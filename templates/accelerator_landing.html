@@ -1,0 +1,363 @@
+{% extends "template_parts/dashboard_base.html" %}
+{% load static %}
+
+{% block content %}
+  <style>
+    body { background: #f8f9fb; }
+    .hero-bg { background: url('{% static "img/hero-bg.jpg" %}') center/cover no-repeat; }
+    .shadow-card { box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
+    .feature-icon { font-size: 2rem; color: #2256b6; }
+    .btn-primary { background: #2256b6; border: none; }
+    .btn-outline-primary { border-color: #2256b6; color: #2256b6; }
+    .btn-outline-primary:hover { background: #2256b6; color: #fff; }
+    .section-title { font-weight: bold; color: #2256b6; }
+    .section-subtitle { color: #6c6c7e; }
+    .feature-card { min-height: 180px; }
+    /* Timeline styles */
+    .timeline-section { background: #fff; }
+    .timeline-step { position: relative; padding-left: 60px; margin-bottom: 48px; }
+    .timeline-dot {
+      position: absolute;
+      left: 0; top: 0;
+      width: 36px; height: 36px;
+      background: #2256b6;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px #0001;
+    }
+    .timeline-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 17px; top: 36px;
+      width: 2px; height: calc(100% - 36px);
+      background: #e0e7ef;
+    }
+    .timeline-title { font-weight: bold; color: #2256b6; font-size: 1.15rem; }
+    .timeline-duration { color: #6c6c7e; font-size: 1rem; }
+    @media (max-width: 600px) {
+      .timeline-step { padding-left: 48px; }
+      .timeline-dot { width: 24px; height: 24px; left: 0; }
+      .timeline-step:not(:last-child)::after { left: 11px; }
+    }
+  </style>
+
+
+  <!-- Hero Section -->
+  <section class="hero-bg py-5">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+          <h1 class="fw-bold" style="color:#2256b6;">Accelerate Your<br>
+            <span style="color:#d32f2f;">Plastic<br>Circularity<br>Innovation</span>
+          </h1>
+          <p class="mt-3 fs-5 text-muted">Join Southeast Asia’s accelerator program for plastic circularity startups. Get the funding, mentorship, and strategic partnerships you need to scale your ocean-positive solution.</p>
+          <div class="d-flex gap-3 mt-4">
+            <a href="#" class="btn btn-primary btn-lg fw-bold px-4">Apply Now</a>
+            <a href="#" class="btn btn-outline-primary btn-lg fw-bold px-4">Download Program Guide</a>
+          </div>
+          <div class="mt-3 text-muted small">
+            <i class="bi bi-calendar"></i> Applications close August 1, 2025 &nbsp; &bull; &nbsp; <i class="bi bi-geo-alt"></i> Singapore &amp; Virtual
+          </div>
+        </div>
+        <div class="col-lg-6 text-center">
+          <img src="{% static 'img/hero-wave.jpg' %}" alt="Ocean Wave" class="img-fluid rounded-4 shadow-card" style="max-width:400px;">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose Section -->
+  <section class="py-5 bg-white">
+    <div class="container">
+      <h2 class="section-title text-center mb-3">Why Choose SEA-MaP Accelerator?</h2>
+      <p class="section-subtitle text-center mb-5">Comprehensive 6-month program is specifically designed for plastic circularity startups in Southeast Asia, providing everything you need to transform your innovative idea into a market-ready solution.</p>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="bg-white rounded-4 shadow-card p-4 feature-card h-100">
+            <div class="feature-icon mb-3"><i class="bi bi-cash-stack"></i></div>
+            <h5 class="fw-bold mb-2">Funding Support</h5>
+            <div class="text-muted">Access up to $100K in seed funding to accelerate your plastic circularity innovation and bring your solution to market</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="bg-white rounded-4 shadow-card p-4 feature-card h-100">
+            <div class="feature-icon mb-3"><i class="bi bi-person-badge"></i></div>
+            <h5 class="fw-bold mb-2">Expert Mentorship</h5>
+            <div class="text-muted">One-on-one guidance from industry leaders, plastic circularity conservation experts, and successful entrepreneurs</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="bg-white rounded-4 shadow-card p-4 feature-card h-100">
+            <div class="feature-icon mb-3"><i class="bi bi-diagram-3"></i></div>
+            <h5 class="fw-bold mb-2">Strategic Partnerships</h5>
+            <div class="text-muted">Connect with government bodies, NGOs, research institutions, and corporate partners across ASEAN</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="bg-white rounded-4 shadow-card p-4 feature-card h-100">
+            <div class="feature-icon mb-3"><i class="bi bi-bar-chart-steps"></i></div>
+            <h5 class="fw-bold mb-2">Business Development</h5>
+            <div class="text-muted">Comprehensive support for product development, market validation, and scaling strategies</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="bg-white rounded-4 shadow-card p-4 feature-card h-100">
+            <div class="feature-icon mb-3"><i class="bi bi-globe"></i></div>
+            <h5 class="fw-bold mb-2">Regional Market Access</h5>
+            <div class="text-muted">Tap into ASEAN markets with our extensive regional network and local partnerships</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="bg-white rounded-4 shadow-card p-4 feature-card h-100">
+            <div class="feature-icon mb-3"><i class="bi bi-award"></i></div>
+            <h5 class="fw-bold mb-2">Certification & Recognition</h5>
+            <div class="text-muted">Gain credibility through our internationally recognized program and certification</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Program Timeline Section -->
+  <section class="timeline-section py-5">
+    <div class="container">
+      <h2 class="section-title text-center mb-3">Program Timeline</h2>
+      <p class="section-subtitle text-center mb-5">
+        Structured 6-month intensive program is designed to maximize your startup's growth potential and ensure market readiness upon graduation.
+      </p>
+      <div class="mx-auto" style="max-width:700px;">
+        <div class="timeline-step">
+          <div class="timeline-dot"></div>
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <span class="timeline-title">Application &amp; Selection</span>
+              <div class="text-muted">Submit your application, pitch deck, and participate in selection interviews with expert panel</div>
+            </div>
+            <div class="timeline-duration"><i class="bi bi-clock"></i> 2 weeks</div>
+          </div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-dot"></div>
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <span class="timeline-title">Kickoff &amp; Onboarding</span>
+              <div class="text-muted">Program orientation, team introductions, goal setting, and comprehensive needs assessment</div>
+            </div>
+            <div class="timeline-duration"><i class="bi bi-clock"></i> 1 week</div>
+          </div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-dot"></div>
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <span class="timeline-title">Development Phase</span>
+              <div class="text-muted">Intensive development with weekly mentorship sessions, milestone tracking, and peer collaboration</div>
+            </div>
+            <div class="timeline-duration"><i class="bi bi-clock"></i> 3 months</div>
+          </div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-dot"></div>
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <span class="timeline-title">Demo &amp; Pitching</span>
+              <div class="text-muted">Prepare and present your solution to investors, partners, and potential customers at Demo Day</div>
+            </div>
+            <div class="timeline-duration"><i class="bi bi-clock"></i> 2 weeks</div>
+          </div>
+        </div>
+        <div class="timeline-step mb-0">
+          <div class="timeline-dot"></div>
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <span class="timeline-title">Post-Program Support</span>
+              <div class="text-muted">Continued mentorship, access to network, follow-up funding support, and scaling assistance</div>
+            </div>
+            <div class="timeline-duration"><i class="bi bi-clock"></i> 6 months</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Success Stories Section -->
+    <section class="py-5 bg-white">
+    <div class="container">
+        <h2 class="section-title text-center mb-3">Success Stories</h2>
+        <p class="section-subtitle text-center mb-5">
+        Meet the innovative startups that have transformed their ideas into impactful plastic circularity solutions through the accelerator program.
+        </p>
+        <div class="row justify-content-center g-4">
+        <div class="col-md-5">
+            <div class="card rounded-4 shadow-card h-100 overflow-hidden">
+            <div class="position-relative" style="height:180px;">
+                <img src="{% static 'img/hero-wave.jpg' %}" alt="AquaTech Solutions" class="w-100 h-100" style="object-fit:cover;">
+                <div class="position-absolute bottom-0 start-0 w-100 px-3 pb-2" style="background:linear-gradient(0deg,#0008 70%,transparent 100%);">
+                <div class="fw-bold text-white fs-5">AquaTech Solutions</div>
+                <div class="text-white small">Founded by Dr. Marina Chen</div>
+                </div>
+                <a href="#" class="position-absolute top-0 end-0 m-2 text-white" target="_blank" style="font-size:1.2rem;">
+                <i class="bi bi-box-arrow-up-right"></i>
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="fw-semibold mb-2" style="color:#6c6c7e;">Plastic pollution monitoring system for coastal communities</div>
+                <ul class="list-unstyled mb-2">
+                <li class="mb-1">
+                    <i class="bi bi-record-circle text-primary"></i>
+                    Deployed across 50+ locations in Southeast Asia, plastic circularity for 2M+ people
+                </li>
+                </ul>
+                <div class="fw-bold" style="color:#d32f2f;"><i class="bi bi-currency-dollar"></i> $2.5M Series A</div>
+            </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card rounded-4 shadow-card h-100 overflow-hidden">
+            <div class="position-relative" style="height:180px;">
+                <img src="{% static 'img/success-coral.jpg' %}" alt="OceanGuard" class="w-100 h-100" style="object-fit:cover;">
+                <div class="position-absolute bottom-0 start-0 w-100 px-3 pb-2" style="background:linear-gradient(0deg,#0008 70%,transparent 100%);">
+                <div class="fw-bold text-white fs-5">OceanGuard</div>
+                <div class="text-white small">Founded by James Rodriguez</div>
+                </div>
+                <a href="#" class="position-absolute top-0 end-0 m-2 text-white" target="_blank" style="font-size:1.2rem;">
+                <i class="bi bi-box-arrow-up-right"></i>
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="fw-semibold mb-2" style="color:#6c6c7e;">Autonomous marine debris collection platform using advanced robotics</div>
+                <ul class="list-unstyled mb-2">
+                <li class="mb-1">
+                    <i class="bi bi-record-circle text-primary"></i>
+                    Removed 10+ tons of plastic from ocean waters, deployed in 5 ASEAN countries
+                </li>
+                </ul>
+                <div class="fw-bold" style="color:#d32f2f;"><i class="bi bi-currency-dollar"></i> $1.8M Seed Round</div>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    </section>
+
+    <!-- Program Impact Section -->
+    <section class="py-5" style="background:#3a63b6;">
+    <div class="container">
+        <h2 class="section-title text-center mb-3" style="color:#fff;">Program Impact</h2>
+        <p class="section-subtitle text-center mb-5" style="color:#fff; font-size:1.3rem;">
+        Accelerator program has made a significant impact on plastic circularity startups across Southeast Asia.
+        </p>
+        <div class="row text-center text-white justify-content-center">
+        <div class="col-md-3 mb-4 mb-md-0">
+            <div class="fs-1 fw-bold">50+</div>
+            <div class="fw-bold mb-1">Startups Accelerated</div>
+            <div class="small">Successfully graduated innovative plastic circularity technology companies</div>
+        </div>
+        <div class="col-md-3 mb-4 mb-md-0">
+            <div class="fs-1 fw-bold">$15M+</div>
+            <div class="fw-bold mb-1">Total Funding Raised</div>
+            <div class="small">Cumulative funding secured by our portfolio companies</div>
+        </div>
+        <div class="col-md-3 mb-4 mb-md-0">
+            <div class="fs-1 fw-bold">100+</div>
+            <div class="fw-bold mb-1">Jobs Created</div>
+            <div class="small">Direct employment opportunities generated by program alumni</div>
+        </div>
+        <div class="col-md-3">
+            <div class="fs-1 fw-bold">8</div>
+            <div class="fw-bold mb-1">ASEAN Countries</div>
+            <div class="small">Regional coverage and market access for our startups</div>
+        </div>
+        </div>
+    </div>
+    </section>
+
+    <!-- Eligibility Criteria Section -->
+    <section class="py-5 bg-white">
+    <div class="container">
+        <div class="row align-items-start justify-content-between">
+        <div class="col-lg-7 mb-4 mb-lg-0">
+            <h2 class="section-title mb-3" style="color:#2256b6;">Eligibility Criteria</h2>
+            <p class="fs-5 mb-4" style="color:#6c6c7e;">
+            Passionate entrepreneurs with innovative plastic circularity solutions.
+            </p>
+            <ul class="list-unstyled mb-4 fs-5" style="color:#2256b6;">
+            <li class="mb-3"><i class="bi bi-check-circle-fill me-2 text-primary"></i> Startups focused on plastic circularity technology</li>
+            <li class="mb-3"><i class="bi bi-check-circle-fill me-2 text-primary"></i> Technology-driven solutions with clear environmental impact and commercial potential</li>
+            <li class="mb-3"><i class="bi bi-check-circle-fill me-2 text-primary"></i> Based in ASEAN region or committed to establishing a presence in Southeast Asia</li>
+            <li class="mb-3"><i class="bi bi-check-circle-fill me-2 text-primary"></i> Team of 2-5 co-founders with relevant expertise and complementary skills</li>
+            <li class="mb-3"><i class="bi bi-check-circle-fill me-2 text-primary"></i> Prototype or MVP ready for testing, validation, and further development</li>
+            <li class="mb-3"><i class="bi bi-check-circle-fill me-2 text-primary"></i> Full commitment to participate in the 6-month intensive program</li>
+            </ul>
+            <div class="bg-light rounded-4 p-4 mt-3" style="max-width:500px;">
+            <div class="fw-bold mb-2">Application Requirements</div>
+            <ul class="list-unstyled mb-0" style="color:#6c6c7e;">
+                <li>• Complete application form with company and team details</li>
+                <li>• 3-minute pitch video demonstrating your solution</li>
+                <li>• Business plan or executive summary (max 10 pages)</li>
+                <li>• Financial projections and funding requirements</li>
+                <li>• Letters of support or early customer validation</li>
+            </ul>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="bg-white rounded-4 shadow-card p-4" style="border:1px solid #e0e7ef;">
+            <div class="text-center mb-3">
+                <div class="feature-icon mb-2" style="font-size:2.5rem;"><i class="bi bi-rocket-takeoff"></i></div>
+                <div class="fw-bold fs-4" style="color:#2256b6;">Ready to Apply?</div>
+            </div>
+            <p class="text-center mb-4" style="color:#6c6c7e;">
+                Join the next cohort of innovative plastic circularity startups and accelerate your impact on ocean conservation.
+            </p>
+            <div class="mb-3">
+                <div class="d-flex justify-content-between py-1">
+                <span class="text-muted">Application Deadline:</span>
+                <span class="fw-bold">August 1, 2025</span>
+                </div>
+                <div class="d-flex justify-content-between py-1">
+                <span class="text-muted">Program Start:</span>
+                <span class="fw-bold">October 1, 2025</span>
+                </div>
+                <div class="d-flex justify-content-between py-1">
+                <span class="text-muted">Cohort Size:</span>
+                <span class="fw-bold">12 Startups</span>
+                </div>
+                <div class="d-flex justify-content-between py-1">
+                <span class="text-muted">Program Duration:</span>
+                <span class="fw-bold">6 Months</span>
+                </div>
+            </div>
+            <a href="#" class="btn btn-primary btn-lg w-100 fw-bold mb-3">Submit Application <span class="ms-2">&rarr;</span></a>
+            <div class="text-center text-muted small mb-2">Questions about the program?</div>
+            <div class="text-center">
+                <a href="mailto:accelerator@sea-map.org" class="text-decoration-none text-primary me-2"><i class="bi bi-envelope"></i> accelerator@sea-map.org</a>
+                <span class="text-muted mx-1">|</span>
+                <a href="tel:+6531234567" class="text-decoration-none text-primary"><i class="bi bi-telephone"></i> +65 3123 4567</a>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    </section>
+
+    <section class="py-5" style="background: radial-gradient(ellipse at top left, #faece9 0%, #f7f7f7 60%, #f5f9fc 100%);">
+  <div class="container text-center">
+    <h1 class="fw-bold text-primary" style="font-size: 2.8rem; color: #3156a0 !important;">
+      Transform Your Plastic Circularity Innovation Into Reality
+    </h1>
+    <p class="mt-4 mb-5" style="color: #767888; font-size: 1.5rem;">
+      Don't miss this opportunity to be part of Southeast Asia's leading plastic circularity accelerator. Applications close soon, and spots are limited.
+    </p>
+    <div class="d-flex justify-content-center gap-4">
+      <a href="#" class="btn btn-lg fw-bold rounded-pill" style="background: #c2463a; color: #fff; box-shadow: 0 8px 24px rgba(194,70,58,0.14); min-width: 200px;">
+        Apply Now
+      </a>
+      <a href="#" class="btn btn-lg fw-bold rounded-pill border border-2" style="color: #3156a0; border-color: #3156a0; min-width: 280px; background: #fff;">
+        Schedule Info Session
+      </a>
+    </div>
+  </div>
+</section>
+
+
+
+{% endblock %}

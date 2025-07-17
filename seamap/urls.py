@@ -16,7 +16,29 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from member.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('login/', CustomLoginView.as_view(), name='login'),
+    path('signup/', signup, name='signup'),
+    path('matchmaking/investors/', investor_matchmaking, name='investor_matchmaking'),
+    path('dashboard/startup', dashboard, name='dashboard_startup'),
+    path('dashboard/problem-statement', problem, name='problem'),
+    path('dashboard/challenge', challenge, name='challenge'),
+    path('dashboard/accelerator-landing', accelerator_landing, name='accelerator_landing'),
+    path('dashboard/startup-detail', startup_detail, name='startup_detail'),
+    path('dashboard/investor-detail', investor_detail, name='investor_detail'),
+    path('startup/profile/<int:startup_id>/', startup_profile, name='startup_profile'),
+    path('investor/profile/<int:investor_id>/', investor_profile, name='investor_profile'),
+    path('corporate/profile/<int:company_id>/', corporate_profile, name='corporate_profile'),
+
+    # Onboarding flow
+    path('onboarding/', onboarding_role_selection, name='onboarding_role_selection'),
+
+    path('onboarding/startup/1', onboarding_startup_step1, name='onboarding_startup_step1'),
+    path('onboarding/startup/2', onboarding_startup_step2, name='onboarding_startup_step2'),
+    path('onboarding/startup/3', onboarding_startup_step3, name='onboarding_startup_step3'),
+    path('onboarding/startup/4', onboarding_startup_step4, name='onboarding_startup_step4'),
+
 ]

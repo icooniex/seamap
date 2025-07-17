@@ -1,0 +1,192 @@
+{% extends "template_parts/dashboard_base.html" %}
+{% load static %}
+
+{% block content %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .match-badge { color: #198754; font-weight: 600; }
+        .tag { background: #e3f2fd; color: #0d6efd; padding: 4px 12px; border-radius: 20px; font-size: 13px; margin-right: 8px; margin-bottom: 4px; display: inline-block; }
+        .section-title { color: #0d6efd; margin-bottom: 16px; font-weight: 600; }
+        .btn-primary { background: #0d6efd; border: none; }
+        .btn-outline-primary { border-color: #0d6efd; color: #0d6efd; }
+        .info-card { background: #f8f9fa; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+        .opportunity-card { background: #e8f5e9; border-left: 4px solid #198754; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+        .challenge-card { background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+        .goal-item { background: #e8f5e9; border-radius: 20px; padding: 8px 16px; margin-bottom: 8px; display: inline-block; }
+        .interest-item { background: #e3f2fd; border-radius: 20px; padding: 8px 16px; margin-bottom: 8px; display: inline-block; }
+        .approach-card { background: #fff8e1; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+        .company-logo { width: 60px; height: 60px; background: #17a2b8; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: bold; }
+        .company-size { font-size: 1.2rem; font-weight: bold; color: #6c757d; }
+    </style>
+
+<div class="container p-4 bg-white rounded-4 shadow">
+    <!-- Header -->
+    <div class="d-flex align-items-center mb-4">
+        <div class="company-logo me-3">
+            {{ company.name|slice:":2"|upper }}
+        </div>
+        <div class="flex-grow-1">
+            <h2 class="mb-1">{{ company.name }}</h2>
+            <div class="text-muted mb-2">{{ company.description }}</div>
+            <div class="d-flex align-items-center gap-3">
+                <span class="badge bg-light text-dark"><i class="bi bi-building"></i> {{ company.industry }}</span>
+                <span class="badge bg-light text-dark"><i class="bi bi-geo-alt"></i> {{ company.location }}</span>
+                <span class="badge bg-light text-dark"><i class="bi bi-calendar"></i> Founded {{ company.founded_year }}</span>
+                <span class="badge bg-light text-dark"><i class="bi bi-people"></i> {{ company.employee_count }}</span>
+                <span class="badge bg-success">{{ company.revenue_range }}</span>
+            </div>
+            <div class="match-badge mt-2"><i class="bi bi-bullseye"></i> Match: {{ company.match_percentage }}%</div>
+        </div>
+        <div>
+            <a href="{{ company.website }}" class="btn btn-outline-primary me-2"><i class="bi bi-link-45deg"></i> Visit Website</a>
+            <button class="btn btn-primary"><i class="bi bi-chat-dots"></i> Contact Corporate</button>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <div class="mb-5">
+        <h5 class="section-title">About {{ company.name }}</h5>
+        <div class="row">
+            <div class="col-md-8">
+                <div class="mb-3">
+                    <h6>Overview</h6>
+                    <p>{{ company.overview }}</p>
+                </div>
+                <div class="mb-3">
+                    <h6>Industry Information</h6>
+                    <p>{{ company.industry_info }}</p>
+                </div>
+                <div class="mb-3">
+                    <h6>Tags</h6>
+                    {% for tag in company.tags %}
+                        <span class="tag">{{ tag }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-title">Sustainability Goals</h6>
+                        {% for goal in company.sustainability_goals %}
+                            <div class="goal-item"><i class="bi bi-check-circle-fill"></i> {{ goal }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h6 class="card-title">Purchasing Interests</h6>
+                        {% for interest in company.purchasing_interests %}
+                            <div class="interest-item">{{ interest }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Opportunities -->
+    <div class="mb-5">
+        <h5 class="section-title">Opportunities</h5>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="opportunity-card">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="me-2"><i class="bi bi-cash-coin"></i></div>
+                        <h6 class="mb-0">Potential Value</h6>
+                    </div>
+                    <div class="text-muted mb-3">{{ company.potential_value.description }}</div>
+                    <div class="mb-2"><strong>Purchase Potential:</strong></div>
+                    <ul class="mb-0">
+                        {% for item in company.potential_value.purchase_items %}
+                            <li>{{ item }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="opportunity-card">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="me-2"><i class="bi bi-graph-up-arrow"></i></div>
+                        <h6 class="mb-0">Impact Potential</h6>
+                    </div>
+                    <div class="text-muted mb-3">{{ company.impact_potential.description }}</div>
+                    <div class="mb-2"><strong>Sustainability Objectives:</strong></div>
+                    <ul class="mb-0">
+                        {% for objective in company.impact_potential.objectives %}
+                            <li>{{ objective }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recommended Approaches -->
+    <div class="mb-5">
+        <h5 class="section-title">Recommended Approaches</h5>
+        <div class="row">
+            {% for approach in company.recommended_approaches %}
+                <div class="col-md-4 mb-3">
+                    <div class="approach-card">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="me-2"><i class="bi bi-lightbulb"></i></div>
+                            <h6 class="mb-0">{{ approach.title }}</h6>
+                        </div>
+                        <div class="text-muted">{{ approach.description }}</div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Innovation Challenges -->
+    <div class="mb-5">
+        <h5 class="section-title">Innovation Challenges</h5>
+        {% for challenge in company.innovation_challenges %}
+            <div class="challenge-card">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h6>{{ challenge.title }}</h6>
+                        <p class="text-muted">{{ challenge.description }}</p>
+                        <div class="mb-2">
+                            <span class="badge bg-light text-dark"><i class="bi bi-calendar-event"></i> {{ challenge.timeline }}</span>
+                            <span class="badge bg-light text-dark"><i class="bi bi-geo-alt"></i> {{ challenge.location }}</span>
+                            <span class="badge bg-warning text-dark"><i class="bi bi-clock"></i> {{ challenge.deadline }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <button class="btn btn-primary">View Challenge</button>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Problem Statements -->
+    <div class="mb-5">
+        <h5 class="section-title">Problem Statements</h5>
+        {% if company.problem_statements %}
+            {% for statement in company.problem_statements %}
+                <div class="info-card">
+                    <h6>{{ statement.title }}</h6>
+                    <p>{{ statement.description }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="info-card text-center">
+                <div class="text-muted">This organization hasn't posted any problem statements yet.</div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Contact Section -->
+    <div class="mb-4">
+        <h5 class="section-title">Contact {{ company.name }}</h5>
+        <div class="info-card">
+            <p>{{ company.contact_description }}</p>
+            <button class="btn btn-primary"><i class="bi bi-envelope"></i> Send Message</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

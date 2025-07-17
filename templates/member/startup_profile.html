@@ -1,0 +1,166 @@
+{% extends "template_parts/dashboard_base.html" %}
+{% load static %}
+
+{% block content %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <style>
+        .match-badge { color: #198754; font-weight: 600; }
+        .tag { background: #e3f2fd; color: #0d6efd; padding: 4px 12px; border-radius: 20px; font-size: 13px; margin-right: 8px; margin-bottom: 4px; display: inline-block; }
+        .impact-card { background: #e8f5e9; border-left: 4px solid #198754; border-radius: 8px; padding: 16px; }
+        .section-title { color: #0d6efd; margin-bottom: 16px; font-weight: 600; }
+        .btn-primary { background: #00c6fb; border: none; }
+        .btn-outline-primary { border-color: #00c6fb; color: #00c6fb; }
+        .team-icon { width: 40px; height: 40px; background: #0d6efd; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; }
+        .funding-amount { font-size: 1.5rem; font-weight: bold; color: #198754; }
+        .why-connect { background: #f8f9fa; border-radius: 8px; padding: 20px; }
+        .contact-section { background: #f8f9fa; border-radius: 8px; padding: 20px; }
+    </style>
+
+<div class="container p-4 bg-white rounded-4 shadow">
+    <!-- Header -->
+    <div class="d-flex align-items-center mb-4">
+        <div class="bg-info text-white rounded-3 d-flex align-items-center justify-content-center me-3" style="width:60px;height:60px;font-size:1.5rem;font-weight:bold;">
+            OC
+        </div>
+        <div class="flex-grow-1">
+            <h2 class="mb-1">{{ startup.name }}</h2>
+            <div class="text-muted mb-2">{{ startup.description }}</div>
+            <div class="d-flex align-items-center gap-3">
+                <span class="badge bg-light text-dark"><i class="bi bi-geo-alt"></i> {{ startup.location }}</span>
+                <span class="badge bg-light text-dark"><i class="bi bi-calendar"></i> Founded {{ startup.founded_year }}</span>
+                <span class="badge bg-light text-dark"><i class="bi bi-people"></i> {{ startup.team_size }}</span>
+                <span class="badge bg-primary"><i class="bi bi-graph-up"></i> {{ startup.development_stage }}</span>
+            </div>
+            <div class="match-badge mt-2"><i class="bi bi-bullseye"></i> Match: {{ startup.match_percentage }}%</div>
+        </div>
+        <div>
+            <a href="#" class="btn btn-outline-primary me-2"><i class="bi bi-link-45deg"></i> Visit Website</a>
+            <button class="btn btn-primary"><i class="bi bi-chat-dots"></i> Contact Innovator</button>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <div class="mb-5">
+        <h5 class="section-title"><i class="bi bi-info-circle"></i> About {{ startup.name }}</h5>
+        <div class="row">
+            <div class="col-md-8">
+                <div class="mb-3">
+                    <h6><i class="bi bi-eye"></i> Overview</h6>
+                    <p>{{ startup.overview }}</p>
+                </div>
+                <div class="mb-3">
+                    <h6><i class="bi bi-tools"></i> Solution Categories</h6>
+                    {% for category in startup.solution_categories %}
+                        <span class="tag"><i class="bi bi-gear"></i> {{ category }}</span>
+                    {% endfor %}
+                </div>
+                <div class="mb-3">
+                    <h6><i class="bi bi-tags"></i> Tags</h6>
+                    {% for tag in startup.tags %}
+                        <span class="tag">{{ tag }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title"><i class="bi bi-ladder"></i> Development Stage</h6>
+                        <span class="badge bg-primary"><i class="bi bi-graph-up"></i> {{ startup.development_stage }}</span>
+                    </div>
+                </div>
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title"><i class="bi bi-cash-stack"></i> Funding Needed</h6>
+                        <div class="funding-amount">{{ startup.funding_needed }}</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-title"><i class="bi bi-diagram-3"></i> Sectors</h6>
+                        {% for sector in startup.sectors %}
+                            <span class="tag">{{ sector }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Impact Metrics -->
+    <div class="mb-5">
+        <h5 class="section-title"><i class="bi bi-graph-up-arrow"></i> Impact Metrics</h5>
+        <div class="row">
+            {% for metric in startup.impact_metrics %}
+                <div class="col-md-6 mb-3">
+                    <div class="impact-card">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="me-2"><i class="bi bi-bar-chart"></i></div>
+                            <h6 class="mb-0">{{ metric.title }}</h6>
+                        </div>
+                        <div class="text-muted">{{ metric.description }}</div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="alert alert-info mt-3">
+            <h6><i class="bi bi-tree"></i> Environmental & Social Impact</h6>
+            <p class="mb-0">{{ startup.environmental_impact }}</p>
+        </div>
+    </div>
+
+    <!-- Team -->
+    <div class="mb-5">
+        <h5 class="section-title"><i class="bi bi-people-fill"></i> Team</h5>
+        <div class="row">
+            <div class="col-md-8">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="team-icon me-3"><i class="bi bi-people"></i></div>
+                    <div>
+                        <h6 class="mb-0">Team size</h6>
+                        <div class="text-muted">{{ startup.team_size }}</div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <h6><i class="bi bi-person-lines-fill"></i> Team Overview</h6>
+                    <p>{{ startup.team_overview }}</p>
+                </div>
+                <div class="mb-3">
+                    <h6><i class="bi bi-star-fill"></i> Core Expertise</h6>
+                    <ul class="list-unstyled">
+                        {% for expertise in startup.core_expertise %}
+                            <li class="mb-1"><i class="bi bi-check-circle"></i> {{ expertise }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact -->
+    <div class="mb-4">
+        <h5 class="section-title"><i class="bi bi-envelope-at"></i> Contact {{ startup.name }}</h5>
+        <div class="row">
+            <div class="col-md-8">
+                <div class="contact-section">
+                    <p>{{ startup.contact_description }}</p>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary"><i class="bi bi-envelope"></i> Send Email</button>
+                        <button class="btn btn-outline-primary"><i class="bi bi-chat-dots"></i> Start Chat</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="why-connect">
+                    <h6 class="mb-3"><i class="bi bi-question-circle"></i> Why Connect?</h6>
+                    <ul class="mb-0">
+                        {% for reason in startup.connection_reasons %}
+                            <li class="mb-1"><i class="bi bi-check"></i> {{ reason }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

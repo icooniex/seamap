@@ -1,0 +1,86 @@
+{% extends "template_parts/dashboard_base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container py-4">
+  <h2 class="fw-bold mb-1">Innovation Challenges</h2>
+  <div class="mb-3 fs-5 text-muted">Discover and participate in challenges that drive marine conservation and sustainable innovation</div>
+
+  <!-- Search & Filters -->
+  <form method="get" class="d-flex align-items-center gap-3 mb-4">
+        <input type="text" name="q" class="form-control rounded-3 border-0 px-4 py-2" placeholder="Search challenges..." value="{{ request.GET.q }}">
+        <select name="category" class="form-select rounded-3 border-0 px-3 py-2" >
+            <option value="">All Categories</option>
+            <option value="marine">Marine</option>
+            <option value="packaging">Packaging</option>
+            <!-- Add more categories -->
+        </select>
+        
+        <button type="submit" class="btn btn-primary d-flex align-items-center px-4 py-2">
+            <i class="bi bi-search me-2"></i> Search
+        </button>
+        
+    </form>
+
+  <!-- Problem Statement Cards -->
+  <div class="row g-4">
+    
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm rounded-4 overflow-hidden">
+        <div class="position-relative">
+          <img src="{{ problem.image.url }}" alt="{{ problem.title }}" class="w-100" style="height:160px;object-fit:cover;">
+          <div class="position-absolute top-0 start-0 m-2 d-flex gap-2">
+            {% if problem.status == 'open' %}
+              <span class="badge bg-success">Open</span>
+            {% elif problem.status == 'in-progress' %}
+              <span class="badge bg-primary">In-progress</span>
+            {% endif %}
+            {% if problem.urgency == 'high' %}
+              <span class="badge bg-danger">High</span>
+            {% elif problem.urgency == 'medium' %}
+              <span class="badge bg-warning text-dark">Medium</span>
+            {% elif problem.urgency == 'critical' %}
+              <span class="badge bg-danger">Critical</span>
+            {% endif %}
+          </div>
+          <div class="position-absolute top-0 end-0 m-2">
+            <span class="badge bg-light text-dark"><i class="bi bi-people"></i> 12 applicants</span>
+          </div>
+        </div>
+        <div class="card-body pb-0">
+          <div class="d-flex align-items-center mb-2">
+            {% if problem.company_logo %}
+              <img src="{{ problem.company_logo.url }}" alt="{{ problem.company }}" style="width:32px;height:32px;object-fit:cover;" class="rounded-circle me-2">
+            {% else %}
+              <span class="fw-bold text-secondary me-2" style="font-size:1.2rem;">MCA</span>
+            {% endif %}
+            <div>
+              <div class="fw-semibold">Marine Conservation Alliance</div>
+              <div class="text-muted small">Corporate</div>
+            </div>
+          </div>
+          <h5 class="fw-bold mb-1">Ocean Plastic Innovation Challenge</h5>
+          <div class="mb-2 text-muted">Developing solutions to reduce ocean plastic pollution</div>
+          <div class="mb-3">
+              <span class="badge rounded-pill bg-light text-primary border border-primary me-1">Waste Management</span>
+              <span class="badge rounded-pill bg-light text-primary border border-primary me-1">Waste Management</span>
+          </div>
+          <div class="mb-2 text-muted small">
+            <i class="bi bi-geo-alt"></i> Singapore<br>
+            <i class="bi bi-calendar"></i> Jun 15, 2025 - Sep 15, 2025<br>
+            <i class="bi bi-calendar-check"></i> Apply by Jun 1, 2025<br>
+            <i class="bi bi-trophy"></i> $50,000 Grand Prize
+          </div>
+        </div>
+        <div class="card-footer bg-white border-0 pt-0 pb-3">
+          <a href="{{ problem.url }}" class="btn btn-primary w-100 fw-bold">View Details</a>
+        </div>
+      </div>
+    </div>
+    
+    
+  </div>
+</div>
+
+{% endblock %}

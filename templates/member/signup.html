@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create your account</title>
+    <style>
+        body { margin: 0; font-family: Arial, sans-serif; }
+        .container { display: flex; height: 100vh; }
+        .left, .right { flex: 1; display: flex; align-items: center; justify-content: center; }
+        .left { background: #fff; flex-direction: column; }
+        .right { background: linear-gradient(135deg, #3a8dde 0%, #6dd5ed 100%); color: #fff; flex-direction: column; }
+        .form-box { width: 350px; }
+        .form-box h1 { font-size: 2rem; font-weight: bold; margin-bottom: 1rem; }
+        .form-box input { width: 100%; padding: 12px; margin: 8px 0; border-radius: 6px; border: 1px solid #ccc; }
+        .form-box button { width: 100%; padding: 12px; background: #2256b6; color: #fff; border: none; border-radius: 6px; font-size: 1rem; margin-top: 12px; }
+        .form-box a { color: #2256b6; text-decoration: none; }
+        .right .info-box { background: rgba(255,255,255,0.2); padding: 2rem; border-radius: 12px; }
+        .right .info-box h2 { margin: 0 0 1rem 0; }
+        .right .tags { margin-top: 1rem; }
+        .right .tag { display: inline-block; background: rgba(255,255,255,0.3); color: #fff; padding: 0.5em 1em; border-radius: 20px; margin-right: 0.5em; font-size: 1em; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="left">
+        <div class="form-box">
+            <a href="/">← Back to home</a>
+            <h1>Create your account</h1>
+            <form method="post">
+                {% csrf_token %}
+                <input type="text" name="full_name" placeholder="Jane Doe" required>
+                <input type="email" name="email" placeholder="you@example.com" required>
+                <input type="password" name="password" placeholder="Password" minlength="8" required>
+                <small>Password must be at least 8 characters</small>
+                <button type="submit">Create account</button>
+            </form>
+            <p style="margin-top: 1em;">Already have an account? <a href="{% url 'login' %}">Sign in</a></p>
+        </div>
+    </div>
+    <div class="right">
+        <div class="info-box">
+            <h2>Regional Platform for Innovation and Investments</h2>
+            <p>Accelerating plastic circularity innovation in Southeast Asia through collaboration and matchmaking.</p>
+            <div class="tags">
+                <span class="tag">Startups</span>
+                <span class="tag">Investors</span>
+                <span class="tag">Corporates</span>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

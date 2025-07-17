@@ -1,0 +1,101 @@
+{% extends "onboarding/base.html" %}
+{% load static %}
+
+{% block content %}
+
+
+<!-- Main Content -->
+<div class="main-content">
+    <div class="onboarding-card">
+        <h1 class="title">What brings you to SEA-MAP?</h1>
+        <p class="subtitle">Select your role to personalize your experience</p>
+
+        <form id="roleSelectionForm" method="POST" action="{% url 'onboarding_role_selection' %}">
+            {% csrf_token %}
+            <div class="role-options">
+                <!-- Startup Role -->
+                <div class="role-card" data-role="startup">
+                    <div class="role-icon startup-icon">
+                        <i class="bi bi-star"></i>
+                    </div>
+                    <div>
+                    <h3 class="role-title">Startup</h3>
+                    <p class="role-description">
+                        Startup, researcher, or developer creating solutions for marine plastic pollution
+                    </p>
+                    </div>
+                    <input type="radio" name="user_role" value="startup" style="display: none;">
+                </div>
+
+                <!-- Investor Role -->
+                <div class="role-card" data-role="investor">
+                    <div class="role-icon investor-icon">
+                        <i class="bi bi-cup"></i>
+                    </div>
+                    <h3 class="role-title">Investor</h3>
+                    <p class="role-description">
+                        VC, impact investor, or funder interested in plastic circularity projects
+                    </p>
+                    <input type="radio" name="user_role" value="investor" style="display: none;">
+                </div>
+
+                <!-- Corporate Role -->
+                <div class="role-card" data-role="corporate">
+                    <div class="role-icon corporate-icon">
+                        <i class="bi bi-briefcase"></i>
+                    </div>
+                    <h3 class="role-title">Corporate</h3>
+                    <p class="role-description">
+                        Company looking for innovative solutions to reduce plastic waste
+                    </p>
+                    <input type="radio" name="user_role" value="corporate" style="display: none;">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary continue-btn" id="continueBtn" disabled>
+                Continue
+            </button>
+        </form>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const roleCards = document.querySelectorAll('.role-card');
+        const continueBtn = document.getElementById('continueBtn');
+        const form = document.getElementById('roleSelectionForm');
+
+        roleCards.forEach(card => {
+            card.addEventListener('click', function() {
+                // Remove selected class from all cards
+                roleCards.forEach(c => c.classList.remove('selected'));
+                
+                // Add selected class to clicked card
+                this.classList.add('selected');
+                
+                // Check the corresponding radio button
+                const radio = this.querySelector('input[type="radio"]');
+                radio.checked = true;
+                
+                // Enable continue button
+                continueBtn.disabled = false;
+                continueBtn.classList.add('active');
+                continueBtn.classList.remove('btn-secondary');
+                continueBtn.classList.add('btn-primary');
+            });
+        });
+
+        // Handle form submission
+        form.addEventListener('submit', function(e) {
+            const selectedRole = document.querySelector('input[name="user_role"]:checked');
+            if (!selectedRole) {
+                e.preventDefault();
+                alert('Please select a role to continue.');
+            }
+        });
+    });
+</script>
+
+{% endblock %}

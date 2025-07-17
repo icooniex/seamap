@@ -1,0 +1,534 @@
+{% extends "onboarding/base.html" %}
+{% load static %}
+
+{% block content %}
+
+    <div class="onboarding-container">
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="container">
+                <!-- Role Indicator -->
+                <div class="role-indicator">
+                    <!-- Progress Bar -->
+                    <div class="container">
+                        <div class="progress-container">
+                            <div class="step-info">
+                                <span class="text-muted">Startup Onboarding: Step 3 of 4</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 75%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- File Upload Form -->
+                <div class="onboarding-card">
+                    <h2 class="form-title">Upload Company Documents</h2>
+                    <p class="form-subtitle">Share your company profile or pitch deck to help us understand your innovation better</p>
+                    
+                    <form id="fileUploadForm" method="POST" action="{% url 'onboarding_startup_step4' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Company Profile Upload -->
+                        <div class="form-group">
+                            <label for="company_profile" class="form-label">Company Profile</label>
+                            <div class="file-upload-area" id="companyProfileUpload">
+                                <div class="file-upload-content">
+                                    <div class="file-upload-icon">
+                                        <i class="bi bi-cloud-upload"></i>
+                                    </div>
+                                    <h4>Drag & drop your company profile here</h4>
+                                    <p class="text-muted">or click to browse files</p>
+                                    <p class="file-requirements">PDF, DOC, DOCX up to 10MB</p>
+                                </div>
+                                <input type="file" id="company_profile" name="company_profile" 
+                                       accept=".pdf,.doc,.docx" class="file-input">
+                            </div>
+                            <div class="file-preview" id="companyProfilePreview"></div>
+                        </div>
+
+                        <!-- Pitch Deck Upload -->
+                        <div class="form-group">
+                            <label for="pitch_deck" class="form-label">Pitch Deck</label>
+                            <div class="file-upload-area" id="pitchDeckUpload">
+                                <div class="file-upload-content">
+                                    <div class="file-upload-icon">
+                                        <i class="bi bi-cloud-upload"></i>
+                                    </div>
+                                    <h4>Drag & drop your pitch deck here</h4>
+                                    <p class="text-muted">or click to browse files</p>
+                                    <p class="file-requirements">PDF, PPT, PPTX up to 15MB</p>
+                                </div>
+                                <input type="file" id="pitch_deck" name="pitch_deck" 
+                                       accept=".pdf,.ppt,.pptx" class="file-input">
+                            </div>
+                            <div class="file-preview" id="pitchDeckPreview"></div>
+                        </div>
+
+                        <!-- Additional Documents -->
+                        <div class="form-group">
+                            <label for="additional_docs" class="form-label">Additional Documents (Optional)</label>
+                            <div class="file-upload-area" id="additionalDocsUpload">
+                                <div class="file-upload-content">
+                                    <div class="file-upload-icon">
+                                        <i class="bi bi-cloud-upload"></i>
+                                    </div>
+                                    <h4>Upload any additional documents</h4>
+                                    <p class="text-muted">Business plan, technical specifications, etc.</p>
+                                    <p class="file-requirements">PDF, DOC, DOCX up to 10MB each</p>
+                                </div>
+                                <input type="file" id="additional_docs" name="additional_docs" 
+                                       accept=".pdf,.doc,.docx" class="file-input" multiple>
+                            </div>
+                            <div class="file-preview" id="additionalDocsPreview"></div>
+                        </div>
+
+                        <!-- Upload Progress -->
+                        <div class="upload-progress" id="uploadProgress" style="display: none;">
+                            <div class="progress-label">Uploading files...</div>
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                     id="uploadProgressBar" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Button Group -->
+                        <div class="button-group">
+                            <button type="button" class="btn btn-back" onclick="history.back()">Back</button>
+                            <button type="submit" class="btn btn-continue" id="continueBtn">Continue</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<style>
+    .form-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+    .form-subtitle {
+        color: #6c757d;
+        margin-bottom: 30px;
+        font-size: 1rem;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: #333;
+        margin-bottom: 12px;
+        display: block;
+    }
+
+    .file-upload-area {
+        border: 2px dashed #e9ecef;
+        border-radius: 12px;
+        padding: 40px 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        background: #f8f9fa;
+    }
+
+    .file-upload-area:hover {
+        border-color: #007bff;
+        background: #f0f8ff;
+    }
+
+    .file-upload-area.dragover {
+        border-color: #007bff;
+        background: #e6f3ff;
+    }
+
+    .file-upload-content {
+        pointer-events: none;
+    }
+
+    .file-upload-icon {
+        font-size: 3rem;
+        color: #007bff;
+        margin-bottom: 15px;
+    }
+
+    .file-upload-area h4 {
+        font-size: 1.1rem;
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: #333;
+    }
+
+    .file-requirements {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-top: 8px;
+    }
+
+    .file-input {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .file-preview {
+        margin-top: 15px;
+    }
+
+    .file-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 16px;
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        margin-bottom: 8px;
+    }
+
+    .file-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .file-icon {
+        font-size: 1.2rem;
+        color: #007bff;
+    }
+
+    .file-details {
+        flex: 1;
+    }
+
+    .file-name {
+        font-weight: 500;
+        color: #333;
+        margin-bottom: 2px;
+    }
+
+    .file-size {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+
+    .file-remove {
+        background: none;
+        border: none;
+        color: #dc3545;
+        cursor: pointer;
+        font-size: 1.1rem;
+        padding: 4px;
+    }
+
+    .file-remove:hover {
+        color: #c82333;
+    }
+
+    .upload-progress {
+        margin: 20px 0;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .progress-label {
+        font-size: 0.9rem;
+        color: #333;
+        margin-bottom: 8px;
+    }
+
+    .error-message {
+        color: #dc3545;
+        font-size: 0.85rem;
+        margin-top: 5px;
+    }
+
+    .success-message {
+        color: #28a745;
+        font-size: 0.85rem;
+        margin-top: 5px;
+    }
+
+    .button-group {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 40px;
+    }
+
+    .btn-back {
+        background: #6c757d;
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-back:hover {
+        background: #5a6268;
+        color: white;
+    }
+
+    .btn-continue {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-continue:hover {
+        background: #0056b3;
+    }
+
+    .btn-continue:disabled {
+        background: #6c757d;
+        cursor: not-allowed;
+    }
+
+    @media (max-width: 768px) {
+        .button-group {
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .btn-back,
+        .btn-continue {
+            width: 100%;
+        }
+    }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('fileUploadForm');
+        const continueBtn = document.getElementById('continueBtn');
+        const uploadProgress = document.getElementById('uploadProgress');
+        const uploadProgressBar = document.getElementById('uploadProgressBar');
+
+        // File upload handlers
+        const fileUploads = [
+            { 
+                area: 'companyProfileUpload', 
+                input: 'company_profile', 
+                preview: 'companyProfilePreview',
+                maxSize: 10 * 1024 * 1024, // 10MB
+                multiple: false
+            },
+            { 
+                area: 'pitchDeckUpload', 
+                input: 'pitch_deck', 
+                preview: 'pitchDeckPreview',
+                maxSize: 15 * 1024 * 1024, // 15MB
+                multiple: false
+            },
+            { 
+                area: 'additionalDocsUpload', 
+                input: 'additional_docs', 
+                preview: 'additionalDocsPreview',
+                maxSize: 10 * 1024 * 1024, // 10MB
+                multiple: true
+            }
+        ];
+
+        fileUploads.forEach(upload => {
+            const uploadArea = document.getElementById(upload.area);
+            const fileInput = document.getElementById(upload.input);
+            const preview = document.getElementById(upload.preview);
+
+            // Click to upload - fix double dialog issue
+            uploadArea.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (e.target !== fileInput) {
+                    fileInput.click();
+                }
+            });
+
+            // Prevent file input from triggering again
+            fileInput.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+
+            // Drag and drop
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                
+                const files = e.dataTransfer.files;
+                handleFiles(files, fileInput, preview, upload.maxSize, upload.multiple);
+            });
+
+            // File input change
+            fileInput.addEventListener('change', (e) => {
+                const files = e.target.files;
+                handleFiles(files, fileInput, preview, upload.maxSize, upload.multiple);
+            });
+        });
+
+        function handleFiles(files, input, preview, maxSize, multiple) {
+            const fileArray = Array.from(files);
+            
+            if (!multiple && fileArray.length > 1) {
+                showError(preview, 'Only one file can be uploaded');
+                return;
+            }
+
+            // Clear previous files if not multiple
+            if (!multiple) {
+                preview.innerHTML = '';
+            }
+
+            fileArray.forEach(file => {
+                if (file.size > maxSize) {
+                    showError(preview, `File size exceeds limit (${formatFileSize(maxSize)})`);
+                    return;
+                }
+
+                displayFilePreview(file, preview, input);
+            });
+        }
+
+        function displayFilePreview(file, preview, input) {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            
+            const fileIcon = getFileIcon(file.type, file.name);
+            
+            fileItem.innerHTML = `
+                <div class="file-info">
+                    <div class="file-icon">${fileIcon}</div>
+                    <div class="file-details">
+                        <div class="file-name">${file.name}</div>
+                        <div class="file-size">${formatFileSize(file.size)}</div>
+                    </div>
+                </div>
+                <button type="button" class="file-remove" onclick="removeFile(this, '${input.id}')">
+                    <i class="bi bi-x-circle"></i>
+                </button>
+            `;
+
+            preview.appendChild(fileItem);
+            clearError(preview);
+        }
+
+        function getFileIcon(mimeType, fileName) {
+            const extension = fileName.split('.').pop().toLowerCase();
+            
+            if (mimeType.includes('pdf') || extension === 'pdf') {
+                return '<i class="bi bi-file-pdf"></i>';
+            }
+            if (mimeType.includes('word') || mimeType.includes('document') || 
+                extension === 'doc' || extension === 'docx') {
+                return '<i class="bi bi-file-word"></i>';
+            }
+            if (mimeType.includes('presentation') || mimeType.includes('powerpoint') || 
+                extension === 'ppt' || extension === 'pptx') {
+                return '<i class="bi bi-file-ppt"></i>';
+            }
+            return '<i class="bi bi-file-earmark"></i>';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function showError(preview, message) {
+            clearError(preview);
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.textContent = message;
+            preview.appendChild(errorDiv);
+        }
+
+        function clearError(preview) {
+            const errorMsg = preview.querySelector('.error-message');
+            if (errorMsg) errorMsg.remove();
+        }
+
+        // Global function for removing files
+        window.removeFile = function(button, inputId) {
+            const fileItem = button.closest('.file-item');
+            const input = document.getElementById(inputId);
+            
+            fileItem.remove();
+            input.value = ''; // Clear the input
+        };
+
+        // Form submission with progress
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(form);
+            
+            // Show upload progress
+            uploadProgress.style.display = 'block';
+            continueBtn.disabled = true;
+            continueBtn.textContent = 'Uploading...';
+
+            // Simulate upload progress
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                uploadProgressBar.style.width = progress + '%';
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    
+                    // Submit the form
+                    fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                        }
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            window.location.href = "{% url 'onboarding_startup_step4' %}";
+                        } else {
+                            throw new Error('Upload failed');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Upload failed. Please try again.');
+                        uploadProgress.style.display = 'none';
+                        continueBtn.disabled = false;
+                        continueBtn.textContent = 'Continue';
+                    });
+                }
+            }, 200);
+        });
+    });
+</script>
+{% endblock %}

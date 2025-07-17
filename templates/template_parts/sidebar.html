@@ -1,0 +1,83 @@
+{% load static %}
+<nav id="sidebar" class="sidebar js-sidebar">
+    <div class="sidebar-content js-simplebar">
+        <a class="sidebar-brand" style="font-size: 0.8rem;font-weight: normal;" href="index.html">
+
+
+            <div class="d-flex align-items-center">
+                <div class="flex-shrink-0">
+                    <img src="{% static 'images/logo.webp' %}" alt="SEA-MaP Logo" style="width:50px;">
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <div class="fw-bold fs-4" >SEA-MaP</div>
+                    <div class="text-muted small" >
+                        Regional Platform for Innovation and Investments
+                    </div>
+                </div>
+            </div>
+            
+            
+        </a>
+
+        
+
+        <ul class="sidebar-nav">
+            <li class="sidebar-header">
+                MAIN
+            </li>
+
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="index.html">
+                    <i class="bi bi-house-door"></i> <span class="align-middle">Home</span>
+                </a>
+            </li>
+
+
+            <li class="sidebar-header">
+                MATCHMAKING
+            </li>
+
+            <li class="sidebar-item {% if '/dashboard/startup' in request.path %}active{% endif %}">
+                <a class="sidebar-link" href="{% url 'dashboard_startup' %}">
+                    <i class="bi bi-rocket-takeoff"></i> <span class="align-middle">Startups</span>
+                </a>
+            </li>
+
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="{% url 'dashboard_startup' %}">
+                    <i class="bi bi-currency-dollar"></i> <span class="align-middle">Investors</span>
+                </a>
+            </li>
+
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="{% url 'dashboard_startup' %}">
+                    <i class="bi bi-bank"></i> <span class="align-middle">Corporates</span>
+                </a>
+            </li>
+
+
+            <li class="sidebar-header">
+                RESOURCES
+            </li>
+
+            <li class="sidebar-item {% if '/dashboard/challenge' in request.path %}active{% endif %}">
+                <a class="sidebar-link" href="{% url 'challenge' %}">
+                    <i class="bi bi-trophy"></i> <span class="align-middle">Challenges</span>
+                </a>
+            </li>
+
+            <li class="sidebar-item {% if '/dashboard/problem-statement' in request.path %}active{% endif %}">
+                <a class="sidebar-link" href="{% url 'problem' %}">
+                    <i class="bi bi-card-checklist"></i> <span class="align-middle">Problem Statements</span>
+                </a>
+            </li>
+
+            <li class="sidebar-item {% if '/dashboard/accelerator-landing' in request.path %}active{% endif %}">
+                <a class="sidebar-link" href="{% url 'accelerator_landing' %}">
+                    <i class="bi bi-lightning"></i> <span class="align-middle">Accelerator Program</span>
+                </a>
+            </li>
+        </ul>
+
+    </div>
+</nav>

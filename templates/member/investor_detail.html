@@ -1,0 +1,198 @@
+{% extends "template_parts/dashboard_base.html" %}
+{% load static %}
+{% block content %}
+    <style>
+        body { background: #f7f9fb; font-family: 'Inter', Arial, sans-serif; }
+        .profile-header { background: #fff; border-radius: 16px; padding: 32px 24px; box-shadow: 0 2px 8px #eaf1fb; }
+        .btn-gradient { background: linear-gradient(90deg, #43e6b6 0%, #79c3fc 100%); color: #fff; border: none; }
+        .progress { height: 7px; border-radius: 5px; }
+        .card { border-radius: 16px; box-shadow: 0 2px 8px #eaf1fb; }
+        .investment-team img { width: 48px; height: 48px; object-fit: cover; border-radius: 50%; }
+        .social-icon { font-size: 1.5rem; color: #3a7bd5; margin-right: 12px; }
+        .active-label { color: #43e6b6; font-weight: 600; font-size: 0.95rem; }
+        .section-title { font-weight: 700; color: #1b3467; }
+    </style>
+
+<div class="container mt-4 mb-5">
+    <!-- Header Section -->
+    <div class="profile-header mb-4">
+        <div class="d-flex align-items-center">
+            <div class="me-3">
+                <div class="bg-primary text-white d-flex align-items-center justify-content-center rounded-circle" style="width:56px;height:56px;font-size:2rem;">B</div>
+            </div>
+            <div>
+                <h3 class="mb-0 fw-bold">Blue Ocean Fund <span class="badge bg-light text-primary ms-2">Match: 97%</span></h3>
+                <div class="text-muted mt-2">
+                    Impact investment fund focused on ocean conservation
+                </div>
+                <div class="mt-2 mb-2 small">
+                    <span class="me-3"><i class="bi bi-geo-alt"></i> Singapore</span>
+                    <span class="me-3"><i class="bi bi-calendar"></i> Founded 2018</span>
+                    <span class="me-3"><i class="bi bi-people"></i> 15-20 team members</span>
+                    <span><i class="bi bi-briefcase"></i> 3 portfolio companies</span>
+                </div>
+            </div>
+            <div class="ms-auto text-end">
+                <a href="https://www.blueoceanfund.com" target="_blank" class="btn btn-outline-secondary me-2">Visit Website</a>
+                <button class="btn btn-gradient fw-bold">Request Connection</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <div class="mb-4">
+        <h5 class="section-title">About Blue Ocean Fund</h5>
+        <div class="row">
+            <div class="col-lg-8">
+                <h6 class="fw-bold">Overview</h6>
+                <p class="text-muted mb-2">
+                    Blue Ocean Fund is a Singapore-based impact investment fund that focuses on ocean conservation and marine technology. Founded in 2018, the fund aims to support startups and projects that address ocean plastic pollution, sustainable fishing, and marine biodiversity conservation in Southeast Asia.
+                </p>
+                <h6 class="fw-bold">Investment Thesis</h6>
+                <p class="text-muted">
+                    Our investment thesis centers on the belief that protecting our oceans requires innovative technologies and sustainable business models. We invest in companies that demonstrably reduce marine pollution, promote sustainable use of marine resources, or help communities adapt to climate change impacts on coastal areas.
+                </p>
+            </div>
+            <div class="col-lg-4">
+                <div class="mb-3">
+                    <span class="fw-bold">Investment Stages:</span>
+                    <span class="badge bg-light text-primary ms-2">Seed</span>
+                    <span class="badge bg-light text-primary ms-2">Series A</span>
+                </div>
+                <div>
+                    <span class="fw-bold">Investment Range:</span>
+                    <div class="mt-1 p-2 bg-light rounded" style="color:#43e6b6; font-weight:600;">$500K - $2M</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Investment Focus -->
+    <div class="mb-4">
+        <h5 class="section-title">Investment Focus</h5>
+        <div class="row">
+            <div class="col-lg-7">
+                <div class="mb-3 fw-bold">Interest by Sector</div>
+                <div class="mb-2">Ocean Cleanup <span class="float-end">95%</span>
+                    <div class="progress"><div class="progress-bar" style="width: 95%; background:#43e6b6;"></div></div>
+                </div>
+                <div class="mb-2">Sustainable Fishing <span class="float-end">85%</span>
+                    <div class="progress"><div class="progress-bar" style="width: 85%; background:#79c3fc;"></div></div>
+                </div>
+                <div class="mb-2">Marine Conservation <span class="float-end">90%</span>
+                    <div class="progress"><div class="progress-bar" style="width: 90%; background:#3a7bd5;"></div></div>
+                </div>
+                <div class="mb-2">Coastal Management <span class="float-end">75%</span>
+                    <div class="progress"><div class="progress-bar" style="width: 75%; background:#b5c7f7;"></div></div>
+                </div>
+                <div class="mb-2">Plastic Alternatives <span class="float-end">80%</span>
+                    <div class="progress"><div class="progress-bar" style="width: 80%; background:#43e6b6;"></div></div>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="mb-2">
+                    <span class="fw-bold">Investment Type:</span>
+                    <span class="badge bg-light text-primary ms-2">Impact Fund</span>
+                    <div class="mt-1 text-muted small">Focusing on measurable social and environmental impact alongside financial returns.</div>
+                </div>
+                <div class="mb-2">
+                    <span class="fw-bold">Primary Focus:</span>
+                    <div class="mt-1 p-2 bg-light rounded text-primary fw-bold mb-1">
+                        Marine Tech
+                    </div>
+                    <div class="text-muted small">
+                        Technologies and solutions for ocean conservation and sustainable marine resource utilization.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Portfolio Companies -->
+    <div class="mb-4">
+        <h5 class="section-title">Portfolio Companies</h5>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="card p-3">
+                    <img src="{% static 'images/oceanclean_tech.jpg' %}" alt="OceanClean Tech" class="mb-2 w-100 rounded">
+                    <div class="fw-bold">OceanClean Tech <span class="active-label ms-2">Active</span></div>
+                    <div class="text-muted small mb-1">Autonomous ocean cleanup drones</div>
+                    <div class="text-muted small"><i class="bi bi-calendar"></i> Invested in 2020</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card p-3">
+                    <img src="{% static 'images/bioplastic_innovations.jpg' %}" alt="BioPlastic Innovations" class="mb-2 w-100 rounded">
+                    <div class="fw-bold">BioPlastic Innovations <span class="active-label ms-2">Active</span></div>
+                    <div class="text-muted small mb-1">Seaweed-based biodegradable packaging</div>
+                    <div class="text-muted small"><i class="bi bi-calendar"></i> Invested in 2019</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card p-3">
+                    <img src="{% static 'images/reefwatch.jpg' %}" alt="ReefWatch" class="mb-2 w-100 rounded">
+                    <div class="fw-bold">ReefWatch <span class="active-label ms-2">Active</span></div>
+                    <div class="text-muted small mb-1">AI-powered coral reef monitoring systems</div>
+                    <div class="text-muted small"><i class="bi bi-calendar"></i> Invested in 2021</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Investment Team -->
+    <div class="mb-4 investment-team">
+        <h5 class="section-title">Investment Team</h5>
+        <div class="row text-center">
+            <div class="col-md-4 mb-3">
+                <img src="{% static 'images/sarah_chen.jpg' %}" alt="Sarah Chen">
+                <div class="fw-bold mt-2">Sarah Chen</div>
+                <div class="text-muted small">Managing Partner</div>
+                <a href="https://www.linkedin.com/in/sarahchen" target="_blank" class="small text-primary">View Linkedin</a>
+            </div>
+            <div class="col-md-4 mb-3">
+                <img src="{% static 'images/michael_tan.jpg' %}" alt="Michael Tan">
+                <div class="fw-bold mt-2">Michael Tan</div>
+                <div class="text-muted small">Investment Director</div>
+                <a href="https://www.linkedin.com/in/michaeltan" target="_blank" class="small text-primary">View Linkedin</a>
+            </div>
+            <div class="col-md-4 mb-3">
+                <img src="{% static 'images/emma_sullivan.jpg' %}" alt="Dr. Emma Sullivan">
+                <div class="fw-bold mt-2">Dr. Emma Sullivan</div>
+                <div class="text-muted small">Marine Science Advisor</div>
+                <a href="https://www.linkedin.com/in/emmasullivan" target="_blank" class="small text-primary">View Linkedin</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Information -->
+    <div class="mb-4">
+        <h5 class="section-title">Contact Information</h5>
+        <div class="row">
+            <div class="col-md-4 mb-2">
+                <div class="p-3 bg-white rounded">
+                    <div class="fw-bold mb-1"><i class="bi bi-envelope me-2"></i>Email</div>
+                    <div>info@blueoceanfund.com</div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-2">
+                <div class="p-3 bg-white rounded">
+                    <div class="fw-bold mb-1"><i class="bi bi-telephone me-2"></i>Phone</div>
+                    <div>+65 6123 4567</div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-2">
+                <div class="p-3 bg-white rounded">
+                    <div class="fw-bold mb-1"><i class="bi bi-globe me-2"></i>Website</div>
+                    <a href="https://www.blueoceanfund.com" target="_blank">www.blueoceanfund.com</a>
+                </div>
+            </div>
+        </div>
+        <div class="mt-3">
+            <span class="social-icon"><i class="bi bi-linkedin"></i></span>
+            <span class="social-icon"><i class="bi bi-twitter"></i></span>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
