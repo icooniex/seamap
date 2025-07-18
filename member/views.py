@@ -855,7 +855,7 @@ def corporate_profile(request, corporate_id):
         ]
     }
     
-    return render(request, 'member/corporate_profile2.html', {'corporate': corporate_data})
+    return render(request, 'member/corporate_profile3.html', {'corporate': corporate_data})
 
 def onboarding_role_selection(request):
     return render(request, 'onboarding/index.html')
