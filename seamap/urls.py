@@ -31,7 +31,7 @@ urlpatterns = [
     path('dashboard/investor-detail', investor_detail, name='investor_detail'),
     path('startup/profile/<int:startup_id>/', startup_profile, name='startup_profile'),
     path('investor/profile/<int:investor_id>/', investor_profile, name='investor_profile'),
-    path('corporate/profile/<int:company_id>/', corporate_profile, name='corporate_profile'),
+    path('corporate/profile/<int:corporate_id>/', corporate_profile, name='corporate_profile'),
 
     # Onboarding flow
     path('onboarding/', onboarding_role_selection, name='onboarding_role_selection'),
@@ -40,5 +40,7 @@ urlpatterns = [
     path('onboarding/startup/2', onboarding_startup_step2, name='onboarding_startup_step2'),
     path('onboarding/startup/3', onboarding_startup_step3, name='onboarding_startup_step3'),
     path('onboarding/startup/4', onboarding_startup_step4, name='onboarding_startup_step4'),
+    path('onboarding/startup/5', onboarding_startup_step5, name='onboarding_startup_step5'),
+    path('onboarding/startup/6', onboarding_startup_step6, name='onboarding_startup_step6'),
 
 ]

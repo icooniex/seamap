@@ -1,0 +1,118 @@
+{% extends "onboarding/base.html" %}
+{% load static %}
+
+{% block content %}
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="onboarding-card">
+            <!-- Role Indicator -->
+            <div class="role-indicator" >
+                <!-- Progress Bar -->
+                <div class="container" >
+                    <div class="progress-container">
+                        
+                        <div class="step-info">
+                            <span class="text-muted">Startup Onboarding: Step 1 of 4</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: 25%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            <!-- Company Information Form -->
+            <div class="">
+                <h2 class="form-title">Startup Support</h2>
+                
+                <form id="companyForm" method="POST" action="{% url 'onboarding_startup_step2' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label class="form-label">Which areas do you seek support in for your startup’s growth and acceleration?</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="plastic_alternatives" name="innovation_type" value="plastic_alternatives">
+                                <label for="plastic_alternatives">Branding & Marketing</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="plastic_alternatives" name="innovation_type" value="plastic_alternatives">
+                                <label for="plastic_alternatives">Investment Readiness and Access to Funding</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="plastic_alternatives" name="innovation_type" value="plastic_alternatives">
+                                <label for="plastic_alternatives">Manufacturing & Supply Chain</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="plastic_alternatives" name="innovation_type" value="plastic_alternatives">
+                                <label for="plastic_alternatives">Market Expansion & Customer Acquisition</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="plastic_alternatives" name="innovation_type" value="plastic_alternatives">
+                                <label for="plastic_alternatives">Product Development & R&D</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="plastic_alternatives" name="innovation_type" value="plastic_alternatives">
+                                <label for="plastic_alternatives">Regulatory & Compliance</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="plastic_alternatives" name="innovation_type" value="plastic_alternatives">
+                                <label for="plastic_alternatives">Sustainability & Circular Economy</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="plastic_alternatives" name="innovation_type" value="plastic_alternatives">
+                                <label for="plastic_alternatives">Talent & Hiring</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="plastic_alternatives" name="innovation_type" value="plastic_alternatives">
+                                <label for="plastic_alternatives">Technology & Digital Transformation</label>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="company_name" class="form-label">Please share more about the areas of support you have selected</label>
+                        <input type="text" class="form-control" id="company_name" name="company_name" 
+                                placeholder="Your company or project name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="company_name" class="form-label">Is there any additional information you would like to share? (optional)</label>
+                        <input type="text" class="form-control" id="company_name" name="company_name" 
+                                placeholder="Your company or project name" >
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="consent_info" name="consent_info" required>
+                            <label for="consent_info">
+                                I agree to my personal data being stored and used to receive further information about SEA MaP events and matching opportunities
+                            </label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="consent_marketplace" name="consent_marketplace" required>
+                            <label for="consent_marketplace">
+                                I consent to sharing my information on the Financing Marketplace for matching purposes, understanding that financial and sensitive details may be collected but won’t be posted or shared without my explicit consent.
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Button Group -->
+                    <div class="button-group">
+                        <button type="button" class="btn btn-back">Back</button>
+                        <button type="submit" class="btn btn-continue">Continue</button>
+                    </div>
+                </form>
+
+                
+            </div>
+
+            
+        </div>
+    </div>
+
+
+{% endblock %}

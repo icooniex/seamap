@@ -1,0 +1,112 @@
+{% extends "onboarding/base.html" %}
+{% load static %}
+
+{% block content %}
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="onboarding-card">
+            <!-- Role Indicator -->
+            <div class="role-indicator" >
+                <!-- Progress Bar -->
+                <div class="container" >
+                    <div class="progress-container">
+                        
+                        <div class="step-info">
+                            <span class="text-muted">Startup Onboarding: Step 1 of 4</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: 25%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            <!-- Company Information Form -->
+            <div class="">
+                <h2 class="form-title">Founders and Team</h2>
+                
+                <form id="companyForm" method="POST" action="{% url 'onboarding_startup_step2' %}">
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label class="form-label">Is the startup led or co-led by a female founder? <span class="text-danger">*</span></label>
+                        <div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="female_led" id="female_led_yes" value="yes" required>
+                                <label class="form-check-label" for="female_led_yes">Yes</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="female_led" id="female_led_no" value="no" required>
+                                <label class="form-check-label" for="female_led_no">No</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="company_description" class="form-label">What is the core team size (including founders)?</label>
+                        <textarea class="form-control text-area" id="company_description" name="company_description" 
+                                    placeholder="Tell us briefly about your company, mission and team" rows="4"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="company_description" class="form-label">How does the team prioritize the representation of different identities and experiences, including marginalized groups?</label>
+                        <textarea class="form-control text-area" id="company_description" name="company_description" 
+                                    placeholder="Tell us briefly about your company, mission and team" rows="4"></textarea>
+                    </div>
+
+                    <!-- Button Group -->
+                    <div class="button-group">
+                        <button type="button" class="btn btn-back" onclick="history.back()">Back</button>
+                        <button type="submit" class="btn btn-continue">Continue</button>
+                    </div>
+                </form>
+
+                
+            </div>
+
+            
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('companyForm');
+            const continueBtn = document.querySelector('.btn-continue');
+
+            // Form validation
+            form.addEventListener('submit', function(e) {
+                const requiredFields = form.querySelectorAll('[required]');
+                let isValid = true;
+
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        isValid = false;
+                        field.classList.add('is-invalid');
+                    } else {
+                        field.classList.remove('is-invalid');
+                    }
+                });
+
+                if (!isValid) {
+                    e.preventDefault();
+                    alert('Please fill in all required fields.');
+                }
+            });
+
+            // Remove invalid class on input
+            const inputs = form.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    if (this.classList.contains('is-invalid') && this.value.trim()) {
+                        this.classList.remove('is-invalid');
+                    }
+                });
+            });
+        });
+    </script>
+
+{% endblock %}

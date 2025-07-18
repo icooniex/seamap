@@ -1,0 +1,526 @@
+{% extends "template_parts/dashboard_base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <!-- Header Section -->
+    <div class="dashboard-header mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h3 mb-1"><strong>Startups</strong> Matchmaking Dashboard</h1>
+                <p class="text-muted">Discover innovative startups that match your investment criteria</p>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-primary" id="filterBtn">
+                    <i class="bi bi-funnel"></i> Filters
+                </button>
+                <button class="btn btn-outline-secondary" id="sortBtn">
+                    <i class="bi bi-sort-down"></i> Sort
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="search-section mb-4">
+        <form method="get" class="d-flex align-items-center gap-3 mb-3">
+            <div class="search-input-group flex-grow-1">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" name="q" class="form-control search-input" 
+                       placeholder="Search startups by name, description, or technology..." 
+                       value="{{ request.GET.q }}">
+            </div>
+            <button type="submit" class="btn btn-primary search-btn">
+                <i class="bi bi-search me-2"></i> Search
+            </button>
+        </form>
+
+        <!-- Filter Tags -->
+        <div class="filter-tags" id="filterTags">
+            <span class="filter-tag active" data-filter="all">All Startups</span>
+            <span class="filter-tag" data-filter="early-stage">Early Stage</span>
+            <span class="filter-tag" data-filter="growth">Growth Stage</span>
+            <span class="filter-tag" data-filter="high-match">High Match (>80%)</span>
+            <span class="filter-tag" data-filter="recent">Recently Added</span>
+        </div>
+    </div>
+
+    <!-- Results Summary -->
+    <div class="results-summary mb-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <span class="text-muted">Showing <strong>{{ startups.count }}</strong> startups</span>
+            <div class="view-options">
+                <button class="btn btn-sm btn-outline-secondary active" id="listView">
+                    <i class="bi bi-list"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-secondary" id="gridView">
+                    <i class="bi bi-grid"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Startup Cards -->
+    <div class="startups-container" id="startupsContainer">
+        
+        <div class="startup-card" data-match="{{ startup.match_percentage }}" data-stage="{{ startup.stage }}">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-start">
+                        <!-- Company Logo/Avatar -->
+                        <div class="company-avatar me-3">
+                            {% if startup.logo %}
+                                <img src="{{ startup.logo.url }}" alt="{{ startup.name }}" class="avatar-img">
+                            {% else %}
+                                <div class="avatar-placeholder">
+                                    OC
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Main Content -->
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="company-name mb-0">OceanClean Tech</h5>
+                                <div class="match-score">
+                                    <span class="match-percentage">93%</span>
+                                    <small class="text-muted d-block">Match</small>
+                                </div>
+                            </div>
+
+                            <!-- Company Info -->
+                            <div class="company-info mb-2">
+                                <span class="info-item">
+                                    <i class="bi bi-geo-alt"></i> Indonesia
+                                </span>
+                                <span class="info-separator">•</span>
+                                <span class="info-item">
+                                    <i class="bi bi-calendar"></i> Founded 2020
+                                </span>
+                                <span class="info-separator">•</span>
+                                <span class="info-item">
+                                    <i class="bi bi-people"></i> 6-10 employees
+                                </span>
+                            </div>
+
+                            <!-- Description -->
+                            <p class="company-description">Developing autonomous drones that collect plastic waste from oceans and waterways with AI-powered identification technology.</p>
+
+                            <!-- Technology Tags -->
+                            <div class="tech-tags mb-3">
+                                <span class="tech-tag">Cleanup Technologies</span>
+                                <span class="tech-tag">Cleanup Technologies</span>
+                            </div>
+
+                            <!-- Bottom Row -->
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="funding-info">
+                                    <span class="stage-badge stage-early">Early Market Entry</span>
+                                    <span class="funding-amount">Seeking: $250K - $1M</span>
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="btn btn-sm btn-outline-primary me-2" onclick="toggleBookmark({{ startup.id }})">
+                                        <i class="bi bi-bookmark{% if startup.is_bookmarked %}-fill{% endif %}"></i>
+                                    </button>
+                                    <a href="" class="btn btn-sm btn-primary">
+                                        View Details <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Pagination -->
+    {% if startups.has_other_pages %}
+    <div class="pagination-container">
+        <nav aria-label="Startups pagination">
+            <ul class="pagination justify-content-center">
+                {% if startups.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ startups.previous_page_number }}">Previous</a>
+                    </li>
+                {% endif %}
+                
+                {% for num in startups.paginator.page_range %}
+                    {% if startups.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if startups.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ startups.next_page_number }}">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+/* Dashboard Styling */
+.dashboard-header {
+    background: linear-gradient(135deg, #f8f9ff 0%, #e8f4f8 100%);
+    padding: 2rem;
+    border-radius: 16px;
+    margin-bottom: 2rem;
+}
+
+.search-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.search-input-group {
+    position: relative;
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+    z-index: 10;
+}
+
+.search-input {
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.search-btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+.filter-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.filter-tag {
+    padding: 0.5rem 1rem;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-tag:hover {
+    background: #e9ecef;
+}
+
+.filter-tag.active {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.results-summary {
+    padding: 0 0.5rem;
+}
+
+.view-options .btn {
+    border-radius: 8px;
+}
+
+.view-options .btn.active {
+    background: #007bff;
+    color: white;
+}
+
+.startup-card {
+    margin-bottom: 1.5rem;
+    transition: transform 0.2s ease;
+}
+
+.startup-card:hover {
+    transform: translateY(-2px);
+}
+
+.startup-card .card {
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.company-avatar {
+    flex-shrink: 0;
+}
+
+.avatar-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.avatar-placeholder {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.company-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.match-score {
+    text-align: center;
+    min-width: 60px;
+}
+
+.match-percentage {
+    background: #e8f5e8;
+    color: #28a745;
+    padding: 0.25rem 0.5rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.company-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.info-separator {
+    color: #dee2e6;
+}
+
+.company-description {
+    color: #495057;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.tech-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tech-tag {
+    background: #f8f9ff;
+    color: #007bff;
+    padding: 0.25rem 0.75rem;
+    border-radius: 16px;
+    font-size: 0.8rem;
+    border: 1px solid #007bff;
+}
+
+.funding-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.stage-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.stage-early {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.stage-growth {
+    background: #d4edda;
+    color: #155724;
+}
+
+.stage-mature {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.funding-amount {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+.action-buttons {
+    display: flex;
+    align-items: center;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #6c757d;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.pagination-container {
+    margin-top: 2rem;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .dashboard-header {
+        padding: 1rem;
+    }
+    
+    .search-section {
+        padding: 1rem;
+    }
+    
+    .search-input-group {
+        margin-bottom: 1rem;
+    }
+    
+    .filter-tags {
+        justify-content: center;
+    }
+    
+    .company-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+    
+    .info-separator {
+        display: none;
+    }
+    
+    .funding-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Filter functionality
+    const filterTags = document.querySelectorAll('.filter-tag');
+    const startupCards = document.querySelectorAll('.startup-card');
+    
+    filterTags.forEach(tag => {
+        tag.addEventListener('click', function() {
+            // Remove active class from all tags
+            filterTags.forEach(t => t.classList.remove('active'));
+            // Add active class to clicked tag
+            this.classList.add('active');
+            
+            const filter = this.dataset.filter;
+            
+            startupCards.forEach(card => {
+                if (filter === 'all') {
+                    card.style.display = 'block';
+                } else if (filter === 'high-match') {
+                    const match = parseInt(card.dataset.match);
+                    card.style.display = match > 80 ? 'block' : 'none';
+                } else if (filter === 'early-stage') {
+                    card.style.display = card.dataset.stage === 'early' ? 'block' : 'none';
+                } else if (filter === 'growth') {
+                    card.style.display = card.dataset.stage === 'growth' ? 'block' : 'none';
+                }
+            });
+        });
+    });
+    
+    // View toggle functionality
+    const listView = document.getElementById('listView');
+    const gridView = document.getElementById('gridView');
+    const container = document.getElementById('startupsContainer');
+    
+    gridView.addEventListener('click', function() {
+        listView.classList.remove('active');
+        gridView.classList.add('active');
+        container.style.display = 'grid';
+        container.style.gridTemplateColumns = 'repeat(auto-fit, minmax(400px, 1fr))';
+        container.style.gap = '1.5rem';
+    });
+    
+    listView.addEventListener('click', function() {
+        gridView.classList.remove('active');
+        listView.classList.add('active');
+        container.style.display = 'block';
+        container.style.gridTemplateColumns = 'none';
+    });
+});
+
+function toggleBookmark(startupId) {
+    fetch(`/api/toggle-bookmark/${startupId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        const button = event.target.closest('button');
+        const icon = button.querySelector('i');
+        
+        if (data.bookmarked) {
+            icon.classList.remove('bi-bookmark');
+            icon.classList.add('bi-bookmark-fill');
+        } else {
+            icon.classList.remove('bi-bookmark-fill');
+            icon.classList.add('bi-bookmark');
+        }
+    });
+}
+</script>
+{% endblock %}

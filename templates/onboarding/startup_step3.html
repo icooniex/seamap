@@ -3,103 +3,101 @@
 
 {% block content %}
 
-    <div class="onboarding-container">
-        <!-- Main Content -->
-        <div class="main-content">
-            <div class="container">
-                <!-- Role Indicator -->
-                <div class="role-indicator">
-                    <!-- Progress Bar -->
-                    <div class="container">
-                        <div class="progress-container">
-                            <div class="step-info">
-                                <span class="text-muted">Startup Onboarding: Step 3 of 4</span>
-                            </div>
-                            <div class="progress">
-                                <div class="progress-bar" style="width: 75%"></div>
-                            </div>
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="onboarding-card">
+            <!-- Role Indicator -->
+            <div class="role-indicator">
+                <!-- Progress Bar -->
+                <div class="container">
+                    <div class="progress-container">
+                        <div class="step-info">
+                            <span class="text-muted">Startup Onboarding: Step 3 of 4</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: 75%"></div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- File Upload Form -->
-                <div class="onboarding-card">
-                    <h2 class="form-title">Upload Company Documents</h2>
-                    <p class="form-subtitle">Share your company profile or pitch deck to help us understand your innovation better</p>
+            <!-- File Upload Form -->
+            <div class="">
+                <h2 class="form-title">Upload Company Documents</h2>
+                <p class="form-subtitle">Share your company profile or pitch deck to help us understand your innovation better</p>
+                
+                <form id="fileUploadForm" method="POST" action="{% url 'onboarding_startup_step4' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
                     
-                    <form id="fileUploadForm" method="POST" action="{% url 'onboarding_startup_step4' %}" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        
-                        <!-- Company Profile Upload -->
-                        <div class="form-group">
-                            <label for="company_profile" class="form-label">Company Profile</label>
-                            <div class="file-upload-area" id="companyProfileUpload">
-                                <div class="file-upload-content">
-                                    <div class="file-upload-icon">
-                                        <i class="bi bi-cloud-upload"></i>
-                                    </div>
-                                    <h4>Drag & drop your company profile here</h4>
-                                    <p class="text-muted">or click to browse files</p>
-                                    <p class="file-requirements">PDF, DOC, DOCX up to 10MB</p>
+                    <!-- Company Profile Upload -->
+                    <div class="form-group">
+                        <label for="company_profile" class="form-label">Company Profile</label>
+                        <div class="file-upload-area" id="companyProfileUpload">
+                            <div class="file-upload-content">
+                                <div class="file-upload-icon">
+                                    <i class="bi bi-cloud-upload"></i>
                                 </div>
-                                <input type="file" id="company_profile" name="company_profile" 
-                                       accept=".pdf,.doc,.docx" class="file-input">
+                                <h4>Drag & drop your company profile here</h4>
+                                <p class="text-muted">or click to browse files</p>
+                                <p class="file-requirements">PDF, DOC, DOCX up to 10MB</p>
                             </div>
-                            <div class="file-preview" id="companyProfilePreview"></div>
+                            <input type="file" id="company_profile" name="company_profile" 
+                                    accept=".pdf,.doc,.docx" class="file-input">
                         </div>
+                        <div class="file-preview" id="companyProfilePreview"></div>
+                    </div>
 
-                        <!-- Pitch Deck Upload -->
-                        <div class="form-group">
-                            <label for="pitch_deck" class="form-label">Pitch Deck</label>
-                            <div class="file-upload-area" id="pitchDeckUpload">
-                                <div class="file-upload-content">
-                                    <div class="file-upload-icon">
-                                        <i class="bi bi-cloud-upload"></i>
-                                    </div>
-                                    <h4>Drag & drop your pitch deck here</h4>
-                                    <p class="text-muted">or click to browse files</p>
-                                    <p class="file-requirements">PDF, PPT, PPTX up to 15MB</p>
+                    <!-- Pitch Deck Upload -->
+                    <div class="form-group">
+                        <label for="pitch_deck" class="form-label">Pitch Deck</label>
+                        <div class="file-upload-area" id="pitchDeckUpload">
+                            <div class="file-upload-content">
+                                <div class="file-upload-icon">
+                                    <i class="bi bi-cloud-upload"></i>
                                 </div>
-                                <input type="file" id="pitch_deck" name="pitch_deck" 
-                                       accept=".pdf,.ppt,.pptx" class="file-input">
+                                <h4>Drag & drop your pitch deck here</h4>
+                                <p class="text-muted">or click to browse files</p>
+                                <p class="file-requirements">PDF, PPT, PPTX up to 15MB</p>
                             </div>
-                            <div class="file-preview" id="pitchDeckPreview"></div>
+                            <input type="file" id="pitch_deck" name="pitch_deck" 
+                                    accept=".pdf,.ppt,.pptx" class="file-input">
                         </div>
+                        <div class="file-preview" id="pitchDeckPreview"></div>
+                    </div>
 
-                        <!-- Additional Documents -->
-                        <div class="form-group">
-                            <label for="additional_docs" class="form-label">Additional Documents (Optional)</label>
-                            <div class="file-upload-area" id="additionalDocsUpload">
-                                <div class="file-upload-content">
-                                    <div class="file-upload-icon">
-                                        <i class="bi bi-cloud-upload"></i>
-                                    </div>
-                                    <h4>Upload any additional documents</h4>
-                                    <p class="text-muted">Business plan, technical specifications, etc.</p>
-                                    <p class="file-requirements">PDF, DOC, DOCX up to 10MB each</p>
+                    <!-- Additional Documents -->
+                    <div class="form-group">
+                        <label for="additional_docs" class="form-label">Additional Documents (Optional)</label>
+                        <div class="file-upload-area" id="additionalDocsUpload">
+                            <div class="file-upload-content">
+                                <div class="file-upload-icon">
+                                    <i class="bi bi-cloud-upload"></i>
                                 </div>
-                                <input type="file" id="additional_docs" name="additional_docs" 
-                                       accept=".pdf,.doc,.docx" class="file-input" multiple>
+                                <h4>Upload any additional documents</h4>
+                                <p class="text-muted">Business plan, technical specifications, etc.</p>
+                                <p class="file-requirements">PDF, DOC, DOCX up to 10MB each</p>
                             </div>
-                            <div class="file-preview" id="additionalDocsPreview"></div>
+                            <input type="file" id="additional_docs" name="additional_docs" 
+                                    accept=".pdf,.doc,.docx" class="file-input" multiple>
                         </div>
+                        <div class="file-preview" id="additionalDocsPreview"></div>
+                    </div>
 
-                        <!-- Upload Progress -->
-                        <div class="upload-progress" id="uploadProgress" style="display: none;">
-                            <div class="progress-label">Uploading files...</div>
-                            <div class="progress">
-                                <div class="progress-bar progress-bar-striped progress-bar-animated" 
-                                     id="uploadProgressBar" style="width: 0%"></div>
-                            </div>
+                    <!-- Upload Progress -->
+                    <div class="upload-progress" id="uploadProgress" style="display: none;">
+                        <div class="progress-label">Uploading files...</div>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                    id="uploadProgressBar" style="width: 0%"></div>
                         </div>
+                    </div>
 
-                        <!-- Button Group -->
-                        <div class="button-group">
-                            <button type="button" class="btn btn-back" onclick="history.back()">Back</button>
-                            <button type="submit" class="btn btn-continue" id="continueBtn">Continue</button>
-                        </div>
-                    </form>
-                </div>
+                    <!-- Button Group -->
+                    <div class="button-group">
+                        <button type="button" class="btn btn-back" onclick="history.back()">Back</button>
+                        <button type="submit" class="btn btn-continue" id="continueBtn">Continue</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -123,8 +121,6 @@
     }
 
     .form-label {
-        font-weight: 500;
-        color: #333;
         margin-bottom: 12px;
         display: block;
     }
@@ -260,47 +256,6 @@
         color: #28a745;
         font-size: 0.85rem;
         margin-top: 5px;
-    }
-
-    .button-group {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 40px;
-    }
-
-    .btn-back {
-        background: #6c757d;
-        color: white;
-        border: none;
-        padding: 12px 30px;
-        border-radius: 8px;
-        font-weight: 500;
-        transition: background-color 0.3s ease;
-    }
-
-    .btn-back:hover {
-        background: #5a6268;
-        color: white;
-    }
-
-    .btn-continue {
-        background: #007bff;
-        color: white;
-        border: none;
-        padding: 12px 30px;
-        border-radius: 8px;
-        font-weight: 500;
-        transition: background-color 0.3s ease;
-    }
-
-    .btn-continue:hover {
-        background: #0056b3;
-    }
-
-    .btn-continue:disabled {
-        background: #6c757d;
-        cursor: not-allowed;
     }
 
     @media (max-width: 768px) {

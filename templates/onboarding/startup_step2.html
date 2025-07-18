@@ -2,147 +2,127 @@
 {% load static %}
 
 {% block content %}
-    <style>
-        
-        .checkbox-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .checkbox-item:hover {
-            background-color: #f8f9fa;
-            border-color: #007bff;
-        }
-        .checkbox-item.selected {
-            background-color: #f8f9ff;
-            border-color: #007bff;
-        }
-        .checkbox-item input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            margin: 0;
-            cursor: pointer;
-        }
-        .checkbox-item label {
-            flex: 1;
-            margin: 0;
-            cursor: pointer;
-            font-weight: 400;
-            color: #333;
-        }
-        
-    </style>
-
-    <div class="onboarding-container">
-        
-
-        <!-- Main Content -->
-        <div class="main-content">
-            <div class="container">
-                <!-- Role Indicator -->
-                <div class="role-indicator" >
-                    <!-- Progress Bar -->
-                    <div class="container" >
-                        <div class="progress-container">
-                            
-                            <div class="step-info">
-                                <span class="text-muted">Startup Onboarding: Step 2 of 4</span>
-                            </div>
-                            <div class="progress">
-                                <div class="progress-bar" style="width: 50%"></div>
-                            </div>
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="onboarding-card">
+            <!-- Role Indicator -->
+            <div class="role-indicator" >
+                <!-- Progress Bar -->
+                <div class="container" >
+                    <div class="progress-container">
+                        
+                        <div class="step-info">
+                            <span class="text-muted">Startup Onboarding: Step 2 of 4</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: 50%"></div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Innovation Information Form -->
-                <div class="onboarding-card">
-                    <h2 class="form-title">About your innovation</h2>
+            <!-- Innovation Information Form -->
+            <div class="">
+                <h2 class="form-title">About your innovation</h2>
+                
+                <form id="innovationForm" method="POST" action="">
+                    {% csrf_token %}
                     
-                    <form id="innovationForm" method="POST" action="">
-                        {% csrf_token %}
-                        
-                        <!-- Type of Innovation -->
-                        <div class="form-group">
-                            <label class="form-label">Type of Innovation (select all that apply)</label>
-                            <div class="checkbox-group">
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="plastic_alternatives" name="innovation_type" value="plastic_alternatives">
-                                    <label for="plastic_alternatives">Plastic Alternatives</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="recycling_technologies" name="innovation_type" value="recycling_technologies">
-                                    <label for="recycling_technologies">Recycling Technologies</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="waste_collection" name="innovation_type" value="waste_collection">
-                                    <label for="waste_collection">Waste Collection Systems</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="circular_economy" name="innovation_type" value="circular_economy">
-                                    <label for="circular_economy">Circular Economy Models</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="monitoring_tools" name="innovation_type" value="monitoring_tools">
-                                    <label for="monitoring_tools">Monitoring & Assessment Tools</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="ocean_cleanup" name="innovation_type" value="ocean_cleanup">
-                                    <label for="ocean_cleanup">Ocean Cleanup Technologies</label>
-                                </div>
+                    <!-- Type of Innovation -->
+                    <div class="form-group">
+                        <label class="form-label">Type of Innovation (select all that apply)</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="plastic_alternatives" name="innovation_type" value="plastic_alternatives">
+                                <label for="plastic_alternatives">Eliminate & Redesign Packaging</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="recycling_technologies" name="innovation_type" value="recycling_technologies">
+                                <label for="recycling_technologies">Refill & Reuse Solutions</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="waste_collection" name="innovation_type" value="waste_collection">
+                                <label for="waste_collection">Reusable Packaging Collection/Drop Off</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="circular_economy" name="innovation_type" value="circular_economy">
+                                <label for="circular_economy">Upcycling Plastic Waste</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="monitoring_tools" name="innovation_type" value="monitoring_tools">
+                                <label for="monitoring_tools">Sustainable Alternative Materials</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="ocean_cleanup" name="innovation_type" value="ocean_cleanup">
+                                <label for="ocean_cleanup">Education & Industry Partnerships</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="ocean_cleanup" name="innovation_type" value="ocean_cleanup">
+                                <label for="ocean_cleanup">Tracking & Monitoring Waste</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="ocean_cleanup" name="innovation_type" value="ocean_cleanup">
+                                <label for="ocean_cleanup">Plastic Footprint Offsetting</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="ocean_cleanup" name="innovation_type" value="ocean_cleanup">
+                                <label for="ocean_cleanup">Enhancing Plastic Recycling Systems</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="ocean_cleanup" name="innovation_type" value="ocean_cleanup">
+                                <label for="ocean_cleanup">Improved Waste Collection Systems</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="ocean_cleanup" name="innovation_type" value="ocean_cleanup">
+                                <label for="ocean_cleanup">Other</label>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Current Stage of Solution -->
-                        <div class="form-group">
-                            <label for="current_stage" class="form-label">Current Stage of Solution</label>
-                            <select class="form-select" id="current_stage" name="current_stage" required>
-                                <option value="">Select current stage</option>
-                                <option value="idea">Idea Stage</option>
-                                <option value="concept">Concept Development</option>
-                                <option value="prototype">Prototype Development</option>
-                                <option value="testing">Testing & Validation</option>
-                                <option value="pilot">Pilot Implementation</option>
-                                <option value="scaling">Scaling Up</option>
-                                <option value="commercial">Commercial Ready</option>
-                            </select>
-                        </div>
+                    <!-- Brief Company Description -->
+                    <div class="form-group">
+                        <label for="company_description" class="form-label">Please describe your solution and it's USP in one paragraphThis question is required.*</label>
+                        <textarea class="form-control text-area" id="company_description" name="company_description" 
+                                    placeholder="Tell us briefly about your company, mission and team" rows="4"></textarea>
+                    </div>
 
-                        <!-- Funding Needed -->
-                        <div class="form-group">
-                            <label for="funding_needed" class="form-label">Funding Needed</label>
-                            <select class="form-select" id="funding_needed" name="funding_needed" required>
-                                <option value="">Select funding range</option>
-                                <option value="under_10k">Under $10,000</option>
-                                <option value="10k_50k">$10,000 - $50,000</option>
-                                <option value="50k_100k">$50,000 - $100,000</option>
-                                <option value="100k_500k">$100,000 - $500,000</option>
-                                <option value="500k_1m">$500,000 - $1M</option>
-                                <option value="1m_5m">$1M - $5M</option>
-                                <option value="5m_10m">$5M - $10M</option>
-                                <option value="over_10m">Over $10M</option>
-                                <option value="not_seeking">Not currently seeking funding</option>
-                            </select>
-                        </div>
+                    <!-- Current Stage of Solution -->
+                    <div class="form-group">
+                        <label for="current_stage" class="form-label">Current Stage of Solution</label>
+                        <select class="form-select" id="current_stage" name="current_stage" required>
+                            <option value="">Select current stage</option>
+                            <option value="idea">Ideation – Developing an idea, no product yet.</option>
+                            <option value="prototype">Prototype – Initial MVP or prototype created.</option>
+                            <option value="validation">Validation – Testing with early customers, gathering feedback.</option>
+                            <option value="early">Early Growth – Generating revenue, growing customer base.</option>
+                            <option value="scaling">Scaling – Expanding with proven business model and revenue.</option>
+                            <option value="profitable">Established – Profitable, exploring new markets or innovations.</option>
+                        </select>
+                    </div>
 
-                        <!-- Button Group -->
-                        <div class="button-group">
-                            <button type="button" class="btn btn-back" onclick="history.back()">Back</button>
-                            <button type="submit" class="btn btn-continue">Continue</button>
-                        </div>
-                    </form>
-                </div>
+                    <!-- Funding Needed -->
+                    <div class="form-group">
+                        <label for="funding_needed" class="form-label">Funding Needed</label>
+                        <select class="form-select" id="funding_needed" name="funding_needed" required>
+                            <option value="">Select funding range</option>
+                            <option value="under_10k">Under $10,000</option>
+                            <option value="10k_50k">$10,000 - $50,000</option>
+                            <option value="50k_100k">$50,000 - $100,000</option>
+                            <option value="100k_500k">$100,000 - $500,000</option>
+                            <option value="500k_1m">$500,000 - $1M</option>
+                            <option value="1m_5m">$1M - $5M</option>
+                            <option value="5m_10m">$5M - $10M</option>
+                            <option value="over_10m">Over $10M</option>
+                            <option value="not_seeking">Not currently seeking funding</option>
+                        </select>
+                    </div>
+
+                    <!-- Button Group -->
+                    <div class="button-group">
+                        <button type="button" class="btn btn-back" onclick="history.back()">Back</button>
+                        <button type="submit" class="btn btn-continue">Continue</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
