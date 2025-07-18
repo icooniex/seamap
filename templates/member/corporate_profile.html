@@ -2,191 +2,1821 @@
 {% load static %}
 
 {% block content %}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-    <style>
-        .match-badge { color: #198754; font-weight: 600; }
-        .tag { background: #e3f2fd; color: #0d6efd; padding: 4px 12px; border-radius: 20px; font-size: 13px; margin-right: 8px; margin-bottom: 4px; display: inline-block; }
-        .section-title { color: #0d6efd; margin-bottom: 16px; font-weight: 600; }
-        .btn-primary { background: #0d6efd; border: none; }
-        .btn-outline-primary { border-color: #0d6efd; color: #0d6efd; }
-        .info-card { background: #f8f9fa; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
-        .opportunity-card { background: #e8f5e9; border-left: 4px solid #198754; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
-        .challenge-card { background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
-        .goal-item { background: #e8f5e9; border-radius: 20px; padding: 8px 16px; margin-bottom: 8px; display: inline-block; }
-        .interest-item { background: #e3f2fd; border-radius: 20px; padding: 8px 16px; margin-bottom: 8px; display: inline-block; }
-        .approach-card { background: #fff8e1; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
-        .company-logo { width: 60px; height: 60px; background: #17a2b8; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: bold; }
-        .company-size { font-size: 1.2rem; font-weight: bold; color: #6c757d; }
-    </style>
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+<link rel="stylesheet" href="{% static 'css/profile_sticky.css' %}">
 
-<div class="container p-4 bg-white rounded-4 shadow">
-    <!-- Header -->
-    <div class="d-flex align-items-center mb-4">
-        <div class="company-logo me-3">
-            {{ company.name|slice:":2"|upper }}
-        </div>
-        <div class="flex-grow-1">
-            <h2 class="mb-1">{{ company.name }}</h2>
-            <div class="text-muted mb-2">{{ company.description }}</div>
-            <div class="d-flex align-items-center gap-3">
-                <span class="badge bg-light text-dark"><i class="bi bi-building"></i> {{ company.industry }}</span>
-                <span class="badge bg-light text-dark"><i class="bi bi-geo-alt"></i> {{ company.location }}</span>
-                <span class="badge bg-light text-dark"><i class="bi bi-calendar"></i> Founded {{ company.founded_year }}</span>
-                <span class="badge bg-light text-dark"><i class="bi bi-people"></i> {{ company.employee_count }}</span>
-                <span class="badge bg-success">{{ company.revenue_range }}</span>
-            </div>
-            <div class="match-badge mt-2"><i class="bi bi-bullseye"></i> Match: {{ company.match_percentage }}%</div>
-        </div>
-        <div>
-            <a href="{{ company.website }}" class="btn btn-outline-primary me-2"><i class="bi bi-link-45deg"></i> Visit Website</a>
-            <button class="btn btn-primary"><i class="bi bi-chat-dots"></i> Contact Corporate</button>
-        </div>
-    </div>
+<div class="container-fluid p-0">
+    <!-- Sticky Header (appears when scrolling within main content) -->
+    <div id="stickyHeader" class="sticky-header-content sticky-top ">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center justify-content-between">
+                <!-- Left Side: Company Info -->
+                <div class="d-flex align-items-center flex-grow-1">
+                    <!-- Company Logo -->
+                    <div class="sticky-avatar me-3">
+                        {% if corporate.logo %}
+                            <img src="{{ corporate.logo.url }}" alt="{{ corporate.company_name }}" class="sticky-avatar-img">
+                        {% else %}
+                            <div class="sticky-avatar-placeholder">
+                                {{ corporate.company_name|slice:":2"|upper }}
+                            </div>
+                        {% endif %}
+                    </div>
 
-    <!-- About Section -->
-    <div class="mb-5">
-        <h5 class="section-title">About {{ company.name }}</h5>
-        <div class="row">
-            <div class="col-md-8">
-                <div class="mb-3">
-                    <h6>Overview</h6>
-                    <p>{{ company.overview }}</p>
-                </div>
-                <div class="mb-3">
-                    <h6>Industry Information</h6>
-                    <p>{{ company.industry_info }}</p>
-                </div>
-                <div class="mb-3">
-                    <h6>Tags</h6>
-                    {% for tag in company.tags %}
-                        <span class="tag">{{ tag }}</span>
-                    {% endfor %}
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h6 class="card-title">Sustainability Goals</h6>
-                        {% for goal in company.sustainability_goals %}
-                            <div class="goal-item"><i class="bi bi-check-circle-fill"></i> {{ goal }}</div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="card mt-3">
-                    <div class="card-body">
-                        <h6 class="card-title">Purchasing Interests</h6>
-                        {% for interest in company.purchasing_interests %}
-                            <div class="interest-item">{{ interest }}</div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Opportunities -->
-    <div class="mb-5">
-        <h5 class="section-title">Opportunities</h5>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="opportunity-card">
-                    <div class="d-flex align-items-center mb-2">
-                        <div class="me-2"><i class="bi bi-cash-coin"></i></div>
-                        <h6 class="mb-0">Potential Value</h6>
-                    </div>
-                    <div class="text-muted mb-3">{{ company.potential_value.description }}</div>
-                    <div class="mb-2"><strong>Purchase Potential:</strong></div>
-                    <ul class="mb-0">
-                        {% for item in company.potential_value.purchase_items %}
-                            <li>{{ item }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="opportunity-card">
-                    <div class="d-flex align-items-center mb-2">
-                        <div class="me-2"><i class="bi bi-graph-up-arrow"></i></div>
-                        <h6 class="mb-0">Impact Potential</h6>
-                    </div>
-                    <div class="text-muted mb-3">{{ company.impact_potential.description }}</div>
-                    <div class="mb-2"><strong>Sustainability Objectives:</strong></div>
-                    <ul class="mb-0">
-                        {% for objective in company.impact_potential.objectives %}
-                            <li>{{ objective }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Recommended Approaches -->
-    <div class="mb-5">
-        <h5 class="section-title">Recommended Approaches</h5>
-        <div class="row">
-            {% for approach in company.recommended_approaches %}
-                <div class="col-md-4 mb-3">
-                    <div class="approach-card">
-                        <div class="d-flex align-items-center mb-2">
-                            <div class="me-2"><i class="bi bi-lightbulb"></i></div>
-                            <h6 class="mb-0">{{ approach.title }}</h6>
+                    <!-- Company Details -->
+                    <div class="flex-grow-1 me-3">
+                        <div class="d-flex align-items-center flex-wrap">
+                            <h5 class="sticky-company-name mb-0 me-3">{{ corporate.company_name }}</h5>
+                            <div class="sticky-match-score me-3">
+                                <span class="match-badge">{{ corporate.match_percentage|default:"88" }}% Match</span>
+                            </div>
                         </div>
-                        <div class="text-muted">{{ approach.description }}</div>
+
+                        <!-- Company Quick Info (Hidden on mobile) -->
+                        <div class="sticky-quick-info d-none d-lg-flex mt-1">
+                            <span class="sticky-info-item">
+                                <i class="bi bi-geo-alt me-1"></i>{{ corporate.headquarters_location }}
+                            </span>
+                            <span class="sticky-separator">•</span>
+                            <span class="sticky-info-item">
+                                <i class="bi bi-calendar me-1"></i>{{ corporate.founded_year }}
+                            </span>
+                            <span class="sticky-separator">•</span>
+                            <span class="sticky-info-item">
+                                <i class="bi bi-people me-1"></i>{{ corporate.company_size }}
+                            </span>
+                            <span class="sticky-separator">•</span>
+                            <span class="sticky-info-item">
+                                <i class="bi bi-briefcase me-1"></i>{{ corporate.organization_type }}
+                            </span>
+                        </div>
+                        
+                        <!-- Short Description (Hidden on mobile) -->
+                        <p class="sticky-description d-none d-md-block mb-0">{{ corporate.description|truncatechars:120 }}</p>
                     </div>
                 </div>
-            {% endfor %}
+
+                <!-- Right Side: Action Buttons -->
+                <div class="sticky-actions">
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary btn-sm sticky-btn-primary" onclick="openContactModal()">
+                            <i class="bi bi-envelope me-1"></i>
+                            <span class="d-none d-sm-inline">Connect</span>
+                        </button>
+                        <button class="btn btn-outline-info btn-sm sticky-btn-secondary d-none d-lg-inline-flex" onclick="shareProfile()">
+                            <i class="bi bi-globe me-1"></i>Website
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Innovation Challenges -->
-    <div class="mb-5">
-        <h5 class="section-title">Innovation Challenges</h5>
-        {% for challenge in company.innovation_challenges %}
-            <div class="challenge-card">
+    <!-- Breadcrumb Navigation -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb bg-transparent p-0">
+            <li class="breadcrumb-item">
+                <a href="{% url 'dashboard_startup' %}" class="text-decoration-none text-primary fw-semibold">
+                    <i class="bi bi-house-door me-1"></i>Dashboard
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="#" class="text-decoration-none text-primary fw-semibold">
+                    <i class="bi bi-bank me-1"></i>Corporates
+                </a>
+            </li>
+            <li class="breadcrumb-item active text-muted" aria-current="page">{{ corporate.company_name }}</li>
+        </ol>
+    </nav>
+
+    <!-- Company Header Card -->
+    <div class="profile-card mb-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-3">
+                <div class="d-flex align-items-start">
+                    <!-- Company Logo/Avatar -->
+                    <div class="company-avatar me-3">
+                        {% if corporate.logo %}
+                            <img src="{{ corporate.logo.url }}" alt="{{ corporate.company_name }}" class="avatar-img">
+                        {% else %}
+                            <div class="avatar-placeholder">
+                                {{ corporate.company_name|slice:":2"|upper }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Main Content -->
+                    <div class="flex-grow-1">
+                        <!-- Company Name & Match Score Row -->
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div class="company-title-section">
+                                <h1 class="company-name mb-1">{{ corporate.company_name }}</h1>
+                                <p class="company-tagline text-muted mb-0 d-none d-md-block">{{ corporate.description }}</p>
+                            </div>
+                            <div class="match-score-container">
+                                <div class="match-percentage-sm">{{ corporate.match_percentage|default:"88" }}%</div>
+                                <small class="text-muted d-block text-center">Match</small>
+                            </div>
+                        </div>
+
+                        <!-- Mobile Description -->
+                        <p class="company-tagline-mobile text-muted mb-2 d-block d-md-none">{{ corporate.description }}</p>
+
+                        <!-- Company Quick Info -->
+                        <div class="company-info mb-2">
+                            <span class="info-item">
+                                <i class="bi bi-geo-alt text-primary"></i> 
+                                <span class="info-text">{{ corporate.headquarters_location }}</span>
+                            </span>
+                            <span class="info-separator d-none d-sm-inline">•</span>
+                            <span class="info-item">
+                                <i class="bi bi-calendar text-primary"></i> 
+                                <span class="info-text">{{ corporate.founded_year }}</span>
+                            </span>
+                            <span class="info-separator d-none d-sm-inline">•</span>
+                            <span class="info-item">
+                                <i class="bi bi-people text-primary"></i> 
+                                <span class="info-text">{{ corporate.company_size }}</span>
+                            </span>
+                            <span class="info-separator d-none d-sm-inline">•</span>
+                            <span class="info-item">
+                                <i class="bi bi-briefcase text-primary"></i> 
+                                <span class="info-text">{{ corporate.organization_type }}</span>
+                            </span>
+                        </div>
+
+                        <!-- Industry Tags -->
+                        <div class="tech-tags mb-3">
+                            <span class="tech-tag-primary-sm">{{ corporate.organization_type }}</span>
+                            {% for industry in corporate.industry_expertise %}
+                                <span class="tech-tag-sm">{{ industry }}</span>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="action-buttons">
+                            <div class="d-flex gap-2 flex-wrap d-md-none">
+                                <!-- Mobile: Stack buttons vertically -->
+                                <button class="btn btn-primary btn-mobile" onclick="openContactModal()">
+                                    <i class="bi bi-envelope me-2"></i>Connect
+                                </button>
+                                <div class="btn-group-mobile">
+                                    <button class="btn btn-outline-primary btn-sm btn-mobile-sm" onclick="window.open('{{ corporate.website }}', '_blank')">
+                                        <i class="bi bi-globe me-1"></i>Website
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-sm btn-mobile-sm" onclick="toggleBookmark({{ corporate.id }})">
+                                        <i class="bi bi-bookmark me-1"></i>Save
+                                    </button>
+                                    <button class="btn btn-outline-info btn-sm btn-mobile-sm" onclick="shareProfile()">
+                                        <i class="bi bi-share me-1"></i>Share
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="d-none d-md-flex gap-2 flex-wrap">
+                                <!-- Desktop: Horizontal layout -->
+                                <button class="btn btn-primary" onclick="openContactModal()">
+                                    <i class="bi bi-envelope me-1"></i>Connect
+                                </button>
+                                <button class="btn btn-outline-primary btn-sm" onclick="window.open('{{ corporate.website }}', '_blank')">
+                                    <i class="bi bi-globe me-1"></i>Website
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm" onclick="toggleBookmark({{ corporate.id }})">
+                                    <i class="bi bi-bookmark me-1"></i>Save
+                                </button>
+                                <button class="btn btn-outline-info btn-sm" onclick="shareProfile()">
+                                    <i class="bi bi-share me-1"></i>Share
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key Metrics Row -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card text-center border-0 shadow-sm metric-card">
+                <div class="card-body">
+                    <div class="metric-icon mx-auto mb-2">
+                        <i class="bi bi-percent text-success"></i>
+                    </div>
+                    <div class="stat-value text-success">{{ corporate.match_percentage|default:"88" }}%</div>
+                    <div class="stat-label">Match Score</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card text-center border-0 shadow-sm metric-card">
+                <div class="card-body">
+                    <div class="metric-icon mx-auto mb-2">
+                        <i class="bi bi-currency-dollar text-primary"></i>
+                    </div>
+                    <div class="stat-value text-primary">{{ corporate.annual_revenue|default:"$2.8B" }}</div>
+                    <div class="stat-label">Annual Revenue</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card text-center border-0 shadow-sm metric-card">
+                <div class="card-body">
+                    <div class="metric-icon mx-auto mb-2">
+                        <i class="bi bi-people text-info"></i>
+                    </div>
+                    <div class="stat-value text-info">{{ corporate.employee_count|default:"15,000+" }}</div>
+                    <div class="stat-label">Employees</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card text-center border-0 shadow-sm metric-card">
+                <div class="card-body">
+                    <div class="metric-icon mx-auto mb-2">
+                        <i class="bi bi-globe text-warning"></i>
+                    </div>
+                    <div class="stat-value text-warning">{{ corporate.global_presence|default:"25+" }}</div>
+                    <div class="stat-label">Countries</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Company Section -->
+    <div class="profile-card mb-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <h3 class="section-title mb-4">
+                    <i class="bi bi-info-circle text-primary me-2"></i>
+                    About {{ corporate.company_name }}
+                </h3>
+                
                 <div class="row">
-                    <div class="col-md-8">
-                        <h6>{{ challenge.title }}</h6>
-                        <p class="text-muted">{{ challenge.description }}</p>
-                        <div class="mb-2">
-                            <span class="badge bg-light text-dark"><i class="bi bi-calendar-event"></i> {{ challenge.timeline }}</span>
-                            <span class="badge bg-light text-dark"><i class="bi bi-geo-alt"></i> {{ challenge.location }}</span>
-                            <span class="badge bg-warning text-dark"><i class="bi bi-clock"></i> {{ challenge.deadline }}</span>
+                    <div class="col-lg-8">
+                        <div class="mb-4">
+                            <h5 class="subsection-title"><i class="bi bi-eye text-primary me-2"></i>Company Overview</h5>
+                            <p class="company-description">{{ corporate.detailed_description }}</p>
+                        </div>
+
+                        <div class="mb-4">
+                            <h5 class="subsection-title"><i class="bi bi-lightbulb text-warning me-2"></i>Mission & Vision</h5>
+                            <p class="text-muted">{{ corporate.mission_vision }}</p>
+                        </div>
+
+                        <div class="mb-4">
+                            <h5 class="subsection-title"><i class="bi bi-gear text-success me-2"></i>Business Focus Areas</h5>
+                            <div class="tech-tags">
+                                {% for area in corporate.business_focus_areas %}
+                                    <span class="tech-tag-success">
+                                        <i class="bi bi-check-circle me-1"></i>{{ area }}
+                                    </span>
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-4 text-end">
-                        <button class="btn btn-primary">View Challenge</button>
+                    
+                    <div class="col-lg-4">
+                        <div class="card border-0 bg-light h-100">
+                            <div class="card-body">
+                                <h6 class="fw-bold mb-3">
+                                    <i class="bi bi-ladder text-primary me-2"></i>Organization Type
+                                </h6>
+                                <div class="text-center mb-3">
+                                    <span class="stage-badge stage-{{ corporate.organization_type|lower|cut:" " }}">
+                                        {{ corporate.organization_type }}
+                                    </span>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <small class="text-muted d-block mb-1">Company Size</small>
+                                    <div class="fw-semibold">{{ corporate.company_size }}</div>
+                                </div>
+                                
+                                <hr class="my-3">
+                                
+                                <h6 class="fw-bold mb-3">
+                                    <i class="bi bi-diagram-3 text-success me-2"></i>Industry Expertise
+                                </h6>
+                                <div class="tech-tags">
+                                    {% for expertise in corporate.industry_expertise %}
+                                        <span class="tech-tag-sm">{{ expertise }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        {% endfor %}
+        </div>
     </div>
 
-    <!-- Problem Statements -->
-    <div class="mb-5">
-        <h5 class="section-title">Problem Statements</h5>
-        {% if company.problem_statements %}
-            {% for statement in company.problem_statements %}
-                <div class="info-card">
-                    <h6>{{ statement.title }}</h6>
-                    <p>{{ statement.description }}</p>
+    <!-- Corporate Information Section -->
+    <div class="profile-card mb-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <h3 class="section-title mb-4">
+                    <i class="bi bi-building text-primary me-2"></i>
+                    Corporate Information
+                </h3>
+                
+                <div class="row">
+                    <!-- Left Column -->
+                    <div class="col-lg-6">
+                        <!-- Organization Type -->
+                        <div class="corporate-info-card mb-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="corporate-type-icon me-3">
+                                    {% if corporate.organization_type == "Private Corporation" %}
+                                        <i class="bi bi-building text-primary"></i>
+                                    {% elif corporate.organization_type == "Multinational Corporation" %}
+                                        <i class="bi bi-globe text-info"></i>
+                                    {% elif corporate.organization_type == "SME" %}
+                                        <i class="bi bi-shop text-success"></i>
+                                    {% elif corporate.organization_type == "Startup Subsidiary" %}
+                                        <i class="bi bi-rocket text-warning"></i>
+                                    {% elif corporate.organization_type == "Government Enterprise" %}
+                                        <i class="bi bi-flag text-secondary"></i>
+                                    {% else %}
+                                        <i class="bi bi-briefcase text-dark"></i>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <h5 class="fw-bold mb-1">Organization Type</h5>
+                                    <span class="corporate-type-badge corporate-type-{{ corporate.organization_type|lower|cut:" "|cut:"-" }}">
+                                        {{ corporate.organization_type|default:"Private Corporation" }}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            {% if corporate.business_model %}
+                                <div class="small text-muted">
+                                    <strong>Business Model:</strong> {{ corporate.business_model }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Company Scale & Metrics -->
+                        <div class="corporate-info-card">
+                            <div class="corporate-icon mb-3">
+                                <i class="bi bi-bar-chart"></i>
+                            </div>
+                            <h5 class="fw-bold mb-3">Company Scale & Metrics</h5>
+                            
+                            <div class="row g-3 mb-3">
+                                <div class="col-6">
+                                    <div class="metric-stat-card">
+                                        <div class="small text-muted mb-1">Annual Revenue</div>
+                                        <div class="fw-bold text-success">{{ corporate.annual_revenue|default:"$2.8B" }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="metric-stat-card">
+                                        <div class="small text-muted mb-1">Market Cap</div>
+                                        <div class="fw-bold text-primary">{{ corporate.market_cap|default:"$15B" }}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mb-3">
+                                <div class="col-6">
+                                    <div class="metric-stat-card">
+                                        <div class="small text-muted mb-1">Employees</div>
+                                        <div class="fw-bold text-info">{{ corporate.employee_count|default:"15,000+" }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="metric-stat-card">
+                                        <div class="small text-muted mb-1">Global Presence</div>
+                                        <div class="fw-bold text-warning">{{ corporate.global_presence|default:"25+" }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column -->
+                    <div class="col-lg-6">
+                        <!-- Industry Expertise -->
+                        <div class="mb-4">
+                            <h5 class="subsection-title mb-3">
+                                <i class="bi bi-gear text-primary me-2"></i>Industry Expertise
+                            </h5>
+                            <div class="industry-expertise-container">
+                                {% for expertise in corporate.industry_expertise %}
+                                    <div class="industry-expertise-item">
+                                        <span class="industry-expertise-tag industry-{{ expertise|lower|cut:" "|cut:"&"|cut:"-" }}">
+                                            {% if expertise == "Commerce & Advertising" %}
+                                                <i class="bi bi-shop me-2"></i>
+                                            {% elif expertise == "Real Estate" %}
+                                                <i class="bi bi-house me-2"></i>
+                                            {% elif expertise == "Education" %}
+                                                <i class="bi bi-book me-2"></i>
+                                            {% elif expertise == "Energy" %}
+                                                <i class="bi bi-lightning me-2"></i>
+                                            {% elif expertise == "Healthcare" %}
+                                                <i class="bi bi-heart-pulse me-2"></i>
+                                            {% elif expertise == "Technology" %}
+                                                <i class="bi bi-cpu me-2"></i>
+                                            {% elif expertise == "Finance" %}
+                                                <i class="bi bi-bank me-2"></i>
+                                            {% else %}
+                                                <i class="bi bi-circle me-2"></i>
+                                            {% endif %}
+                                            {{ expertise }}
+                                        </span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Corporate Strategy -->
+                        <div class="corporate-strategy-card">
+                            <h5 class="subsection-title mb-3">
+                                <i class="bi bi-bullseye text-info me-2"></i>Strategic Focus
+                            </h5>
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <div class="strategy-item">
+                                        <div class="strategy-icon">
+                                            <i class="bi bi-graph-up"></i>
+                                        </div>
+                                        <div>
+                                            <div class="small text-muted">Growth Strategy</div>
+                                            <div class="fw-semibold">{{ corporate.growth_strategy|default:"Digital Transformation" }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="strategy-item">
+                                        <div class="strategy-icon">
+                                            <i class="bi bi-target"></i>
+                                        </div>
+                                        <div>
+                                            <div class="small text-muted">Innovation Focus</div>
+                                            <div class="fw-semibold">{{ corporate.innovation_focus|default:"Sustainability" }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="strategy-item">
+                                        <div class="strategy-icon">
+                                            <i class="bi bi-award"></i>
+                                        </div>
+                                        <div>
+                                            <div class="small text-muted">ESG Rating</div>
+                                            <div class="fw-semibold">{{ corporate.esg_rating|default:"A+" }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            {% endfor %}
-        {% else %}
-            <div class="info-card text-center">
-                <div class="text-muted">This organization hasn't posted any problem statements yet.</div>
             </div>
-        {% endif %}
+        </div>
     </div>
 
-    <!-- Contact Section -->
-    <div class="mb-4">
-        <h5 class="section-title">Contact {{ company.name }}</h5>
-        <div class="info-card">
-            <p>{{ company.contact_description }}</p>
-            <button class="btn btn-primary"><i class="bi bi-envelope"></i> Send Message</button>
+    <!-- Market Interest Section -->
+    <div class="profile-card mb-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <h3 class="section-title mb-4">
+                    <i class="bi bi-graph-up-arrow text-success me-2"></i>
+                    Market Interest & Focus Areas
+                </h3>
+                
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="mb-4">
+                            <h5 class="subsection-title"><i class="bi bi-bullseye text-primary me-2"></i>Innovation Interest Categories</h5>
+                            <p class="text-muted mb-3">{{ corporate.innovation_interest_description }}</p>
+                            <div class="tech-tags">
+                                {% for category in corporate.innovation_interest_categories %}
+                                    <span class="tech-tag-info">{{ category }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <h5 class="subsection-title"><i class="bi bi-search text-warning me-2"></i>Technology Scouting Areas</h5>
+                            <div class="tech-tags">
+                                {% for area in corporate.technology_scouting_areas %}
+                                    <span class="tech-tag-warning">{{ area }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4">
+                        <div class="card border-0 bg-light">
+                            <div class="card-body">
+                                <h6 class="fw-bold mb-3">
+                                    <i class="bi bi-globe text-success me-2"></i>Market Presence
+                                </h6>
+                                <div class="tech-tags mb-3">
+                                    {% for market in corporate.target_markets %}
+                                        <span class="tech-tag-info">{{ market }}</span>
+                                    {% endfor %}
+                                </div>
+                                
+                                <h6 class="fw-bold mb-3">
+                                    <i class="bi bi-calendar-event text-primary me-2"></i>Innovation Timeline
+                                </h6>
+                                <ul class="list-unstyled mb-0">
+                                    {% for timeline in corporate.innovation_timeline %}
+                                        <li class="mb-2">
+                                            <i class="bi bi-clock text-primary me-2"></i>
+                                            <small>{{ timeline }}</small>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Market Opportunity -->
+                <div class="alert alert-info d-flex align-items-start mt-4">
+                    <i class="bi bi-info-circle text-info me-3 mt-1"></i>
+                    <div>
+                        <h6 class="mb-1">Strategic Market Focus</h6>
+                        <p class="mb-0">{{ corporate.strategic_market_focus }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Collaboration & Support Section -->
+    <div class="profile-card mb-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <h3 class="section-title mb-4">
+                    <i class="bi bi-handshake text-success me-2"></i>
+                    Collaboration & Support
+                </h3>
+                
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card border-0 bg-success bg-opacity-10 mb-4">
+                            <div class="card-body">
+                                <h5 class="fw-bold text-success mb-3">Collaboration Overview</h5>
+                                <p class="mb-3">{{ corporate.collaboration_overview }}</p>
+                                
+                                <div class="row g-3 mb-3">
+                                    <div class="col-6">
+                                        <div class="text-center">
+                                            <div class="h5 fw-bold text-success">{{ corporate.active_partnerships|default:"25+" }}</div>
+                                            <small class="text-muted">Active Partnerships</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="text-center">
+                                            <div class="h5 fw-bold text-info">{{ corporate.innovation_budget|default:"$50M" }}</div>
+                                            <small class="text-muted">Innovation Budget</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <h5 class="subsection-title"><i class="bi bi-gear text-primary me-2"></i>Collaboration Types</h5>
+                            <div class="row g-3">
+                                {% for collab_type in corporate.collaboration_types %}
+                                    <div class="col-md-6">
+                                        <div class="card border-0 shadow-sm h-100">
+                                            <div class="card-body">
+                                                <div class="d-flex align-items-start mb-2">
+                                                    <div class="collaboration-icon me-3">
+                                                        {% if collab_type.type == "Co-Development" %}
+                                                            <i class="bi bi-gear text-primary"></i>
+                                                        {% elif collab_type.type == "Financial Support" %}
+                                                            <i class="bi bi-currency-dollar text-success"></i>
+                                                        {% elif collab_type.type == "Mentorship" %}
+                                                            <i class="bi bi-person-check text-info"></i>
+                                                        {% elif collab_type.type == "Pilot Program" %}
+                                                            <i class="bi bi-play-circle text-warning"></i>
+                                                        {% else %}
+                                                            <i class="bi bi-handshake text-secondary"></i>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="fw-bold mb-1">{{ collab_type.type }}</h6>
+                                                        <p class="small text-muted mb-0">{{ collab_type.description }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4">
+                        <div class="card border-0 bg-light">
+                            <div class="card-body">
+                                <h6 class="fw-bold mb-3">
+                                    <i class="bi bi-target text-primary me-2"></i>Goals & Outcomes
+                                </h6>
+                                <ul class="list-unstyled mb-4">
+                                    {% for goal in corporate.collaboration_goals %}
+                                        <li class="mb-2">
+                                            <i class="bi bi-check-circle text-success me-2"></i>
+                                            <small>{{ goal }}</small>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+
+                                <h6 class="fw-bold mb-3">
+                                    <i class="bi bi-award text-warning me-2"></i>Success Metrics
+                                </h6>
+                                <div class="row g-2">
+                                    <div class="col-12">
+                                        <div class="small-stat text-center">
+                                            <div class="fw-bold text-primary">{{ corporate.partnership_success_rate|default:"92%" }}</div>
+                                            <small class="text-muted">Success Rate</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="small-stat text-center">
+                                            <div class="fw-bold text-success">{{ corporate.avg_partnership_duration|default:"18 mo" }}</div>
+                                            <small class="text-muted">Avg Duration</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="small-stat text-center">
+                                            <div class="fw-bold text-info">{{ corporate.roi_partnerships|default:"3.5x" }}</div>
+                                            <small class="text-muted">Avg ROI</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leadership & Team Section -->
+    <div class="profile-card mb-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <h3 class="section-title mb-4">
+                    <i class="bi bi-people-fill text-primary me-2"></i>
+                    Leadership & Team
+                </h3>
+                
+                <div class="row">
+                    <div class="col-lg-12">
+                        <!-- Leadership Team -->
+                        <div class="mb-4">
+                            <h5 class="subsection-title"><i class="bi bi-person-badge text-primary me-2"></i>Executive Leadership</h5>
+                            <div class="row g-4">
+                                {% for leader in corporate.leadership_team %}
+                                    <div class="col-md-6">
+                                        <div class="card border-0 bg-light">
+                                            <div class="card-body">
+                                                <div class="d-flex align-items-start">
+                                                    <div class="founder-avatar me-3">
+                                                        {% if leader.photo %}
+                                                            <img src="{{ leader.photo.url }}" alt="{{ leader.name }}" class="founder-img">
+                                                        {% else %}
+                                                            <div class="founder-placeholder">
+                                                                {{ leader.name|slice:":2"|upper }}
+                                                            </div>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="fw-bold mb-1">{{ leader.name }}</h6>
+                                                        <div class="text-primary fw-semibold mb-2">{{ leader.position }}</div>
+                                                        <p class="small text-muted mb-0">{{ leader.bio }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="mb-4">
+                                    <h5 class="subsection-title"><i class="bi bi-building text-primary me-2"></i>Innovation Team</h5>
+                                    <p class="text-muted">{{ corporate.innovation_team_description }}</p>
+                                </div>
+
+                                <div class="mb-4">
+                                    <h5 class="subsection-title"><i class="bi bi-star text-warning me-2"></i>Key Departments</h5>
+                                    <div class="row">
+                                        {% for department in corporate.key_departments %}
+                                            <div class="col-md-6 mb-2">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="bi bi-check-circle text-success me-2"></i>
+                                                    <span>{{ department }}</span>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4">
+                                <div class="card border-0 bg-light text-center">
+                                    <div class="card-body">
+                                        <div class="team-avatar mx-auto mb-3">
+                                            <i class="bi bi-people"></i>
+                                        </div>
+                                        <h6 class="fw-bold mb-2">Team Overview</h6>
+                                        <div class="row g-2 mb-3">
+                                            <div class="col-6">
+                                                <div class="small-stat">
+                                                    <div class="fw-bold text-primary">{{ corporate.employee_count|default:"15,000+" }}</div>
+                                                    <small class="text-muted">Total Employees</small>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="small-stat">
+                                                    <div class="fw-bold text-success">{{ corporate.rd_team_size|default:"500+" }}</div>
+                                                    <small class="text-muted">R&D Team</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p class="text-muted small mb-0">{{ corporate.team_culture_description }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- News & Challenges Section -->
+    <div class="profile-card mb-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <h3 class="section-title mb-4">
+                    <i class="bi bi-newspaper text-info me-2"></i>
+                    News, Problem Statements & Challenges
+                </h3>
+                
+                <div class="row g-4 mb-4">
+                    <!-- Recent News -->
+                    <div class="col-lg-6">
+                        <h5 class="subsection-title mb-3"><i class="bi bi-newspaper text-info me-2"></i>Recent News</h5>
+                        {% for news in corporate.recent_news %}
+                            <div class="card border-0 shadow-sm mb-3">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <span class="news-badge news-{{ news.category|lower }}">{{ news.category }}</span>
+                                        <span class="date-badge">{{ news.date|date:"M d, Y" }}</span>
+                                    </div>
+                                    <h6 class="fw-bold mb-2">{{ news.title }}</h6>
+                                    <p class="small text-muted mb-3">{{ news.summary }}</p>
+                                    <a href="{{ news.link }}" class="btn btn-outline-primary btn-sm" target="_blank">
+                                        <i class="bi bi-arrow-up-right me-1"></i>Read More
+                                    </a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Problem Statements & Challenges -->
+                    <div class="col-lg-6">
+                        <h5 class="subsection-title mb-3"><i class="bi bi-lightbulb text-warning me-2"></i>Open Challenges</h5>
+                        {% for challenge in corporate.open_challenges %}
+                            <div class="card border-0 shadow-sm mb-3 challenge-card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <span class="challenge-badge challenge-{{ challenge.priority|lower }}">{{ challenge.priority }} Priority</span>
+                                        <span class="reward-badge">{{ challenge.reward|default:"$50K" }}</span>
+                                    </div>
+                                    <h6 class="fw-bold mb-2">{{ challenge.title }}</h6>
+                                    <p class="small text-muted mb-3">{{ challenge.description }}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">Deadline: {{ challenge.deadline|date:"M d, Y" }}</small>
+                                        <a href="{{ challenge.link }}" class="btn btn-outline-success btn-sm">
+                                            <i class="bi bi-plus-circle me-1"></i>Join Challenge
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Get in Touch Section -->
+    <div class="profile-card mb-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <h3 class="section-title mb-4">
+                    <i class="bi bi-envelope-at text-primary me-2"></i>
+                    Get in Touch
+                </h3>
+                
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card border-0 bg-primary bg-opacity-10">
+                            <div class="card-body">
+                                <h5 class="fw-bold mb-3">
+                                    <i class="bi bi-handshake text-primary me-2"></i>
+                                    Ready to Collaborate?
+                                </h5>
+                                <p class="mb-4">{{ corporate.partnership_message|default:"We're actively seeking innovative startups and technology partners to collaborate on cutting-edge solutions. Join us in driving digital transformation and sustainable innovation." }}</p>
+                                
+                                <div class="d-flex gap-3 flex-wrap">
+                                    <button class="btn btn-primary" onclick="openContactModal()">
+                                        <i class="bi bi-envelope me-2"></i>Send Proposal
+                                    </button>
+                                    <button class="btn btn-outline-secondary" onclick="sendEmail()">
+                                        <i class="bi bi-telephone me-2"></i>Request Meeting
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4">
+                        <div class="card border-0 bg-warning bg-opacity-10">
+                            <div class="card-body">
+                                <h6 class="fw-bold mb-3">
+                                    <i class="bi bi-question-circle text-warning me-2"></i>
+                                    Collaboration Opportunities
+                                </h6>
+                                <ul class="list-unstyled mb-0">
+                                    {% for opportunity in corporate.collaboration_opportunities %}
+                                        <li class="mb-2">
+                                            <i class="bi bi-check text-success me-2"></i>{{ opportunity }}
+                                        </li>
+                                    {% empty %}
+                                        <li class="mb-2">
+                                            <i class="bi bi-check text-success me-2"></i>Co-Development Projects
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-check text-success me-2"></i>Strategic Partnerships
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-check text-success me-2"></i>Technology Licensing
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-check text-success me-2"></i>Pilot Programs
+                                        </li>
+                                        <li class="mb-0">
+                                            <i class="bi bi-check text-success me-2"></i>Innovation Challenges
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Contact Information -->
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <div class="contact-info-item">
+                            <div class="contact-icon-sm">
+                                <i class="bi bi-envelope"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1">Email</h6>
+                                <p class="text-muted small mb-0">{{ corporate.contact_email|default:"partnerships@company.com" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="contact-info-item">
+                            <div class="contact-icon-sm">
+                                <i class="bi bi-globe"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1">Website</h6>
+                                <p class="text-muted small mb-0">
+                                    <a href="{{ corporate.website }}" target="_blank" class="text-decoration-none">
+                                        {{ corporate.website|slice:"8:" }}
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="contact-info-item">
+                            <div class="contact-icon-sm">
+                                <i class="bi bi-linkedin"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1">LinkedIn</h6>
+                                <p class="text-muted small mb-0">
+                                    <a href="{{ corporate.linkedin_url }}" target="_blank" class="text-decoration-none">
+                                        Company Profile
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<!-- Contact Modal -->
+<div class="modal fade" id="contactModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border-0">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-envelope me-2"></i>Contact {{ corporate.company_name }}
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="contactForm">
+                    {% csrf_token %}
+                    <input type="hidden" name="corporate_id" value="{{ corporate.id }}">
+                    
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="firstName" class="form-label fw-semibold">First Name</label>
+                            <input type="text" class="form-control" id="firstName" name="first_name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="lastName" class="form-label fw-semibold">Last Name</label>
+                            <input type="text" class="form-control" id="lastName" name="last_name" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="email" class="form-label fw-semibold">Email Address</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="company" class="form-label fw-semibold">Company/Organization</label>
+                            <input type="text" class="form-control" id="company" name="company">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="subject" class="form-label fw-semibold">Collaboration Type</label>
+                        <select class="form-select" id="subject" name="subject" required>
+                            <option value="">Select collaboration type...</option>
+                            <option value="co-development">Co-Development Project</option>
+                            <option value="partnership">Strategic Partnership</option>
+                            <option value="pilot">Pilot Program</option>
+                            <option value="licensing">Technology Licensing</option>
+                            <option value="challenge">Innovation Challenge</option>
+                            <option value="general">General Inquiry</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="message" class="form-label fw-semibold">Proposal Summary</label>
+                        <textarea class="form-control" id="message" name="message" rows="5" required 
+                                  placeholder="Describe your proposal, innovation, or collaboration idea..."></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="timeline" class="form-label fw-semibold">Proposed Timeline</label>
+                        <select class="form-select" id="timeline" name="timeline">
+                            <option value="immediate">Immediate (1-3 months)</option>
+                            <option value="short">Short-term (3-6 months)</option>
+                            <option value="medium">Medium-term (6-12 months)</option>
+                            <option value="long">Long-term (12+ months)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="copyMe" name="copy_me" checked>
+                        <label class="form-check-label" for="copyMe">
+                            Send me a copy of this proposal
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="submitContact()">
+                    <i class="bi bi-send me-2"></i>Send Proposal
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Additional CSS for Corporate-specific styles -->
+<style>
+/* Corporate-specific organization type badges */
+.organization-type-privatecorporation {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+.organization-type-multinationalcorporation {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+    box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);
+}
+
+.organization-type-sme {
+    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+.organization-type-startupsubsidiary {
+    background: linear-gradient(135deg, #ffc107 0%, #ff8f00 100%);
+    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+}
+
+.organization-type-governmententerprise {
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
+}
+
+/* Industry expertise tags */
+.industry-commerceadvertising {
+    background: linear-gradient(135deg, #e91e63 0%, #ad1457 100%);
+    color: white;
+    border: 2px solid #e91e63;
+}
+
+.industry-realestate {
+    background: linear-gradient(135deg, #795548 0%, #5d4037 100%);
+    color: white;
+    border: 2px solid #795548;
+}
+
+.industry-education {
+    background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%);
+    color: white;
+    border: 2px solid #9c27b0;
+}
+
+.industry-energy {
+    background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+    color: white;
+    border: 2px solid #ff9800;
+}
+
+.industry-healthcare {
+    background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
+    color: white;
+    border: 2px solid #4caf50;
+}
+
+.industry-technology {
+    background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+    color: white;
+    border: 2px solid #2196f3;
+}
+
+.industry-finance {
+    background: linear-gradient(135deg, #607d8b 0%, #455a64 100%);
+    color: white;
+    border: 2px solid #607d8b;
+}
+
+/* Collaboration icons */
+.collaboration-icon {
+    width: 40px;
+    height: 40px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e9ecef;
+    flex-shrink: 0;
+}
+
+.collaboration-icon i {
+    font-size: 1.1rem;
+}
+
+/* Challenge cards */
+.challenge-card {
+    transition: all 0.3s ease;
+}
+
+.challenge-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1) !important;
+}
+
+.challenge-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.challenge-high {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+}
+
+.challenge-medium {
+    background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+    color: #212529;
+}
+
+.challenge-low {
+    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+    color: white;
+}
+
+.reward-badge {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* Technology tag variations */
+.tech-tag-warning {
+    background: #fff3cd;
+    color: #856404;
+    padding: 0.25rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    border: 1px solid #ffeaa7;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.tech-tag-warning:hover {
+    background: #ffc107;
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* Small stat improvements */
+.small-stat {
+    padding: 0.5rem;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+/* Responsive improvements for corporate page */
+@media (max-width: 768px) {
+    .challenge-card {
+        margin-bottom: 1rem;
+    }
+    
+    .collaboration-icon {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .collaboration-icon i {
+        font-size: 1rem;
+    }
+    
+    .industry-expertise .stage-tag {
+        font-size: 0.7rem;
+        padding: 0.4rem 0.6rem;
+    }
+}
+</style>
+
+<style>
+    /* Corporate Information Section Styling */
+.corporate-info-card {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.corporate-info-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+/* Corporate Type Icon */
+.corporate-type-icon {
+    width: 50px;
+    height: 50px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #e9ecef;
+    flex-shrink: 0;
+}
+
+.corporate-type-icon i {
+    font-size: 1.5rem;
+}
+
+/* Corporate Type Badges */
+.corporate-type-badge {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+    display: inline-block;
+}
+
+/* Specific corporate type colors */
+.corporate-type-privatecorporation {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+.corporate-type-multinationalcorporation {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+    box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);
+}
+
+.corporate-type-sme {
+    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+.corporate-type-startupsubsidiary {
+    background: linear-gradient(135deg, #ffc107 0%, #ff8f00 100%);
+    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+}
+
+.corporate-type-governmententerprise {
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
+}
+
+/* Corporate Icon */
+.corporate-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.corporate-icon i {
+    font-size: 1.2rem;
+}
+
+/* Metric Stat Cards */
+.metric-stat-card {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 0.75rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.metric-stat-card:hover {
+    border-color: #007bff;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1);
+    transform: translateY(-1px);
+}
+
+/* Industry Expertise */
+.industry-expertise-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.industry-expertise-item {
+    flex: 1;
+    min-width: 140px;
+}
+
+.industry-expertise-tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 2px solid transparent;
+}
+
+.industry-expertise-tag:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Industry-specific colors */
+.industry-commerceadvertising {
+    background: linear-gradient(135deg, #e91e63 0%, #ad1457 100%);
+    color: white;
+    border-color: #e91e63;
+}
+
+.industry-realestate {
+    background: linear-gradient(135deg, #795548 0%, #5d4037 100%);
+    color: white;
+    border-color: #795548;
+}
+
+.industry-education {
+    background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%);
+    color: white;
+    border-color: #9c27b0;
+}
+
+.industry-energy {
+    background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+    color: white;
+    border-color: #ff9800;
+}
+
+.industry-healthcare {
+    background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
+    color: white;
+    border-color: #4caf50;
+}
+
+.industry-technology {
+    background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+    color: white;
+    border-color: #2196f3;
+}
+
+.industry-finance {
+    background: linear-gradient(135deg, #607d8b 0%, #455a64 100%);
+    color: white;
+    border-color: #607d8b;
+}
+
+/* Default industry style */
+.industry-tag {
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    color: white;
+    border-color: #6c757d;
+}
+
+/* Corporate Strategy Card */
+.corporate-strategy-card {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid #dee2e6;
+}
+
+.strategy-item {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0;
+}
+
+.strategy-icon {
+    width: 40px;
+    height: 40px;
+    background: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.75rem;
+    border: 1px solid #e9ecef;
+    flex-shrink: 0;
+}
+
+.strategy-icon i {
+    color: #007bff;
+    font-size: 1.1rem;
+}
+
+/* Responsive Design for Corporate Information */
+@media (max-width: 768px) {
+    .industry-expertise-container {
+        flex-direction: column;
+    }
+    
+    .industry-expertise-item {
+        min-width: 100%;
+    }
+    
+    .corporate-info-card {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .row.g-3 .col-6 {
+        margin-bottom: 0.75rem;
+    }
+    
+    .corporate-type-icon {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .corporate-type-icon i {
+        font-size: 1.2rem;
+    }
+    
+    .corporate-strategy-card {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .industry-expertise-tag {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+    }
+    
+    .industry-expertise-tag i {
+        display: none;
+    }
+    
+    .metric-stat-card {
+        padding: 0.5rem;
+    }
+    
+    .strategy-item {
+        flex-direction: column;
+        text-align: center;
+        padding: 0.75rem 0;
+    }
+    
+    .strategy-icon {
+        margin-right: 0;
+        margin-bottom: 0.5rem;
+    }
+    
+    .corporate-type-badge {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* Animation improvements */
+.corporate-info-card,
+.corporate-strategy-card {
+    opacity: 0;
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+.corporate-info-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.corporate-strategy-card {
+    animation-delay: 0.2s;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Fix for very long organization names */
+.corporate-type-badge {
+    overflow-wrap: break-word;
+    hyphens: auto;
+    text-align: center;
+}
+
+/* Ensure consistent spacing */
+.subsection-title {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.subsection-title i {
+    font-size: 1.1rem;
+}
+</style>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    // Animate progress bars
+    setTimeout(() => {
+        const progressBars = document.querySelectorAll('.progress-bar');
+        progressBars.forEach(bar => {
+            const width = bar.style.width;
+            bar.style.width = '0%';
+            setTimeout(() => {
+                bar.style.width = width;
+            }, 200);
+        });
+    }, 500);
+
+    // Animate metric cards on scroll
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.metric-card').forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(card);
+    });
+});
+
+function openContactModal() {
+    const modal = new bootstrap.Modal(document.getElementById('contactModal'));
+    modal.show();
+}
+
+function submitContact() {
+    const form = document.getElementById('contactForm');
+    const formData = new FormData(form);
+    
+    // Show loading state
+    const submitBtn = document.querySelector('.modal-footer .btn-primary');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Sending...';
+    submitBtn.disabled = true;
+    
+    fetch('/api/contact-corporate/', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Show success message
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-success alert-dismissible fade show';
+            alertDiv.innerHTML = `
+                <i class="bi bi-check-circle me-2"></i>
+                Proposal sent successfully! We'll get back to you soon.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.querySelector('.container-fluid').insertBefore(alertDiv, document.querySelector('.profile-card'));
+            
+            // Close modal and reset form
+            bootstrap.Modal.getInstance(document.getElementById('contactModal')).hide();
+            form.reset();
+            
+            // Auto-hide alert after 5 seconds
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        } else {
+            throw new Error(data.message || 'Unknown error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        // Show error message
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+        alertDiv.innerHTML = `
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            Error sending proposal. Please try again or contact us directly.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.querySelector('.modal-body').insertBefore(alertDiv, document.querySelector('#contactForm'));
+    })
+    .finally(() => {
+        // Restore button state
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    });
+}
+
+function toggleBookmark(corporateId) {
+    const button = event.target.closest('button');
+    const icon = button.querySelector('i');
+    const originalClass = icon.className;
+    
+    // Optimistic UI update
+    icon.className = 'bi bi-bookmark-fill me-2';
+    
+    fetch(`/api/toggle-bookmark/${corporateId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.bookmarked) {
+            icon.className = 'bi bi-bookmark-fill me-2';
+            button.innerHTML = '<i class="bi bi-bookmark-fill me-2"></i>Bookmarked';
+        } else {
+            icon.className = 'bi bi-bookmark me-2';
+            button.innerHTML = '<i class="bi bi-bookmark me-2"></i>Bookmark';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        // Revert on error
+        icon.className = originalClass;
+    });
+}
+
+function shareProfile() {
+    if (navigator.share) {
+        navigator.share({
+            title: '{{ corporate.company_name }} - SEA-MAP',
+            text: '{{ corporate.description }}',
+            url: window.location.href,
+        });
+    } else {
+        navigator.clipboard.writeText(window.location.href).then(function() {
+            // Show success feedback
+            const button = event.target.closest('button');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="bi bi-check me-2"></i>Copied!';
+            setTimeout(() => {
+                button.innerHTML = originalText;
+            }, 2000);
+        }).catch(function() {
+            alert('Link copied to clipboard: ' + window.location.href);
+        });
+    }
+}
+
+function sendEmail() {
+    const subject = encodeURIComponent('Collaboration Opportunity - {{ corporate.company_name }}');
+    const body = encodeURIComponent(`Hello {{ corporate.company_name }} team,\n\nI found your corporate profile on SEA-MAP and I'm interested in exploring collaboration opportunities.\n\nBest regards`);
+    const email = '{{ corporate.contact_email|default:"partnerships@company.com" }}';
+    window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+}
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
+</script>
+
+<script>
+// Replace the existing sticky header JavaScript with this corrected version
+document.addEventListener('DOMContentLoaded', function() {
+    // Existing code...
+
+    // Fixed Sticky Header Functionality
+    const stickyHeader = document.getElementById('stickyHeader');
+    const headerCard = document.querySelector('.profile-card');
+    let isHeaderVisible = false;
+    let ticking = false;
+
+    function updateStickyHeader() {
+        if (!headerCard || !stickyHeader) return;
+
+        const headerRect = headerCard.getBoundingClientRect();
+        const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+        
+        // Show sticky header when the main header card is scrolled out of view
+        const shouldShow = headerRect.bottom <= 0;
+
+        if (shouldShow && !isHeaderVisible) {
+            stickyHeader.classList.add('show');
+            isHeaderVisible = true;
+        } else if (!shouldShow && isHeaderVisible) {
+            stickyHeader.classList.remove('show');
+            isHeaderVisible = false;
+        }
+
+        ticking = false;
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(updateStickyHeader);
+            ticking = true;
+        }
+    }
+
+    // Listen for scroll events
+    window.addEventListener('scroll', requestTick, { passive: true });
+
+    // Listen for resize events
+    window.addEventListener('resize', requestTick, { passive: true });
+
+    // Initial check
+    updateStickyHeader();
+
+    // Enhanced button interactions for sticky header
+    if (stickyHeader) {
+        const stickyButtons = stickyHeader.querySelectorAll('button');
+        stickyButtons.forEach(button => {
+            // Add ripple effect
+            button.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple-effect');
+                
+                const rect = button.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.cssText = `
+                    position: absolute;
+                    width: ${size}px;
+                    height: ${size}px;
+                    left: ${x}px;
+                    top: ${y}px;
+                    background: rgba(255, 255, 255, 0.3);
+                    border-radius: 50%;
+                    transform: scale(0);
+                    animation: ripple 0.6s linear;
+                    pointer-events: none;
+                `;
+                
+                button.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+    }
+
+    // Add smooth scroll to top when clicking company name in sticky header
+    const stickyCompanyName = stickyHeader?.querySelector('.sticky-company-name');
+    if (stickyCompanyName) {
+        stickyCompanyName.style.cursor = 'pointer';
+        stickyCompanyName.addEventListener('click', function() {
+            headerCard.scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+        });
+    }
+
+    // Update bookmark state in sticky header
+    window.updateStickyBookmarkState = function(isBookmarked) {
+        if (!stickyHeader) return;
+        
+        const stickyBookmarkBtn = stickyHeader.querySelector('button[onclick*="toggleBookmark"]');
+        if (stickyBookmarkBtn) {
+            const icon = stickyBookmarkBtn.querySelector('i');
+            const text = stickyBookmarkBtn.querySelector('span');
+            
+            if (isBookmarked) {
+                icon.className = 'bi bi-bookmark-fill me-1';
+                if (text) text.textContent = 'Saved';
+            } else {
+                icon.className = 'bi bi-bookmark me-1';
+                if (text) text.textContent = 'Save';
+            }
+        }
+    };
+});
+</script>
+
+
 
 {% endblock %}

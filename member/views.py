@@ -58,7 +58,7 @@ def investor_matchmaking(request):
     return render(request, 'member/investor_matchmaking.html')
 
 def dashboard(request):
-    return render(request, 'dashboard5.html')
+    return render(request, 'dashboard.html')
 
 def dashboard2(request):
     return render(request, 'dash2.html')
@@ -78,8 +78,6 @@ def startup_detail(request):
 def investor_detail(request):
     return render(request, 'member/investor_detail.html')
 
-
-# ...existing code...
 
 def startup_profile(request, startup_id):
     """Display detailed startup profile page"""
@@ -304,11 +302,7 @@ def startup_profile(request, startup_id):
         ]
     }
     
-    return render(request, 'member/startup_profile4.html', {'startup': startup_data})
-
-# ...existing code...
-
-# ...existing code...
+    return render(request, 'member/startup_profile.html', {'startup': startup_data})
 
 def investor_profile(request, investor_id):
     """Display detailed investor profile page"""
@@ -546,7 +540,7 @@ def investor_profile(request, investor_id):
         'geographic_reach': '6 SEA countries'
     }
     
-    return render(request, 'member/investor_profile3.html', {'investor': investor_data})
+    return render(request, 'member/investor_profile.html', {'investor': investor_data})
 
 def corporate_profile(request, corporate_id):
     """Display detailed corporate profile page"""
@@ -855,14 +849,11 @@ def corporate_profile(request, corporate_id):
         ]
     }
     
-    return render(request, 'member/corporate_profile3.html', {'corporate': corporate_data})
+    return render(request, 'member/corporate_profile.html', {'corporate': corporate_data})
 
 def onboarding_role_selection(request):
     return render(request, 'onboarding/index.html')
 
-
-
-# ...existing code...
 
 def onboarding_startup_step1(request):
     """Handle startup onboarding step 1 - company information"""
