@@ -58,7 +58,10 @@ def investor_matchmaking(request):
     return render(request, 'member/investor_matchmaking.html')
 
 def dashboard(request):
-    return render(request, 'dashboard4.html')
+    return render(request, 'dashboard5.html')
+
+def dashboard2(request):
+    return render(request, 'dash2.html')
 
 def problem(request):
     return render(request, 'resources/problem.html')
@@ -301,7 +304,7 @@ def startup_profile(request, startup_id):
         ]
     }
     
-    return render(request, 'member/startup_profile3.html', {'startup': startup_data})
+    return render(request, 'member/startup_profile4.html', {'startup': startup_data})
 
 # ...existing code...
 
@@ -543,7 +546,7 @@ def investor_profile(request, investor_id):
         'geographic_reach': '6 SEA countries'
     }
     
-    return render(request, 'member/investor_profile2.html', {'investor': investor_data})
+    return render(request, 'member/investor_profile3.html', {'investor': investor_data})
 
 def corporate_profile(request, corporate_id):
     """Display detailed corporate profile page"""

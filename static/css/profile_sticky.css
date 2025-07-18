@@ -1,0 +1,382 @@
+/* Fixed Sticky Header Styles */
+.sticky-header-content {
+    /* top: 70px; */
+    /* right: 0; */
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    z-index: 1000;
+    padding: 0.75rem 0;
+    transform: translateY(-100%);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    opacity: 0;
+    visibility: hidden;
+    margin: -32px;
+}
+
+.sticky-header-content.show {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* Rest of the sticky header styles remain the same */
+.sticky-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 2px solid rgba(0, 123, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.sticky-avatar:hover {
+    border-color: rgba(0, 123, 255, 0.4);
+    transform: scale(1.05);
+}
+
+.sticky-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.sticky-avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.sticky-avatar:hover .sticky-avatar-placeholder {
+    background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+}
+
+/* Sticky Company Info */
+.sticky-company-name {
+    color: #2c3e50;
+    font-weight: 700;
+    font-size: 1.1rem;
+    line-height: 1.2;
+    margin-right: 1rem !important;
+    transition: color 0.3s ease;
+}
+
+.sticky-company-name:hover {
+    color: #007bff;
+}
+
+.sticky-description {
+    color: #6c757d;
+    font-size: 0.85rem;
+    line-height: 1.3;
+    margin-top: 0.25rem;
+    transition: color 0.3s ease;
+}
+
+/* Match Score Badge */
+.match-badge {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 25px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    box-shadow: 0 3px 10px rgba(40, 167, 69, 0.3);
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.match-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.match-badge:hover::before {
+    left: 100%;
+}
+
+.match-badge:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+}
+
+/* Quick Info */
+.sticky-quick-info {
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.sticky-info-item {
+    color: #6c757d;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    transition: color 0.3s ease;
+}
+
+.sticky-info-item:hover {
+    color: #495057;
+}
+
+.sticky-info-item i {
+    color: #007bff;
+    font-size: 0.7rem;
+    transition: color 0.3s ease;
+}
+
+.sticky-separator {
+    color: #dee2e6;
+    margin: 0 0.5rem;
+    font-size: 0.8rem;
+}
+
+/* Sticky Action Buttons */
+.sticky-actions {
+    flex-shrink: 0;
+}
+
+.sticky-btn-primary {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    border: none;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    box-shadow: 0 3px 10px rgba(0, 123, 255, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.sticky-btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.sticky-btn-primary:hover::before {
+    left: 100%;
+}
+
+.sticky-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+    background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+}
+
+.sticky-btn-secondary {
+    border-color: #dee2e6;
+    color: #6c757d;
+    background: rgba(255, 255, 255, 0.9);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.sticky-btn-secondary:hover {
+    border-color: #007bff;
+    color: #007bff;
+    background: rgba(0, 123, 255, 0.05);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2);
+}
+
+/* Animation keyframes */
+@keyframes slideDownFade {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+        visibility: hidden;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+@keyframes slideUpFade {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
+    }
+    to {
+        transform: translateY(-100%);
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+.sticky-header-content.show {
+    animation: slideDownFade 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.sticky-header-content.hide {
+    animation: slideUpFade 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 992px) {
+    .sticky-header-content {
+        padding: 0.6rem 0;
+    }
+    
+    .sticky-avatar {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .sticky-company-name {
+        font-size: 1rem;
+        margin-right: 0.75rem !important;
+    }
+    
+    .match-badge {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.6rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .sticky-header-content {
+        padding: 0.5rem 0;
+    }
+    
+    .sticky-avatar {
+        width: 40px;
+        height: 40px;
+        margin-right: 0.75rem !important;
+    }
+    
+    .sticky-company-name {
+        font-size: 0.95rem;
+        margin-right: 0.5rem !important;
+    }
+    
+    .match-badge {
+        font-size: 0.65rem;
+        padding: 0.2rem 0.5rem;
+    }
+    
+    .sticky-btn-primary {
+        padding: 0.4rem 0.75rem;
+        font-size: 0.85rem;
+    }
+    
+    .sticky-description {
+        font-size: 0.8rem;
+        margin-top: 0.15rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .sticky-avatar {
+        width: 35px;
+        height: 35px;
+        margin-right: 0.5rem !important;
+    }
+    
+    .sticky-company-name {
+        font-size: 0.9rem;
+        margin-right: 0.4rem !important;
+    }
+    
+    .match-badge {
+        font-size: 0.6rem;
+        padding: 0.15rem 0.4rem;
+    }
+    
+    .sticky-btn-primary {
+        padding: 0.35rem 0.6rem;
+        font-size: 0.8rem;
+    }
+    
+    .sticky-btn-primary i {
+        margin-right: 0.25rem !important;
+    }
+}
+
+/* Improve backdrop blur for better browsers */
+@supports (backdrop-filter: blur(15px)) {
+    .sticky-header-content {
+        background: rgba(255, 255, 255, 0.85);
+    }
+}
+
+/* Fallback for browsers without backdrop-filter */
+@supports not (backdrop-filter: blur(15px)) {
+    .sticky-header-content {
+        background: rgba(255, 255, 255, 0.98);
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .sticky-header-content {
+        background: rgba(33, 37, 41, 0.95);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .sticky-company-name {
+        color: #f8f9fa;
+    }
+    
+    .sticky-company-name:hover {
+        color: #66b3ff;
+    }
+    
+    .sticky-description {
+        color: #adb5bd;
+    }
+    
+    .sticky-info-item {
+        color: #adb5bd;
+    }
+    
+    .sticky-separator {
+        color: #495057;
+    }
+    
+    .sticky-btn-secondary {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: #495057;
+        color: #adb5bd;
+    }
+    
+    .sticky-btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: #66b3ff;
+        color: #66b3ff;
+    }
+}
+
+/* Performance optimization */
+.sticky-header-content {
+    will-change: transform, opacity;
+    contain: layout style paint;
+}

@@ -22,6 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', CustomLoginView.as_view(), name='login'),
     path('signup/', signup, name='signup'),
+    path('dash/', dashboard2, name='dash'),
     path('matchmaking/investors/', investor_matchmaking, name='investor_matchmaking'),
     path('dashboard/startup', dashboard, name='dashboard_startup'),
     path('dashboard/problem-statement', problem, name='problem'),
