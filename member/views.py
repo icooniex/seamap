@@ -109,14 +109,78 @@ def dashboard(request):
     return render(request, 'dashboard.html', context)
 
 def onboarding_investor(request):
-    """Placeholder for investor onboarding"""
-    # messages.info(request, 'Investor onboarding coming soon!')
-    # return redirect('onboarding_role_selection')
+    """Investor onboarding page - Organization profile setup"""
+    # Check if user has completed profile setup
+    try:
+        member = Member.objects.get(user=request.user)
+        if not member.profile_completed:
+            messages.warning(request, 'Please complete your profile first.')
+            return redirect('onboarding_user_profile')
+    except Member.DoesNotExist:
+        messages.warning(request, 'Please complete your profile first.')
+        return redirect('onboarding_role_selection')
+    
+    # Check if role was selected and is investor
+    if member.user_type != 'investor':
+        messages.warning(request, 'This onboarding is for investors only.')
+        return redirect('onboarding_role_selection')
+    
+    if request.method == 'POST':
+        try:
+            # Handle multiple selections for funding_stage, investment_categories, and market_country_interests
+            funding_stages = request.POST.getlist('funding_stage')
+            investment_categories = request.POST.getlist('investment_categories')
+            market_country_interests = request.POST.getlist('market_country_interests')
+            
+            # Create new company profile (investor organization)
+            company = Company.objects.create(
+                member=member,
+                company_name=request.POST.get('company_name', ''),
+                investor_type=request.POST.get('investor_type', ''),
+                website=request.POST.get('website', '') or None,
+                founded_year=int(request.POST.get('founded_year')) if request.POST.get('founded_year') else None,
+                team_size=request.POST.get('team_size', ''),
+                primary_location=request.POST.get('primary_location', ''),
+                company_description=request.POST.get('company_description', ''),
+                # Investment information
+                funding_size=request.POST.get('funding_size', ''),
+                average_deal_size=request.POST.get('average_deal_size', ''),
+                funding_stages=funding_stages,
+                investment_categories=investment_categories,
+                market_country_interests=market_country_interests,
+                investment_philosophy=request.POST.get('investment_philosophy', ''),
+                # Additional information
+                additional_info=request.POST.get('additional_info', ''),
+                # Set as primary company
+                is_primary=True
+            )
+            
+            # Handle company logo upload
+            if 'company_logo' in request.FILES:
+                company.company_logo = request.FILES['company_logo']
+                company.save()
+            
+            # Update member consent and onboarding status
+            member.consent_info = request.POST.get('consent_info') == 'on'
+            member.consent_marketplace = request.POST.get('consent_marketplace') == 'on'
+            member.onboarding_completed = True
+            member.save()
+            
+            # Clear session
+            if 'selected_role' in request.session:
+                del request.session['selected_role']
+            
+            messages.success(request, f'Welcome to SEA-MAP, {company.company_name}! Your investor registration is complete.')
+            return redirect('dashboard')
+            
+        except Exception as e:
+            messages.error(request, f'An error occurred during registration: {str(e)}')
+            return render(request, 'onboarding/investor_onboarding_complete.html', {'member': member})
+    
     context = {
-        'message': 'Investor onboarding coming soon!'
+        'member': member,
     }
-
-    return render(request, 'onboarding/investor_onboarding.html', context)
+    return render(request, 'onboarding/investor_onboarding_complete.html', context)
 
 def onboarding_corporate(request):
     """Placeholder for corporate onboarding"""

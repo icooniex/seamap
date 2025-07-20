@@ -52,6 +52,35 @@ FUNDING_NEEDED_CHOICES = [
     ('not_seeking', 'Not currently seeking funding'),
 ]
 
+# Investor-specific choices
+INVESTOR_TYPE_CHOICES = [
+    ('angel', '🦸 Angel Investor'),
+    ('vc', '💼 Venture Capital (VC)'),
+    ('corporate', '🏢 Corporate Investor'),
+    ('family_office', '👨‍👩‍👧‍👦 Family Office'),
+    ('impact_fund', '🌱 Impact Fund'),
+    ('government', '🏛️ Government/Development Agency'),
+    ('other', '🔎 Other'),
+]
+
+FUNDING_SIZE_CHOICES = [
+    ('under_1m', 'Under $1M'),
+    ('1m_50m', '$1M - $50M'),
+    ('100m_200m', '$100M - $200M'),
+    ('200m_500m', '$200M - $500M'),
+    ('over_500m', 'Over $500M'),
+]
+
+DEAL_SIZE_CHOICES = [
+    ('under_100k', 'Under $100K'),
+    ('100k_500k', '$100K - $500K'),
+    ('500k_1m', '$500K - $1M'),
+    ('1m_5m', '$1M - $5M'),
+    ('5m_10m', '$5M - $10M'),
+    ('10m_50m', '$10M - $50M'),
+    ('over_50m', 'Over $50M'),
+]
+
 class Member(models.Model):
     """User Profile Model - stores individual user information"""
     # Basic user information
@@ -96,6 +125,15 @@ class Company(models.Model):
     team_size = models.CharField(max_length=10, choices=TEAM_SIZE_CHOICES, blank=True)
     primary_location = models.CharField(max_length=50, choices=LOCATION_CHOICES, blank=True)
     company_description = models.TextField(blank=True)
+    
+    # Investor-specific fields
+    investor_type = models.CharField(max_length=20, choices=INVESTOR_TYPE_CHOICES, blank=True)
+    funding_size = models.CharField(max_length=20, choices=FUNDING_SIZE_CHOICES, blank=True)
+    average_deal_size = models.CharField(max_length=20, choices=DEAL_SIZE_CHOICES, blank=True)
+    funding_stages = models.JSONField(default=list, blank=True)  # Store multiple selections
+    investment_categories = models.JSONField(default=list, blank=True)  # Store multiple selections  
+    market_country_interests = models.JSONField(default=list, blank=True)  # Store multiple selections
+    investment_philosophy = models.TextField(blank=True)
     
     # Innovation Information (Step 2) - Mainly for startups
     innovation_types = models.JSONField(default=list, blank=True)  # Store multiple selections
@@ -142,6 +180,49 @@ class Company(models.Model):
             'regulatory_compliance': 'Regulatory & Compliance',
         }
         return [area_mapping.get(a, a) for a in self.support_areas]
+
+    def get_funding_stages_display(self):
+        """Return human-readable funding stages"""
+        stage_mapping = {
+            'pre_seed': 'Pre-Seed',
+            'seed': 'Seed',
+            'series_a': 'Series A',
+            'series_b': 'Series B',
+            'series_c': 'Series C',
+            'series_d': 'Series D and Above',
+        }
+        return [stage_mapping.get(s, s) for s in self.funding_stages]
+
+    def get_investment_categories_display(self):
+        """Return human-readable investment categories"""
+        category_mapping = {
+            'eliminate_redesign': 'Eliminate & Redesign Packaging',
+            'refill_reuse': 'Refill & Reuse Solutions',
+            'collection_sorting': 'Collection & Sorting Technologies',
+            'advanced_recycling': 'Advanced Recycling & Upcycling',
+            'bioplastics': 'Bioplastics & Compostable Materials',
+            'waste_management': 'Waste Management Infrastructure',
+            'data_monitoring': 'Data, Monitoring & Traceability',
+            'other': 'Other',
+        }
+        return [category_mapping.get(c, c) for c in self.investment_categories]
+
+    def get_market_country_interests_display(self):
+        """Return human-readable market countries"""
+        country_mapping = {
+            'Singapore': '🇸🇬 Singapore',
+            'Indonesia': '🇮🇩 Indonesia',
+            'Thailand': '🇹🇭 Thailand',
+            'Malaysia': '🇲🇾 Malaysia',
+            'Philippines': '🇵🇭 Philippines',
+            'Vietnam': '🇻🇳 Vietnam',
+            'Cambodia': '🇰🇭 Cambodia',
+            'Laos': '🇱🇦 Laos',
+            'Myanmar': '🇲🇲 Myanmar',
+            'Brunei': '🇧🇳 Brunei',
+            'Other': '🌍 Other',
+        }
+        return [country_mapping.get(c, c) for c in self.market_country_interests]
 
     class Meta:
         verbose_name = "Company Profile"
