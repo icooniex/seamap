@@ -1,0 +1,821 @@
+{% extends 'onboarding/onboarding_base.html' %}
+{% load static %}
+
+{% block title %}Startup Onboarding - SEA-MAP{% endblock %}
+
+{% block extra_css %}
+<style>
+.logo-upload-container {
+    border: 2px dashed #dee2e6;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+    position: relative;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-upload-container:hover {
+    border-color: #0d6efd;
+    background: #e7f3ff;
+}
+
+.logo-upload-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.upload-icon {
+    font-size: 3rem;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+}
+
+.logo-upload-container:hover .upload-icon {
+    color: #0d6efd;
+}
+
+.upload-text p {
+    margin-bottom: 0.25rem;
+}
+
+.logo-preview {
+    position: relative;
+    max-width: 200px;
+    margin: 0 auto;
+}
+
+.logo-image {
+    max-width: 100%;
+    max-height: 150px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.logo-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 8px;
+}
+
+.logo-preview:hover .logo-overlay {
+    opacity: 1;
+}
+</style>
+{% endblock %}
+
+{% block header_content %}
+<div class="logo-icon small">
+    <i class="bi bi-rocket-takeoff"></i>
+</div>
+<h1 class="onboarding-title">Startup Registration</h1>
+<p class="onboarding-subtitle">Join our community of innovative startups tackling marine plastic pollution</p>
+{% endblock %}
+
+{% block mobile_breadcrumb %}
+<!-- Center: Progress indicator for mobile -->
+<div class="onboarding-breadcrumb">
+    <span id="mobile-step-indicator">Step 1 of 3</span>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Progress Section -->
+<div class="progress-section">
+    <div class="step-indicator">
+        <div class="step-item">
+            <div class="step-number active" id="step-1-indicator">1</div>
+            <div class="step-title active" id="step-1-title">Company</div>
+        </div>
+        <div class="step-connector" id="connector-1"></div>
+        <div class="step-item">
+            <div class="step-number pending" id="step-2-indicator">2</div>
+            <div class="step-title" id="step-2-title">Innovation</div>
+        </div>
+        <div class="step-connector" id="connector-2"></div>
+        <div class="step-item">
+            <div class="step-number pending" id="step-3-indicator">3</div>
+            <div class="step-title" id="step-3-title">Support</div>
+        </div>
+    </div>
+    <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="progressBar" style="width: 33.33%"></div>
+    </div>
+</div>
+
+<!-- Form Content -->
+<form id="onboardingForm" method="POST" action="{% url 'onboarding_startup_new' %}" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    
+    <div class="form-content">
+        <!-- Step 1: Company Information -->
+        <div class="step-content active" data-step="1">
+            <h2 class="form-title">Tell us about your company</h2>
+            <p class="form-subtitle">Help us understand your startup's foundation and mission</p>
+            
+            <div class="form-group">
+                <label for="company_name" class="form-label">
+                    <i class="bi bi-building me-2 text-primary"></i>Company Name *
+                </label>
+                <input type="text" class="form-control" id="company_name" name="company_name" 
+                       placeholder="Enter your company or project name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="company_logo" class="form-label">
+                    <i class="bi bi-image me-2 text-primary"></i>Company Logo
+                </label>
+                <div class="logo-upload-container">
+                    <div class="logo-preview" id="logoPreview" style="display: none;">
+                        <img id="logoImage" src="" alt="Company Logo Preview" class="logo-image">
+                        <div class="logo-overlay">
+                            <button type="button" class="btn btn-sm btn-outline-light" onclick="document.getElementById('company_logo').click()">
+                                <i class="bi bi-pencil"></i> Change
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="removeLogo()">
+                                <i class="bi bi-trash"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                    <div class="logo-upload-placeholder" id="logoPlaceholder">
+                        <div class="upload-icon">
+                            <i class="bi bi-cloud-upload"></i>
+                        </div>
+                        <div class="upload-text">
+                            <p class="mb-1"><strong>Upload your company logo</strong></p>
+                            <p class="text-muted small">PNG, JPG, or SVG • Max 5MB • Recommended: 200x200px</p>
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="document.getElementById('company_logo').click()">
+                            Choose File
+                        </button>
+                    </div>
+                    <input type="file" class="form-control d-none" id="company_logo" name="company_logo" 
+                           accept="image/png,image/jpeg,image/jpg,image/svg+xml" onchange="handleLogoUpload(this)">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="website" class="form-label">
+                            <i class="bi bi-globe me-2 text-primary"></i>Website
+                        </label>
+                        <input type="url" class="form-control" id="website" name="website" 
+                               placeholder="https://www.example.com">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="founded_year" class="form-label">
+                            <i class="bi bi-calendar-event me-2 text-primary"></i>Founded Year
+                        </label>
+                        <input type="number" class="form-control" id="founded_year" name="founded_year" 
+                               placeholder="e.g. 2020" min="1900" max="2025">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="team_size" class="form-label">
+                            <i class="bi bi-people me-2 text-primary"></i>Team Size *
+                        </label>
+                        <select class="form-select" id="team_size" name="team_size" required>
+                            <option value="">Select team size</option>
+                            <option value="1">1 person (Solo founder)</option>
+                            <option value="2-5">2-5 people</option>
+                            <option value="6-10">6-10 people</option>
+                            <option value="11-25">11-25 people</option>
+                            <option value="26-50">26-50 people</option>
+                            <option value="51-100">51-100 people</option>
+                            <option value="100+">100+ people</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="primary_location" class="form-label">
+                            <i class="bi bi-geo-alt me-2 text-primary"></i>Primary Location *
+                        </label>
+                        <select class="form-select" id="primary_location" name="primary_location" required>
+                            <option value="">Select your country</option>
+                            <option value="Singapore">🇸🇬 Singapore</option>
+                            <option value="Indonesia">🇮🇩 Indonesia</option>
+                            <option value="Thailand">🇹🇭 Thailand</option>
+                            <option value="Malaysia">🇲🇾 Malaysia</option>
+                            <option value="Philippines">🇵🇭 Philippines</option>
+                            <option value="Vietnam">🇻🇳 Vietnam</option>
+                            <option value="Cambodia">🇰🇭 Cambodia</option>
+                            <option value="Laos">🇱🇦 Laos</option>
+                            <option value="Myanmar">🇲🇲 Myanmar</option>
+                            <option value="Brunei">🇧🇳 Brunei</option>
+                            <option value="Other">🌍 Other</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="company_description" class="form-label">
+                    <i class="bi bi-card-text me-2 text-primary"></i>Company Description
+                </label>
+                <textarea class="form-control" id="company_description" name="company_description" 
+                          placeholder="Tell us about your company's mission, vision, and what makes you unique..." rows="4"></textarea>
+            </div>
+        </div>
+
+        <!-- Step 2: Innovation Information -->
+        <div class="step-content" data-step="2">
+            <h2 class="form-title">About your innovation</h2>
+            <p class="form-subtitle">Share details about your solution and impact on marine plastic pollution</p>
+            
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="bi bi-lightbulb me-2 text-primary"></i>Type of Innovation * <span class="text-muted">(select all that apply)</span>
+                </label>
+                <div class="checkbox-grid">
+                    <div class="checkbox-card" data-checkbox="plastic_alternatives">
+                        <input type="checkbox" id="plastic_alternatives" name="innovation_type" value="plastic_alternatives">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                            </div>
+                            <label for="plastic_alternatives" class="checkbox-label">Eliminate & Redesign Packaging</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="recycling_technologies">
+                        <input type="checkbox" id="recycling_technologies" name="innovation_type" value="recycling_technologies">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                            </div>
+                            <label for="recycling_technologies" class="checkbox-label">Refill & Reuse Solutions</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="waste_collection">
+                        <input type="checkbox" id="waste_collection" name="innovation_type" value="waste_collection">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                            </div>
+                            <label for="waste_collection" class="checkbox-label">Reusable Packaging Collection/Drop Off</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="circular_economy">
+                        <input type="checkbox" id="circular_economy" name="innovation_type" value="circular_economy">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                            </div>
+                            <label for="circular_economy" class="checkbox-label">Upcycling Plastic Waste</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="monitoring_tools">
+                        <input type="checkbox" id="monitoring_tools" name="innovation_type" value="monitoring_tools">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                            </div>
+                            <label for="monitoring_tools" class="checkbox-label">Sustainable Alternative Materials</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="education_partnerships">
+                        <input type="checkbox" id="education_partnerships" name="innovation_type" value="education_partnerships">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                            </div>
+                            <label for="education_partnerships" class="checkbox-label">Education & Industry Partnerships</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="tracking_monitoring">
+                        <input type="checkbox" id="tracking_monitoring" name="innovation_type" value="tracking_monitoring">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                            </div>
+                            <label for="tracking_monitoring" class="checkbox-label">Tracking & Monitoring Waste</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="other">
+                        <input type="checkbox" id="other" name="innovation_type" value="other">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                            </div>
+                            <label for="other" class="checkbox-label">Other Innovation</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="solution_description" class="form-label">
+                    <i class="bi bi-star me-2 text-primary"></i>Solution Description & USP *
+                </label>
+                <textarea class="form-control" id="solution_description" name="solution_description" 
+                          placeholder="Describe your solution and what makes it unique in one paragraph..." rows="4" required></textarea>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="current_stage" class="form-label">
+                            <i class="bi bi-graph-up-arrow me-2 text-primary"></i>Current Stage *
+                        </label>
+                        <select class="form-select" id="current_stage" name="current_stage" required>
+                            <option value="">Select current stage</option>
+                            <option value="idea">💡 Ideation – Developing an idea, no product yet</option>
+                            <option value="prototype">🔧 Prototype – Initial MVP or prototype created</option>
+                            <option value="validation">🧪 Validation – Testing with early customers</option>
+                            <option value="early">📈 Early Growth – Generating revenue</option>
+                            <option value="scaling">🚀 Scaling – Expanding with proven model</option>
+                            <option value="profitable">💰 Established – Profitable and exploring new markets</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="funding_needed" class="form-label">
+                            <i class="bi bi-currency-dollar me-2 text-primary"></i>Funding Needed *
+                        </label>
+                        <select class="form-select" id="funding_needed" name="funding_needed" required>
+                            <option value="">Select funding range</option>
+                            <option value="under_10k">Under $10K</option>
+                            <option value="10k_50k">$10K - $50K</option>
+                            <option value="50k_100k">$50K - $100K</option>
+                            <option value="100k_500k">$100K - $500K</option>
+                            <option value="500k_1m">$500K - $1M</option>
+                            <option value="1m_5m">$1M - $5M</option>
+                            <option value="5m_10m">$5M - $10M</option>
+                            <option value="over_10m">Over $10M</option>
+                            <option value="not_seeking">Not currently seeking funding</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Support & Consent -->
+        <div class="step-content" data-step="3">
+            <h2 class="form-title">Support & Consent</h2>
+            <p class="form-subtitle">Let us know how we can best support your startup's growth</p>
+            
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="bi bi-handshake me-2 text-primary"></i>Areas of Support <span class="text-muted">(select all that apply)</span>
+                </label>
+                <div class="checkbox-grid">
+                    <div class="checkbox-card" data-checkbox="branding_marketing">
+                        <input type="checkbox" id="branding_marketing" name="support_areas" value="branding_marketing">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                            </div>
+                            <label for="branding_marketing" class="checkbox-label">Branding & Marketing</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="investment_funding">
+                        <input type="checkbox" id="investment_funding" name="support_areas" value="investment_funding">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                            </div>
+                            <label for="investment_funding" class="checkbox-label">Investment & Funding Access</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="manufacturing_supply">
+                        <input type="checkbox" id="manufacturing_supply" name="support_areas" value="manufacturing_supply">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                            </div>
+                            <label for="manufacturing_supply" class="checkbox-label">Manufacturing & Supply Chain</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="market_expansion">
+                        <input type="checkbox" id="market_expansion" name="support_areas" value="market_expansion">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                            </div>
+                            <label for="market_expansion" class="checkbox-label">Market Expansion & Customer Acquisition</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="product_development">
+                        <input type="checkbox" id="product_development" name="support_areas" value="product_development">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                            </div>
+                            <label for="product_development" class="checkbox-label">Product Development & R&D</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="regulatory_compliance">
+                        <input type="checkbox" id="regulatory_compliance" name="support_areas" value="regulatory_compliance">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                            </div>
+                            <label for="regulatory_compliance" class="checkbox-label">Regulatory & Compliance</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="support_details" class="form-label">
+                    <i class="bi bi-chat-text me-2 text-primary"></i>Support Details
+                </label>
+                <textarea class="form-control" id="support_details" name="support_details" 
+                          placeholder="Tell us more about the specific support you need..." rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="additional_info" class="form-label">
+                    <i class="bi bi-plus-circle me-2 text-primary"></i>Additional Information <span class="text-muted">(optional)</span>
+                </label>
+                <textarea class="form-control" id="additional_info" name="additional_info" 
+                          placeholder="Any additional information about your startup..." rows="3"></textarea>
+            </div>
+
+            <div class="consent-section">
+                <div class="consent-title">
+                    <i class="bi bi-shield-check text-success"></i>
+                    Privacy & Consent
+                </div>
+                <div class="consent-item">
+                    <div class="consent-checkbox">
+                        <input type="checkbox" id="consent_info" name="consent_info" required>
+                        <div class="consent-text">
+                            <strong>Information Updates:</strong> I agree to my personal data being stored and used to receive further information about SEA MaP events and matching opportunities.
+                        </div>
+                    </div>
+                </div>
+                <div class="consent-item">
+                    <div class="consent-checkbox">
+                        <input type="checkbox" id="consent_marketplace" name="consent_marketplace" required>
+                        <div class="consent-text">
+                            <strong>Marketplace Participation:</strong> I consent to sharing my information on the Financing Marketplace for matching purposes, understanding that financial and sensitive details won't be shared without my explicit consent.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Section -->
+    <div class="navigation-section">
+        <button type="button" class="btn btn-outline-secondary" id="backBtn" disabled>
+            <i class="bi bi-arrow-left me-2"></i>Back
+        </button>
+        <div>
+            <button type="button" class="btn btn-primary" id="nextBtn">
+                Continue<i class="bi bi-arrow-right ms-2"></i>
+            </button>
+            <button type="submit" class="btn btn-primary" id="submitBtn" style="display: none;">
+                <i class="bi bi-check-circle me-2"></i>Complete Registration
+            </button>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block modals %}
+<!-- Validation Modal -->
+<div class="modal fade" id="validationModal" tabindex="-1" aria-labelledby="validationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="validationModalLabel">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    Validation Required
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="validationModalBody">
+                <!-- Message will be inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                    <i class="bi bi-check-lg me-2"></i>Got it!
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('onboardingForm');
+    const stepContents = document.querySelectorAll('.step-content');
+    const backBtn = document.getElementById('backBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const progressBar = document.getElementById('progressBar');
+    const validationModal = OnboardingUtils.initValidationModal('validationModal');
+    const validationModalBody = document.getElementById('validationModalBody');
+    const mobileStepIndicator = document.getElementById('mobile-step-indicator');
+    
+    let currentStep = 1;
+    const totalSteps = 3;
+    
+    // Initialize simple checkbox functionality
+    document.querySelectorAll('.checkbox-card').forEach(card => {
+        const checkbox = card.querySelector('input[type="checkbox"]');
+        const icon = card.querySelector('.checkbox-icon');
+        
+        if (checkbox && icon) {
+            // Update initial state
+            if (checkbox.checked) {
+                card.classList.add('selected');
+                icon.innerHTML = '<i class="bi bi-check-lg"></i>';
+            }
+            
+            // Click handler for the entire card
+            card.addEventListener('click', () => {
+                checkbox.checked = !checkbox.checked;
+                if (checkbox.checked) {
+                    card.classList.add('selected');
+                    icon.innerHTML = '<i class="bi bi-check-lg"></i>';
+                } else {
+                    card.classList.remove('selected');
+                    icon.innerHTML = '';
+                }
+            });
+        }
+    });
+    
+    function updateStepIndicators() {
+        for (let i = 1; i <= totalSteps; i++) {
+            const indicator = document.getElementById(`step-${i}-indicator`);
+            const title = document.getElementById(`step-${i}-title`);
+            
+            if (i < currentStep) {
+                indicator.className = 'step-number completed';
+                indicator.innerHTML = '<i class="bi bi-check-lg"></i>';
+                title.className = 'step-title';
+            } else if (i === currentStep) {
+                indicator.className = 'step-number active';
+                indicator.textContent = i;
+                title.className = 'step-title active';
+            } else {
+                indicator.className = 'step-number pending';
+                indicator.textContent = i;
+                title.className = 'step-title';
+            }
+        }
+        
+        // Update connectors
+        for (let i = 1; i < totalSteps; i++) {
+            const connector = document.getElementById(`connector-${i}`);
+            connector.className = i < currentStep ? 'step-connector completed' : 'step-connector';
+        }
+        
+        // Update progress bar
+        const progressWidth = (currentStep / totalSteps) * 100;
+        progressBar.style.width = progressWidth + '%';
+        
+        // Update mobile step indicator
+        if (mobileStepIndicator) {
+            mobileStepIndicator.textContent = `Step ${currentStep} of ${totalSteps}`;
+        }
+        
+        // Update buttons
+        backBtn.disabled = currentStep === 1;
+        if (currentStep === totalSteps) {
+            nextBtn.style.display = 'none';
+            submitBtn.style.display = 'inline-flex';
+        } else {
+            nextBtn.style.display = 'inline-flex';
+            submitBtn.style.display = 'none';
+        }
+    }
+    
+    function showStep(stepNumber) {
+        stepContents.forEach(content => {
+            content.classList.remove('active');
+            if (parseInt(content.dataset.step) === stepNumber) {
+                content.classList.add('active');
+            }
+        });
+        
+        currentStep = stepNumber;
+        updateStepIndicators();
+    }
+    
+    function validateStep(stepNumber) {
+        const currentStepElement = document.querySelector(`[data-step="${stepNumber}"]`);
+        const requiredFields = currentStepElement.querySelectorAll('[required]');
+        let isValid = true;
+        let firstInvalidField = null;
+        
+        // Reset previous errors
+        document.querySelectorAll('.is-invalid').forEach(field => {
+            field.classList.remove('is-invalid');
+        });
+        
+        // Validate required fields
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                isValid = false;
+                field.classList.add('is-invalid');
+                if (!firstInvalidField) firstInvalidField = field;
+            }
+        });
+        
+        // Special validation for URL field (website)
+        if (stepNumber === 1) {
+            const websiteField = document.getElementById('website');
+            if (websiteField && websiteField.value.trim()) {
+                const urlPattern = /^https?:\/\/.+/;
+                if (!urlPattern.test(websiteField.value.trim())) {
+                    isValid = false;
+                    websiteField.classList.add('is-invalid');
+                    if (!firstInvalidField) firstInvalidField = websiteField;
+                    validationModalBody.innerHTML = '<p class="mb-0">Please enter a valid website URL starting with http:// or https://</p>';
+                    validationModal.show();
+                    return false;
+                }
+            }
+        }
+        
+        // Special validations
+        if (stepNumber === 2) {
+            const innovationTypes = currentStepElement.querySelectorAll('input[name="innovation_type"]:checked');
+            if (innovationTypes.length === 0) {
+                isValid = false;
+                validationModalBody.innerHTML = '<p class="mb-0">Please select at least one type of innovation that describes your startup\'s focus area.</p>';
+                validationModal.show();
+                return false;
+            }
+        }
+        
+        if (stepNumber === 3) {
+            const consentInfo = document.getElementById('consent_info');
+            const consentMarketplace = document.getElementById('consent_marketplace');
+            
+            if (!consentInfo.checked || !consentMarketplace.checked) {
+                isValid = false;
+                validationModalBody.innerHTML = '<p class="mb-0">Please accept both privacy consent agreements to complete your registration and join the SEA-MAP platform.</p>';
+                validationModal.show();
+                return false;
+            }
+        }
+        
+        if (!isValid && !firstInvalidField) {
+            validationModalBody.innerHTML = '<p class="mb-0">Please fill in all required fields marked with * before continuing to the next step.</p>';
+            validationModal.show();
+        }
+        
+        // Focus on first invalid field
+        if (firstInvalidField) {
+            firstInvalidField.focus();
+        }
+        
+        return isValid;
+    }
+    
+    // Event listeners
+    nextBtn.addEventListener('click', function() {
+        if (validateStep(currentStep) && currentStep < totalSteps) {
+            showStep(currentStep + 1);
+        }
+    });
+    
+    backBtn.addEventListener('click', function() {
+        if (currentStep > 1) {
+            showStep(currentStep - 1);
+        }
+    });
+    
+    form.addEventListener('submit', function(e) {
+        // Validate all steps before submission
+        let allValid = true;
+        let firstInvalidStep = null;
+        
+        for (let step = 1; step <= totalSteps; step++) {
+            if (!validateStepSilently(step)) {
+                allValid = false;
+                if (!firstInvalidStep) firstInvalidStep = step;
+            }
+        }
+        
+        if (!allValid) {
+            e.preventDefault();
+            // Navigate to first invalid step
+            if (firstInvalidStep && firstInvalidStep !== currentStep) {
+                showStep(firstInvalidStep);
+            }
+            // Validate current step to show errors
+            validateStep(currentStep);
+        }
+    });
+    
+    // Silent validation (doesn't show modal or focus)
+    function validateStepSilently(stepNumber) {
+        const currentStepElement = document.querySelector(`[data-step="${stepNumber}"]`);
+        const requiredFields = currentStepElement.querySelectorAll('[required]');
+        let isValid = true;
+        
+        // Validate required fields
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                isValid = false;
+            }
+        });
+        
+        // Special validation for URL field (website)
+        if (stepNumber === 1) {
+            const websiteField = document.getElementById('website');
+            if (websiteField && websiteField.value.trim()) {
+                const urlPattern = /^https?:\/\/.+/;
+                if (!urlPattern.test(websiteField.value.trim())) {
+                    isValid = false;
+                }
+            }
+        }
+        
+        // Special validations
+        if (stepNumber === 2) {
+            const innovationTypes = currentStepElement.querySelectorAll('input[name="innovation_type"]:checked');
+            if (innovationTypes.length === 0) {
+                isValid = false;
+            }
+        }
+        
+        if (stepNumber === 3) {
+            const consentInfo = document.getElementById('consent_info');
+            const consentMarketplace = document.getElementById('consent_marketplace');
+            
+            if (!consentInfo.checked || !consentMarketplace.checked) {
+                isValid = false;
+            }
+        }
+        
+        return isValid;
+    }
+    
+    // Remove error styling on input
+    document.querySelectorAll('input, select, textarea').forEach(input => {
+        input.addEventListener('input', function() {
+            if (this.classList.contains('is-invalid')) {
+                this.classList.remove('is-invalid');
+            }
+        });
+    });
+    
+    // Initialize
+    updateStepIndicators();
+    
+    // Logo upload functions
+    window.handleLogoUpload = function(input) {
+        const file = input.files[0];
+        const logoPreview = document.getElementById('logoPreview');
+        const logoPlaceholder = document.getElementById('logoPlaceholder');
+        const logoImage = document.getElementById('logoImage');
+        
+        if (file) {
+            // Validate file size (5MB max)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File size must be less than 5MB');
+                input.value = '';
+                return;
+            }
+            
+            // Validate file type
+            if (!file.type.match(/^image\/(png|jpeg|jpg|svg\+xml)$/)) {
+                alert('Please select a PNG, JPG, or SVG file');
+                input.value = '';
+                return;
+            }
+            
+            // Create file reader
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                logoImage.src = e.target.result;
+                logoPreview.style.display = 'block';
+                logoPlaceholder.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+    
+    window.removeLogo = function() {
+        const logoPreview = document.getElementById('logoPreview');
+        const logoPlaceholder = document.getElementById('logoPlaceholder');
+        const logoInput = document.getElementById('company_logo');
+        const logoImage = document.getElementById('logoImage');
+        
+        logoInput.value = '';
+        logoImage.src = '';
+        logoPreview.style.display = 'none';
+        logoPlaceholder.style.display = 'block';
+    };
+});
+</script>
+{% endblock %}
