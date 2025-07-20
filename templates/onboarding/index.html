@@ -96,10 +96,15 @@
         // Handle form submission
         form.addEventListener('submit', function(e) {
             const selectedRole = document.querySelector('input[name="user_role"]:checked');
+            console.log('Form submission triggered. Selected role:', selectedRole ? selectedRole.value : 'none');
             if (!selectedRole) {
+                console.log('No role selected, preventing form submission');
                 e.preventDefault();
                 // You could add a modal here instead of alert for consistency
                 alert('Please select a role to continue.');
+            } else {
+                console.log('Role selected, allowing form to submit:', selectedRole.value);
+                // Allow form to submit normally - don't prevent default
             }
         });
 

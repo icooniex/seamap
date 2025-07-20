@@ -15,12 +15,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from member.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('login/', CustomLoginView.as_view(), name='login'),
+    
+    # Include member app URLs
+    path('', include('member.urls')),
+    
+    # Legacy URLs (keeping for compatibility)
     path('signup/', signup, name='signup'),
     path('dash/', dashboard2, name='dash'),
     path('matchmaking/investors/', investor_matchmaking, name='investor_matchmaking'),
@@ -34,16 +38,11 @@ urlpatterns = [
     path('investor/profile/<int:investor_id>/', investor_profile, name='investor_profile'),
     path('corporate/profile/<int:corporate_id>/', corporate_profile, name='corporate_profile'),
 
-    # Onboarding flow
-    path('onboarding/', onboarding_role_selection, name='onboarding_role_selection'),
-
-    path('onboarding/startup/1', onboarding_startup_step1, name='onboarding_startup_step1'),
-    path('onboarding/startup/2', onboarding_startup_step2, name='onboarding_startup_step2'),
-    path('onboarding/startup/3', onboarding_startup_step3, name='onboarding_startup_step3'),
-    path('onboarding/startup/4', onboarding_startup_step4, name='onboarding_startup_step4'),
-    path('onboarding/startup/5', onboarding_startup_step5, name='onboarding_startup_step5'),
-    path('onboarding/startup/6', onboarding_startup_step6, name='onboarding_startup_step6'),
-    path('onboarding/startup/single', onboarding_startup_single_page, name='onboarding_startup_single_page'),
-    path('onboarding/startup/new', onboarding_startup_new, name='onboarding_startup_new'),
-
+    # path('onboarding/startup/1', onboarding_startup_step1, name='onboarding_startup_step1'),
+    # path('onboarding/startup/2', onboarding_startup_step2, name='onboarding_startup_step2'),
+    # path('onboarding/startup/3', onboarding_startup_step3, name='onboarding_startup_step3'),
+    # path('onboarding/startup/4', onboarding_startup_step4, name='onboarding_startup_step4'),
+    # path('onboarding/startup/5', onboarding_startup_step5, name='onboarding_startup_step5'),
+    # path('onboarding/startup/6', onboarding_startup_step6, name='onboarding_startup_step6'),
+    # path('onboarding/startup/single', onboarding_startup_single_page, name='onboarding_startup_single_page'),
 ]

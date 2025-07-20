@@ -43,7 +43,7 @@
 </div>
 
 <!-- Form Content -->
-<form id="onboardingForm" method="POST" action="{% url 'onboarding_startup_new' %}">
+<form id="onboardingForm" method="POST" action="{% url 'onboarding_startup_new' %}" novalidate>
     {% csrf_token %}
     
     <div class="form-content">
@@ -503,6 +503,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const currentStepElement = document.querySelector(`[data-step="${stepNumber}"]`);
         const requiredFields = currentStepElement.querySelectorAll('[required]');
         let isValid = true;
+        let firstInvalidField = null;
         
         // Reset previous errors
         document.querySelectorAll('.is-invalid').forEach(field => {
@@ -514,8 +515,25 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!field.value.trim()) {
                 isValid = false;
                 field.classList.add('is-invalid');
+                if (!firstInvalidField) firstInvalidField = field;
             }
         });
+        
+        // Special validation for URL field (website)
+        if (stepNumber === 1) {
+            const websiteField = document.getElementById('website');
+            if (websiteField && websiteField.value.trim()) {
+                const urlPattern = /^https?:\/\/.+/;
+                if (!urlPattern.test(websiteField.value.trim())) {
+                    isValid = false;
+                    websiteField.classList.add('is-invalid');
+                    if (!firstInvalidField) firstInvalidField = websiteField;
+                    validationModalBody.innerHTML = '<p class="mb-0">Please enter a valid website URL starting with http:// or https://</p>';
+                    validationModal.show();
+                    return false;
+                }
+            }
+        }
         
         // Special validations
         if (stepNumber === 2) {
@@ -540,9 +558,14 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        if (!isValid) {
+        if (!isValid && !firstInvalidField) {
             validationModalBody.innerHTML = '<p class="mb-0">Please fill in all required fields marked with * before continuing to the next step.</p>';
             validationModal.show();
+        }
+        
+        // Focus on first invalid field
+        if (firstInvalidField) {
+            firstInvalidField.focus();
         }
         
         return isValid;
@@ -562,10 +585,71 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     form.addEventListener('submit', function(e) {
-        if (!validateStep(currentStep)) {
+        // Validate all steps before submission
+        let allValid = true;
+        let firstInvalidStep = null;
+        
+        for (let step = 1; step <= totalSteps; step++) {
+            if (!validateStepSilently(step)) {
+                allValid = false;
+                if (!firstInvalidStep) firstInvalidStep = step;
+            }
+        }
+        
+        if (!allValid) {
             e.preventDefault();
+            // Navigate to first invalid step
+            if (firstInvalidStep && firstInvalidStep !== currentStep) {
+                showStep(firstInvalidStep);
+            }
+            // Validate current step to show errors
+            validateStep(currentStep);
         }
     });
+    
+    // Silent validation (doesn't show modal or focus)
+    function validateStepSilently(stepNumber) {
+        const currentStepElement = document.querySelector(`[data-step="${stepNumber}"]`);
+        const requiredFields = currentStepElement.querySelectorAll('[required]');
+        let isValid = true;
+        
+        // Validate required fields
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                isValid = false;
+            }
+        });
+        
+        // Special validation for URL field (website)
+        if (stepNumber === 1) {
+            const websiteField = document.getElementById('website');
+            if (websiteField && websiteField.value.trim()) {
+                const urlPattern = /^https?:\/\/.+/;
+                if (!urlPattern.test(websiteField.value.trim())) {
+                    isValid = false;
+                }
+            }
+        }
+        
+        // Special validations
+        if (stepNumber === 2) {
+            const innovationTypes = currentStepElement.querySelectorAll('input[name="innovation_type"]:checked');
+            if (innovationTypes.length === 0) {
+                isValid = false;
+            }
+        }
+        
+        if (stepNumber === 3) {
+            const consentInfo = document.getElementById('consent_info');
+            const consentMarketplace = document.getElementById('consent_marketplace');
+            
+            if (!consentInfo.checked || !consentMarketplace.checked) {
+                isValid = false;
+            }
+        }
+        
+        return isValid;
+    }
     
     // Remove error styling on input
     document.querySelectorAll('input, select, textarea').forEach(input => {

@@ -3,10 +3,64 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django import forms
 from django.contrib.auth.views import LoginView
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.views.decorators.http import require_http_methods
+from django.http import JsonResponse
+from .models import Member
+import json
+from django.views import View
 
 
 class CustomLoginView(LoginView):
     template_name = 'member/login.html'
+
+class OnboardingRoleSelectionView(View):
+    """First step: Role selection page using Django class-based view"""
+    def get(self, request):
+        return render(request, 'onboarding/index.html')
+
+    def post(self, request):
+        user_role = request.POST.get('user_role')
+        if not user_role:
+            messages.error(request, 'Please select a role.')
+            return render(request, 'onboarding/index.html')
+        if user_role not in ['startup', 'investor', 'corporate']:
+            messages.error(request, 'Please select a valid role.')
+            return render(request, 'onboarding/index.html')
+        request.session['selected_role'] = user_role
+        if user_role == 'startup':
+            return redirect('onboarding_startup_new')
+        elif user_role == 'investor':
+            return redirect('onboarding_investor')
+        elif user_role == 'corporate':
+            return redirect('onboarding_corporate')
+        messages.error(request, 'Unknown role selected.')
+        return render(request, 'onboarding/index.html')
+
+@login_required
+def dashboard(request):
+    """Dashboard after successful onboarding"""
+    try:
+        member = Member.objects.get(user=request.user)
+    except Member.DoesNotExist:
+        messages.error(request, 'Member profile not found. Please complete onboarding.')
+        return redirect('onboarding_role_selection')
+    
+    context = {
+        'member': member,
+    }
+    return render(request, 'onboarding_dashboard.html', context)
+
+def onboarding_investor(request):
+    """Placeholder for investor onboarding"""
+    messages.info(request, 'Investor onboarding coming soon!')
+    return redirect('onboarding_role_selection')
+
+def onboarding_corporate(request):
+    """Placeholder for corporate onboarding"""
+    messages.info(request, 'Corporate onboarding coming soon!')
+    return redirect('onboarding_role_selection')
 
 class SignUpForm(forms.ModelForm):
     full_name = forms.CharField(max_length=150, label='Full Name')
@@ -899,6 +953,7 @@ import os
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.conf import settings
+from django.views import View
 
 def onboarding_startup_step3(request):
     """Handle startup onboarding step 3 - file uploads"""
@@ -999,40 +1054,79 @@ def onboarding_startup_single_page(request):
 
 def onboarding_startup_new(request):
     """New enhanced startup onboarding page"""
+    # Check if role was selected
+    if 'selected_role' not in request.session or request.session.get('selected_role') != 'startup':
+        messages.warning(request, 'Please select your role first.')
+        return redirect('onboarding_role_selection')
+    
     if request.method == 'POST':
-        # Process all form data from the enhanced form
-        step1_data = {
-            'company_name': request.POST.get('company_name'),
-            'website': request.POST.get('website'),
-            'founded_year': request.POST.get('founded_year'),
-            'team_size': request.POST.get('team_size'),
-            'primary_location': request.POST.get('primary_location'),
-            'company_description': request.POST.get('company_description'),
-        }
-        
-        step2_data = {
-            'innovation_type': request.POST.getlist('innovation_type'),
-            'solution_description': request.POST.get('solution_description'),
-            'current_stage': request.POST.get('current_stage'),
-            'funding_needed': request.POST.get('funding_needed'),
-        }
-        
-        step3_data = {
-            'support_areas': request.POST.getlist('support_areas'),
-            'support_details': request.POST.get('support_details'),
-            'additional_info': request.POST.get('additional_info'),
-            'consent_info': request.POST.get('consent_info') == 'on',
-            'consent_marketplace': request.POST.get('consent_marketplace') == 'on',
-        }
-        
-        # Store in session
-        request.session['startup_onboarding_new'] = {
-            'step1': step1_data,
-            'step2': step2_data,
-            'step3': step3_data,
-        }
-        
-        # Redirect to success page or dashboard
-        return redirect('dashboard')
+        try:
+            # Get or create user (for now, we'll create a temporary user)
+            username = request.POST.get('company_name', '').lower().replace(' ', '_')
+            if not username:
+                username = f"startup_{request.session.session_key[:8]}"
+            
+            # Create or get user
+            user, created = User.objects.get_or_create(
+                username=username,
+                defaults={
+                    'first_name': 'Startup',
+                    'last_name': 'User',
+                }
+            )
+            
+            # Handle multiple selections for innovation_type and support_areas
+            innovation_types = request.POST.getlist('innovation_type')
+            support_areas = request.POST.getlist('support_areas')
+            
+            # Create or update member profile
+            member, member_created = Member.objects.get_or_create(
+                user=user,
+                defaults={
+                    'user_type': 'startup'
+                }
+            )
+            
+            # Update member fields
+            member.user_type = 'startup'
+            member.company_name = request.POST.get('company_name', '')
+            member.website = request.POST.get('website', '') or None
+            member.founded_year = int(request.POST.get('founded_year')) if request.POST.get('founded_year') else None
+            member.team_size = request.POST.get('team_size', '')
+            member.primary_location = request.POST.get('primary_location', '')
+            member.company_description = request.POST.get('company_description', '')
+            
+            # Innovation information
+            member.innovation_types = innovation_types
+            member.solution_description = request.POST.get('solution_description', '')
+            member.current_stage = request.POST.get('current_stage', '')
+            member.funding_needed = request.POST.get('funding_needed', '')
+            
+            # Support information
+            member.support_areas = support_areas
+            member.support_details = request.POST.get('support_details', '')
+            member.additional_info = request.POST.get('additional_info', '')
+            
+            # Consent
+            member.consent_info = request.POST.get('consent_info') == 'on'
+            member.consent_marketplace = request.POST.get('consent_marketplace') == 'on'
+            
+            # Mark onboarding as completed
+            member.onboarding_completed = True
+            member.save()
+            
+            # Login the user
+            login(request, user)
+            
+            # Clear session
+            if 'selected_role' in request.session:
+                del request.session['selected_role']
+            
+            messages.success(request, f'Welcome to SEA-MAP, {member.company_name}! Your startup registration is complete.')
+            return redirect('dashboard')
+            
+        except Exception as e:
+            messages.error(request, f'An error occurred during registration: {str(e)}')
+            return render(request, 'onboarding/startup_onboarding_new.html')
     
     return render(request, 'onboarding/startup_onboarding_new.html')
