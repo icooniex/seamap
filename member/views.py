@@ -110,8 +110,13 @@ def dashboard(request):
 
 def onboarding_investor(request):
     """Placeholder for investor onboarding"""
-    messages.info(request, 'Investor onboarding coming soon!')
-    return redirect('onboarding_role_selection')
+    # messages.info(request, 'Investor onboarding coming soon!')
+    # return redirect('onboarding_role_selection')
+    context = {
+        'message': 'Investor onboarding coming soon!'
+    }
+
+    return render(request, 'onboarding/investor_onboarding.html', context)
 
 def onboarding_corporate(request):
     """Placeholder for corporate onboarding"""
