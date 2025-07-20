@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
-from .models import Member
+from .models import Member, Company
 import json
 from django.views import View
 
@@ -37,14 +37,19 @@ def dashboard(request):
     """Dashboard after successful onboarding"""
     try:
         member = Member.objects.get(user=request.user)
+        # Get user's companies
+        companies = Company.objects.filter(member=member)
+        primary_company = companies.filter(is_primary=True).first()
     except Member.DoesNotExist:
         messages.error(request, 'Member profile not found. Please complete onboarding.')
         return redirect('onboarding_role_selection')
     
     context = {
         'member': member,
+        'companies': companies,
+        'primary_company': primary_company,
     }
-    return render(request, 'onboarding_dashboard.html', context)
+    return render(request, 'dashboard.html', context)
 
 def onboarding_investor(request):
     """Placeholder for investor onboarding"""
@@ -57,18 +62,20 @@ def onboarding_corporate(request):
     return redirect('onboarding_role_selection')
 
 class SignUpForm(forms.ModelForm):
-    full_name = forms.CharField(max_length=150, label='Full Name')
+    first_name = forms.CharField(max_length=150, label='First Name')
+    last_name = forms.CharField(max_length=150, label='Last Name')
     password = forms.CharField(widget=forms.PasswordInput, min_length=8)
 
     class Meta:
         model = User
-        fields = ['full_name', 'email', 'password']
+        fields = ['first_name', 'last_name', 'email', 'password']
 
     def save(self, commit=True):
         user = super().save(commit=False)
         user.username = self.cleaned_data['email']
         user.set_password(self.cleaned_data['password'])
-        user.first_name = self.cleaned_data['full_name']
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
         user.email = self.cleaned_data['email']
         if commit:
             user.save()
@@ -76,12 +83,23 @@ class SignUpForm(forms.ModelForm):
 
 def signup(request):
     if request.method == 'POST':
+        print(f"POST data received: {request.POST}")  # Debug print
         form = SignUpForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)
-            # Redirect to role selection instead of dashboard
-            return redirect('onboarding_role_selection')
+            try:
+                user = form.save()
+                login(request, user)
+                messages.success(request, f'Account created successfully for {user.get_full_name()}!')
+                # Redirect to role selection instead of dashboard
+                return redirect('onboarding_role_selection')
+            except Exception as e:
+                messages.error(request, f'Error creating account: {str(e)}')
+        else:
+            # Add form errors to messages for debugging
+            print(f"Form errors: {form.errors}")  # Debug print
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f'{field}: {error}')
     else:
         form = SignUpForm()
     return render(request, 'member/signup.html', {'form': form})
@@ -1071,12 +1089,13 @@ def onboarding_user_profile(request):
             member.phone_number = request.POST.get('phone_number', '')
             member.linkedin_url = request.POST.get('linkedin_url', '')
             member.user_type = selected_role
+            member.profile_completed = True  # Mark profile as completed
             
             member.save()
             
             messages.success(request, 'Profile updated successfully!')
             
-            # Redirect to role-specific onboarding
+            # Redirect to role-specific onboarding (company setup)
             if selected_role == 'startup':
                 return redirect('onboarding_startup_new')
             elif selected_role == 'investor':
@@ -1100,86 +1119,75 @@ def onboarding_user_profile(request):
     
     return render(request, 'onboarding/user_profile.html', context)
 
+@login_required
 def onboarding_startup_new(request):
-    """New enhanced startup onboarding page"""
-    # Check if role was selected
-    if 'selected_role' not in request.session or request.session.get('selected_role') != 'startup':
-        messages.warning(request, 'Please select your role first.')
+    """New enhanced startup onboarding page - Company profile setup"""
+    # Check if user has completed profile setup
+    try:
+        member = Member.objects.get(user=request.user)
+        if not member.profile_completed:
+            messages.warning(request, 'Please complete your profile first.')
+            return redirect('onboarding_user_profile')
+    except Member.DoesNotExist:
+        messages.warning(request, 'Please complete your profile first.')
+        return redirect('onboarding_role_selection')
+    
+    # Check if role was selected and is startup
+    if member.user_type != 'startup':
+        messages.warning(request, 'This onboarding is for startups only.')
         return redirect('onboarding_role_selection')
     
     if request.method == 'POST':
         try:
-            # Get or create user (for now, we'll create a temporary user)
-            username = request.POST.get('company_name', '').lower().replace(' ', '_')
-            if not username:
-                username = f"startup_{request.session.session_key[:8]}"
-            
-            # Create or get user
-            user, created = User.objects.get_or_create(
-                username=username,
-                defaults={
-                    'first_name': 'Startup',
-                    'last_name': 'User',
-                }
-            )
-            
             # Handle multiple selections for innovation_type and support_areas
             innovation_types = request.POST.getlist('innovation_type')
             support_areas = request.POST.getlist('support_areas')
             
-            # Create or update member profile
-            member, member_created = Member.objects.get_or_create(
-                user=user,
-                defaults={
-                    'user_type': 'startup'
-                }
+            # Create new company profile
+            company = Company.objects.create(
+                member=member,
+                company_name=request.POST.get('company_name', ''),
+                website=request.POST.get('website', '') or None,
+                founded_year=int(request.POST.get('founded_year')) if request.POST.get('founded_year') else None,
+                team_size=request.POST.get('team_size', ''),
+                primary_location=request.POST.get('primary_location', ''),
+                company_description=request.POST.get('company_description', ''),
+                # Innovation information
+                innovation_types=innovation_types,
+                solution_description=request.POST.get('solution_description', ''),
+                current_stage=request.POST.get('current_stage', ''),
+                funding_needed=request.POST.get('funding_needed', ''),
+                # Support information
+                support_areas=support_areas,
+                support_details=request.POST.get('support_details', ''),
+                additional_info=request.POST.get('additional_info', ''),
+                # Set as primary company
+                is_primary=True
             )
-            
-            # Update member fields
-            member.user_type = 'startup'
-            member.company_name = request.POST.get('company_name', '')
             
             # Handle company logo upload
             if 'company_logo' in request.FILES:
-                member.company_logo = request.FILES['company_logo']
-                
-            member.website = request.POST.get('website', '') or None
-            member.founded_year = int(request.POST.get('founded_year')) if request.POST.get('founded_year') else None
-            member.team_size = request.POST.get('team_size', '')
-            member.primary_location = request.POST.get('primary_location', '')
-            member.company_description = request.POST.get('company_description', '')
+                company.company_logo = request.FILES['company_logo']
+                company.save()
             
-            # Innovation information
-            member.innovation_types = innovation_types
-            member.solution_description = request.POST.get('solution_description', '')
-            member.current_stage = request.POST.get('current_stage', '')
-            member.funding_needed = request.POST.get('funding_needed', '')
-            
-            # Support information
-            member.support_areas = support_areas
-            member.support_details = request.POST.get('support_details', '')
-            member.additional_info = request.POST.get('additional_info', '')
-            
-            # Consent
+            # Update member consent and onboarding status
             member.consent_info = request.POST.get('consent_info') == 'on'
             member.consent_marketplace = request.POST.get('consent_marketplace') == 'on'
-            
-            # Mark onboarding as completed
             member.onboarding_completed = True
             member.save()
-            
-            # Login the user
-            login(request, user)
             
             # Clear session
             if 'selected_role' in request.session:
                 del request.session['selected_role']
             
-            messages.success(request, f'Welcome to SEA-MAP, {member.company_name}! Your startup registration is complete.')
+            messages.success(request, f'Welcome to SEA-MAP, {company.company_name}! Your startup registration is complete.')
             return redirect('dashboard')
             
         except Exception as e:
             messages.error(request, f'An error occurred during registration: {str(e)}')
-            return render(request, 'onboarding/startup_onboarding_new.html')
+            return render(request, 'onboarding/startup_onboarding_new.html', {'member': member})
     
-    return render(request, 'onboarding/startup_onboarding_new.html')
+    context = {
+        'member': member,
+    }
+    return render(request, 'onboarding/startup_onboarding_new.html', context)

@@ -53,19 +53,43 @@ FUNDING_NEEDED_CHOICES = [
 ]
 
 class Member(models.Model):
+    """User Profile Model - stores individual user information"""
     # Basic user information
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     user_type = models.CharField(max_length=20, choices=USER_TYPE_CHOICES)
     
-    # User Profile Information (New Step)
+    # User Profile Information
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
     job_position = models.CharField(max_length=255, blank=True)
     short_bio = models.TextField(max_length=500, blank=True)
     phone_number = models.CharField(max_length=20, blank=True)
     linkedin_url = models.URLField(blank=True, null=True)
     
-    # Company Information (Step 1)
-    company_name = models.CharField(max_length=255, blank=True)
+    # Consent fields
+    consent_info = models.BooleanField(default=False)
+    consent_marketplace = models.BooleanField(default=False)
+    
+    # Registration tracking
+    profile_completed = models.BooleanField(default=False)
+    onboarding_completed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.get_full_name() or self.user.username} ({self.get_user_type_display()})"
+
+    class Meta:
+        verbose_name = "Member Profile"
+        verbose_name_plural = "Member Profiles"
+
+
+class Company(models.Model):
+    """Company/Organization Profile Model - stores company/organization information"""
+    # Link to member (founder/representative)
+    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='companies')
+    
+    # Basic Company Information (Step 1)
+    company_name = models.CharField(max_length=255)
     company_logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
     website = models.URLField(blank=True, null=True)
     founded_year = models.IntegerField(blank=True, null=True)
@@ -73,7 +97,7 @@ class Member(models.Model):
     primary_location = models.CharField(max_length=50, choices=LOCATION_CHOICES, blank=True)
     company_description = models.TextField(blank=True)
     
-    # Innovation Information (Step 2)
+    # Innovation Information (Step 2) - Mainly for startups
     innovation_types = models.JSONField(default=list, blank=True)  # Store multiple selections
     solution_description = models.TextField(blank=True)
     current_stage = models.CharField(max_length=20, choices=CURRENT_STAGE_CHOICES, blank=True)
@@ -84,17 +108,14 @@ class Member(models.Model):
     support_details = models.TextField(blank=True)
     additional_info = models.TextField(blank=True)
     
-    # Consent fields
-    consent_info = models.BooleanField(default=False)
-    consent_marketplace = models.BooleanField(default=False)
-    
-    # Registration tracking
-    onboarding_completed = models.BooleanField(default=False)
+    # Company Status
+    is_primary = models.BooleanField(default=True)  # User's main company
+    is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.user.username} ({self.user_type}) - {self.company_name}"
+        return f"{self.company_name} (by {self.member.user.get_full_name() or self.member.user.username})"
 
     def get_innovation_types_display(self):
         """Return human-readable innovation types"""
@@ -122,6 +143,12 @@ class Member(models.Model):
         }
         return [area_mapping.get(a, a) for a in self.support_areas]
 
+    class Meta:
+        verbose_name = "Company Profile"
+        verbose_name_plural = "Company Profiles"
+        unique_together = ['member', 'company_name']  # Prevent duplicate company names per member
+
+
 class MemberDocument(models.Model):
     member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='documents')
     name = models.CharField(max_length=255)
@@ -131,3 +158,19 @@ class MemberDocument(models.Model):
 
     def __str__(self):
         return f"{self.name} for {self.member.user.username}"
+
+
+class CompanyDocument(models.Model):
+    """Documents related to a specific company"""
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='documents')
+    name = models.CharField(max_length=255)
+    file = models.FileField(upload_to='company_documents/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    document_type = models.CharField(max_length=50, blank=True)  # e.g., 'pitch_deck', 'business_plan'
+
+    def __str__(self):
+        return f"{self.name} for {self.company.company_name}"
+
+    class Meta:
+        verbose_name = "Company Document"
+        verbose_name_plural = "Company Documents"
