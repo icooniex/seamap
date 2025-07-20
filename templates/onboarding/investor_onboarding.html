@@ -1,90 +1,17 @@
 {% extends 'onboarding/onboarding_base.html' %}
 {% load static %}
 
-{% block title %}Startup Onboarding - SEA-MAP{% endblock %}
+{% block title %}Investor Onboarding - SEA-MAP{% endblock %}
 
 {% block extra_css %}
-<style>
-.logo-upload-container {
-    border: 2px dashed #dee2e6;
-    border-radius: 12px;
-    padding: 2rem;
-    text-align: center;
-    background: #f8f9fa;
-    transition: all 0.3s ease;
-    position: relative;
-    min-height: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.logo-upload-container:hover {
-    border-color: #0d6efd;
-    background: #e7f3ff;
-}
-
-.logo-upload-placeholder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-}
-
-.upload-icon {
-    font-size: 3rem;
-    color: #6c757d;
-    margin-bottom: 0.5rem;
-}
-
-.logo-upload-container:hover .upload-icon {
-    color: #0d6efd;
-}
-
-.upload-text p {
-    margin-bottom: 0.25rem;
-}
-
-.logo-preview {
-    position: relative;
-    max-width: 200px;
-    margin: 0 auto;
-}
-
-.logo-image {
-    max-width: 100%;
-    max-height: 150px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-.logo-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    border-radius: 8px;
-}
-
-.logo-preview:hover .logo-overlay {
-    opacity: 1;
-}
-</style>
 {% endblock %}
 
 {% block header_content %}
 <div class="logo-icon small">
-    <i class="bi bi-rocket-takeoff"></i>
+    <i class="bi bi-cash-stack"></i>
 </div>
 <h1 class="onboarding-title">Investor Registration</h1>
-<p class="onboarding-subtitle">Join our community of innovative startups tackling marine plastic pollution</p>
+<p class="onboarding-subtitle">Join our community of investors supporting solutions to marine plastic pollution</p>
 {% endblock %}
 
 {% block mobile_breadcrumb %}
@@ -119,28 +46,28 @@
 </div>
 
 <!-- Form Content -->
-<form id="onboardingForm" method="POST" action="{% url 'onboarding_startup_new' %}" enctype="multipart/form-data" novalidate>
+<form id="onboardingForm" method="POST" action="{% url 'onboarding_investor' %}" enctype="multipart/form-data" novalidate>
     {% csrf_token %}
     
     <div class="form-content">
         <!-- Step 1: Company Information -->
         <div class="step-content active" data-step="1">
-            <h2 class="form-title">Tell us about your company</h2>
-            <p class="form-subtitle">Help us understand your startup's foundation and mission</p>
+            <h2 class="form-title">Tell us about your organization</h2>
+            <p class="form-subtitle">Help us understand your investment organization and focus areas</p>
             
             <div class="form-group">
                 <label for="company_name" class="form-label">
                     <i class="bi bi-building me-2 text-primary"></i>Company Name *
                 </label>
                 <input type="text" class="form-control" id="company_name" name="company_name" 
-                       placeholder="Enter your company or project name">
+                       placeholder="Enter your company or project name" required>
             </div>
 
             <div class="form-group">
                 <label for="investor_type" class="form-label">
                     <i class="bi bi-person-badge me-2 text-primary"></i>Type of Investor *
                 </label>
-                <select class="form-select" id="investor_type" name="investor_type">
+                <select class="form-select" id="investor_type" name="investor_type" required>
                     <option value="">Select investor type</option>
                     <option value="angel">🦸 Angel Investor</option>
                     <option value="vc">💼 Venture Capital (VC)</option>
@@ -212,7 +139,7 @@
                         <label for="team_size" class="form-label">
                             <i class="bi bi-people me-2 text-primary"></i>Team Size *
                         </label>
-                        <select class="form-select" id="team_size" name="team_size">
+                        <select class="form-select" id="team_size" name="team_size" required>
                             <option value="">Select team size</option>
                             <option value="1">1 person (Solo founder)</option>
                             <option value="2-5">2-5 people</option>
@@ -229,7 +156,7 @@
                         <label for="primary_location" class="form-label">
                             <i class="bi bi-geo-alt me-2 text-primary"></i>Primary Location *
                         </label>
-                        <select class="form-select" id="primary_location" name="primary_location">
+                        <select class="form-select" id="primary_location" name="primary_location" required>
                             <option value="">Select your country</option>
                             <option value="Singapore">🇸🇬 Singapore</option>
                             <option value="Indonesia">🇮🇩 Indonesia</option>
@@ -258,8 +185,8 @@
 
         <!-- Step 2: Investment Information -->
         <div class="step-content" data-step="2">
-            <h2 class="form-title">About your investment</h2>
-            <p class="form-subtitle">Share details about your solution and impact on marine plastic pollution</p>
+            <h2 class="form-title">About your investment approach</h2>
+            <p class="form-subtitle">Share details about your investment criteria and focus on marine plastic solutions</p>
 
             <div class="row">
                 <div class="col-md-6">
@@ -306,7 +233,7 @@
                 </label>
                 <div class="checkbox-grid">
                     <div class="checkbox-card" data-checkbox="pre_seed">
-                        <input type="checkbox" id="pre_seed" name="funding_stage" value="pre_seed" required>
+                        <input type="checkbox" id="pre_seed" name="funding_stage" value="pre_seed" data-required-group="funding_stage">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon"></div>
                             <label for="pre_seed" class="checkbox-label">Pre-Seed</label>
@@ -524,7 +451,7 @@
                     <i class="bi bi-plus-circle me-2 text-primary"></i>Additional Information <span class="text-muted">(optional)</span>
                 </label>
                 <textarea class="form-control" id="additional_info" name="additional_info" 
-                          placeholder="Any additional information about your startup..." rows="3"></textarea>
+                          placeholder="Any additional information about your organization or investment approach..." rows="3"></textarea>
             </div>
 
             <div class="consent-section">
@@ -596,312 +523,473 @@
 
 {% block extra_js %}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('onboardingForm');
-    const stepContents = document.querySelectorAll('.step-content');
-    const backBtn = document.getElementById('backBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const submitBtn = document.getElementById('submitBtn');
-    const progressBar = document.getElementById('progressBar');
-    const validationModal = OnboardingUtils.initValidationModal('validationModal');
-    const validationModalBody = document.getElementById('validationModalBody');
-    const mobileStepIndicator = document.getElementById('mobile-step-indicator');
+// INDEPENDENT INVESTOR ONBOARDING SCRIPT
+// Complete step flow and form validation for investor onboarding
+(function() {
+    'use strict';
     
-    let currentStep = 1;
-    const totalSteps = 3;
-    
-    // Initialize simple checkbox functionality
-    document.querySelectorAll('.checkbox-card').forEach(card => {
-        const checkbox = card.querySelector('input[type="checkbox"]');
-        const icon = card.querySelector('.checkbox-icon');
+    // Wait for DOM to be ready
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Initializing investor onboarding...');
         
-        if (checkbox && icon) {
-            // Update initial state
+        // Get all required elements
+        const form = document.getElementById('onboardingForm');
+        const stepContents = document.querySelectorAll('.step-content');
+        const backBtn = document.getElementById('backBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const progressBar = document.getElementById('progressBar');
+        const mobileStepIndicator = document.getElementById('mobile-step-indicator');
+        const validationModalElement = document.getElementById('validationModal');
+        const validationModalBody = document.getElementById('validationModalBody');
+        
+        if (!form || !stepContents.length || !backBtn || !nextBtn || !submitBtn || !progressBar || !validationModalElement) {
+            console.error('Required elements not found');
+            return;
+        }
+        
+        // Initialize Bootstrap Modal
+        let validationModal;
+        try {
+            validationModal = new window.bootstrap.Modal(validationModalElement);
+        } catch (e) {
+            console.warn('Bootstrap Modal not available, using fallback');
+            validationModal = {
+                show: function() {
+                    const message = validationModalBody.textContent || validationModalBody.innerHTML;
+                    alert(message.replace(/<[^>]*>/g, ''));
+                }
+            };
+        }
+        
+        let currentStep = 1;
+        const totalSteps = 3;
+        
+        // Initialize all components
+        initializeCheckboxCards();
+        initializeFileUpload();
+        initializeFormValidation();
+        setupEventListeners();
+        updateStepIndicators();
+        
+        function initializeCheckboxCards() {
+            document.querySelectorAll('.checkbox-card').forEach(card => {
+                const checkbox = card.querySelector('input[type="checkbox"]');
+                const icon = card.querySelector('.checkbox-icon');
+                
+                if (!checkbox || !icon) return;
+                
+                // Set initial state
+                updateCheckboxCard(card, checkbox, icon);
+                
+                // Add click handler for entire card
+                card.addEventListener('click', function(e) {
+                    // Prevent double-toggle if clicking directly on checkbox
+                    if (e.target === checkbox) return;
+                    
+                    checkbox.checked = !checkbox.checked;
+                    updateCheckboxCard(card, checkbox, icon);
+                    clearCheckboxGroupError(checkbox);
+                });
+                
+                // Handle direct checkbox clicks
+                checkbox.addEventListener('change', function() {
+                    updateCheckboxCard(card, checkbox, icon);
+                    clearCheckboxGroupError(checkbox);
+                });
+            });
+        }
+        
+        function updateCheckboxCard(card, checkbox, icon) {
             if (checkbox.checked) {
                 card.classList.add('selected');
                 icon.innerHTML = '<i class="bi bi-check-lg"></i>';
+            } else {
+                card.classList.remove('selected');
+                icon.innerHTML = '';
             }
+        }
+        
+        function clearCheckboxGroupError(checkbox) {
+            const checkboxGrid = checkbox.closest('.checkbox-grid');
+            if (checkboxGrid && checkboxGrid.classList.contains('is-invalid')) {
+                const groupName = checkbox.name;
+                const checkedBoxes = checkboxGrid.querySelectorAll(`input[name="${groupName}"]:checked`);
+                if (checkedBoxes.length > 0) {
+                    checkboxGrid.classList.remove('is-invalid');
+                }
+            }
+        }
+        
+        function initializeFileUpload() {
+            // Global function for logo upload
+            window.handleLogoUpload = function(input) {
+                const file = input.files[0];
+                if (!file) return;
+                
+                // Validate file size (5MB max)
+                if (file.size > 5 * 1024 * 1024) {
+                    showMessage('File size must be less than 5MB');
+                    input.value = '';
+                    return;
+                }
+                
+                // Validate file type
+                if (!file.type.match(/^image\/(png|jpeg|jpg|svg\+xml)$/)) {
+                    showMessage('Please select a PNG, JPG, or SVG file');
+                    input.value = '';
+                    return;
+                }
+                
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const logoImage = document.getElementById('logoImage');
+                    const logoPreview = document.getElementById('logoPreview');
+                    const logoPlaceholder = document.getElementById('logoPlaceholder');
+                    
+                    if (logoImage && logoPreview && logoPlaceholder) {
+                        logoImage.src = e.target.result;
+                        logoPreview.style.display = 'block';
+                        logoPlaceholder.style.display = 'none';
+                    }
+                };
+                reader.readAsDataURL(file);
+            };
             
-            // Click handler for the entire card
-            card.addEventListener('click', () => {
-                checkbox.checked = !checkbox.checked;
-                if (checkbox.checked) {
-                    card.classList.add('selected');
-                    icon.innerHTML = '<i class="bi bi-check-lg"></i>';
-                } else {
-                    card.classList.remove('selected');
-                    icon.innerHTML = '';
+            // Global function to remove logo
+            window.removeLogo = function() {
+                const logoPreview = document.getElementById('logoPreview');
+                const logoPlaceholder = document.getElementById('logoPlaceholder');
+                const logoInput = document.getElementById('company_logo');
+                const logoImage = document.getElementById('logoImage');
+                
+                if (logoInput) logoInput.value = '';
+                if (logoImage) logoImage.src = '';
+                if (logoPreview) logoPreview.style.display = 'none';
+                if (logoPlaceholder) logoPlaceholder.style.display = 'block';
+            };
+        }
+        
+        function initializeFormValidation() {
+            // Clear error styling on input
+            document.querySelectorAll('input, select, textarea').forEach(input => {
+                input.addEventListener('input', function() {
+                    if (this.classList.contains('is-invalid')) {
+                        this.classList.remove('is-invalid');
+                    }
+                });
+                
+                input.addEventListener('change', function() {
+                    if (this.classList.contains('is-invalid')) {
+                        this.classList.remove('is-invalid');
+                    }
+                });
+            });
+        }
+        
+        function setupEventListeners() {
+            nextBtn.addEventListener('click', function() {
+                if (validateStep(currentStep)) {
+                    if (currentStep < totalSteps) {
+                        showStep(currentStep + 1);
+                    }
+                }
+            });
+            
+            backBtn.addEventListener('click', function() {
+                if (currentStep > 1) {
+                    showStep(currentStep - 1);
+                }
+            });
+            
+            form.addEventListener('submit', function(e) {
+                let allValid = true;
+                let firstInvalidStep = null;
+                
+                // Validate all steps before submission
+                for (let step = 1; step <= totalSteps; step++) {
+                    if (!validateStepSilently(step)) {
+                        allValid = false;
+                        if (!firstInvalidStep) firstInvalidStep = step;
+                    }
+                }
+                
+                if (!allValid) {
+                    e.preventDefault();
+                    
+                    // Navigate to first invalid step
+                    if (firstInvalidStep && firstInvalidStep !== currentStep) {
+                        showStep(firstInvalidStep);
+                    }
+                    
+                    // Show validation errors for current step
+                    validateStep(currentStep);
                 }
             });
         }
-    });
-    
-    function updateStepIndicators() {
-        for (let i = 1; i <= totalSteps; i++) {
-            const indicator = document.getElementById(`step-${i}-indicator`);
-            const title = document.getElementById(`step-${i}-title`);
+        
+        function updateStepIndicators() {
+            // Update step number indicators
+            for (let i = 1; i <= totalSteps; i++) {
+                const indicator = document.getElementById(`step-${i}-indicator`);
+                const title = document.getElementById(`step-${i}-title`);
+                
+                if (!indicator || !title) continue;
+                
+                if (i < currentStep) {
+                    // Completed step
+                    indicator.className = 'step-number completed';
+                    indicator.innerHTML = '<i class="bi bi-check-lg"></i>';
+                    title.className = 'step-title';
+                } else if (i === currentStep) {
+                    // Current active step
+                    indicator.className = 'step-number active';
+                    indicator.textContent = i;
+                    title.className = 'step-title active';
+                } else {
+                    // Future pending step
+                    indicator.className = 'step-number pending';
+                    indicator.textContent = i;
+                    title.className = 'step-title';
+                }
+            }
             
-            if (i < currentStep) {
-                indicator.className = 'step-number completed';
-                indicator.innerHTML = '<i class="bi bi-check-lg"></i>';
-                title.className = 'step-title';
-            } else if (i === currentStep) {
-                indicator.className = 'step-number active';
-                indicator.textContent = i;
-                title.className = 'step-title active';
+            // Update connector lines
+            for (let i = 1; i < totalSteps; i++) {
+                const connector = document.getElementById(`connector-${i}`);
+                if (connector) {
+                    connector.className = i < currentStep ? 'step-connector completed' : 'step-connector';
+                }
+            }
+            
+            // Update progress bar
+            const progressWidth = (currentStep / totalSteps) * 100;
+            progressBar.style.width = progressWidth + '%';
+            
+            // Update mobile step indicator
+            if (mobileStepIndicator) {
+                mobileStepIndicator.textContent = `Step ${currentStep} of ${totalSteps}`;
+            }
+            
+            // Update navigation buttons
+            backBtn.disabled = currentStep === 1;
+            if (currentStep === totalSteps) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'inline-flex';
             } else {
-                indicator.className = 'step-number pending';
-                indicator.textContent = i;
-                title.className = 'step-title';
+                nextBtn.style.display = 'inline-flex';
+                submitBtn.style.display = 'none';
             }
         }
         
-        // Update connectors
-        for (let i = 1; i < totalSteps; i++) {
-            const connector = document.getElementById(`connector-${i}`);
-            connector.className = i < currentStep ? 'step-connector completed' : 'step-connector';
-        }
-        
-        // Update progress bar
-        const progressWidth = (currentStep / totalSteps) * 100;
-        progressBar.style.width = progressWidth + '%';
-        
-        // Update mobile step indicator
-        if (mobileStepIndicator) {
-            mobileStepIndicator.textContent = `Step ${currentStep} of ${totalSteps}`;
-        }
-        
-        // Update buttons
-        backBtn.disabled = currentStep === 1;
-        if (currentStep === totalSteps) {
-            nextBtn.style.display = 'none';
-            submitBtn.style.display = 'inline-flex';
-        } else {
-            nextBtn.style.display = 'inline-flex';
-            submitBtn.style.display = 'none';
-        }
-    }
-    
-    function showStep(stepNumber) {
-        stepContents.forEach(content => {
-            content.classList.remove('active');
-            if (parseInt(content.dataset.step) === stepNumber) {
-                content.classList.add('active');
+        function showStep(stepNumber) {
+            // Hide all step contents
+            stepContents.forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Show the target step
+            const targetStep = document.querySelector(`[data-step="${stepNumber}"]`);
+            if (targetStep) {
+                targetStep.classList.add('active');
             }
-        });
+            
+            currentStep = stepNumber;
+            updateStepIndicators();
+        }
         
-        currentStep = stepNumber;
-        updateStepIndicators();
-    }
-    
-    function validateStep(stepNumber) {
-        const currentStepElement = document.querySelector(`[data-step="${stepNumber}"]`);
-        const requiredFields = currentStepElement.querySelectorAll('[required]');
-        let isValid = true;
-        let firstInvalidField = null;
-        
-        // Reset previous errors
-        document.querySelectorAll('.is-invalid').forEach(field => {
-            field.classList.remove('is-invalid');
-        });
-        
-        // Validate required fields
-        requiredFields.forEach(field => {
-            if (!field.value.trim()) {
-                isValid = false;
-                field.classList.add('is-invalid');
-                if (!firstInvalidField) firstInvalidField = field;
-            }
-        });
-        
-        // Special validation for URL field (website)
-        if (stepNumber === 1) {
-            const websiteField = document.getElementById('website');
-            if (websiteField && websiteField.value.trim()) {
-                const urlPattern = /^https?:\/\/.+/;
-                if (!urlPattern.test(websiteField.value.trim())) {
+        function validateStep(stepNumber) {
+            const currentStepElement = document.querySelector(`[data-step="${stepNumber}"]`);
+            if (!currentStepElement) return false;
+            
+            let isValid = true;
+            let errorMessage = '';
+            let firstInvalidField = null;
+            
+            // Clear all previous validation errors
+            clearAllValidationErrors();
+            
+            if (stepNumber === 1) {
+                // Step 1: Company/Organization Information
+                const requiredFields = ['company_name', 'investor_type', 'team_size', 'primary_location'];
+                
+                requiredFields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (field && !field.value.trim()) {
+                        isValid = false;
+                        field.classList.add('is-invalid');
+                        if (!firstInvalidField) firstInvalidField = field;
+                    }
+                });
+                
+                // Validate website URL if provided
+                const websiteField = document.getElementById('website');
+                if (websiteField && websiteField.value.trim()) {
+                    const urlPattern = /^https?:\/\/.+/;
+                    if (!urlPattern.test(websiteField.value.trim())) {
+                        isValid = false;
+                        websiteField.classList.add('is-invalid');
+                        if (!firstInvalidField) firstInvalidField = websiteField;
+                        errorMessage = 'Please enter a valid website URL starting with http:// or https://';
+                    }
+                }
+                
+                if (!isValid && !errorMessage) {
+                    errorMessage = 'Please fill in all required fields marked with * before continuing.';
+                }
+                
+            } else if (stepNumber === 2) {
+                // Step 2: Investment Information
+                const requiredFields = ['funding_size', 'average_deal_size', 'investment_philosophy'];
+                
+                requiredFields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (field && !field.value.trim()) {
+                        isValid = false;
+                        field.classList.add('is-invalid');
+                        if (!firstInvalidField) firstInvalidField = field;
+                    }
+                });
+                
+                // Validate funding stages (at least one must be selected)
+                const fundingStages = currentStepElement.querySelectorAll('input[name="funding_stage"]:checked');
+                if (fundingStages.length === 0) {
                     isValid = false;
-                    websiteField.classList.add('is-invalid');
-                    if (!firstInvalidField) firstInvalidField = websiteField;
-                    validationModalBody.innerHTML = '<p class="mb-0">Please enter a valid website URL starting with http:// or https://</p>';
-                    validationModal.show();
-                    return false;
+                    const groupContainer = currentStepElement.querySelector('input[name="funding_stage"]')?.closest('.checkbox-grid');
+                    if (groupContainer) {
+                        groupContainer.classList.add('is-invalid');
+                    }
+                    if (!errorMessage) errorMessage = 'Please select at least one preferred funding stage.';
+                }
+                
+                // Validate investment categories (at least one must be selected)
+                const investmentCategories = currentStepElement.querySelectorAll('input[name="investment_categories"]:checked');
+                if (investmentCategories.length === 0) {
+                    isValid = false;
+                    const groupContainer = currentStepElement.querySelector('input[name="investment_categories"]')?.closest('.checkbox-grid');
+                    if (groupContainer) {
+                        groupContainer.classList.add('is-invalid');
+                    }
+                    if (!errorMessage) errorMessage = 'Please select at least one investment category interest.';
+                }
+                
+                // Validate market country interests (at least one must be selected)
+                const marketCountries = currentStepElement.querySelectorAll('input[name="market_country_interests"]:checked');
+                if (marketCountries.length === 0) {
+                    isValid = false;
+                    const groupContainer = currentStepElement.querySelector('input[name="market_country_interests"]')?.closest('.checkbox-grid');
+                    if (groupContainer) {
+                        groupContainer.classList.add('is-invalid');
+                    }
+                    if (!errorMessage) errorMessage = 'Please select at least one market country interest.';
+                }
+                
+                if (!isValid && !errorMessage) {
+                    errorMessage = 'Please complete all required fields and make all required selections.';
+                }
+                
+            } else if (stepNumber === 3) {
+                // Step 3: Support & Consent
+                const consentInfo = document.getElementById('consent_info');
+                const consentMarketplace = document.getElementById('consent_marketplace');
+                
+                if (!consentInfo?.checked || !consentMarketplace?.checked) {
+                    isValid = false;
+                    if (consentInfo && !consentInfo.checked) {
+                        consentInfo.classList.add('is-invalid');
+                    }
+                    if (consentMarketplace && !consentMarketplace.checked) {
+                        consentMarketplace.classList.add('is-invalid');
+                    }
+                    errorMessage = 'Please accept both privacy consent agreements to complete your registration.';
                 }
             }
-        }
-        
-        // Special validations
-        if (stepNumber === 2) {
-            const innovationTypes = currentStepElement.querySelectorAll('input[name="innovation_type"]:checked');
-            if (innovationTypes.length === 0) {
-                isValid = false;
-                validationModalBody.innerHTML = '<p class="mb-0">Please select at least one type of innovation that describes your startup\'s focus area.</p>';
-                validationModal.show();
-                return false;
-            }
-        }
-        
-        if (stepNumber === 3) {
-            const consentInfo = document.getElementById('consent_info');
-            const consentMarketplace = document.getElementById('consent_marketplace');
             
-            if (!consentInfo.checked || !consentMarketplace.checked) {
-                isValid = false;
-                validationModalBody.innerHTML = '<p class="mb-0">Please accept both privacy consent agreements to complete your registration and join the SEA-MAP platform.</p>';
-                validationModal.show();
-                return false;
+            // Show validation message if there are errors
+            if (!isValid) {
+                showMessage(errorMessage);
+                
+                // Focus on first invalid field
+                if (firstInvalidField) {
+                    setTimeout(() => firstInvalidField.focus(), 100);
+                }
             }
+            
+            return isValid;
         }
         
-        if (!isValid && !firstInvalidField) {
-            validationModalBody.innerHTML = '<p class="mb-0">Please fill in all required fields marked with * before continuing to the next step.</p>';
-            validationModal.show();
-        }
-        
-        // Focus on first invalid field
-        if (firstInvalidField) {
-            firstInvalidField.focus();
-        }
-        
-        return isValid;
-    }
-    
-    // Event listeners
-    nextBtn.addEventListener('click', function() {
-        if (validateStep(currentStep) && currentStep < totalSteps) {
-            showStep(currentStep + 1);
-        }
-    });
-    
-    backBtn.addEventListener('click', function() {
-        if (currentStep > 1) {
-            showStep(currentStep - 1);
-        }
-    });
-    
-    form.addEventListener('submit', function(e) {
-        // Validate all steps before submission
-        let allValid = true;
-        let firstInvalidStep = null;
-        
-        for (let step = 1; step <= totalSteps; step++) {
-            if (!validateStepSilently(step)) {
-                allValid = false;
-                if (!firstInvalidStep) firstInvalidStep = step;
-            }
-        }
-        
-        if (!allValid) {
-            e.preventDefault();
-            // Navigate to first invalid step
-            if (firstInvalidStep && firstInvalidStep !== currentStep) {
-                showStep(firstInvalidStep);
-            }
-            // Validate current step to show errors
-            validateStep(currentStep);
-        }
-    });
-    
-    // Silent validation (doesn't show modal or focus)
-    function validateStepSilently(stepNumber) {
-        const currentStepElement = document.querySelector(`[data-step="${stepNumber}"]`);
-        const requiredFields = currentStepElement.querySelectorAll('[required]');
-        let isValid = true;
-        
-        // Validate required fields
-        requiredFields.forEach(field => {
-            if (!field.value.trim()) {
-                isValid = false;
-            }
-        });
-        
-        // Special validation for URL field (website)
-        if (stepNumber === 1) {
-            const websiteField = document.getElementById('website');
-            if (websiteField && websiteField.value.trim()) {
-                const urlPattern = /^https?:\/\/.+/;
-                if (!urlPattern.test(websiteField.value.trim())) {
+        function validateStepSilently(stepNumber) {
+            // Same validation logic but without showing errors or focusing fields
+            const currentStepElement = document.querySelector(`[data-step="${stepNumber}"]`);
+            if (!currentStepElement) return false;
+            
+            let isValid = true;
+            
+            if (stepNumber === 1) {
+                const requiredFields = ['company_name', 'investor_type', 'team_size', 'primary_location'];
+                
+                requiredFields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (field && !field.value.trim()) {
+                        isValid = false;
+                    }
+                });
+                
+                const websiteField = document.getElementById('website');
+                if (websiteField && websiteField.value.trim()) {
+                    const urlPattern = /^https?:\/\/.+/;
+                    if (!urlPattern.test(websiteField.value.trim())) {
+                        isValid = false;
+                    }
+                }
+                
+            } else if (stepNumber === 2) {
+                const requiredFields = ['funding_size', 'average_deal_size', 'investment_philosophy'];
+                
+                requiredFields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (field && !field.value.trim()) {
+                        isValid = false;
+                    }
+                });
+                
+                const fundingStages = currentStepElement.querySelectorAll('input[name="funding_stage"]:checked');
+                const investmentCategories = currentStepElement.querySelectorAll('input[name="investment_categories"]:checked');
+                const marketCountries = currentStepElement.querySelectorAll('input[name="market_country_interests"]:checked');
+                
+                if (fundingStages.length === 0 || investmentCategories.length === 0 || marketCountries.length === 0) {
+                    isValid = false;
+                }
+                
+            } else if (stepNumber === 3) {
+                const consentInfo = document.getElementById('consent_info');
+                const consentMarketplace = document.getElementById('consent_marketplace');
+                
+                if (!consentInfo?.checked || !consentMarketplace?.checked) {
                     isValid = false;
                 }
             }
-        }
-        
-        // Special validations
-        if (stepNumber === 2) {
-            const innovationTypes = currentStepElement.querySelectorAll('input[name="innovation_type"]:checked');
-            if (innovationTypes.length === 0) {
-                isValid = false;
-            }
-        }
-        
-        if (stepNumber === 3) {
-            const consentInfo = document.getElementById('consent_info');
-            const consentMarketplace = document.getElementById('consent_marketplace');
             
-            if (!consentInfo.checked || !consentMarketplace.checked) {
-                isValid = false;
-            }
+            return isValid;
         }
         
-        return isValid;
-    }
-    
-    // Remove error styling on input
-    document.querySelectorAll('input, select, textarea').forEach(input => {
-        input.addEventListener('input', function() {
-            if (this.classList.contains('is-invalid')) {
-                this.classList.remove('is-invalid');
+        function clearAllValidationErrors() {
+            document.querySelectorAll('.is-invalid').forEach(element => {
+                element.classList.remove('is-invalid');
+            });
+        }
+        
+        function showMessage(message) {
+            if (validationModalBody && validationModal) {
+                validationModalBody.innerHTML = `<p class="mb-0">${message}</p>`;
+                validationModal.show();
+            } else {
+                // Fallback to browser alert
+                alert(message);
             }
-        });
+        }
     });
-    
-    // Initialize
-    updateStepIndicators();
-    
-    // Logo upload functions
-    window.handleLogoUpload = function(input) {
-        const file = input.files[0];
-        const logoPreview = document.getElementById('logoPreview');
-        const logoPlaceholder = document.getElementById('logoPlaceholder');
-        const logoImage = document.getElementById('logoImage');
-        
-        if (file) {
-            // Validate file size (5MB max)
-            if (file.size > 5 * 1024 * 1024) {
-                alert('File size must be less than 5MB');
-                input.value = '';
-                return;
-            }
-            
-            // Validate file type
-            if (!file.type.match(/^image\/(png|jpeg|jpg|svg\+xml)$/)) {
-                alert('Please select a PNG, JPG, or SVG file');
-                input.value = '';
-                return;
-            }
-            
-            // Create file reader
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                logoImage.src = e.target.result;
-                logoPreview.style.display = 'block';
-                logoPlaceholder.style.display = 'none';
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-    
-    window.removeLogo = function() {
-        const logoPreview = document.getElementById('logoPreview');
-        const logoPlaceholder = document.getElementById('logoPlaceholder');
-        const logoInput = document.getElementById('company_logo');
-        const logoImage = document.getElementById('logoImage');
-        
-        logoInput.value = '';
-        logoImage.src = '';
-        logoPreview.style.display = 'none';
-        logoPlaceholder.style.display = 'block';
-    };
-});
+})();
 </script>
 {% endblock %}
