@@ -39,9 +39,9 @@ class CompanyDocumentInline(admin.TabularInline):
 
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
-    list_display = ('company_name', 'get_member_name', 'get_member_type', 'primary_location', 'current_stage', 'is_primary', 'is_active', 'created_at')
-    list_filter = ('member__user_type', 'primary_location', 'current_stage', 'is_primary', 'is_active', 'team_size', 'created_at')
-    search_fields = ('company_name', 'member__user__username', 'member__user__email', 'company_description', 'solution_description')
+    list_display = ('company_name', 'get_member_name', 'get_member_type', 'primary_location', 'current_stage', 'investor_type', 'is_primary', 'is_active', 'created_at')
+    list_filter = ('member__user_type', 'primary_location', 'current_stage', 'investor_type', 'funding_size', 'is_primary', 'is_active', 'team_size', 'created_at')
+    search_fields = ('company_name', 'member__user__username', 'member__user__email', 'company_description', 'solution_description', 'investment_philosophy')
     readonly_fields = ('created_at', 'updated_at')
     inlines = [CompanyDocumentInline]
     
@@ -53,6 +53,20 @@ class CompanyAdmin(admin.ModelAdmin):
         return obj.member.get_user_type_display()
     get_member_type.short_description = 'Member Type'
     
+    def get_investor_type_display(self, obj):
+        return obj.get_investor_type_display() if obj.investor_type else '-'
+    get_investor_type_display.short_description = 'Investor Type'
+    
+    def get_funding_stages_list(self, obj):
+        stages = obj.get_funding_stages_display() if obj.funding_stages else []
+        return ', '.join(stages) if stages else '-'
+    get_funding_stages_list.short_description = 'Funding Stages'
+    
+    def get_investment_categories_list(self, obj):
+        categories = obj.get_investment_categories_display() if obj.investment_categories else []
+        return ', '.join(categories) if categories else '-'
+    get_investment_categories_list.short_description = 'Investment Categories'
+    
     fieldsets = (
         ('Basic Information', {
             'fields': ('member', 'company_name', 'company_logo', 'website')
@@ -62,6 +76,10 @@ class CompanyAdmin(admin.ModelAdmin):
         }),
         ('Innovation & Solution (For Startups)', {
             'fields': ('innovation_types', 'solution_description', 'current_stage', 'funding_needed'),
+            'classes': ('collapse',)
+        }),
+        ('Investor Profile (For Investors)', {
+            'fields': ('investor_type', 'funding_size', 'average_deal_size', 'funding_stages', 'investment_categories', 'market_country_interests', 'investment_philosophy'),
             'classes': ('collapse',)
         }),
         ('Support Requirements', {
