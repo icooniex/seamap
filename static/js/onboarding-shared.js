@@ -6,6 +6,35 @@
 // Utility functions
 const OnboardingUtils = {
     /**
+     * Fix Bootstrap modal backdrop issues
+     * Call this to prevent overlay from staying after modal is closed
+     */
+    fixModalBackdrop: function(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.addEventListener('hidden.bs.modal', function () {
+                // Remove any remaining modal backdrops
+                document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+                    backdrop.remove();
+                });
+                // Remove modal-open class from body
+                document.body.classList.remove('modal-open');
+                // Reset body styles
+                document.body.style.overflow = '';
+                document.body.style.paddingRight = '';
+            });
+        }
+    },
+
+    /**
+     * Initialize validation modal with backdrop fix
+     */
+    initValidationModal: function(modalId = 'validationModal') {
+        this.fixModalBackdrop(modalId);
+        return new bootstrap.Modal(document.getElementById(modalId));
+    },
+
+    /**
      * Initialize checkbox card interactions
      */
     initCheckboxCards: function() {

@@ -422,21 +422,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const nextBtn = document.getElementById('nextBtn');
     const submitBtn = document.getElementById('submitBtn');
     const progressBar = document.getElementById('progressBar');
-    const validationModal = new bootstrap.Modal(document.getElementById('validationModal'));
+    const validationModal = OnboardingUtils.initValidationModal('validationModal');
     const validationModalBody = document.getElementById('validationModalBody');
     const mobileStepIndicator = document.getElementById('mobile-step-indicator');
     
     let currentStep = 1;
     const totalSteps = 3;
     
-    // Initialize checkbox interactions
-    document.querySelectorAll('.checkbox-card').forEach(card => {
-        card.addEventListener('click', function() {
-            const checkbox = this.querySelector('input[type="checkbox"]');
-            checkbox.checked = !checkbox.checked;
-            this.classList.toggle('selected', checkbox.checked);
-        });
-    });
+    // Initialize checkbox interactions using shared utility
+    OnboardingUtils.initCheckboxCards();
     
     function updateStepIndicators() {
         for (let i = 1; i <= totalSteps; i++) {
