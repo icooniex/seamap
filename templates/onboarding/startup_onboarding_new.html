@@ -145,7 +145,6 @@
                         <input type="checkbox" id="plastic_alternatives" name="innovation_type" value="plastic_alternatives">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon">
-                                <i class="bi bi-check-lg"></i>
                             </div>
                             <label for="plastic_alternatives" class="checkbox-label">Eliminate & Redesign Packaging</label>
                         </div>
@@ -154,7 +153,6 @@
                         <input type="checkbox" id="recycling_technologies" name="innovation_type" value="recycling_technologies">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon">
-                                <i class="bi bi-check-lg"></i>
                             </div>
                             <label for="recycling_technologies" class="checkbox-label">Refill & Reuse Solutions</label>
                         </div>
@@ -163,7 +161,6 @@
                         <input type="checkbox" id="waste_collection" name="innovation_type" value="waste_collection">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon">
-                                <i class="bi bi-check-lg"></i>
                             </div>
                             <label for="waste_collection" class="checkbox-label">Reusable Packaging Collection/Drop Off</label>
                         </div>
@@ -172,7 +169,6 @@
                         <input type="checkbox" id="circular_economy" name="innovation_type" value="circular_economy">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon">
-                                <i class="bi bi-check-lg"></i>
                             </div>
                             <label for="circular_economy" class="checkbox-label">Upcycling Plastic Waste</label>
                         </div>
@@ -181,7 +177,6 @@
                         <input type="checkbox" id="monitoring_tools" name="innovation_type" value="monitoring_tools">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon">
-                                <i class="bi bi-check-lg"></i>
                             </div>
                             <label for="monitoring_tools" class="checkbox-label">Sustainable Alternative Materials</label>
                         </div>
@@ -190,7 +185,6 @@
                         <input type="checkbox" id="education_partnerships" name="innovation_type" value="education_partnerships">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon">
-                                <i class="bi bi-check-lg"></i>
                             </div>
                             <label for="education_partnerships" class="checkbox-label">Education & Industry Partnerships</label>
                         </div>
@@ -199,7 +193,6 @@
                         <input type="checkbox" id="tracking_monitoring" name="innovation_type" value="tracking_monitoring">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon">
-                                <i class="bi bi-check-lg"></i>
                             </div>
                             <label for="tracking_monitoring" class="checkbox-label">Tracking & Monitoring Waste</label>
                         </div>
@@ -208,7 +201,6 @@
                         <input type="checkbox" id="other" name="innovation_type" value="other">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon">
-                                <i class="bi bi-check-lg"></i>
                             </div>
                             <label for="other" class="checkbox-label">Other Innovation</label>
                         </div>
@@ -277,7 +269,6 @@
                         <input type="checkbox" id="branding_marketing" name="support_areas" value="branding_marketing">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon">
-                                <i class="bi bi-check-lg"></i>
                             </div>
                             <label for="branding_marketing" class="checkbox-label">Branding & Marketing</label>
                         </div>
@@ -286,7 +277,6 @@
                         <input type="checkbox" id="investment_funding" name="support_areas" value="investment_funding">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon">
-                                <i class="bi bi-check-lg"></i>
                             </div>
                             <label for="investment_funding" class="checkbox-label">Investment & Funding Access</label>
                         </div>
@@ -295,7 +285,6 @@
                         <input type="checkbox" id="manufacturing_supply" name="support_areas" value="manufacturing_supply">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon">
-                                <i class="bi bi-check-lg"></i>
                             </div>
                             <label for="manufacturing_supply" class="checkbox-label">Manufacturing & Supply Chain</label>
                         </div>
@@ -304,7 +293,6 @@
                         <input type="checkbox" id="market_expansion" name="support_areas" value="market_expansion">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon">
-                                <i class="bi bi-check-lg"></i>
                             </div>
                             <label for="market_expansion" class="checkbox-label">Market Expansion & Customer Acquisition</label>
                         </div>
@@ -313,7 +301,6 @@
                         <input type="checkbox" id="product_development" name="support_areas" value="product_development">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon">
-                                <i class="bi bi-check-lg"></i>
                             </div>
                             <label for="product_development" class="checkbox-label">Product Development & R&D</label>
                         </div>
@@ -322,7 +309,6 @@
                         <input type="checkbox" id="regulatory_compliance" name="support_areas" value="regulatory_compliance">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon">
-                                <i class="bi bi-check-lg"></i>
                             </div>
                             <label for="regulatory_compliance" class="checkbox-label">Regulatory & Compliance</label>
                         </div>
@@ -429,8 +415,31 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentStep = 1;
     const totalSteps = 3;
     
-    // Initialize checkbox interactions using shared utility
-    OnboardingUtils.initCheckboxCards();
+    // Initialize simple checkbox functionality
+    document.querySelectorAll('.checkbox-card').forEach(card => {
+        const checkbox = card.querySelector('input[type="checkbox"]');
+        const icon = card.querySelector('.checkbox-icon');
+        
+        if (checkbox && icon) {
+            // Update initial state
+            if (checkbox.checked) {
+                card.classList.add('selected');
+                icon.innerHTML = '<i class="bi bi-check-lg"></i>';
+            }
+            
+            // Click handler for the entire card
+            card.addEventListener('click', () => {
+                checkbox.checked = !checkbox.checked;
+                if (checkbox.checked) {
+                    card.classList.add('selected');
+                    icon.innerHTML = '<i class="bi bi-check-lg"></i>';
+                } else {
+                    card.classList.remove('selected');
+                    icon.innerHTML = '';
+                }
+            });
+        }
+    });
     
     function updateStepIndicators() {
         for (let i = 1; i <= totalSteps; i++) {

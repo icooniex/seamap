@@ -39,12 +39,56 @@ const OnboardingUtils = {
      */
     initCheckboxCards: function() {
         document.querySelectorAll('.checkbox-card').forEach(card => {
-            card.addEventListener('click', function() {
-                const checkbox = this.querySelector('input[type="checkbox"]');
+            const checkbox = card.querySelector('input[type="checkbox"]');
+            const icon = card.querySelector('.checkbox-icon');
+            
+            if (!checkbox || !icon) {
+                return;
+            }
+            
+            // Initialize icon state based on checkbox
+            this.updateCheckboxIcon(card, checkbox, icon);
+            
+            // Click handler for the entire card
+            card.addEventListener('click', (e) => {
+                // Don't trigger if clicking on the actual hidden checkbox
+                if (e.target === checkbox) {
+                    return;
+                }
+                
+                // Toggle the checkbox
                 checkbox.checked = !checkbox.checked;
-                this.classList.toggle('selected', checkbox.checked);
+                // Trigger change event
+                checkbox.dispatchEvent(new Event('change'));
+            });
+            
+            // Separate click handler for the icon to ensure it's always clickable
+            icon.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent card click
+                // Toggle the checkbox
+                checkbox.checked = !checkbox.checked;
+                // Trigger change event
+                checkbox.dispatchEvent(new Event('change'));
+            });
+            
+            // Handle checkbox change events
+            checkbox.addEventListener('change', () => {
+                this.updateCheckboxIcon(card, checkbox, icon);
             });
         });
+    },
+    
+    /**
+     * Update checkbox icon and card state
+     */
+    updateCheckboxIcon: function(card, checkbox, icon) {
+        if (checkbox.checked) {
+            card.classList.add('selected');
+            icon.innerHTML = '<i class="bi bi-check-lg"></i>';
+        } else {
+            card.classList.remove('selected');
+            icon.innerHTML = '';
+        }
     },
 
     /**
