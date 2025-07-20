@@ -125,7 +125,8 @@ def signup(request):
         if form.is_valid():
             try:
                 user = form.save()
-                login(request, user)
+                # Specify the backend when logging in after signup
+                login(request, user, backend='member.backends.EmailBackend')
                 messages.success(request, f'Account created successfully for {user.get_full_name()}!')
                 # Redirect to role selection instead of dashboard
                 return redirect('onboarding_role_selection')

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign in to your account - SEA-MAP</title>
+    <title>Create your account - SEA-MAP</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -32,23 +32,24 @@
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            max-width: 1000px;
+            max-width: 1100px;
             width: 100%;
-            min-height: 600px;
+            min-height: 700px;
             display: flex;
         }
 
         .auth-form-section {
-            flex: 1;
+            flex: 1.2;
             padding: 3rem 2.5rem;
             display: flex;
             flex-direction: column;
             justify-content: center;
             position: relative;
+            overflow-y: auto;
         }
 
         .auth-info-section {
-            flex: 1;
+            flex: 0.8;
             background: linear-gradient(135deg, var(--bs-primary) 0%, #3b6cc1 50%, #639ac0 100%);
             color: white;
             padding: 3rem 2.5rem;
@@ -182,42 +183,126 @@
             z-index: 2;
         }
 
-        /* Form styling - use onboarding form classes */
-        .form-options {
+        /* Form styling - enhanced for signup */
+        .form-row {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            gap: 1rem;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .user-type-selection {
             margin-bottom: 2rem;
         }
 
-        .remember-me {
+        .user-type-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 0.75rem;
+        }
+
+        .user-type-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .user-type-card:hover {
+            border-color: var(--bs-primary);
+            background: rgba(44, 89, 167, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .user-type-card.selected {
+            border-color: var(--bs-primary);
+            background: rgba(44, 89, 167, 0.1);
+        }
+
+        .user-type-card input[type="radio"] {
+            display: none;
+        }
+
+        .user-type-icon {
+            font-size: 1.5rem;
+            color: var(--bs-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .user-type-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .password-requirements {
+            background: #f7fafc;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .password-requirements h6 {
+            color: #4a5568;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .requirement {
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            color: #718096;
+            margin-bottom: 0.25rem;
         }
 
-        .remember-me input[type="checkbox"] {
-            margin: 0;
+        .requirement.valid {
+            color: var(--bs-success);
+        }
+
+        .requirement i {
+            font-size: 0.75rem;
+        }
+
+        .terms-checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: #f7fafc;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .terms-checkbox input[type="checkbox"] {
+            margin-top: 0.125rem;
             width: 1.1rem;
             height: 1.1rem;
             accent-color: var(--bs-primary);
+            flex-shrink: 0;
         }
 
-        .remember-me label {
+        .terms-text {
             font-size: 0.9rem;
             color: #4a5568;
-            cursor: pointer;
-            font-weight: 500;
+            line-height: 1.4;
         }
 
-        .forgot-password {
+        .terms-text a {
             color: var(--bs-primary);
             text-decoration: none;
-            font-size: 0.9rem;
             font-weight: 500;
         }
 
-        .forgot-password:hover {
+        .terms-text a:hover {
             text-decoration: underline;
         }
 
@@ -245,7 +330,7 @@
         }
 
         .info-title {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             font-weight: 700;
             margin-bottom: 1.5rem;
             line-height: 1.2;
@@ -258,39 +343,61 @@
             line-height: 1.6;
         }
 
-        .info-features {
+        .info-steps {
             display: flex;
             flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .info-step {
+            display: flex;
+            align-items: flex-start;
             gap: 1rem;
         }
 
-        .info-feature {
+        .step-number {
+            width: 2rem;
+            height: 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            flex-shrink: 0;
         }
 
-        .info-feature i {
-            font-size: 1.2rem;
+        .step-content h6 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+            font-weight: 600;
+        }
+
+        .step-content p {
+            font-size: 0.9rem;
             opacity: 0.8;
+            margin: 0;
         }
 
-        .info-tags {
-            display: flex;
-            gap: 0.75rem;
-            flex-wrap: wrap;
+        .info-cta {
             margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .info-tag {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+        .info-cta h6 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-cta p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin: 0;
         }
 
         /* Loading state */
@@ -321,7 +428,7 @@
 
             .auth-info-section {
                 order: -1;
-                min-height: 250px;
+                min-height: 300px;
                 padding: 2rem 1.5rem;
             }
 
@@ -338,22 +445,22 @@
                 flex-direction: column;
             }
 
-            .form-options {
+            .form-row {
                 flex-direction: column;
-                gap: 1rem;
-                align-items: flex-start;
+                gap: 0;
+            }
+
+            .user-type-grid {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
             }
 
             .info-title {
-                font-size: 2rem;
+                font-size: 1.8rem;
             }
 
             .info-description {
                 font-size: 1rem;
-            }
-
-            .info-tags {
-                justify-content: center;
             }
         }
 
@@ -468,10 +575,10 @@
 
                 <div class="auth-header">
                     <div class="auth-logo">
-                        <i class="bi bi-box-arrow-in-right"></i>
+                        <i class="bi bi-person-plus"></i>
                     </div>
-                    <h1 class="auth-title">Welcome back</h1>
-                    <p class="auth-subtitle">Sign in to continue your innovation journey</p>
+                    <h1 class="auth-title">Join SEA-MAP</h1>
+                    <p class="auth-subtitle">Start your sustainable innovation journey today</p>
                 </div>
 
                 <!-- Error/Success Messages -->
@@ -497,20 +604,81 @@
                 </div>
 
                 <div class="divider">
-                    <span>or continue with email</span>
+                    <span>or create with email</span>
                 </div>
 
-                <form method="post" id="loginForm">
+                <form method="post" id="signupForm">
                     {% csrf_token %}
                     
-                    <div class="form-group">
-                        <label class="form-label" for="{{ form.username.id_for_label }}">
-                            <i class="bi bi-envelope me-2"></i>{{ form.username.label }}
+                    <!-- User Type Selection -->
+                    <div class="user-type-selection">
+                        <label class="form-label">
+                            <i class="bi bi-person-badge me-2"></i>I am a...
                         </label>
-                        {{ form.username }}
-                        {% if form.username.errors %}
+                        <div class="user-type-grid">
+                            <div class="user-type-card" data-type="startup">
+                                <input type="radio" name="user_type" value="startup" id="startup">
+                                <div class="user-type-icon">
+                                    <i class="bi bi-rocket-takeoff"></i>
+                                </div>
+                                <div class="user-type-title">Startup</div>
+                            </div>
+                            <div class="user-type-card" data-type="investor">
+                                <input type="radio" name="user_type" value="investor" id="investor">
+                                <div class="user-type-icon">
+                                    <i class="bi bi-cash-stack"></i>
+                                </div>
+                                <div class="user-type-title">Investor</div>
+                            </div>
+                            <div class="user-type-card" data-type="corporate">
+                                <input type="radio" name="user_type" value="corporate" id="corporate">
+                                <div class="user-type-icon">
+                                    <i class="bi bi-building"></i>
+                                </div>
+                                <div class="user-type-title">Corporate</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Personal Information -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.first_name.id_for_label }}">
+                                <i class="bi bi-person me-2"></i>{{ form.first_name.label }}
+                            </label>
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                                <div class="text-danger mt-1 small">
+                                    {% for error in form.first_name.errors %}
+                                        <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.last_name.id_for_label }}">
+                                <i class="bi bi-person me-2"></i>{{ form.last_name.label }}
+                            </label>
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                                <div class="text-danger mt-1 small">
+                                    {% for error in form.last_name.errors %}
+                                        <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.email.id_for_label }}">
+                            <i class="bi bi-envelope me-2"></i>{{ form.email.label }}
+                        </label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
                             <div class="text-danger mt-1 small">
-                                {% for error in form.username.errors %}
+                                {% for error in form.email.errors %}
                                     <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
                                 {% endfor %}
                             </div>
@@ -518,13 +686,44 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="{{ form.password.id_for_label }}">
-                            <i class="bi bi-lock me-2"></i>{{ form.password.label }}
+                        <label class="form-label" for="{{ form.password1.id_for_label }}">
+                            <i class="bi bi-lock me-2"></i>{{ form.password1.label }}
                         </label>
-                        {{ form.password }}
-                        {% if form.password.errors %}
+                        {{ form.password1 }}
+                        {% if form.password1.errors %}
                             <div class="text-danger mt-1 small">
-                                {% for error in form.password.errors %}
+                                {% for error in form.password1.errors %}
+                                    <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Password Requirements -->
+                        <div class="password-requirements">
+                            <h6><i class="bi bi-shield-check me-1"></i>Password Requirements:</h6>
+                            <div class="requirement" id="length">
+                                <i class="bi bi-x-circle"></i>
+                                <span>At least 8 characters</span>
+                            </div>
+                            <div class="requirement" id="letter">
+                                <i class="bi bi-x-circle"></i>
+                                <span>At least one letter</span>
+                            </div>
+                            <div class="requirement" id="number">
+                                <i class="bi bi-x-circle"></i>
+                                <span>At least one number</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.password2.id_for_label }}">
+                            <i class="bi bi-lock-fill me-2"></i>{{ form.password2.label }}
+                        </label>
+                        {{ form.password2 }}
+                        {% if form.password2.errors %}
+                            <div class="text-danger mt-1 small">
+                                {% for error in form.password2.errors %}
                                     <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
                                 {% endfor %}
                             </div>
@@ -539,57 +738,62 @@
                         </div>
                     {% endif %}
 
-                    <div class="form-options">
-                        <div class="remember-me">
-                            {{ form.remember_me }}
-                            <label for="{{ form.remember_me.id_for_label }}">Remember me</label>
+                    <!-- Terms and Conditions -->
+                    <div class="terms-checkbox">
+                        <input type="checkbox" id="terms" name="terms" required>
+                        <div class="terms-text">
+                            <label for="terms">
+                                I agree to the <a href="#" target="_blank">Terms of Service</a> and acknowledge that I have read the <a href="#" target="_blank">Privacy Policy</a>. I consent to receive occasional updates about SEA-MAP innovations and opportunities.
+                            </label>
                         </div>
-                        <a href="#" class="forgot-password">Forgot password?</a>
                     </div>
 
                     <button type="submit" class="btn btn-primary w-100" id="submitBtn">
                         <span class="spinner" id="spinner"></span>
                         <span id="btnText">
-                            <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+                            <i class="bi bi-person-plus me-2"></i>Create Account
                         </span>
                     </button>
                 </form>
                 
                 <div class="auth-link">
-                    Don't have an account? <a href="{% url 'signup' %}">Create account</a>
+                    Already have an account? <a href="{% url 'login' %}">Sign in</a>
                 </div>
             </div>
             
             <!-- Info Section -->
             <div class="auth-info-section">
                 <div class="info-content">
-                    <h2 class="info-title">Join the Innovation Network</h2>
-                    <p class="info-description">Connect with marine plastic pollution solutions across Southeast Asia and accelerate sustainable innovation.</p>
+                    <h2 class="info-title">Start Your Impact Journey</h2>
+                    <p class="info-description">Join hundreds of innovators tackling marine plastic pollution across Southeast Asia.</p>
                     
-                    <div class="info-features">
-                        <div class="info-feature">
-                            <i class="bi bi-lightbulb"></i>
-                            <span>Discover breakthrough innovations</span>
+                    <div class="info-steps">
+                        <div class="info-step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h6>Create Your Profile</h6>
+                                <p>Tell us about yourself and your innovation focus</p>
+                            </div>
                         </div>
-                        <div class="info-feature">
-                            <i class="bi bi-people"></i>
-                            <span>Connect with like-minded innovators</span>
+                        <div class="info-step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h6>Connect & Discover</h6>
+                                <p>Find matching partners, investors, and opportunities</p>
+                            </div>
                         </div>
-                        <div class="info-feature">
-                            <i class="bi bi-graph-up-arrow"></i>
-                            <span>Access investment opportunities</span>
-                        </div>
-                        <div class="info-feature">
-                            <i class="bi bi-globe-asia-australia"></i>
-                            <span>Impact Southeast Asia's sustainability</span>
+                        <div class="info-step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h6>Scale Your Impact</h6>
+                                <p>Access resources to grow your sustainable solution</p>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="info-tags">
-                        <span class="info-tag">Startups</span>
-                        <span class="info-tag">Investors</span>
-                        <span class="info-tag">Corporates</span>
-                        <span class="info-tag">Innovation</span>
+                    <div class="info-cta">
+                        <h6><i class="bi bi-lightbulb me-2"></i>Ready to Innovate?</h6>
+                        <p>Join a community of changemakers working towards a plastic-free ocean.</p>
                     </div>
                 </div>
             </div>
@@ -601,16 +805,82 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('loginForm');
+            const form = document.getElementById('signupForm');
             const submitBtn = document.getElementById('submitBtn');
             const spinner = document.getElementById('spinner');
             const btnText = document.getElementById('btnText');
+            const password1 = document.getElementById('{{ form.password1.id_for_label }}');
+
+            // User type selection
+            document.querySelectorAll('.user-type-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    // Remove selected class from all cards
+                    document.querySelectorAll('.user-type-card').forEach(c => c.classList.remove('selected'));
+                    // Add selected class to clicked card
+                    this.classList.add('selected');
+                    // Check the radio button
+                    this.querySelector('input[type="radio"]').checked = true;
+                });
+            });
+
+            // Password strength validation
+            if (password1) {
+                password1.addEventListener('input', function() {
+                    const password = this.value;
+                    const lengthReq = document.getElementById('length');
+                    const letterReq = document.getElementById('letter');
+                    const numberReq = document.getElementById('number');
+
+                    // Length check
+                    if (password.length >= 8) {
+                        lengthReq.classList.add('valid');
+                        lengthReq.querySelector('i').className = 'bi bi-check-circle';
+                    } else {
+                        lengthReq.classList.remove('valid');
+                        lengthReq.querySelector('i').className = 'bi bi-x-circle';
+                    }
+
+                    // Letter check
+                    if (/[a-zA-Z]/.test(password)) {
+                        letterReq.classList.add('valid');
+                        letterReq.querySelector('i').className = 'bi bi-check-circle';
+                    } else {
+                        letterReq.classList.remove('valid');
+                        letterReq.querySelector('i').className = 'bi bi-x-circle';
+                    }
+
+                    // Number check
+                    if (/\d/.test(password)) {
+                        numberReq.classList.add('valid');
+                        numberReq.querySelector('i').className = 'bi bi-check-circle';
+                    } else {
+                        numberReq.classList.remove('valid');
+                        numberReq.querySelector('i').className = 'bi bi-x-circle';
+                    }
+                });
+            }
 
             // Form submission handling
             form.addEventListener('submit', function(e) {
+                // Check if user type is selected
+                const userTypeSelected = document.querySelector('input[name="user_type"]:checked');
+                if (!userTypeSelected) {
+                    e.preventDefault();
+                    alert('Please select your user type (Startup, Investor, or Corporate)');
+                    return;
+                }
+
+                // Check terms checkbox
+                const termsChecked = document.getElementById('terms').checked;
+                if (!termsChecked) {
+                    e.preventDefault();
+                    alert('Please agree to the Terms of Service and Privacy Policy');
+                    return;
+                }
+
                 submitBtn.disabled = true;
                 spinner.style.display = 'inline-block';
-                btnText.innerHTML = '<i class="bi bi-arrow-clockwise me-2"></i>Signing in...';
+                btnText.innerHTML = '<i class="bi bi-arrow-clockwise me-2"></i>Creating account...';
             });
 
             // Auto-dismiss alerts after 5 seconds
