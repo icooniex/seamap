@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
-from django.contrib.auth import login
+from django.contrib.auth import login, logout as auth_logout
 from django import forms
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
@@ -8,12 +8,69 @@ from django.contrib import messages
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
 from .models import Member, Company
+from .forms import EmailLoginForm, SignUpForm
 import json
 from django.views import View
 
 
 class CustomLoginView(LoginView):
+    """
+    Custom login view with email authentication and remember me functionality
+    """
     template_name = 'member/login.html'
+    form_class = EmailLoginForm
+    redirect_authenticated_user = True
+    
+    def get_success_url(self):
+        """Redirect to dashboard after successful login"""
+        return '/dashboard/'
+    
+    def form_valid(self, form):
+        """Handle successful form submission"""
+        remember_me = form.cleaned_data.get('remember_me', False)
+        
+        # Set session expiry based on remember me checkbox
+        if remember_me:
+            # Remember for 30 days
+            self.request.session.set_expiry(30 * 24 * 60 * 60)
+        else:
+            # Session expires when browser closes
+            self.request.session.set_expiry(0)
+        
+        # Don't show welcome message - let the dashboard handle login success
+        return super().form_valid(form)
+    
+    def form_invalid(self, form):
+        """Handle form validation errors"""
+        # Add form errors to messages
+        for field, errors in form.errors.items():
+            for error in errors:
+                messages.error(self.request, error)
+        return super().form_invalid(form)
+    
+    def get_context_data(self, **kwargs):
+        """Add extra context to template"""
+        context = super().get_context_data(**kwargs)
+        # Preserve email value if login failed
+        if self.request.method == 'POST':
+            context['email'] = self.request.POST.get('username', '')
+        return context
+
+
+def custom_logout(request):
+    """
+    Custom logout view with redirect and success message
+    """
+    if request.user.is_authenticated:
+        username = request.user.get_full_name() or request.user.username or 'User'
+        auth_logout(request)
+        messages.success(request, f'You have been logged out successfully. See you again!')
+    else:
+        messages.info(request, 'You are already logged out.')
+    
+    # Redirect to login page after logout
+    return redirect('login')
+
 
 class OnboardingRoleSelectionView(View):
     """First step: Role selection page using Django class-based view"""
@@ -60,26 +117,6 @@ def onboarding_corporate(request):
     """Placeholder for corporate onboarding"""
     messages.info(request, 'Corporate onboarding coming soon!')
     return redirect('onboarding_role_selection')
-
-class SignUpForm(forms.ModelForm):
-    first_name = forms.CharField(max_length=150, label='First Name')
-    last_name = forms.CharField(max_length=150, label='Last Name')
-    password = forms.CharField(widget=forms.PasswordInput, min_length=8)
-
-    class Meta:
-        model = User
-        fields = ['first_name', 'last_name', 'email', 'password']
-
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        user.username = self.cleaned_data['email']
-        user.set_password(self.cleaned_data['password'])
-        user.first_name = self.cleaned_data['first_name']
-        user.last_name = self.cleaned_data['last_name']
-        user.email = self.cleaned_data['email']
-        if commit:
-            user.save()
-        return user
 
 def signup(request):
     if request.method == 'POST':

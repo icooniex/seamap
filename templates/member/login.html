@@ -453,32 +453,41 @@
                 {% csrf_token %}
                 
                 <div class="form-group">
-                    <label class="form-label" for="email">Email</label>
-                    <input type="email" 
-                           id="email"
-                           name="email" 
-                           class="form-input" 
-                           placeholder="you@example.com" 
-                           required 
-                           value="{{ email|default:'' }}">
-                    <div class="form-error" id="email_error"></div>
+                    <label class="form-label" for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                        <div class="form-error">
+                            {% for error in form.username.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="password">Password</label>
-                    <input type="password" 
-                           id="password"
-                           name="password" 
-                           class="form-input" 
-                           placeholder="Password" 
-                           required>
-                    <div class="form-error" id="password_error"></div>
+                    <label class="form-label" for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+                    {{ form.password }}
+                    {% if form.password.errors %}
+                        <div class="form-error">
+                            {% for error in form.password.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
+
+                {% if form.non_field_errors %}
+                    <div class="form-error">
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
 
                 <div class="form-options">
                     <div class="remember-me">
-                        <input type="checkbox" id="remember" name="remember">
-                        <label for="remember">Remember me</label>
+                        {{ form.remember_me }}
+                        <label for="{{ form.remember_me.id_for_label }}">Remember me</label>
                     </div>
                     <a href="#" class="forgot-password">Forgot password?</a>
                 </div>
@@ -515,69 +524,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const spinner = document.getElementById('spinner');
     const btnText = document.getElementById('btnText');
 
-    // Form validation
+    // Form validation and submission
     form.addEventListener('submit', function(e) {
-        e.preventDefault();
+        // Let Django handle the form validation
+        // Show loading state
+        submitBtn.disabled = true;
+        spinner.style.display = 'inline-block';
+        btnText.textContent = 'Signing in...';
         
-        // Clear previous errors
-        document.querySelectorAll('.form-error').forEach(error => {
-            error.style.display = 'none';
-        });
-        document.querySelectorAll('.form-input').forEach(input => {
-            input.classList.remove('error');
-        });
-
-        let isValid = true;
-
-        // Validate email
-        const email = document.getElementById('email');
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!email.value.trim()) {
-            showError('email', 'Email is required');
-            isValid = false;
-        } else if (!emailPattern.test(email.value)) {
-            showError('email', 'Please enter a valid email address');
-            isValid = false;
-        }
-
-        // Validate password
-        const password = document.getElementById('password');
-        if (!password.value) {
-            showError('password', 'Password is required');
-            isValid = false;
-        }
-
-        if (isValid) {
-            // Show loading state
-            submitBtn.disabled = true;
-            spinner.style.display = 'inline-block';
-            btnText.textContent = 'Signing in...';
-            
-            // Submit form
-            form.submit();
-        }
-    });
-
-    function showError(fieldId, message) {
-        const field = document.getElementById(fieldId);
-        const error = document.getElementById(fieldId + '_error');
-        
-        field.classList.add('error');
-        error.textContent = message;
-        error.style.display = 'block';
-    }
-
-    // Remove error on input
-    document.querySelectorAll('.form-input').forEach(input => {
-        input.addEventListener('input', function() {
-            if (this.classList.contains('error')) {
-                this.classList.remove('error');
-                const errorElement = document.getElementById(this.id + '_error');
-                if (errorElement) {
-                    errorElement.style.display = 'none';
-                }
-            }
-        });
+        // Form will submit normally, no need to prevent default
     });
 
     // Auto-dismiss alerts after 5 seconds

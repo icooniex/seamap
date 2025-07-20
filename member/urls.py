@@ -5,6 +5,7 @@ from .views import OnboardingRoleSelectionView
 urlpatterns = [
     # Authentication
     path('login/', views.CustomLoginView.as_view(), name='login'),
+    path('logout/', views.custom_logout, name='logout'),
     path('signup/', views.signup, name='signup'),
     
     # Onboarding flow

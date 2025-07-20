@@ -739,7 +739,7 @@
                     </li>
                     <li><hr class="dropdown-divider"></li>
                     <li>
-                        <a class="dropdown-item text-danger" href="#">
+                        <a class="dropdown-item text-danger" href="{% url 'logout' %}">
                             <i class="bi bi-box-arrow-right"></i>
                             Log Out
                         </a>
@@ -853,10 +853,6 @@
                     
                     // Handle specific actions
                     switch(text) {
-                        case 'Log Out':
-                            console.log('Logout action');
-                            // Add logout functionality here
-                            break;
                         case 'My Profile':
                             console.log('Profile action');
                             // Add profile functionality here
