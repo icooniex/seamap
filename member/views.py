@@ -949,37 +949,50 @@ def onboarding_startup_step3(request):
 
 def onboarding_startup_step4(request):
     """Handle startup onboarding step 4 - final step"""
-    # Get all data from session
-    company_data = request.session.get('startup_company_data', {})
-    innovation_data = request.session.get('startup_innovation_data', {})
-    files_data = request.session.get('startup_files', {})
     
-    if request.method == 'POST':
-        # Create startup profile with all data
-        # This would typically save to database
-        startup_profile = {
-            'user': request.user,
-            **company_data,
-            **innovation_data,
-            **files_data
-        }
-        
-        # Clear session data
-        request.session.pop('startup_company_data', None)
-        request.session.pop('startup_innovation_data', None)
-        request.session.pop('startup_files', None)
-        
-        # Redirect to dashboard
-        return redirect('dashboard_startup')
-    
-    context = {
-        'company_data': company_data,
-        'innovation_data': innovation_data,
-        'files_data': files_data
-    }
-    return render(request, 'onboarding/startup_step4.html', context)
+    return render(request, 'onboarding/startup_step4.html')
 
 def onboarding_startup_step5(request):
     return render(request, 'onboarding/startup_step5.html')
 def onboarding_startup_step6(request):
     return render(request, 'onboarding/startup_step6.html')
+
+def onboarding_startup_single_page(request):
+    """Handle single-page startup onboarding flow with all 3 steps"""
+    if request.method == 'POST':
+        # Process all form data from the single-page form
+        step1_data = {
+            'company_name': request.POST.get('company_name'),
+            'website': request.POST.get('website'),
+            'founded_year': request.POST.get('founded_year'),
+            'team_size': request.POST.get('team_size'),
+            'primary_location': request.POST.get('primary_location'),
+            'company_description': request.POST.get('company_description'),
+        }
+        
+        step2_data = {
+            'innovation_type': request.POST.getlist('innovation_type'),
+            'solution_description': request.POST.get('solution_description'),
+            'current_stage': request.POST.get('current_stage'),
+            'funding_needed': request.POST.get('funding_needed'),
+        }
+        
+        step3_data = {
+            'support_areas': request.POST.getlist('support_areas'),
+            'support_details': request.POST.get('support_details'),
+            'additional_info': request.POST.get('additional_info'),
+            'consent_info': request.POST.get('consent_info') == 'on',
+            'consent_marketplace': request.POST.get('consent_marketplace') == 'on',
+        }
+        
+        # Store in session
+        request.session['startup_onboarding'] = {
+            'step1': step1_data,
+            'step2': step2_data,
+            'step3': step3_data,
+        }
+        
+        # Redirect to success page or dashboard
+        return redirect('dashboard')
+    
+    return render(request, 'onboarding/startup_single_page.html')
