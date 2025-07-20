@@ -83,7 +83,7 @@
 <div class="logo-icon small">
     <i class="bi bi-rocket-takeoff"></i>
 </div>
-<h1 class="onboarding-title">Startup Registration</h1>
+<h1 class="onboarding-title">Investor Registration</h1>
 <p class="onboarding-subtitle">Join our community of innovative startups tackling marine plastic pollution</p>
 {% endblock %}
 
@@ -105,7 +105,7 @@
         <div class="step-connector" id="connector-1"></div>
         <div class="step-item">
             <div class="step-number pending" id="step-2-indicator">2</div>
-            <div class="step-title" id="step-2-title">Innovation</div>
+            <div class="step-title" id="step-2-title">Investment</div>
         </div>
         <div class="step-connector" id="connector-2"></div>
         <div class="step-item">
@@ -133,7 +133,23 @@
                     <i class="bi bi-building me-2 text-primary"></i>Company Name *
                 </label>
                 <input type="text" class="form-control" id="company_name" name="company_name" 
-                       placeholder="Enter your company or project name" required>
+                       placeholder="Enter your company or project name">
+            </div>
+
+            <div class="form-group">
+                <label for="investor_type" class="form-label">
+                    <i class="bi bi-person-badge me-2 text-primary"></i>Type of Investor *
+                </label>
+                <select class="form-select" id="investor_type" name="investor_type">
+                    <option value="">Select investor type</option>
+                    <option value="angel">🦸 Angel Investor</option>
+                    <option value="vc">💼 Venture Capital (VC)</option>
+                    <option value="corporate">🏢 Corporate Investor</option>
+                    <option value="family_office">👨‍👩‍👧‍👦 Family Office</option>
+                    <option value="impact_fund">🌱 Impact Fund</option>
+                    <option value="government">🏛️ Government/Development Agency</option>
+                    <option value="other">🔎 Other</option>
+                </select>
             </div>
 
             <div class="form-group">
@@ -196,7 +212,7 @@
                         <label for="team_size" class="form-label">
                             <i class="bi bi-people me-2 text-primary"></i>Team Size *
                         </label>
-                        <select class="form-select" id="team_size" name="team_size" required>
+                        <select class="form-select" id="team_size" name="team_size">
                             <option value="">Select team size</option>
                             <option value="1">1 person (Solo founder)</option>
                             <option value="2-5">2-5 people</option>
@@ -213,7 +229,7 @@
                         <label for="primary_location" class="form-label">
                             <i class="bi bi-geo-alt me-2 text-primary"></i>Primary Location *
                         </label>
-                        <select class="form-select" id="primary_location" name="primary_location" required>
+                        <select class="form-select" id="primary_location" name="primary_location">
                             <option value="">Select your country</option>
                             <option value="Singapore">🇸🇬 Singapore</option>
                             <option value="Indonesia">🇮🇩 Indonesia</option>
@@ -240,198 +256,268 @@
             </div>
         </div>
 
-        <!-- Step 2: Innovation Information -->
+        <!-- Step 2: Investment Information -->
         <div class="step-content" data-step="2">
-            <h2 class="form-title">About your innovation</h2>
+            <h2 class="form-title">About your investment</h2>
             <p class="form-subtitle">Share details about your solution and impact on marine plastic pollution</p>
-            
-            <div class="form-group">
-                <label class="form-label">
-                    <i class="bi bi-lightbulb me-2 text-primary"></i>Type of Innovation * <span class="text-muted">(select all that apply)</span>
-                </label>
-                <div class="checkbox-grid">
-                    <div class="checkbox-card" data-checkbox="plastic_alternatives">
-                        <input type="checkbox" id="plastic_alternatives" name="innovation_type" value="plastic_alternatives">
-                        <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                            </div>
-                            <label for="plastic_alternatives" class="checkbox-label">Eliminate & Redesign Packaging</label>
-                        </div>
-                    </div>
-                    <div class="checkbox-card" data-checkbox="recycling_technologies">
-                        <input type="checkbox" id="recycling_technologies" name="innovation_type" value="recycling_technologies">
-                        <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                            </div>
-                            <label for="recycling_technologies" class="checkbox-label">Refill & Reuse Solutions</label>
-                        </div>
-                    </div>
-                    <div class="checkbox-card" data-checkbox="waste_collection">
-                        <input type="checkbox" id="waste_collection" name="innovation_type" value="waste_collection">
-                        <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                            </div>
-                            <label for="waste_collection" class="checkbox-label">Reusable Packaging Collection/Drop Off</label>
-                        </div>
-                    </div>
-                    <div class="checkbox-card" data-checkbox="circular_economy">
-                        <input type="checkbox" id="circular_economy" name="innovation_type" value="circular_economy">
-                        <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                            </div>
-                            <label for="circular_economy" class="checkbox-label">Upcycling Plastic Waste</label>
-                        </div>
-                    </div>
-                    <div class="checkbox-card" data-checkbox="monitoring_tools">
-                        <input type="checkbox" id="monitoring_tools" name="innovation_type" value="monitoring_tools">
-                        <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                            </div>
-                            <label for="monitoring_tools" class="checkbox-label">Sustainable Alternative Materials</label>
-                        </div>
-                    </div>
-                    <div class="checkbox-card" data-checkbox="education_partnerships">
-                        <input type="checkbox" id="education_partnerships" name="innovation_type" value="education_partnerships">
-                        <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                            </div>
-                            <label for="education_partnerships" class="checkbox-label">Education & Industry Partnerships</label>
-                        </div>
-                    </div>
-                    <div class="checkbox-card" data-checkbox="tracking_monitoring">
-                        <input type="checkbox" id="tracking_monitoring" name="innovation_type" value="tracking_monitoring">
-                        <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                            </div>
-                            <label for="tracking_monitoring" class="checkbox-label">Tracking & Monitoring Waste</label>
-                        </div>
-                    </div>
-                    <div class="checkbox-card" data-checkbox="other">
-                        <input type="checkbox" id="other" name="innovation_type" value="other">
-                        <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                            </div>
-                            <label for="other" class="checkbox-label">Other Innovation</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="solution_description" class="form-label">
-                    <i class="bi bi-star me-2 text-primary"></i>Solution Description & USP *
-                </label>
-                <textarea class="form-control" id="solution_description" name="solution_description" 
-                          placeholder="Describe your solution and what makes it unique in one paragraph..." rows="4" required></textarea>
-            </div>
 
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="current_stage" class="form-label">
-                            <i class="bi bi-graph-up-arrow me-2 text-primary"></i>Current Stage *
+                        <label for="funding_size" class="form-label">
+                            <i class="bi bi-cash-stack me-2 text-primary"></i>What is your Fund Size? *
                         </label>
-                        <select class="form-select" id="current_stage" name="current_stage" required>
-                            <option value="">Select current stage</option>
-                            <option value="idea">💡 Ideation – Developing an idea, no product yet</option>
-                            <option value="prototype">🔧 Prototype – Initial MVP or prototype created</option>
-                            <option value="validation">🧪 Validation – Testing with early customers</option>
-                            <option value="early">📈 Early Growth – Generating revenue</option>
-                            <option value="scaling">🚀 Scaling – Expanding with proven model</option>
-                            <option value="profitable">💰 Established – Profitable and exploring new markets</option>
+                        <select class="form-select" id="funding_size" name="funding_size" required>
+                            <option value="">Select typical funding size</option>
+                            <option value="under_1m">Under $1M</option>
+                            <option value="1m_50m">$1M - $50M</option>
+                            <option value="100m_200m">$100M - $200M</option>
+                            <option value="200m_500m">$200M - $500M</option>
+                            <option value="over_500m">Over $500M</option>
                         </select>
                     </div>
                 </div>
+
+                
+
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="funding_needed" class="form-label">
-                            <i class="bi bi-currency-dollar me-2 text-primary"></i>Funding Needed *
+                        <label for="average_deal_size" class="form-label">
+                            <i class="bi bi-currency-dollar me-2 text-primary"></i>Average Deal Size *
                         </label>
-                        <select class="form-select" id="funding_needed" name="funding_needed" required>
-                            <option value="">Select funding range</option>
-                            <option value="under_10k">Under $10K</option>
-                            <option value="10k_50k">$10K - $50K</option>
-                            <option value="50k_100k">$50K - $100K</option>
+                        <select class="form-select" id="average_deal_size" name="average_deal_size" required>
+                            <option value="">Select average deal size</option>
+                            <option value="under_100k">Under $100K</option>
                             <option value="100k_500k">$100K - $500K</option>
                             <option value="500k_1m">$500K - $1M</option>
                             <option value="1m_5m">$1M - $5M</option>
                             <option value="5m_10m">$5M - $10M</option>
-                            <option value="over_10m">Over $10M</option>
-                            <option value="not_seeking">Not currently seeking funding</option>
+                            <option value="10m_50m">$10M - $50M</option>
+                            <option value="over_50m">Over $50M</option>
                         </select>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Step 3: Support & Consent -->
-        <div class="step-content" data-step="3">
-            <h2 class="form-title">Support & Consent</h2>
-            <p class="form-subtitle">Let us know how we can best support your startup's growth</p>
-            
             <div class="form-group">
                 <label class="form-label">
-                    <i class="bi bi-handshake me-2 text-primary"></i>Areas of Support <span class="text-muted">(select all that apply)</span>
+                    <i class="bi bi-flag me-2 text-primary"></i>Preferred Funding Stage(s) *
+                    <span class="text-muted">(select all that apply)</span>
                 </label>
                 <div class="checkbox-grid">
-                    <div class="checkbox-card" data-checkbox="branding_marketing">
-                        <input type="checkbox" id="branding_marketing" name="support_areas" value="branding_marketing">
+                    <div class="checkbox-card" data-checkbox="pre_seed">
+                        <input type="checkbox" id="pre_seed" name="funding_stage" value="pre_seed" required>
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                            </div>
-                            <label for="branding_marketing" class="checkbox-label">Branding & Marketing</label>
+                            <div class="checkbox-icon"></div>
+                            <label for="pre_seed" class="checkbox-label">Pre-Seed</label>
                         </div>
                     </div>
-                    <div class="checkbox-card" data-checkbox="investment_funding">
-                        <input type="checkbox" id="investment_funding" name="support_areas" value="investment_funding">
+                    <div class="checkbox-card" data-checkbox="seed">
+                        <input type="checkbox" id="seed" name="funding_stage" value="seed">
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                            </div>
-                            <label for="investment_funding" class="checkbox-label">Investment & Funding Access</label>
+                            <div class="checkbox-icon"></div>
+                            <label for="seed" class="checkbox-label">Seed</label>
                         </div>
                     </div>
-                    <div class="checkbox-card" data-checkbox="manufacturing_supply">
-                        <input type="checkbox" id="manufacturing_supply" name="support_areas" value="manufacturing_supply">
+                    <div class="checkbox-card" data-checkbox="series_a">
+                        <input type="checkbox" id="series_a" name="funding_stage" value="series_a">
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                            </div>
-                            <label for="manufacturing_supply" class="checkbox-label">Manufacturing & Supply Chain</label>
+                            <div class="checkbox-icon"></div>
+                            <label for="series_a" class="checkbox-label">Series A</label>
                         </div>
                     </div>
-                    <div class="checkbox-card" data-checkbox="market_expansion">
-                        <input type="checkbox" id="market_expansion" name="support_areas" value="market_expansion">
+                    <div class="checkbox-card" data-checkbox="series_b">
+                        <input type="checkbox" id="series_b" name="funding_stage" value="series_b">
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                            </div>
-                            <label for="market_expansion" class="checkbox-label">Market Expansion & Customer Acquisition</label>
+                            <div class="checkbox-icon"></div>
+                            <label for="series_b" class="checkbox-label">Series B</label>
                         </div>
                     </div>
-                    <div class="checkbox-card" data-checkbox="product_development">
-                        <input type="checkbox" id="product_development" name="support_areas" value="product_development">
+                    <div class="checkbox-card" data-checkbox="series_c">
+                        <input type="checkbox" id="series_c" name="funding_stage" value="series_c">
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                            </div>
-                            <label for="product_development" class="checkbox-label">Product Development & R&D</label>
+                            <div class="checkbox-icon"></div>
+                            <label for="series_c" class="checkbox-label">Series C</label>
                         </div>
                     </div>
-                    <div class="checkbox-card" data-checkbox="regulatory_compliance">
-                        <input type="checkbox" id="regulatory_compliance" name="support_areas" value="regulatory_compliance">
+                    <div class="checkbox-card" data-checkbox="series_d">
+                        <input type="checkbox" id="series_d" name="funding_stage" value="series_d">
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                            </div>
-                            <label for="regulatory_compliance" class="checkbox-label">Regulatory & Compliance</label>
+                            <div class="checkbox-icon"></div>
+                            <label for="series_d" class="checkbox-label">Series D and Above</label>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="support_details" class="form-label">
-                    <i class="bi bi-chat-text me-2 text-primary"></i>Support Details
+                <label class="form-label">
+                    <i class="bi bi-tags me-2 text-primary"></i>Investment Category Interests *
+                    <span class="text-muted">(select all that apply)</span>
                 </label>
-                <textarea class="form-control" id="support_details" name="support_details" 
-                          placeholder="Tell us more about the specific support you need..." rows="3"></textarea>
+                <div class="checkbox-grid">
+                    <div class="checkbox-card" data-checkbox="eliminate_redesign">
+                        <input type="checkbox" id="eliminate_redesign" name="investment_categories" value="eliminate_redesign">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <label for="eliminate_redesign" class="checkbox-label">Eliminate & Redesign Packaging</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="refill_reuse">
+                        <input type="checkbox" id="refill_reuse" name="investment_categories" value="refill_reuse">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <label for="refill_reuse" class="checkbox-label">Refill & Reuse Solutions</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="collection_sorting">
+                        <input type="checkbox" id="collection_sorting" name="investment_categories" value="collection_sorting">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <label for="collection_sorting" class="checkbox-label">Collection & Sorting Technologies</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="advanced_recycling">
+                        <input type="checkbox" id="advanced_recycling" name="investment_categories" value="advanced_recycling">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <label for="advanced_recycling" class="checkbox-label">Advanced Recycling & Upcycling</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="bioplastics">
+                        <input type="checkbox" id="bioplastics" name="investment_categories" value="bioplastics">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <label for="bioplastics" class="checkbox-label">Bioplastics & Compostable Materials</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="waste_management">
+                        <input type="checkbox" id="waste_management" name="investment_categories" value="waste_management">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <label for="waste_management" class="checkbox-label">Waste Management Infrastructure</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="data_monitoring">
+                        <input type="checkbox" id="data_monitoring" name="investment_categories" value="data_monitoring">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <label for="data_monitoring" class="checkbox-label">Data, Monitoring & Traceability</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="other_category">
+                        <input type="checkbox" id="other_category" name="investment_categories" value="other">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <label for="other_category" class="checkbox-label">Other</label>
+                        </div>
+                    </div>
+                </div>
             </div>
+
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="bi bi-geo me-2 text-primary"></i>Market Country Interests *
+                    <span class="text-muted">(select all that apply)</span>
+                </label>
+                <div class="checkbox-grid">
+                    <div class="checkbox-card" data-checkbox="singapore_interest">
+                        <input type="checkbox" id="singapore_interest" name="market_country_interests" value="Singapore">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <label for="singapore_interest" class="checkbox-label">🇸🇬 Singapore</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="indonesia_interest">
+                        <input type="checkbox" id="indonesia_interest" name="market_country_interests" value="Indonesia">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <label for="indonesia_interest" class="checkbox-label">🇮🇩 Indonesia</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="thailand_interest">
+                        <input type="checkbox" id="thailand_interest" name="market_country_interests" value="Thailand">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <label for="thailand_interest" class="checkbox-label">🇹🇭 Thailand</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="malaysia_interest">
+                        <input type="checkbox" id="malaysia_interest" name="market_country_interests" value="Malaysia">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <label for="malaysia_interest" class="checkbox-label">🇲🇾 Malaysia</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="philippines_interest">
+                        <input type="checkbox" id="philippines_interest" name="market_country_interests" value="Philippines">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <label for="philippines_interest" class="checkbox-label">🇵🇭 Philippines</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="vietnam_interest">
+                        <input type="checkbox" id="vietnam_interest" name="market_country_interests" value="Vietnam">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <label for="vietnam_interest" class="checkbox-label">🇻🇳 Vietnam</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="cambodia_interest">
+                        <input type="checkbox" id="cambodia_interest" name="market_country_interests" value="Cambodia">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <label for="cambodia_interest" class="checkbox-label">🇰🇭 Cambodia</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="laos_interest">
+                        <input type="checkbox" id="laos_interest" name="market_country_interests" value="Laos">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <label for="laos_interest" class="checkbox-label">🇱🇦 Laos</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="myanmar_interest">
+                        <input type="checkbox" id="myanmar_interest" name="market_country_interests" value="Myanmar">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <label for="myanmar_interest" class="checkbox-label">🇲🇲 Myanmar</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="brunei_interest">
+                        <input type="checkbox" id="brunei_interest" name="market_country_interests" value="Brunei">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <label for="brunei_interest" class="checkbox-label">🇧🇳 Brunei</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="other_country_interest">
+                        <input type="checkbox" id="other_country_interest" name="market_country_interests" value="Other">
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <label for="other_country_interest" class="checkbox-label">🌍 Other</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="form-group">
+                <label for="investment_philosophy" class="form-label">
+                    <i class="bi bi-lightbulb me-2 text-primary"></i>Investment Philosophy & Value Proposition *
+                </label>
+                <textarea class="form-control" id="investment_philosophy" name="investment_philosophy" 
+                          placeholder="Describe your investment philosophy and what value you bring to startups..." rows="4" required></textarea>
+            </div>
+
+            
+        </div>
+
+        <!-- Step 3: Support & Consent -->
+        <div class="step-content" data-step="3">
+            <h2 class="form-title">How can we support you?</h2>
+            <p class="form-subtitle">Tell us how SEA-MAP can help accelerate your investment goals and support your journey.</p>
+            
 
             <div class="form-group">
                 <label for="additional_info" class="form-label">

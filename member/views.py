@@ -59,7 +59,7 @@ def onboarding_investor(request):
         'message': 'Investor onboarding coming soon!'
     }
 
-    return render(request, 'dashboard.html', context)
+    return render(request, 'onboarding/investor_onboarding.html', context)
 
 def onboarding_corporate(request):
     """Placeholder for corporate onboarding"""
