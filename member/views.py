@@ -29,14 +29,8 @@ class OnboardingRoleSelectionView(View):
             messages.error(request, 'Please select a valid role.')
             return render(request, 'onboarding/index.html')
         request.session['selected_role'] = user_role
-        if user_role == 'startup':
-            return redirect('onboarding_startup_new')
-        elif user_role == 'investor':
-            return redirect('onboarding_investor')
-        elif user_role == 'corporate':
-            return redirect('onboarding_corporate')
-        messages.error(request, 'Unknown role selected.')
-        return render(request, 'onboarding/index.html')
+        # Redirect to user profile step first
+        return redirect('onboarding_user_profile')
 
 @login_required
 def dashboard(request):
@@ -86,7 +80,8 @@ def signup(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('dashboard')  # Change to your dashboard URL name
+            # Redirect to role selection instead of dashboard
+            return redirect('onboarding_role_selection')
     else:
         form = SignUpForm()
     return render(request, 'member/signup.html', {'form': form})
@@ -1051,6 +1046,59 @@ def onboarding_startup_single_page(request):
         return redirect('dashboard')
     
     return render(request, 'onboarding/startup_single_page.html')
+
+@login_required
+def onboarding_user_profile(request):
+    """User profile setup step - comes after role selection"""
+    # Check if role was selected
+    if 'selected_role' not in request.session:
+        messages.warning(request, 'Please select your role first.')
+        return redirect('onboarding_role_selection')
+    
+    selected_role = request.session.get('selected_role')
+    
+    if request.method == 'POST':
+        try:
+            # Get or create member
+            member, created = Member.objects.get_or_create(user=request.user)
+            
+            # Update user profile information
+            if 'profile_picture' in request.FILES:
+                member.profile_picture = request.FILES['profile_picture']
+            
+            member.job_position = request.POST.get('job_position', '')
+            member.short_bio = request.POST.get('short_bio', '')
+            member.phone_number = request.POST.get('phone_number', '')
+            member.linkedin_url = request.POST.get('linkedin_url', '')
+            member.user_type = selected_role
+            
+            member.save()
+            
+            messages.success(request, 'Profile updated successfully!')
+            
+            # Redirect to role-specific onboarding
+            if selected_role == 'startup':
+                return redirect('onboarding_startup_new')
+            elif selected_role == 'investor':
+                return redirect('onboarding_investor')
+            elif selected_role == 'corporate':
+                return redirect('onboarding_corporate')
+                
+        except Exception as e:
+            messages.error(request, f'Error saving profile: {str(e)}')
+    
+    # Get existing member data if available
+    try:
+        member = Member.objects.get(user=request.user)
+    except Member.DoesNotExist:
+        member = None
+    
+    context = {
+        'selected_role': selected_role,
+        'member': member,
+    }
+    
+    return render(request, 'onboarding/user_profile.html', context)
 
 def onboarding_startup_new(request):
     """New enhanced startup onboarding page"""

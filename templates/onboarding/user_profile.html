@@ -1,0 +1,341 @@
+{% extends 'onboarding/onboarding_base.html' %}
+{% load static %}
+
+{% block title %}Complete Your Profile - SEA-MAP{% endblock %}
+
+{% block extra_css %}
+<style>
+.profile-upload-container {
+    border: 2px dashed #dee2e6;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+    position: relative;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-upload-container:hover {
+    border-color: #0d6efd;
+    background: #e7f3ff;
+}
+
+.profile-upload-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.upload-icon {
+    font-size: 3rem;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+}
+
+.profile-upload-container:hover .upload-icon {
+    color: #0d6efd;
+}
+
+.upload-text p {
+    margin-bottom: 0.25rem;
+}
+
+.profile-preview {
+    position: relative;
+    max-width: 200px;
+    margin: 0 auto;
+}
+
+.profile-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.profile-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 50%;
+}
+
+.profile-preview:hover .profile-overlay {
+    opacity: 1;
+}
+</style>
+{% endblock %}
+
+{% block header_content %}
+<div class="logo-icon small">
+    {% if selected_role == 'startup' %}
+        <i class="bi bi-rocket-takeoff"></i>
+    {% elif selected_role == 'investor' %}
+        <i class="bi bi-currency-dollar"></i>
+    {% elif selected_role == 'corporate' %}
+        <i class="bi bi-building"></i>
+    {% else %}
+        <i class="bi bi-person-circle"></i>
+    {% endif %}
+</div>
+<h1 class="onboarding-title">Complete Your Profile</h1>
+<p class="onboarding-subtitle">Let's get to know you better before we dive into the details</p>
+{% endblock %}
+
+{% block mobile_breadcrumb %}
+<!-- Center: Progress indicator for mobile -->
+<div class="onboarding-breadcrumb">
+    <span id="mobile-step-indicator">Profile Setup</span>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Progress Section -->
+<div class="progress-section">
+    <div class="step-indicator">
+        <div class="step-item">
+            <div class="step-number completed">
+                <i class="bi bi-check-lg"></i>
+            </div>
+            <div class="step-title">Role Selection</div>
+        </div>
+        <div class="step-connector completed"></div>
+        <div class="step-item">
+            <div class="step-number active">2</div>
+            <div class="step-title active">Profile Setup</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-item">
+            <div class="step-number pending">3</div>
+            <div class="step-title">
+                {% if selected_role == 'startup' %}Company Details
+                {% elif selected_role == 'investor' %}Investment Profile
+                {% elif selected_role == 'corporate' %}Organization Info
+                {% else %}Details
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="progress-bar-container">
+        <div class="progress-bar-fill" style="width: 66.66%"></div>
+    </div>
+</div>
+
+<!-- Form Content -->
+<form id="profileForm" method="POST" action="{% url 'onboarding_user_profile' %}" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    
+    <div class="form-content">
+        <div class="step-content active" data-step="1">
+            <h2 class="form-title">Your Profile Information</h2>
+            <p class="form-subtitle">Help others get to know you better with your profile details</p>
+            
+            <!-- Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            <!-- Profile Picture Upload -->
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="bi bi-camera me-2 text-primary"></i>Profile Picture
+                </label>
+                <div class="profile-upload-container" id="uploadArea">
+                    <div class="profile-upload-placeholder" id="uploadPlaceholder">
+                        <div class="upload-icon">
+                            <i class="bi bi-camera"></i>
+                        </div>
+                        <div class="upload-text">
+                            <p class="mb-1"><strong>Upload your profile picture</strong></p>
+                            <p class="text-muted small">PNG, JPG • Max 5MB • Recommended: 400x400px</p>
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="document.getElementById('profile_picture').click()">
+                            Choose File
+                        </button>
+                    </div>
+                    <div class="profile-preview" id="previewContainer" style="display: none;">
+                        <img class="profile-image" id="previewImage" alt="Profile preview">
+                        <div class="profile-overlay">
+                            <button type="button" class="btn btn-sm btn-outline-light" onclick="removeProfilePicture()">
+                                <i class="bi bi-trash"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                    <input type="file" class="form-control d-none" id="profile_picture" name="profile_picture" 
+                           accept="image/png,image/jpeg,image/jpg" onchange="handleProfileUpload(this)">
+                </div>
+            </div>
+
+            <!-- Contact Information Row -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="job_position" class="form-label">
+                            <i class="bi bi-briefcase me-2 text-primary"></i>Job Position
+                        </label>
+                        <input type="text" class="form-control" id="job_position" name="job_position" 
+                               placeholder="e.g., CEO, CTO, Investment Manager"
+                               value="{{ member.job_position|default:'' }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="phone_number" class="form-label">
+                            <i class="bi bi-telephone me-2 text-primary"></i>Phone Number
+                        </label>
+                        <input type="tel" class="form-control" id="phone_number" name="phone_number" 
+                               placeholder="+65 9123 4567"
+                               value="{{ member.phone_number|default:'' }}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- LinkedIn URL -->
+            <div class="form-group">
+                <label for="linkedin_url" class="form-label">
+                    <i class="bi bi-linkedin me-2 text-primary"></i>LinkedIn Profile <span class="text-muted">(Optional)</span>
+                </label>
+                <input type="url" class="form-control" id="linkedin_url" name="linkedin_url" 
+                       placeholder="https://linkedin.com/in/your-profile"
+                       value="{{ member.linkedin_url|default:'' }}">
+            </div>
+
+            <!-- Bio Section -->
+            <div class="form-group">
+                <label for="short_bio" class="form-label">
+                    <i class="bi bi-person-lines-fill me-2 text-primary"></i>Short Bio
+                </label>
+                <textarea class="form-control" id="short_bio" name="short_bio" 
+                          placeholder="Tell us about yourself, your background, and what drives you in the plastic circularity space..."
+                          rows="4" maxlength="500">{{ member.short_bio|default:'' }}</textarea>
+                <div class="character-count" id="bioCounter">
+                    <span id="bioCount">0</span>/500 characters
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Section -->
+    <div class="navigation-section">
+        <a href="{% url 'onboarding_role_selection' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Back to Role Selection
+        </a>
+        <div>
+            <button type="submit" class="btn btn-primary" id="continueBtn">
+                <span class="spinner-border spinner-border-sm me-2 d-none" id="spinner" role="status"></span>
+                <span id="btnText">Continue to Next Step</span>
+                <i class="bi bi-arrow-right ms-2"></i>
+            </button>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('profileForm');
+    const continueBtn = document.getElementById('continueBtn');
+    const spinner = document.getElementById('spinner');
+    const btnText = document.getElementById('btnText');
+    const bioTextarea = document.getElementById('short_bio');
+    const bioCount = document.getElementById('bioCount');
+    const bioCounter = document.getElementById('bioCounter');
+
+    // Bio character counter
+    function updateBioCount() {
+        const count = bioTextarea.value.length;
+        bioCount.textContent = count;
+        
+        // Remove existing classes
+        bioCounter.classList.remove('text-warning', 'text-danger');
+        
+        if (count > 450) {
+            bioCounter.classList.add('text-danger');
+        } else if (count > 400) {
+            bioCounter.classList.add('text-warning');
+        }
+    }
+
+    if (bioTextarea) {
+        bioTextarea.addEventListener('input', updateBioCount);
+        updateBioCount(); // Initial count
+    }
+
+    // Form submission
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Show loading state
+        continueBtn.disabled = true;
+        spinner.classList.remove('d-none');
+        btnText.textContent = 'Saving profile...';
+        
+        // Submit form after a brief delay for UX
+        setTimeout(() => {
+            form.submit();
+        }, 500);
+    });
+
+    // Profile picture upload functions
+    window.handleProfileUpload = function(input) {
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            
+            // Validate file size (5MB max)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File size must be less than 5MB');
+                input.value = '';
+                return;
+            }
+            
+            // Validate file type
+            if (!file.type.match(/^image\/(png|jpeg|jpg)$/)) {
+                alert('Please select a PNG or JPG file');
+                input.value = '';
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('previewImage').src = e.target.result;
+                document.getElementById('uploadPlaceholder').style.display = 'none';
+                document.getElementById('previewContainer').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    window.removeProfilePicture = function() {
+        const profileInput = document.getElementById('profile_picture');
+        const profileImage = document.getElementById('previewImage');
+        const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+        const previewContainer = document.getElementById('previewContainer');
+        
+        profileInput.value = '';
+        profileImage.src = '';
+        uploadPlaceholder.style.display = 'flex';
+        previewContainer.style.display = 'none';
+    };
+});
+</script>
+{% endblock %}

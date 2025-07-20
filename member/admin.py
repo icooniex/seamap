@@ -12,6 +12,9 @@ class MemberAdmin(admin.ModelAdmin):
         ('Basic Information', {
             'fields': ('user', 'user_type', 'onboarding_completed')
         }),
+        ('User Profile', {
+            'fields': ('profile_picture', 'job_position', 'short_bio', 'phone_number', 'linkedin_url')
+        }),
         ('Company Information', {
             'fields': ('company_name', 'company_logo', 'website', 'founded_year', 'team_size', 'primary_location', 'company_description')
         }),

@@ -57,6 +57,13 @@ class Member(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     user_type = models.CharField(max_length=20, choices=USER_TYPE_CHOICES)
     
+    # User Profile Information (New Step)
+    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
+    job_position = models.CharField(max_length=255, blank=True)
+    short_bio = models.TextField(max_length=500, blank=True)
+    phone_number = models.CharField(max_length=20, blank=True)
+    linkedin_url = models.URLField(blank=True, null=True)
+    
     # Company Information (Step 1)
     company_name = models.CharField(max_length=255, blank=True)
     company_logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
