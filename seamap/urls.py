@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from member.views import *
 
 urlpatterns = [
@@ -46,3 +48,7 @@ urlpatterns = [
     # path('onboarding/startup/6', onboarding_startup_step6, name='onboarding_startup_step6'),
     # path('onboarding/startup/single', onboarding_startup_single_page, name='onboarding_startup_single_page'),
 ]
+
+# Serve media files during development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

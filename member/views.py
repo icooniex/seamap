@@ -1090,6 +1090,11 @@ def onboarding_startup_new(request):
             # Update member fields
             member.user_type = 'startup'
             member.company_name = request.POST.get('company_name', '')
+            
+            # Handle company logo upload
+            if 'company_logo' in request.FILES:
+                member.company_logo = request.FILES['company_logo']
+                
             member.website = request.POST.get('website', '') or None
             member.founded_year = int(request.POST.get('founded_year')) if request.POST.get('founded_year') else None
             member.team_size = request.POST.get('team_size', '')

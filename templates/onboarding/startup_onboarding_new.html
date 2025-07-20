@@ -3,6 +3,82 @@
 
 {% block title %}Startup Onboarding - SEA-MAP{% endblock %}
 
+{% block extra_css %}
+<style>
+.logo-upload-container {
+    border: 2px dashed #dee2e6;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+    position: relative;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-upload-container:hover {
+    border-color: #0d6efd;
+    background: #e7f3ff;
+}
+
+.logo-upload-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.upload-icon {
+    font-size: 3rem;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+}
+
+.logo-upload-container:hover .upload-icon {
+    color: #0d6efd;
+}
+
+.upload-text p {
+    margin-bottom: 0.25rem;
+}
+
+.logo-preview {
+    position: relative;
+    max-width: 200px;
+    margin: 0 auto;
+}
+
+.logo-image {
+    max-width: 100%;
+    max-height: 150px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.logo-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 8px;
+}
+
+.logo-preview:hover .logo-overlay {
+    opacity: 1;
+}
+</style>
+{% endblock %}
+
 {% block header_content %}
 <div class="logo-icon small">
     <i class="bi bi-rocket-takeoff"></i>
@@ -43,7 +119,7 @@
 </div>
 
 <!-- Form Content -->
-<form id="onboardingForm" method="POST" action="{% url 'onboarding_startup_new' %}" novalidate>
+<form id="onboardingForm" method="POST" action="{% url 'onboarding_startup_new' %}" enctype="multipart/form-data" novalidate>
     {% csrf_token %}
     
     <div class="form-content">
@@ -58,6 +134,39 @@
                 </label>
                 <input type="text" class="form-control" id="company_name" name="company_name" 
                        placeholder="Enter your company or project name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="company_logo" class="form-label">
+                    <i class="bi bi-image me-2 text-primary"></i>Company Logo
+                </label>
+                <div class="logo-upload-container">
+                    <div class="logo-preview" id="logoPreview" style="display: none;">
+                        <img id="logoImage" src="" alt="Company Logo Preview" class="logo-image">
+                        <div class="logo-overlay">
+                            <button type="button" class="btn btn-sm btn-outline-light" onclick="document.getElementById('company_logo').click()">
+                                <i class="bi bi-pencil"></i> Change
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="removeLogo()">
+                                <i class="bi bi-trash"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                    <div class="logo-upload-placeholder" id="logoPlaceholder">
+                        <div class="upload-icon">
+                            <i class="bi bi-cloud-upload"></i>
+                        </div>
+                        <div class="upload-text">
+                            <p class="mb-1"><strong>Upload your company logo</strong></p>
+                            <p class="text-muted small">PNG, JPG, or SVG • Max 5MB • Recommended: 200x200px</p>
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="document.getElementById('company_logo').click()">
+                            Choose File
+                        </button>
+                    </div>
+                    <input type="file" class="form-control d-none" id="company_logo" name="company_logo" 
+                           accept="image/png,image/jpeg,image/jpg,image/svg+xml" onchange="handleLogoUpload(this)">
+                </div>
             </div>
 
             <div class="row">
@@ -662,6 +771,51 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize
     updateStepIndicators();
+    
+    // Logo upload functions
+    window.handleLogoUpload = function(input) {
+        const file = input.files[0];
+        const logoPreview = document.getElementById('logoPreview');
+        const logoPlaceholder = document.getElementById('logoPlaceholder');
+        const logoImage = document.getElementById('logoImage');
+        
+        if (file) {
+            // Validate file size (5MB max)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File size must be less than 5MB');
+                input.value = '';
+                return;
+            }
+            
+            // Validate file type
+            if (!file.type.match(/^image\/(png|jpeg|jpg|svg\+xml)$/)) {
+                alert('Please select a PNG, JPG, or SVG file');
+                input.value = '';
+                return;
+            }
+            
+            // Create file reader
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                logoImage.src = e.target.result;
+                logoPreview.style.display = 'block';
+                logoPlaceholder.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+    
+    window.removeLogo = function() {
+        const logoPreview = document.getElementById('logoPreview');
+        const logoPlaceholder = document.getElementById('logoPlaceholder');
+        const logoInput = document.getElementById('company_logo');
+        const logoImage = document.getElementById('logoImage');
+        
+        logoInput.value = '';
+        logoImage.src = '';
+        logoPreview.style.display = 'none';
+        logoPlaceholder.style.display = 'block';
+    };
 });
 </script>
 {% endblock %}

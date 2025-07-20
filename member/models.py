@@ -59,6 +59,7 @@ class Member(models.Model):
     
     # Company Information (Step 1)
     company_name = models.CharField(max_length=255, blank=True)
+    company_logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
     website = models.URLField(blank=True, null=True)
     founded_year = models.IntegerField(blank=True, null=True)
     team_size = models.CharField(max_length=10, choices=TEAM_SIZE_CHOICES, blank=True)
