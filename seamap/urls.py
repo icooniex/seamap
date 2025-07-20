@@ -44,5 +44,6 @@ urlpatterns = [
     path('onboarding/startup/5', onboarding_startup_step5, name='onboarding_startup_step5'),
     path('onboarding/startup/6', onboarding_startup_step6, name='onboarding_startup_step6'),
     path('onboarding/startup/single', onboarding_startup_single_page, name='onboarding_startup_single_page'),
+    path('onboarding/startup/new', onboarding_startup_new, name='onboarding_startup_new'),
 
 ]

@@ -996,3 +996,43 @@ def onboarding_startup_single_page(request):
         return redirect('dashboard')
     
     return render(request, 'onboarding/startup_single_page.html')
+
+def onboarding_startup_new(request):
+    """New enhanced startup onboarding page"""
+    if request.method == 'POST':
+        # Process all form data from the enhanced form
+        step1_data = {
+            'company_name': request.POST.get('company_name'),
+            'website': request.POST.get('website'),
+            'founded_year': request.POST.get('founded_year'),
+            'team_size': request.POST.get('team_size'),
+            'primary_location': request.POST.get('primary_location'),
+            'company_description': request.POST.get('company_description'),
+        }
+        
+        step2_data = {
+            'innovation_type': request.POST.getlist('innovation_type'),
+            'solution_description': request.POST.get('solution_description'),
+            'current_stage': request.POST.get('current_stage'),
+            'funding_needed': request.POST.get('funding_needed'),
+        }
+        
+        step3_data = {
+            'support_areas': request.POST.getlist('support_areas'),
+            'support_details': request.POST.get('support_details'),
+            'additional_info': request.POST.get('additional_info'),
+            'consent_info': request.POST.get('consent_info') == 'on',
+            'consent_marketplace': request.POST.get('consent_marketplace') == 'on',
+        }
+        
+        # Store in session
+        request.session['startup_onboarding_new'] = {
+            'step1': step1_data,
+            'step2': step2_data,
+            'step3': step3_data,
+        }
+        
+        # Redirect to success page or dashboard
+        return redirect('dashboard')
+    
+    return render(request, 'onboarding/startup_onboarding_new.html')
