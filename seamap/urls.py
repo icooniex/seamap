@@ -25,12 +25,15 @@ urlpatterns = [
     
     # Include member app URLs
     path('', include('member.urls')),
-    
+
+    # Match making dashboard
+    path('dashboard/startups/', startup_matchmaking, name='startup_matchmaking'),
+
     # Legacy URLs (keeping for compatibility)
     path('signup/', signup, name='signup'),
     path('dash/', dashboard2, name='dash'),
     path('matchmaking/investors/', investor_matchmaking, name='investor_matchmaking'),
-    path('dashboard/startup', dashboard, name='dashboard_startup'),
+    # path('dashboard/startup', dashboard, name='dashboard_startup'),
     path('dashboard/problem-statement', problem, name='problem'),
     path('dashboard/challenge', challenge, name='challenge'),
     path('dashboard/accelerator-landing', accelerator_landing, name='accelerator_landing'),

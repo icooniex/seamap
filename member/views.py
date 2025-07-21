@@ -8,9 +8,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
+from django.db import models
 from .models import Member, Company
 from .forms import EmailLoginForm, SignUpForm
 import json
+import random
 from django.views import View
 
 
@@ -108,6 +110,179 @@ def dashboard(request):
         'primary_company': primary_company,
     }
     return render(request, 'dashboard.html', context)
+
+def calculate_match_score(startup):
+    """
+    Calculate a mock match score for a startup based on various factors.
+    In a real implementation, this would use ML algorithms and user preferences.
+    """
+    score = 50  # Base score
+    
+    # Add points based on various factors
+    if startup.current_stage:
+        stage_scores = {
+            'idea': 60,
+            'prototype': 70,
+            'validation': 75,
+            'early': 80,
+            'scaling': 85,
+            'profitable': 90
+        }
+        score += stage_scores.get(startup.current_stage, 0) - 50
+    
+    # Add points for having a website
+    if startup.website:
+        score += 10
+    
+    # Add points for team size (sweet spot for early stage)
+    if startup.team_size:
+        team_scores = {
+            '1': 65,
+            '2-5': 85,
+            '6-10': 90,
+            '11-25': 85,
+            '26-50': 80,
+            '51-100': 75,
+            '100+': 70
+        }
+        team_score = team_scores.get(startup.team_size, 70)
+        score = (score + team_score) // 2
+    
+    # Add points for innovation types (diversified approach)
+    if startup.innovation_types and len(startup.innovation_types) > 0:
+        score += min(len(startup.innovation_types) * 5, 20)
+    
+    # Add points for having support areas defined
+    if startup.support_areas and len(startup.support_areas) > 0:
+        score += 5
+    
+    # Add some randomness to make it more realistic
+    score += random.randint(-10, 15)
+    
+    # Ensure score is within bounds
+    return max(0, min(100, score))
+
+@login_required
+def startup_matchmaking(request):
+    """Startup matchmaking view with search and filter functionality"""
+    
+    # Get search query
+    search_query = request.GET.get('q', '').strip()
+    
+    # Get filter parameters
+    filter_stage = request.GET.get('stage', '')
+    filter_location = request.GET.getlist('location')
+    filter_funding_min = request.GET.get('funding_min', '')
+    filter_funding_max = request.GET.get('funding_max', '')
+    filter_team_size = request.GET.getlist('team_size')
+    filter_technologies = request.GET.getlist('technologies')
+    filter_match_score = request.GET.get('match_score', '0')
+    
+    # Base queryset - get all startup companies
+    startups = Company.objects.filter(
+        company_type='startup',
+        is_active=True
+    ).select_related('member__user').order_by('-created_at')
+    
+    # Apply search filter
+    if search_query:
+        startups = startups.filter(
+            models.Q(company_name__icontains=search_query) |
+            models.Q(company_description__icontains=search_query) |
+            models.Q(solution_description__icontains=search_query) |
+            models.Q(member__user__first_name__icontains=search_query) |
+            models.Q(member__user__last_name__icontains=search_query)
+        )
+    
+    # Apply stage filter
+    if filter_stage:
+        startups = startups.filter(current_stage=filter_stage)
+    
+    # Apply location filter
+    if filter_location:
+        startups = startups.filter(primary_location__in=filter_location)
+    
+    # Apply team size filter
+    if filter_team_size:
+        startups = startups.filter(team_size__in=filter_team_size)
+    
+    # Apply funding range filter
+    if filter_funding_min or filter_funding_max:
+        funding_filters = models.Q()
+        if filter_funding_min:
+            # Map funding ranges to minimum values for comparison
+            funding_range_map = {
+                'under_10k': 0,
+                '10k_50k': 10000,
+                '50k_100k': 50000,
+                '100k_500k': 100000,
+                '500k_1m': 500000,
+                '1m_5m': 1000000,
+                '5m_10m': 5000000,
+                'over_10m': 10000000,
+            }
+            min_amount = int(filter_funding_min)
+            # Filter startups seeking funding above minimum
+            for key, value in funding_range_map.items():
+                if value >= min_amount:
+                    funding_filters |= models.Q(funding_needed=key)
+        startups = startups.filter(funding_filters)
+    
+    # Apply technology filter (search in innovation_types)
+    if filter_technologies:
+        tech_filters = models.Q()
+        for tech in filter_technologies:
+            tech_filters |= models.Q(innovation_types__icontains=tech)
+        startups = startups.filter(tech_filters)
+    
+    # Add mock match scores for demonstration
+    startups_with_scores = []
+    for startup in startups:
+        # Calculate a mock match score based on various factors
+        match_score = calculate_match_score(startup)
+        
+        # Only include if meets minimum match score
+        if int(filter_match_score) == 0 or match_score >= int(filter_match_score):
+            startup.match_score = match_score
+            startups_with_scores.append(startup)
+    
+    # Sort by match score if filtering by score
+    if int(filter_match_score) > 0:
+        startups_with_scores.sort(key=lambda x: x.match_score, reverse=True)
+    
+    # Get filter options for the form
+    locations = Company.objects.filter(
+        company_type='startup',
+        is_active=True,
+        primary_location__isnull=False
+    ).values_list('primary_location', flat=True).distinct()
+    
+    stages = Company.objects.filter(
+        company_type='startup',
+        is_active=True,
+        current_stage__isnull=False
+    ).values_list('current_stage', flat=True).distinct()
+    
+    team_sizes = Company.objects.filter(
+        company_type='startup',
+        is_active=True,
+        team_size__isnull=False
+    ).values_list('team_size', flat=True).distinct()
+    
+    context = {
+        'startups': startups_with_scores,
+        'search_query': search_query,
+        'filter_stage': filter_stage,
+        'filter_location': filter_location,
+        'filter_team_size': filter_team_size,
+        'filter_technologies': filter_technologies,
+        'filter_match_score': int(filter_match_score),
+        'available_locations': sorted(set(locations)),
+        'available_stages': sorted(set(stages)),
+        'available_team_sizes': sorted(set(team_sizes)),
+        'total_startups': len(startups_with_scores),
+    }
+    return render(request, 'matchmaking/startup_matchmaking.html', context)
 
 def onboarding_investor(request):
     """Investor onboarding page - Organization profile setup"""
