@@ -94,7 +94,6 @@ class Member(models.Model):
     """User Profile Model - stores individual user information"""
     # Basic user information
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    user_type = models.CharField(max_length=20, choices=USER_TYPE_CHOICES)
     
     # User Profile Information
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
@@ -114,7 +113,7 @@ class Member(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.user.get_full_name() or self.user.username} ({self.get_user_type_display()})"
+        return f"{self.user.get_full_name() or self.user.username}"
 
     class Meta:
         verbose_name = "Member Profile"
@@ -125,6 +124,9 @@ class Company(models.Model):
     """Company/Organization Profile Model - stores company/organization information"""
     # Link to member (founder/representative)
     member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='companies')
+    
+    # Company Type - moved from Member model
+    company_type = models.CharField(max_length=20, choices=USER_TYPE_CHOICES)
     
     # Basic Company Information (Step 1)
     company_name = models.CharField(max_length=255)
@@ -163,7 +165,7 @@ class Company(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.company_name} (by {self.member.user.get_full_name() or self.member.user.username})"
+        return f"{self.company_name} ({self.get_company_type_display()}) - by {self.member.user.get_full_name() or self.member.user.username}"
 
     def get_innovation_types_display(self):
         """Return human-readable innovation types"""

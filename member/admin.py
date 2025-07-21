@@ -3,8 +3,8 @@ from .models import Member, Company, MemberDocument, CompanyDocument
 
 @admin.register(Member)
 class MemberAdmin(admin.ModelAdmin):
-    list_display = ('user', 'get_full_name', 'user_type', 'job_position', 'profile_completed', 'onboarding_completed', 'created_at')
-    list_filter = ('user_type', 'profile_completed', 'onboarding_completed', 'created_at')
+    list_display = ('user', 'get_full_name', 'job_position', 'profile_completed', 'onboarding_completed', 'created_at')
+    list_filter = ('profile_completed', 'onboarding_completed', 'created_at')
     search_fields = ('user__username', 'user__email', 'user__first_name', 'user__last_name', 'job_position', 'short_bio')
     readonly_fields = ('created_at', 'updated_at')
     
@@ -14,7 +14,7 @@ class MemberAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Basic Information', {
-            'fields': ('user', 'user_type')
+            'fields': ('user',)
         }),
         ('User Profile', {
             'fields': ('profile_picture', 'job_position', 'short_bio', 'phone_number', 'linkedin_url')
@@ -39,8 +39,8 @@ class CompanyDocumentInline(admin.TabularInline):
 
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
-    list_display = ('company_name', 'get_member_name', 'get_member_type', 'get_organization_type', 'primary_location', 'current_stage', 'investor_type', 'is_primary', 'is_active', 'created_at')
-    list_filter = ('member__user_type', 'organization_type', 'primary_location', 'current_stage', 'investor_type', 'is_primary', 'is_active', 'team_size', 'created_at')
+    list_display = ('company_name', 'get_member_name', 'get_company_type', 'get_organization_type', 'primary_location', 'current_stage', 'investor_type', 'is_primary', 'is_active', 'created_at')
+    list_filter = ('company_type', 'organization_type', 'primary_location', 'current_stage', 'investor_type', 'is_primary', 'is_active', 'team_size', 'created_at')
     search_fields = ('company_name', 'member__user__username', 'member__user__email', 'company_description', 'solution_description', 'investment_philosophy')
     readonly_fields = ('created_at', 'updated_at')
     inlines = [CompanyDocumentInline]
@@ -49,9 +49,9 @@ class CompanyAdmin(admin.ModelAdmin):
         return obj.member.user.get_full_name() or obj.member.user.username
     get_member_name.short_description = 'Member'
     
-    def get_member_type(self, obj):
-        return obj.member.get_user_type_display()
-    get_member_type.short_description = 'Member Type'
+    def get_company_type(self, obj):
+        return obj.get_company_type_display()
+    get_company_type.short_description = 'Company Type'
     
     def get_organization_type(self, obj):
         """Display organization type for corporate companies"""
@@ -99,7 +99,7 @@ class CompanyAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Basic Information', {
-            'fields': ('member', 'company_name', 'company_logo', 'website')
+            'fields': ('member', 'company_type', 'company_name', 'company_logo', 'website')
         }),
         ('Company Details', {
             'fields': ('founded_year', 'team_size', 'primary_location', 'organization_type', 'company_description')

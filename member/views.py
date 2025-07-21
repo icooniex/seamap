@@ -121,10 +121,8 @@ def onboarding_investor(request):
         messages.warning(request, 'Please complete your profile first.')
         return redirect('onboarding_role_selection')
     
-    # Check if role was selected and is investor
-    if member.user_type != 'investor':
-        messages.warning(request, 'This onboarding is for investors only.')
-        return redirect('onboarding_role_selection')
+    # No longer check member user_type since companies can have different types
+    # This view creates investor-type companies
     
     if request.method == 'POST':
         try:
@@ -136,6 +134,7 @@ def onboarding_investor(request):
             # Create new company profile (investor organization)
             company = Company.objects.create(
                 member=member,
+                company_type='investor',  # Set company type as investor
                 company_name=request.POST.get('company_name', ''),
                 investor_type=request.POST.get('investor_type', ''),
                 website=request.POST.get('website', '') or None,
@@ -192,10 +191,8 @@ def onboarding_corporate(request):
     try:
         member = Member.objects.get(user=request.user)
         
-        # Check if user is corporate type
-        if member.user_type != 'corporate':
-            messages.error(request, 'This onboarding is only for corporate users.')
-            return redirect('dashboard')
+        # No longer check member user_type since companies can have different types
+        # This view creates corporate-type companies
         
     except Member.DoesNotExist:
         messages.error(request, 'Member profile not found. Please contact support.')
@@ -253,6 +250,7 @@ def onboarding_corporate(request):
                 member=member,
                 company_name=company_name,
                 defaults={
+                    'company_type': 'corporate',  # Set company type as corporate
                     'website': website,
                     'founded_year': founded_year_int,
                     'team_size': team_size,
@@ -272,6 +270,7 @@ def onboarding_corporate(request):
             
             # If company already exists, update it
             if not created:
+                company.company_type = 'corporate'  # Ensure company type is set
                 company.website = website
                 company.founded_year = founded_year_int
                 company.team_size = team_size
@@ -338,7 +337,7 @@ def signup(request):
 
 def investor_matchmaking(request):
     # query = request.GET.get('q', '')
-    # investors = Member.objects.filter(user_type='investor')
+    # investors = Company.objects.filter(company_type='investor')
     # if query:
     #     investors = investors.filter(company_name__icontains=query)
     # # Add more filters as needed
@@ -1318,7 +1317,7 @@ def onboarding_user_profile(request):
             member.short_bio = request.POST.get('short_bio', '')
             member.phone_number = request.POST.get('phone_number', '')
             member.linkedin_url = request.POST.get('linkedin_url', '')
-            member.user_type = selected_role
+            # No longer set user_type on member - will be set on company during onboarding
             member.profile_completed = True  # Mark profile as completed
             
             member.save()
@@ -1362,10 +1361,8 @@ def onboarding_startup_new(request):
         messages.warning(request, 'Please complete your profile first.')
         return redirect('onboarding_role_selection')
     
-    # Check if role was selected and is startup
-    if member.user_type != 'startup':
-        messages.warning(request, 'This onboarding is for startups only.')
-        return redirect('onboarding_role_selection')
+    # No longer check member user_type since companies can have different types
+    # This view creates startup-type companies
     
     if request.method == 'POST':
         try:
@@ -1376,6 +1373,7 @@ def onboarding_startup_new(request):
             # Create new company profile
             company = Company.objects.create(
                 member=member,
+                company_type='startup',  # Set company type as startup
                 company_name=request.POST.get('company_name', ''),
                 website=request.POST.get('website', '') or None,
                 founded_year=int(request.POST.get('founded_year')) if request.POST.get('founded_year') else None,
