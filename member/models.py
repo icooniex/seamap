@@ -81,6 +81,15 @@ DEAL_SIZE_CHOICES = [
     ('over_50m', 'Over $50M'),
 ]
 
+# Corporate-specific choices
+ORGANIZATION_TYPE_CHOICES = [
+    ('private_company', 'Private Company'),
+    ('multinational_corporation', 'Multinational Corporation'),
+    ('sme', 'Small or Medium-sized Enterprise (SME)'),
+    ('startup_subsidiary', 'Startup Subsidiary'),
+    ('other', 'Other'),
+]
+
 class Member(models.Model):
     """User Profile Model - stores individual user information"""
     # Basic user information
@@ -125,6 +134,7 @@ class Company(models.Model):
     team_size = models.CharField(max_length=10, choices=TEAM_SIZE_CHOICES, blank=True)
     primary_location = models.CharField(max_length=50, choices=LOCATION_CHOICES, blank=True)
     company_description = models.TextField(blank=True)
+    organization_type = models.CharField(max_length=30, choices=ORGANIZATION_TYPE_CHOICES, blank=True)
     
     # Investor-specific fields
     investor_type = models.CharField(max_length=20, choices=INVESTOR_TYPE_CHOICES, blank=True)
@@ -223,6 +233,12 @@ class Company(models.Model):
             'Other': '🌍 Other',
         }
         return [country_mapping.get(c, c) for c in self.market_country_interests]
+
+    def get_organization_type_display_readable(self):
+        """Return human-readable organization type"""
+        if self.organization_type:
+            return dict(ORGANIZATION_TYPE_CHOICES).get(self.organization_type, self.organization_type)
+        return '-'
 
     class Meta:
         verbose_name = "Company Profile"

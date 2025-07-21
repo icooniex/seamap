@@ -258,6 +258,7 @@ def onboarding_corporate(request):
                     'team_size': team_size,
                     'primary_location': primary_location,
                     'company_description': company_description,
+                    'organization_type': organization_type,
                     'funding_stages': [],  # Corporate doesn't have funding stages like investors
                     'investment_categories': technological_areas,  # Use technological areas as categories
                     'market_country_interests': market_country_interests,
@@ -276,6 +277,7 @@ def onboarding_corporate(request):
                 company.team_size = team_size
                 company.primary_location = primary_location
                 company.company_description = company_description
+                company.organization_type = organization_type
                 company.investment_categories = technological_areas
                 company.market_country_interests = market_country_interests
                 company.investment_philosophy = specific_goals
