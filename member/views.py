@@ -1,3 +1,4 @@
+from multiprocessing import context
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout as auth_logout
@@ -183,9 +184,129 @@ def onboarding_investor(request):
     return render(request, 'onboarding/investor_onboarding_complete.html', context)
 
 def onboarding_corporate(request):
-    """Placeholder for corporate onboarding"""
-    messages.info(request, 'Corporate onboarding coming soon!')
-    return redirect('onboarding_role_selection')
+    """Handle corporate onboarding process"""
+    if not request.user.is_authenticated:
+        messages.error(request, 'Please log in to complete your onboarding.')
+        return redirect('login')
+    
+    try:
+        member = Member.objects.get(user=request.user)
+        
+        # Check if user is corporate type
+        if member.user_type != 'corporate':
+            messages.error(request, 'This onboarding is only for corporate users.')
+            return redirect('dashboard')
+        
+    except Member.DoesNotExist:
+        messages.error(request, 'Member profile not found. Please contact support.')
+        return redirect('login')
+    
+    if request.method == 'POST':
+        try:
+            # Extract form data
+            company_name = request.POST.get('company_name', '').strip()
+            organization_type = request.POST.get('organization_type', '').strip()
+            website = request.POST.get('website', '').strip()
+            founded_year = request.POST.get('founded_year', '')
+            team_size = request.POST.get('team_size', '').strip()
+            primary_location = request.POST.get('primary_location', '').strip()
+            company_description = request.POST.get('company_description', '').strip()
+            
+            # Multi-select fields (checkbox arrays)
+            industry_expertise = request.POST.getlist('industry_expertise')
+            technological_areas = request.POST.getlist('technological_areas') 
+            market_country_interests = request.POST.getlist('market_country_interests')
+            collaboration_methods = request.POST.getlist('collaboration_methods')
+            
+            # Step 3 fields
+            specific_goals = request.POST.get('specific_goals', '').strip()
+            collaborate_startups = request.POST.get('collaborate_startups', '').strip()
+            additional_info = request.POST.get('additional_info', '').strip()
+            
+            # Consent fields
+            consent_info = request.POST.get('consent_info') == 'on'
+            consent_marketplace = request.POST.get('consent_marketplace') == 'on'
+            
+            # Basic validation
+            if not all([company_name, organization_type, team_size, primary_location]):
+                messages.error(request, 'Please fill in all required fields.')
+                context = {'member': member}
+                return render(request, 'onboarding/corporate_onboarding.html', context)
+            
+            if not consent_info or not consent_marketplace:
+                messages.error(request, 'Please accept both consent agreements.')
+                context = {'member': member}
+                return render(request, 'onboarding/corporate_onboarding.html', context)
+            
+            # Convert founded year to integer if provided
+            founded_year_int = None
+            if founded_year.strip():
+                try:
+                    founded_year_int = int(founded_year)
+                except ValueError:
+                    messages.error(request, 'Please enter a valid founded year.')
+                    context = {'member': member}
+                    return render(request, 'onboarding/corporate_onboarding.html', context)
+            
+            # Check if company already exists for this member
+            company, created = Company.objects.get_or_create(
+                member=member,
+                company_name=company_name,
+                defaults={
+                    'website': website,
+                    'founded_year': founded_year_int,
+                    'team_size': team_size,
+                    'primary_location': primary_location,
+                    'company_description': company_description,
+                    'funding_stages': [],  # Corporate doesn't have funding stages like investors
+                    'investment_categories': technological_areas,  # Use technological areas as categories
+                    'market_country_interests': market_country_interests,
+                    'investment_philosophy': specific_goals,  # Use specific goals as philosophy
+                    'support_areas': collaboration_methods,  # Use collaboration methods as support areas
+                    'additional_info': additional_info,
+                    'is_primary': True,
+                    'is_active': True
+                }
+            )
+            
+            # If company already exists, update it
+            if not created:
+                company.website = website
+                company.founded_year = founded_year_int
+                company.team_size = team_size
+                company.primary_location = primary_location
+                company.company_description = company_description
+                company.investment_categories = technological_areas
+                company.market_country_interests = market_country_interests
+                company.investment_philosophy = specific_goals
+                company.support_areas = collaboration_methods
+                company.additional_info = additional_info
+            
+            # Handle file upload
+            if 'company_logo' in request.FILES and request.FILES['company_logo']:
+                company.company_logo = request.FILES['company_logo']
+            
+            company.save()
+            
+            # Update member consent and onboarding status
+            member.consent_info = consent_info
+            member.consent_marketplace = consent_marketplace
+            member.onboarding_completed = True
+            member.save()
+            
+            messages.success(request, 'Corporate onboarding completed successfully!')
+            return redirect('dashboard')
+            
+        except Exception as e:
+            messages.error(request, f'An error occurred while saving your information: {str(e)}')
+            context = {'member': member}
+            return render(request, 'onboarding/corporate_onboarding.html', context)
+    
+    # GET request - show form
+    context = {
+        'member': member,
+    }
+    return render(request, 'onboarding/corporate_onboarding.html', context)
 
 def signup(request):
     if request.method == 'POST':
