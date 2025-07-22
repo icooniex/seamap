@@ -51,7 +51,7 @@
                     <i class="bi bi-table"></i> Table
                 </button>
                 <button class="btn btn-sm btn-outline-secondary" id="cardView">
-                    <i class="bi bi-grid"></i> Cards
+                    <i class="bi bi-grid"></i> Grid
                 </button>
                 
             </div>
@@ -204,95 +204,105 @@
         </div>
     </div>
 
-    <!-- Card View (Hidden by default) -->
-    <div class="startups-container" id="cardContainer" style="display: none;">
-        {% for startup in startups %}
-        <div class="startup-card clickable-card" 
-             data-match="{{ startup.match_score }}" 
-             data-stage="{{ startup.current_stage|default:'unknown' }}" 
-             data-href="/startup/{{ startup.id }}/">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-start">
-                        <!-- Company Logo/Avatar -->
-                        <div class="company-avatar me-3">
-                            {% if startup.company_logo %}
-                                <img src="{{ startup.company_logo.url }}" alt="{{ startup.company_name }}" class="avatar-img" style="width: 60px; height: 60px; object-fit: cover; border-radius: 12px;">
-                            {% else %}
-                                <div class="avatar-placeholder">
-                                    {{ startup.company_name|slice:":2"|upper }}
+    <!-- Grid View (Hidden by default) -->
+    <div class="startups-grid-container" id="cardContainer" style="display: none;">
+        <div class="startups-grid">
+            {% for startup in startups %}
+            <div class="startup-grid-item clickable-card" 
+                 data-match="{{ startup.match_score }}" 
+                 data-stage="{{ startup.current_stage|default:'unknown' }}" 
+                 data-href="/startup/{{ startup.id }}/">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body d-flex flex-column">
+                        <!-- Header Section -->
+                        <div class="grid-header mb-3">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <!-- Company Logo/Avatar -->
+                                <div class="company-avatar-grid">
+                                    {% if startup.company_logo %}
+                                        <img src="{{ startup.company_logo.url }}" alt="{{ startup.company_name }}" class="avatar-img-grid">
+                                    {% else %}
+                                        <div class="avatar-placeholder-grid">
+                                            {{ startup.company_name|slice:":2"|upper }}
+                                        </div>
+                                    {% endif %}
                                 </div>
-                            {% endif %}
-                        </div>
-
-                        <!-- Main Content -->
-                        <div class="flex-grow-1">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h5 class="company-name mb-0">{{ startup.company_name }}</h5>
-                                <div class="match-score">
-                                    <span class="match-percentage">{{ startup.match_score }}%</span>
-                                    <small class="text-muted d-block">Match</small>
+                                <!-- Match Score Badge -->
+                                <div class="match-badge">
+                                    <span class="match-percentage-grid">{{ startup.match_score }}%</span>
                                 </div>
                             </div>
-
-                            <!-- Company Info -->
-                            <div class="company-info mb-2">
-                                <span class="info-item">
+                            
+                            <!-- Company Name -->
+                            <h5 class="company-name-grid mb-1">{{ startup.company_name }}</h5>
+                            
+                            <!-- Location & Founded -->
+                            <div class="company-meta mb-2">
+                                <span class="meta-item">
                                     <i class="bi bi-geo-alt"></i> {{ startup.get_primary_location_display|default:startup.primary_location|default:"Not specified" }}
                                 </span>
-                                <span class="info-separator">•</span>
-                                <span class="info-item">
-                                    <i class="bi bi-calendar"></i> Founded {{ startup.founded_year|default:"Unknown" }}
-                                </span>
-                                <span class="info-separator">•</span>
-                                <span class="info-item">
-                                    <i class="bi bi-people"></i> {{ startup.get_team_size_display|default:startup.team_size|default:"Not specified" }} employees
+                                <span class="meta-separator">•</span>
+                                <span class="meta-item">
+                                    <i class="bi bi-calendar"></i> {{ startup.founded_year|default:"Unknown" }}
                                 </span>
                             </div>
+                        </div>
 
-                            <!-- Description -->
-                            <p class="company-description">
-                                {{ startup.solution_description|default:startup.company_description|truncatewords:20|default:"No description available." }}
-                            </p>
+                        <!-- Description -->
+                        <p class="company-description-grid flex-grow-1">
+                            {{ startup.solution_description|default:startup.company_description|truncatewords:15|default:"No description available." }}
+                        </p>
 
-                            <!-- Technology Tags -->
-                            {% if startup.innovation_types %}
-                            <div class="tech-tags mb-3">
-                                {% for tech in startup.innovation_types|slice:":5" %}
-                                    <span class="tech-tag">{{ tech|title }}</span>
-                                {% endfor %}
+                        <!-- Technology Tags -->
+                        {% if startup.innovation_types %}
+                        <div class="tech-tags-grid mb-3">
+                            {% for tech in startup.innovation_types|slice:":3" %}
+                                <span class="tech-tag-grid">{{ tech|title }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <!-- Footer Section -->
+                        <div class="grid-footer mt-auto">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <!-- Stage Badge -->
+                                {% if startup.current_stage %}
+                                    <span class="stage-badge-grid stage-{{ startup.current_stage }}">{{ startup.get_current_stage_display }}</span>
+                                {% else %}
+                                    <span class="stage-badge-grid">Not Specified</span>
+                                {% endif %}
+                                <!-- Team Size -->
+                                <span class="team-size-grid">
+                                    <i class="bi bi-people"></i> {{ startup.get_team_size_display|default:startup.team_size|default:"N/A" }}
+                                </span>
                             </div>
-                            {% endif %}
-
-                            <!-- Bottom Row -->
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="funding-info">
-                                    {% if startup.current_stage %}
-                                        <span class="stage-badge stage-{{ startup.current_stage }}">{{ startup.get_current_stage_display }}</span>
-                                    {% else %}
-                                        <span class="stage-badge">Stage Not Specified</span>
-                                    {% endif %}
-                                    {% if startup.funding_needed %}
-                                        <span class="funding-amount">Seeking: {{ startup.get_funding_needed_display }}</span>
-                                    {% else %}
-                                        <span class="funding-amount">Funding: Not specified</span>
-                                    {% endif %}
+                            
+                            <!-- Funding Info -->
+                            {% if startup.funding_needed %}
+                                <div class="funding-info-grid">
+                                    <i class="bi bi-currency-dollar text-success"></i>
+                                    <span class="funding-text">Seeking: {{ startup.get_funding_needed_display }}</span>
                                 </div>
-                            </div>
+                            {% else %}
+                                <div class="funding-info-grid text-muted">
+                                    <i class="bi bi-info-circle"></i>
+                                    <span class="funding-text">Funding not specified</span>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        {% empty %}
-        <div class="col-12 text-center py-5">
-            <div class="d-flex flex-column align-items-center text-muted">
-                <i class="bi bi-search fs-1 mb-3"></i>
-                <h5>No startups found</h5>
-                <p>Try adjusting your search criteria or filters.</p>
+            {% empty %}
+            <div class="empty-state">
+                <div class="d-flex flex-column align-items-center text-muted">
+                    <i class="bi bi-search fs-1 mb-3"></i>
+                    <h5>No startups found</h5>
+                    <p>Try adjusting your search criteria or filters.</p>
+                </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
 
 </div>
@@ -587,19 +597,34 @@
 <!-- ...existing code... -->
 
 <style>
-/* Dashboard Styling */
+/* Dashboard Styling - Onboarding Theme */
 .dashboard-header {
-    background: linear-gradient(135deg, #f8f9ff 0%, #e8f4f8 100%);
-    padding: 2rem;
-    border-radius: 16px;
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    color: white;
+    padding: 2.5rem;
+    border-radius: 20px;
     margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(44, 89, 167, 0.15);
+}
+
+.dashboard-header h1 {
+    color: white;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-header p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.1rem;
+    margin-bottom: 0;
 }
 
 .search-section {
     background: white;
-    padding: 1.5rem;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(44, 89, 167, 0.1);
 }
 
 .search-input-group {
@@ -611,53 +636,76 @@
     left: 1rem;
     top: 50%;
     transform: translateY(-50%);
-    color: #6c757d;
+    color: #2c59a7;
     z-index: 10;
+    font-size: 1.1rem;
 }
 
 .search-input {
-    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    padding: 1rem 1.25rem 1rem 3rem;
     border: 2px solid #e9ecef;
     border-radius: 12px;
     font-size: 1rem;
     transition: all 0.3s ease;
+    background: #f8f9fa;
 }
 
 .search-input:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    border-color: #2c59a7;
+    box-shadow: 0 0 0 3px rgba(44, 89, 167, 0.1);
+    background: white;
 }
 
 .search-btn {
-    padding: 0.75rem 1.5rem;
+    padding: 1rem 2rem;
     border-radius: 12px;
-    font-weight: 500;
+    font-weight: 700;
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(44, 89, 167, 0.2);
+}
+
+.search-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(44, 89, 167, 0.35);
+    background: linear-gradient(135deg, #234a91 0%, #4a3f8a 100%);
 }
 
 .filter-tags {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.75rem;
     flex-wrap: wrap;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(44, 89, 167, 0.1);
 }
 
 .filter-tag {
-    padding: 0.5rem 1rem;
-    background: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 20px;
-    font-size: 0.875rem;
+    padding: 0.75rem 1.5rem;
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
+    color: #495057;
 }
 
 .filter-tag:hover {
-    background: #e9ecef;
+    border-color: #2c59a7;
+    color: #2c59a7;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(44, 89, 167, 0.15);
 }
 
 .filter-tag.active {
-    background: #007bff;
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
     color: white;
-    border-color: #007bff;
+    border-color: #2c59a7;
+    box-shadow: 0 4px 16px rgba(44, 89, 167, 0.25);
 }
 
 .results-summary {
@@ -666,11 +714,15 @@
 
 .view-options .btn {
     border-radius: 8px;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
 }
 
 .view-options .btn.active {
-    background: #007bff;
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
     color: white;
+    border: none;
+    box-shadow: 0 2px 8px rgba(44, 89, 167, 0.2);
 }
 
 /* Table Styling with Fixed Sticky Column */
@@ -853,19 +905,20 @@
 .avatar-placeholder-sm {
     width: 40px;
     height: 40px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
     color: white;
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 0.875rem;
-    font-weight: 600;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(44, 89, 167, 0.2);
 }
 
 .company-name-sm {
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 700;
     color: #2c3e50;
     margin-bottom: 0.25rem;
 }
@@ -885,11 +938,20 @@
 
 .tech-tag-sm {
     background: #f8f9ff;
-    color: #007bff;
+    color: #2c59a7;
     padding: 0.125rem 0.5rem;
     border-radius: 12px;
     font-size: 0.75rem;
-    border: 1px solid #007bff;
+    border: 1px solid #2c59a7;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.tech-tag-sm:hover {
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(44, 89, 167, 0.2);
 }
 
 .match-score-sm {
@@ -900,7 +962,7 @@
 .match-percentage-sm {
     font-size: 1.1rem;
     font-weight: 700;
-    color: #28a745;
+    color: #58946e;
     display: block;
     margin-bottom: 0.25rem;
 }
@@ -916,7 +978,7 @@
 
 .match-fill {
     height: 100%;
-    background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+    background: linear-gradient(90deg, #58946e 0%, #639ac0 100%);
     border-radius: 3px;
     transition: width 0.8s ease;
 }
@@ -925,7 +987,7 @@
     padding: 0.25rem 0.75rem;
     border-radius: 16px;
     font-size: 0.75rem;
-    font-weight: 500;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -933,16 +995,19 @@
 .stage-early {
     background: #fff3cd;
     color: #856404;
+    border: 1px solid #EBCA38;
 }
 
 .stage-growth {
-    background: #d4edda;
-    color: #155724;
+    background: #e8f5e8;
+    color: #58946e;
+    border: 1px solid #58946e;
 }
 
 .stage-mature {
-    background: #d1ecf1;
-    color: #0c5460;
+    background: #e7f3ff;
+    color: #639ac0;
+    border: 1px solid #639ac0;
 }
 
 .funding-info-sm {
@@ -972,9 +1037,269 @@
 .action-buttons-sm .btn {
     padding: 0.375rem 0.5rem;
     border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.3s ease;
 }
 
-/* Card View Styling (Original) */
+.action-buttons-sm .btn-primary {
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    border: none;
+    color: white;
+    box-shadow: 0 2px 8px rgba(44, 89, 167, 0.2);
+}
+
+.action-buttons-sm .btn-primary:hover {
+    background: linear-gradient(135deg, #234a91 0%, #4a3f8a 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(44, 89, 167, 0.3);
+}
+
+.action-buttons-sm .btn-outline-primary {
+    border: 1px solid #2c59a7;
+    color: #2c59a7;
+    background: white;
+}
+
+.action-buttons-sm .btn-outline-primary:hover {
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    color: white;
+    border-color: #2c59a7;
+}
+
+/* Grid View Styling */
+.startups-grid-container {
+    background: transparent;
+}
+
+.startups-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    padding: 0;
+}
+
+.startup-grid-item {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.startup-grid-item:hover {
+    transform: translateY(-4px);
+}
+
+.startup-grid-item .card {
+    border: none;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.startup-grid-item:hover .card {
+    border-color: #2c59a7;
+    box-shadow: 0 8px 30px rgba(44, 89, 167, 0.15);
+}
+
+/* Grid Header */
+.grid-header {
+    border-bottom: 1px solid #f1f3f4;
+    padding-bottom: 1rem;
+}
+
+.company-avatar-grid {
+    flex-shrink: 0;
+}
+
+.avatar-img-grid {
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 2px solid #f8f9fa;
+}
+
+.avatar-placeholder-grid {
+    width: 45px;
+    height: 45px;
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    color: white;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 700;
+    box-shadow: 0 3px 10px rgba(44, 89, 167, 0.2);
+}
+
+.match-badge {
+    text-align: center;
+}
+
+.match-percentage-grid {
+    background: linear-gradient(135deg, #58946e 0%, #639ac0 100%);
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    box-shadow: 0 3px 10px rgba(88, 148, 110, 0.3);
+}
+
+.company-name-grid {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #2c3e50;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+}
+
+.company-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: #6c757d;
+    flex-wrap: wrap;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-weight: 500;
+}
+
+.meta-separator {
+    color: #dee2e6;
+    font-weight: bold;
+}
+
+/* Grid Content */
+.company-description-grid {
+    color: #495057;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 0;
+}
+
+.tech-tags-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.tech-tag-grid {
+    background: #f8f9ff;
+    color: #2c59a7;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    border: 1px solid #2c59a7;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.tech-tag-grid:hover {
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(44, 89, 167, 0.2);
+}
+
+/* Grid Footer */
+.grid-footer {
+    border-top: 1px solid #f1f3f4;
+    padding-top: 1rem;
+}
+
+.stage-badge-grid {
+    padding: 0.25rem 0.6rem;
+    border-radius: 14px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.team-size-grid {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.8rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.funding-info-grid {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: #495057;
+}
+
+.funding-text {
+    font-weight: 500;
+}
+
+/* Empty State */
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem 1rem;
+}
+
+/* Grid Responsive */
+@media (max-width: 1200px) {
+    .startups-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.25rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .startups-grid {
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 1rem;
+    }
+    
+    .startup-grid-item .card-body {
+        padding: 1rem;
+    }
+    
+    .company-name-grid {
+        font-size: 1rem;
+    }
+    
+    .company-meta {
+        font-size: 0.75rem;
+    }
+    
+    .tech-tags-grid {
+        gap: 0.3rem;
+    }
+    
+    .tech-tag-grid {
+        font-size: 0.7rem;
+        padding: 0.15rem 0.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .startups-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .startup-grid-item .card {
+        border-radius: 12px;
+    }
+}
+
+/* Card View Styling (Original) - Keep for backward compatibility */
 .startup-card {
     margin-bottom: 1.5rem;
     transition: transform 0.2s ease;
@@ -1004,19 +1329,20 @@
 .avatar-placeholder {
     width: 60px;
     height: 60px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
     color: white;
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.2rem;
-    font-weight: 600;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(44, 89, 167, 0.2);
 }
 
 .company-name {
     font-size: 1.25rem;
-    font-weight: 600;
+    font-weight: 700;
     color: #2c3e50;
 }
 
@@ -1026,12 +1352,13 @@
 }
 
 .match-percentage {
-    background: #e8f5e8;
-    color: #28a745;
-    padding: 0.25rem 0.5rem;
+    background: linear-gradient(135deg, #58946e 0%, #639ac0 100%);
+    color: white;
+    padding: 0.5rem 0.75rem;
     border-radius: 20px;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 0.9rem;
+    box-shadow: 0 3px 10px rgba(88, 148, 110, 0.3);
 }
 
 .company-info {
@@ -1066,11 +1393,20 @@
 
 .tech-tag {
     background: #f8f9ff;
-    color: #007bff;
+    color: #2c59a7;
     padding: 0.25rem 0.75rem;
     border-radius: 16px;
     font-size: 0.8rem;
-    border: 1px solid #007bff;
+    border: 1px solid #2c59a7;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.tech-tag:hover {
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(44, 89, 167, 0.2);
 }
 
 .funding-info {
@@ -1095,6 +1431,40 @@
 .action-buttons {
     display: flex;
     align-items: center;
+    gap: 0.5rem;
+}
+
+.action-buttons .btn-primary {
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(44, 89, 167, 0.2);
+    transition: all 0.3s ease;
+}
+
+.action-buttons .btn-primary:hover {
+    background: linear-gradient(135deg, #234a91 0%, #4a3f8a 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(44, 89, 167, 0.3);
+}
+
+.action-buttons .btn-outline-primary {
+    border: 1px solid #2c59a7;
+    color: #2c59a7;
+    background: white;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.action-buttons .btn-outline-primary:hover {
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    color: white;
+    border-color: #2c59a7;
 }
 
 .pagination-container {
@@ -1188,7 +1558,7 @@
     background: #f8f9fa !important;
 }
 
-/* Clickable Card Styling */
+/* Clickable Grid Item Styling */
 .clickable-card {
     cursor: pointer;
     transition: all 0.3s ease;
@@ -1196,11 +1566,16 @@
 
 .clickable-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 25px rgba(44, 89, 167, 0.15);
 }
 
 .clickable-card:hover .card {
-    border-color: #2C59A7;
+    border-color: #2c59a7;
+    box-shadow: 0 4px 20px rgba(44, 89, 167, 0.1);
+}
+
+.clickable-card:hover .company-name-grid {
+    color: #2c59a7;
 }
 
 /* Visual feedback for clickable elements */
@@ -1217,15 +1592,17 @@
 }
 
 /* Add pointer cursor to entire card */
-.startup-card .card {
+.startup-card .card,
+.startup-grid-item .card {
     border: 2px solid transparent;
     transition: all 0.3s ease;
 }
 
 /* Hover effect for better visual feedback */
 .clickable-row:hover .company-name-sm,
-.clickable-card:hover .company-name {
-    color: #2C59A7;
+.clickable-card:hover .company-name,
+.clickable-card:hover .company-name-grid {
+    color: #2c59a7;
 }
 
 /* Add subtle animation for tech tags on hover */
@@ -1836,4 +2213,4 @@ clickableCards.forEach(card => {
 });
 
 </script>
-{% endblock %}
+{% endblock %} 
