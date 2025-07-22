@@ -123,6 +123,9 @@
                         data-match="{{ startup.match_score }}" 
                         data-stage="{{ startup.current_stage|default:'unknown' }}" 
                         data-name="{{ startup.company_name|lower|cut:' '|cut:'-' }}" 
+                        data-support-areas="{{ startup.support_areas|join:',' }}"
+                        data-innovation-types="{{ startup.innovation_types|join:',' }}"
+                        data-funding="{{ startup.funding_needed|default:'' }}"
                         data-href="/startup/{{ startup.id }}/">
                         <td class="company-cell sticky-column">
                             <div class="d-flex align-items-center">
@@ -220,6 +223,9 @@
             <div class="startup-grid-item clickable-card" 
                  data-match="{{ startup.match_score }}" 
                  data-stage="{{ startup.current_stage|default:'unknown' }}" 
+                 data-support-areas="{{ startup.support_areas|join:',' }}"
+                 data-innovation-types="{{ startup.innovation_types|join:',' }}"
+                 data-funding="{{ startup.funding_needed|default:'' }}"
                  data-href="/startup/{{ startup.id }}/">
                 <div class="card shadow-sm h-100">
                     <div class="card-body d-flex flex-column">
@@ -348,12 +354,134 @@
                             </div>
                         </div>
 
+                        <!-- Innovation Types Filter -->
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="bi bi-lightbulb me-2"></i>
+                                    Innovation Types
+                                </label>
+                                <div class="tech-checkbox-grid">
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="innPlasticAlternatives" name="innovation_types" value="plastic_alternatives" class="form-check-input">
+                                        <label for="innPlasticAlternatives" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Eliminate & Redesign Packaging</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="innRecyclingTech" name="innovation_types" value="recycling_technologies" class="form-check-input">
+                                        <label for="innRecyclingTech" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Refill & Reuse Solutions</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="innWasteCollection" name="innovation_types" value="waste_collection" class="form-check-input">
+                                        <label for="innWasteCollection" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Reusable Packaging Collection/Drop Off</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="innCircularEconomy" name="innovation_types" value="circular_economy" class="form-check-input">
+                                        <label for="innCircularEconomy" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Upcycling Plastic Waste</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="innMonitoringTools" name="innovation_types" value="monitoring_tools" class="form-check-input">
+                                        <label for="innMonitoringTools" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Sustainable Alternative Materials</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="innEducationPartnerships" name="innovation_types" value="education_partnerships" class="form-check-input">
+                                        <label for="innEducationPartnerships" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Education & Industry Partnerships</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="innTrackingMonitoring" name="innovation_types" value="tracking_monitoring" class="form-check-input">
+                                        <label for="innTrackingMonitoring" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Tracking & Monitoring Waste</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="innOther" name="innovation_types" value="other" class="form-check-input">
+                                        <label for="innOther" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Other Innovation</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Current Stage Filter -->
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="bi bi-graph-up me-2"></i>
+                                    Current Stage
+                                </label>
+                                <div class="tech-checkbox-grid">
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="stageIdea" name="current_stage" value="idea" class="form-check-input">
+                                        <label for="stageIdea" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">💡 Ideation</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="stageMvp" name="current_stage" value="prototype" class="form-check-input">
+                                        <label for="stageMvp" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🔧 Prototype/MVP</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="stageValidation" name="current_stage" value="validation" class="form-check-input">
+                                        <label for="stageValidation" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🧪 Validation</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="stageEarly" name="current_stage" value="early" class="form-check-input">
+                                        <label for="stageEarly" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">📈 Early Growth</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="stageScaling" name="current_stage" value="scaling" class="form-check-input">
+                                        <label for="stageScaling" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🚀 Scaling</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="stageProfit" name="current_stage" value="profit" class="form-check-input">
+                                        <label for="stageProfit" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">💰 Established/Profitable</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Location Filter -->
                         <div class="col-12">
                             <div class="form-group">
                                 <label class="form-label">
                                     <i class="bi bi-geo-alt me-2"></i>
-                                    Primary Location
+                                    Market
                                 </label>
                                 <div class="tech-checkbox-grid">
                                     <div class="checkbox-item">
@@ -402,238 +530,75 @@
                             </div>
                         </div></label>
 
-                        <!-- Current Stage Filter -->
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="form-label">
-                                    <i class="bi bi-graph-up me-2"></i>
-                                    Current Stage
-                                </label>
-                                <div class="checkbox-group">
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="stageIdea" name="current_stage" value="idea" class="form-check-input">
-                                        <label for="stageIdea" class="checkbox-label">
-                                            <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Idea Stage</span>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="stageMvp" name="current_stage" value="mvp" class="form-check-input">
-                                        <label for="stageMvp" class="checkbox-label">
-                                            <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">MVP/Prototype</span>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="stageEarly" name="current_stage" value="early_revenue" class="form-check-input">
-                                        <label for="stageEarly" class="checkbox-label">
-                                            <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Early Revenue</span>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="stageGrowth" name="current_stage" value="growth" class="form-check-input">
-                                        <label for="stageGrowth" class="checkbox-label">
-                                            <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Growth</span>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="stageScaling" name="current_stage" value="scaling" class="form-check-input">
-                                        <label for="stageScaling" class="checkbox-label">
-                                            <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Scaling</span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                         <!-- Funding Needed Filter -->
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <div class="form-group">
                                 <label class="form-label">
                                     <i class="bi bi-currency-dollar me-2"></i>
                                     Funding Needed
                                 </label>
-                                <div class="checkbox-group">
+                                <div class="tech-checkbox-grid">
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="funding10k100k" name="funding_needed" value="10000-100000" class="form-check-input">
-                                        <label for="funding10k100k" class="checkbox-label">
+                                        <input type="checkbox" id="fundingUnder10k" name="funding_needed" value="under_10k" class="form-check-input">
+                                        <label for="fundingUnder10k" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">$10K - $100K</span>
+                                            <span class="checkbox-text">Under $10K</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="funding100k500k" name="funding_needed" value="100000-500000" class="form-check-input">
+                                        <input type="checkbox" id="funding10k50k" name="funding_needed" value="10k_50k" class="form-check-input">
+                                        <label for="funding10k50k" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">$10K - $50K</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="funding50k100k" name="funding_needed" value="50k_100k" class="form-check-input">
+                                        <label for="funding50k100k" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">$50K - $100K</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="funding100k500k" name="funding_needed" value="100k_500k" class="form-check-input">
                                         <label for="funding100k500k" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
                                             <span class="checkbox-text">$100K - $500K</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="funding500k1m" name="funding_needed" value="500000-1000000" class="form-check-input">
+                                        <input type="checkbox" id="funding500k1m" name="funding_needed" value="500k_1m" class="form-check-input">
                                         <label for="funding500k1m" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
                                             <span class="checkbox-text">$500K - $1M</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="funding1m5m" name="funding_needed" value="1000000-5000000" class="form-check-input">
+                                        <input type="checkbox" id="funding1m5m" name="funding_needed" value="1m_5m" class="form-check-input">
                                         <label for="funding1m5m" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
                                             <span class="checkbox-text">$1M - $5M</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="fundingOver5m" name="funding_needed" value="5000000+" class="form-check-input">
-                                        <label for="fundingOver5m" class="checkbox-label">
+                                        <input type="checkbox" id="funding5m10m" name="funding_needed" value="5m_10m" class="form-check-input">
+                                        <label for="funding5m10m" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Over $5M</span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Team Size Filter -->
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="form-label">
-                                    <i class="bi bi-people me-2"></i>
-                                    Team Size
-                                </label>
-                                <div class="checkbox-group">
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="team1to5" name="team_size" value="1-5" class="form-check-input">
-                                        <label for="team1to5" class="checkbox-label">
-                                            <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">1-5</span>
+                                            <span class="checkbox-text">$5M - $10M</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="team6to10" name="team_size" value="6-10" class="form-check-input">
-                                        <label for="team6to10" class="checkbox-label">
+                                        <input type="checkbox" id="fundingOver10m" name="funding_needed" value="over_10m" class="form-check-input">
+                                        <label for="fundingOver10m" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">6-10</span>
+                                            <span class="checkbox-text">Over $10M</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="team11to20" name="team_size" value="11-20" class="form-check-input">
-                                        <label for="team11to20" class="checkbox-label">
+                                        <input type="checkbox" id="fundingNotSeeking" name="funding_needed" value="not_seeking" class="form-check-input">
+                                        <label for="fundingNotSeeking" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">11-20</span>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="team21to50" name="team_size" value="21-50" class="form-check-input">
-                                        <label for="team21to50" class="checkbox-label">
-                                            <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">21-50</span>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="team51plus" name="team_size" value="51+" class="form-check-input">
-                                        <label for="team51plus" class="checkbox-label">
-                                            <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">51+</span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <!-- Innovation Types Filter -->
-                        <div class="col-12">
-                            <div class="form-group">
-                                <label class="form-label">
-                                    <i class="bi bi-lightbulb me-2"></i>
-                                    Innovation Types
-                                </label>
-                                <div class="tech-checkbox-grid">
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="innAi" name="innovation_types" value="Artificial Intelligence" class="form-check-input">
-                                        <label for="innAi" class="checkbox-label">
-                                            <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">AI & Machine Learning</span>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="innBlockchain" name="innovation_types" value="Blockchain" class="form-check-input">
-                                        <label for="innBlockchain" class="checkbox-label">
-                                            <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Blockchain</span>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="innIot" name="innovation_types" value="Internet of Things" class="form-check-input">
-                                        <label for="innIot" class="checkbox-label">
-                                            <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Internet of Things</span>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="innCleantech" name="innovation_types" value="Clean Technology" class="form-check-input">
-                                        <label for="innCleantech" class="checkbox-label">
-                                            <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Clean Technology</span>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="innBiotech" name="innovation_types" value="Biotechnology" class="form-check-input">
-                                        <label for="innBiotech" class="checkbox-label">
-                                            <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Biotechnology</span>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="innFintech" name="innovation_types" value="Financial Technology" class="form-check-input">
-                                        <label for="innFintech" class="checkbox-label">
-                                            <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Fintech</span>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="innHealthtech" name="innovation_types" value="Health Technology" class="form-check-input">
-                                        <label for="innHealthtech" class="checkbox-label">
-                                            <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Healthtech</span>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="innEdtech" name="innovation_types" value="Education Technology" class="form-check-input">
-                                        <label for="innEdtech" class="checkbox-label">
-                                            <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Edtech</span>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="innMobility" name="innovation_types" value="Smart Mobility" class="form-check-input">
-                                        <label for="innMobility" class="checkbox-label">
-                                            <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Smart Mobility</span>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="innAgriculture" name="innovation_types" value="Agriculture Technology" class="form-check-input">
-                                        <label for="innAgriculture" class="checkbox-label">
-                                            <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Agritech</span>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="innCybersecurity" name="innovation_types" value="Cybersecurity" class="form-check-input">
-                                        <label for="innCybersecurity" class="checkbox-label">
-                                            <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Cybersecurity</span>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="innOther" name="innovation_types" value="Other" class="form-check-input">
-                                        <label for="innOther" class="checkbox-label">
-                                            <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Other</span>
+                                            <span class="checkbox-text">Not currently seeking funding</span>
                                         </label>
                                     </div>
                                 </div>
@@ -2371,35 +2336,155 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize tooltips
-    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-    
-    // View toggle functionality
-    const cardView = document.getElementById('cardView');
-    const tableView = document.getElementById('tableView');
-    const cardContainer = document.getElementById('cardContainer');
-    const tableContainer = document.getElementById('tableContainer');
-    
-    cardView.addEventListener('click', function() {
-        tableView.classList.remove('active');
-        cardView.classList.add('active');
-        tableContainer.style.display = 'none';
-        cardContainer.style.display = 'block';
-    });
-    
-    tableView.addEventListener('click', function() {
-        cardView.classList.remove('active');
-        tableView.classList.add('active');
-        cardContainer.style.display = 'none';
-        tableContainer.style.display = 'block';
-    });
-    
-    // Filter functionality
-    const filterTags = document.querySelectorAll('.filter-tag');
+    // Global filter state
+    let currentFilters = {
+        search: '',
+        matchScore: 0,
+        locations: [],
+        stages: [],
+        funding: [],
+        innovationTypes: [],
+        supportAreas: [],
+        quickFilter: 'all'
+    };
+
     const startupRows = document.querySelectorAll('.startup-row');
+    const startupCards = document.querySelectorAll('.startup-grid-item');
+    
+    // Search functionality
+    const searchInput = document.querySelector('.search-input');
+    const searchForm = document.querySelector('.search-section form');
+    
+    // Prevent form submission and use JavaScript search instead
+    if (searchForm) {
+        searchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            performSearch();
+        });
+    }
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            currentFilters.search = this.value.toLowerCase().trim();
+            applyAllFilters();
+        });
+    }
+    
+    function performSearch() {
+        currentFilters.search = searchInput.value.toLowerCase().trim();
+        applyAllFilters();
+    }
+    
+    // Advanced Filter Modal functionality
+    const filterModal = document.getElementById('filterModal');
+    const applyFiltersBtn = document.getElementById('applyFiltersBtn');
+    const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+    const matchRange = document.getElementById('matchRange');
+    const matchValue = document.getElementById('matchValue');
+    
+    // Update match range display
+    if (matchRange && matchValue) {
+        matchRange.addEventListener('input', function() {
+            matchValue.textContent = this.value;
+        });
+    }
+    
+    // Apply filters button
+    if (applyFiltersBtn) {
+        applyFiltersBtn.addEventListener('click', function() {
+            collectAdvancedFilters();
+            applyAllFilters();
+            
+            // Update filter button to show active state
+            const filterBtn = document.getElementById('filterBtn');
+            if (hasActiveAdvancedFilters()) {
+                filterBtn.classList.add('has-filters');
+            } else {
+                filterBtn.classList.remove('has-filters');
+            }
+            
+            // Close modal
+            if (filterModal) {
+                const modalInstance = bootstrap.Modal.getInstance(filterModal);
+                if (modalInstance) modalInstance.hide();
+            }
+        });
+    }
+    
+    // Clear filters button
+    if (clearFiltersBtn) {
+        clearFiltersBtn.addEventListener('click', function() {
+            clearAdvancedFilters();
+            applyAllFilters();
+            
+            // Update filter button
+            const filterBtn = document.getElementById('filterBtn');
+            if (filterBtn) filterBtn.classList.remove('has-filters');
+            
+            // Close modal
+            if (filterModal) {
+                const modalInstance = bootstrap.Modal.getInstance(filterModal);
+                if (modalInstance) modalInstance.hide();
+            }
+        });
+    }
+    
+    function collectAdvancedFilters() {
+        // Match score
+        currentFilters.matchScore = matchRange ? parseInt(matchRange.value) : 0;
+        
+        // Locations
+        currentFilters.locations = Array.from(document.querySelectorAll('input[name="primary_location"]:checked'))
+            .map(input => input.value);
+        
+        // Stages
+        currentFilters.stages = Array.from(document.querySelectorAll('input[name="current_stage"]:checked'))
+            .map(input => input.value);
+        
+        // Funding
+        currentFilters.funding = Array.from(document.querySelectorAll('input[name="funding_needed"]:checked'))
+            .map(input => input.value);
+        
+        // Innovation types
+        currentFilters.innovationTypes = Array.from(document.querySelectorAll('input[name="innovation_types"]:checked'))
+            .map(input => input.value);
+        
+        // Support areas
+        currentFilters.supportAreas = Array.from(document.querySelectorAll('input[name="support_areas"]:checked'))
+            .map(input => input.value);
+    }
+    
+    function clearAdvancedFilters() {
+        // Reset filter state
+        currentFilters.matchScore = 0;
+        currentFilters.locations = [];
+        currentFilters.stages = [];
+        currentFilters.funding = [];
+        currentFilters.innovationTypes = [];
+        currentFilters.supportAreas = [];
+        
+        // Reset form inputs
+        if (matchRange) {
+            matchRange.value = 0;
+            matchValue.textContent = '0';
+        }
+        
+        document.querySelectorAll('#filterModal input[type="checkbox"]').forEach(input => {
+            input.checked = false;
+        });
+    }
+    
+    function hasActiveAdvancedFilters() {
+        return currentFilters.matchScore > 0 ||
+               currentFilters.locations.length > 0 ||
+               currentFilters.stages.length > 0 ||
+               currentFilters.funding.length > 0 ||
+               currentFilters.innovationTypes.length > 0 ||
+               currentFilters.supportAreas.length > 0;
+    }
+    
+    // Quick filter tags functionality
+    const filterTags = document.querySelectorAll('.filter-tag');
     
     filterTags.forEach(tag => {
         tag.addEventListener('click', function() {
@@ -2408,22 +2493,362 @@ document.addEventListener('DOMContentLoaded', function() {
             // Add active class to clicked tag
             this.classList.add('active');
             
-            const filter = this.dataset.filter;
+            currentFilters.quickFilter = this.dataset.filter;
+            applyAllFilters();
+        });
+    });
+    
+    // Main filter application function
+    function applyAllFilters() {
+        let visibleCount = 0;
+        
+        // Filter table rows
+        startupRows.forEach(row => {
+            if (matchesAllFilters(row, 'table')) {
+                row.style.display = 'table-row';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        
+        // Filter grid cards
+        startupCards.forEach(card => {
+            if (matchesAllFilters(card, 'grid')) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        // Update results count
+        updateResultsCount(visibleCount);
+    }
+    
+    function matchesAllFilters(element, viewType) {
+        // Get element data based on view type
+        const data = extractElementData(element, viewType);
+        
+        // Debug logging (can be removed in production)
+        if (currentFilters.search && currentFilters.search === 'debug') {
+            console.log('Debug data for element:', data);
+            console.log('Current filters:', currentFilters);
+        }
+        
+        // Search filter
+        if (currentFilters.search && currentFilters.search !== 'debug' && !matchesSearch(data, currentFilters.search)) {
+            return false;
+        }
+        
+        // Quick filter
+        if (!matchesQuickFilter(data, currentFilters.quickFilter)) {
+            return false;
+        }
+        
+        // Advanced filters
+        if (currentFilters.matchScore > 0 && data.matchScore < currentFilters.matchScore) {
+            return false;
+        }
+        
+        if (currentFilters.locations.length > 0 && !matchesLocation(data.location, currentFilters.locations)) {
+            return false;
+        }
+        
+        if (currentFilters.stages.length > 0 && !matchesStage(data.stage, currentFilters.stages)) {
+            return false;
+        }
+        
+        if (currentFilters.funding.length > 0 && !matchesFunding(data.funding, currentFilters.funding)) {
+            return false;
+        }
+        
+        if (currentFilters.innovationTypes.length > 0 && !matchesInnovationTypes(data.innovationTypes, currentFilters.innovationTypes)) {
+            return false;
+        }
+        
+        if (currentFilters.supportAreas.length > 0 && !matchesSupportAreas(data.supportAreas, currentFilters.supportAreas)) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    function extractElementData(element, viewType) {
+        const data = {};
+        
+        if (viewType === 'table') {
+            data.matchScore = parseInt(element.dataset.match) || 0;
+            data.stage = element.dataset.stage || '';
+            data.companyName = element.querySelector('.company-name-sm')?.textContent || '';
+            data.description = element.querySelector('.company-description-sm')?.textContent || '';
+            data.location = element.querySelector('.location-cell span')?.textContent || '';
+            data.teamSize = element.querySelector('.team-cell span')?.textContent || '';
             
-            startupRows.forEach(row => {
-                if (filter === 'all') {
-                    row.style.display = 'table-row';
-                } else if (filter === 'high-match') {
-                    const match = parseInt(row.dataset.match);
-                    row.style.display = match > 80 ? 'table-row' : 'none';
-                } else if (filter === 'early-stage') {
-                    row.style.display = row.dataset.stage === 'early' ? 'table-row' : 'none';
-                } else if (filter === 'growth') {
-                    row.style.display = row.dataset.stage === 'growth' ? 'table-row' : 'none';
+            // Extract funding - try to get the actual database value first
+            const fundingAmountElement = element.querySelector('.funding-amount-sm');
+            data.funding = fundingAmountElement?.textContent || '';
+            
+            // Extract tech tags
+            const techTags = element.querySelectorAll('.tech-tag-sm');
+            data.innovationTypes = Array.from(techTags).map(tag => tag.textContent.trim());
+            
+        } else { // grid view
+            data.matchScore = parseInt(element.dataset.match) || 0;
+            data.stage = element.dataset.stage || '';
+            data.companyName = element.querySelector('.company-name-grid')?.textContent || '';
+            data.description = element.querySelector('.company-description-grid')?.textContent || '';
+            
+            // Extract location from meta
+            const locationMeta = Array.from(element.querySelectorAll('.meta-item')).find(item => 
+                item.textContent.includes('🌍') || item.textContent.includes('📍')
+            );
+            data.location = locationMeta ? locationMeta.textContent.replace(/🌍|📍/g, '').trim() : '';
+            
+            // Extract team size from meta
+            const teamMeta = Array.from(element.querySelectorAll('.meta-item')).find(item => 
+                item.textContent.includes('👥')
+            );
+            data.teamSize = teamMeta ? teamMeta.textContent.replace('👥', '').trim() : '';
+            
+            // Extract funding
+            data.funding = element.querySelector('.funding-text')?.textContent || '';
+            
+            // Extract tech tags
+            const techTags = element.querySelectorAll('.tech-tag-grid');
+            data.innovationTypes = Array.from(techTags).map(tag => tag.textContent.trim());
+        }
+        
+        // Extract support areas from data attributes (when available)
+        const supportAreasAttr = element.dataset.supportAreas;
+        data.supportAreas = supportAreasAttr ? supportAreasAttr.split(',').filter(area => area.trim()) : [];
+        
+        // Extract innovation types from data attributes (when available) - this takes priority
+        const innovationTypesAttr = element.dataset.innovationTypes;
+        if (innovationTypesAttr) {
+            data.innovationTypes = innovationTypesAttr.split(',').filter(type => type.trim());
+        }
+        
+        // Extract funding from data attribute - this takes priority over display text
+        const fundingAttr = element.dataset.funding;
+        if (fundingAttr) {
+            data.funding = fundingAttr;
+        }
+        
+        return data;
+    }
+    
+    function matchesSearch(data, searchTerm) {
+        const searchFields = [
+            data.companyName,
+            data.description,
+            data.location,
+            ...data.innovationTypes
+        ].map(field => (field || '').toLowerCase());
+        
+        return searchFields.some(field => field.includes(searchTerm));
+    }
+    
+    function matchesQuickFilter(data, quickFilter) {
+        switch (quickFilter) {
+            case 'all':
+                return true;
+            case 'early-stage':
+                return ['idea', 'prototype', 'validation', 'early'].includes(data.stage);
+            case 'growth':
+                return ['scaling', 'profit'].includes(data.stage);
+            case 'high-match':
+                return data.matchScore > 80;
+            case 'recent':
+                return true; // Would need founded date logic
+            default:
+                return true;
+        }
+    }
+    
+    function matchesStage(dataStage, filterStages) {
+        // No filters applied - show all
+        if (filterStages.length === 0) return true;
+        
+        // No data available - hide this item
+        if (!dataStage) return false;
+        
+        return filterStages.includes(dataStage);
+    }
+    
+    function matchesLocation(dataLocation, filterLocations) {
+        // No filters applied - show all
+        if (filterLocations.length === 0) return true;
+        
+        // No data available - hide this item
+        if (!dataLocation) return false;
+        
+        // Remove emojis and clean the location string
+        const cleanDataLocation = dataLocation.replace(/[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, '').trim().toLowerCase();
+        
+        return filterLocations.some(location => {
+            const cleanFilterLocation = location.replace(/[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, '').trim().toLowerCase();
+            
+            return cleanDataLocation.includes(cleanFilterLocation) || cleanFilterLocation.includes(cleanDataLocation);
+        });
+    }
+    
+    function matchesFunding(dataFunding, filterFunding) {
+        // No filters applied - show all
+        if (filterFunding.length === 0) return true;
+        
+        // No data available - hide this item
+        if (!dataFunding) return false;
+        
+        const dataFundingLower = dataFunding.toLowerCase();
+        
+        // Debug logging for funding
+        if (filterFunding.length > 0) {
+            console.log('Funding filter - Data:', dataFundingLower, 'Filters:', filterFunding);
+        }
+        
+        return filterFunding.some(range => {
+            // Direct match (database value matches filter value)
+            if (dataFundingLower === range.toLowerCase()) {
+                return true;
+            }
+            
+            // Partial matching for display text
+            if (range === 'under_10k' && (dataFundingLower.includes('under') || dataFundingLower.includes('10k'))) {
+                return true;
+            }
+            if (range === '10k_50k' && (dataFundingLower.includes('10k') && dataFundingLower.includes('50k'))) {
+                return true;
+            }
+            if (range === '50k_100k' && (dataFundingLower.includes('50k') && dataFundingLower.includes('100k'))) {
+                return true;
+            }
+            if (range === '100k_500k' && (dataFundingLower.includes('100k') && dataFundingLower.includes('500k'))) {
+                return true;
+            }
+            if (range === '500k_1m' && (dataFundingLower.includes('500k') || dataFundingLower.includes('1m'))) {
+                return true;
+            }
+            if (range === '1m_5m' && (dataFundingLower.includes('1m') && dataFundingLower.includes('5m'))) {
+                return true;
+            }
+            if (range === '5m_10m' && (dataFundingLower.includes('5m') && dataFundingLower.includes('10m'))) {
+                return true;
+            }
+            if (range === 'over_10m' && (dataFundingLower.includes('over') || dataFundingLower.includes('10m'))) {
+                return true;
+            }
+            if (range === 'not_seeking' && (dataFundingLower.includes('not') || dataFundingLower.includes('seeking'))) {
+                return true;
+            }
+            
+            return false;
+        });
+    }
+    
+    function matchesInnovationTypes(dataTypes, filterTypes) {
+        // No filters applied - show all
+        if (filterTypes.length === 0) return true;
+        
+        // No data available - hide this item
+        if (!dataTypes || dataTypes.length === 0) return false;
+        
+        return filterTypes.some(filterType => {
+            return dataTypes.some(dataType => {
+                const filterTypeLower = filterType.toLowerCase();
+                const dataTypeLower = dataType.toLowerCase();
+                
+                // Direct match
+                if (dataTypeLower === filterTypeLower) return true;
+                
+                // Handle sustainability-focused mappings
+                switch (filterTypeLower) {
+                    case 'plastic_alternatives':
+                        return dataTypeLower.includes('plastic') && 
+                               (dataTypeLower.includes('alternative') || dataTypeLower.includes('eliminate') || 
+                                dataTypeLower.includes('redesign') || dataTypeLower.includes('packaging'));
+                    
+                    case 'recycling_technologies':
+                        return dataTypeLower.includes('recycling') || dataTypeLower.includes('refill') || 
+                               dataTypeLower.includes('reuse') || dataTypeLower.includes('solution');
+                    
+                    case 'waste_collection':
+                        return dataTypeLower.includes('waste') && dataTypeLower.includes('collection') ||
+                               dataTypeLower.includes('drop') || dataTypeLower.includes('reusable');
+                    
+                    case 'circular_economy':
+                        return dataTypeLower.includes('circular') || dataTypeLower.includes('upcycling') ||
+                               dataTypeLower.includes('economy') || dataTypeLower.includes('sustainable');
+                    
+                    case 'monitoring_tools':
+                        return dataTypeLower.includes('monitoring') || dataTypeLower.includes('tools') ||
+                               dataTypeLower.includes('alternative') && dataTypeLower.includes('materials');
+                    
+                    case 'education_partnerships':
+                        return dataTypeLower.includes('education') || dataTypeLower.includes('partnership') ||
+                               dataTypeLower.includes('industry') || dataTypeLower.includes('training');
+                    
+                    case 'tracking_monitoring':
+                        return dataTypeLower.includes('tracking') || dataTypeLower.includes('monitoring') ||
+                               dataTypeLower.includes('waste') && dataTypeLower.includes('track');
+                    
+                    case 'other':
+                        return dataTypeLower.includes('other') || dataTypeLower.includes('innovation') ||
+                               !filterTypes.slice(0, -1).some(ft => // Check if doesn't match any other category
+                                   dataTypeLower.includes(ft.toLowerCase())
+                               );
+                    
+                    default:
+                        // Fallback to partial string matching
+                        return dataTypeLower.includes(filterTypeLower) || 
+                               filterTypeLower.includes(dataTypeLower);
                 }
             });
         });
-    });
+    }
+    
+    function matchesSupportAreas(dataAreas, filterAreas) {
+        // No filters applied - show all
+        if (filterAreas.length === 0) return true;
+        
+        // No data available - hide this item
+        if (!dataAreas || dataAreas.length === 0) return false;
+        
+        // Check if any of the startup's support areas match any of the selected filters
+        return filterAreas.some(filterArea => 
+            dataAreas.some(dataArea => 
+                dataArea.toLowerCase() === filterArea.toLowerCase()
+            )
+        );
+    }
+    
+    function updateResultsCount(count) {
+        const resultsSummary = document.querySelector('.results-summary strong');
+        if (resultsSummary) {
+            resultsSummary.textContent = count;
+        }
+    }
+
+    // View Toggle functionality
+    const tableViewBtn = document.getElementById('tableView');
+    const cardViewBtn = document.getElementById('cardView');
+    const tableContainer = document.getElementById('tableContainer');
+    const cardContainer = document.getElementById('cardContainer');
+
+    if (tableViewBtn && cardViewBtn) {
+        tableViewBtn.addEventListener('click', function() {
+            tableContainer.style.display = 'block';
+            cardContainer.style.display = 'none';
+            tableViewBtn.classList.add('active');
+            cardViewBtn.classList.remove('active');
+        });
+
+        cardViewBtn.addEventListener('click', function() {
+            cardContainer.style.display = 'block';
+            tableContainer.style.display = 'none';
+            cardViewBtn.classList.add('active');
+            tableViewBtn.classList.remove('active');
+        });
+    }
     
     // Sorting functionality
     const sortableHeaders = document.querySelectorAll('.sortable');
@@ -2434,7 +2859,9 @@ document.addEventListener('DOMContentLoaded', function() {
         header.addEventListener('click', function() {
             const sortBy = this.dataset.sort;
             const tbody = document.querySelector('.startup-table tbody');
-            const rows = Array.from(tbody.querySelectorAll('.startup-row'));
+            const rows = Array.from(tbody.querySelectorAll('.startup-row')).filter(row => 
+                row.style.display !== 'none'
+            );
             
             // Remove previous sort classes
             sortableHeaders.forEach(h => {
@@ -2457,32 +2884,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 switch (sortBy) {
                     case 'name':
-                        aValue = a.querySelector('.company-name-sm').textContent.toLowerCase();
-                        bValue = b.querySelector('.company-name-sm').textContent.toLowerCase();
+                        aValue = a.querySelector('.company-name-sm')?.textContent.toLowerCase() || '';
+                        bValue = b.querySelector('.company-name-sm')?.textContent.toLowerCase() || '';
                         break;
                     case 'match':
-                        aValue = parseInt(a.dataset.match);
-                        bValue = parseInt(b.dataset.match);
+                        aValue = parseInt(a.dataset.match) || 0;
+                        bValue = parseInt(b.dataset.match) || 0;
                         break;
                     case 'location':
-                        aValue = a.querySelector('.location-cell span').textContent.toLowerCase();
-                        bValue = b.querySelector('.location-cell span').textContent.toLowerCase();
+                        aValue = a.querySelector('.location-cell span')?.textContent.toLowerCase() || '';
+                        bValue = b.querySelector('.location-cell span')?.textContent.toLowerCase() || '';
                         break;
                     case 'stage':
-                        aValue = a.querySelector('.stage-badge-sm').textContent.toLowerCase();
-                        bValue = b.querySelector('.stage-badge-sm').textContent.toLowerCase();
+                        aValue = a.querySelector('.stage-badge-sm')?.textContent.toLowerCase() || '';
+                        bValue = b.querySelector('.stage-badge-sm')?.textContent.toLowerCase() || '';
                         break;
                     case 'funding':
-                        aValue = a.querySelector('.funding-amount-sm').textContent.toLowerCase();
-                        bValue = b.querySelector('.funding-amount-sm').textContent.toLowerCase();
+                        aValue = a.querySelector('.funding-amount-sm')?.textContent.toLowerCase() || '';
+                        bValue = b.querySelector('.funding-amount-sm')?.textContent.toLowerCase() || '';
                         break;
                     case 'team':
-                        aValue = a.querySelector('.team-cell span').textContent.toLowerCase();
-                        bValue = b.querySelector('.team-cell span').textContent.toLowerCase();
+                        aValue = a.querySelector('.team-cell span')?.textContent.toLowerCase() || '';
+                        bValue = b.querySelector('.team-cell span')?.textContent.toLowerCase() || '';
                         break;
                     case 'founded':
-                        aValue = parseInt(a.querySelector('.founded-cell span').textContent);
-                        bValue = parseInt(b.querySelector('.founded-cell span').textContent);
+                        aValue = parseInt(a.querySelector('.founded-cell span')?.textContent) || 0;
+                        bValue = parseInt(b.querySelector('.founded-cell span')?.textContent) || 0;
                         break;
                     default:
                         return 0;
@@ -2496,7 +2923,13 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             
             // Re-append sorted rows
+            const allRows = Array.from(tbody.querySelectorAll('.startup-row'));
+            const hiddenRows = allRows.filter(row => row.style.display === 'none');
+            
+            // Clear tbody and re-append in order: sorted visible rows + hidden rows
+            tbody.innerHTML = '';
             rows.forEach(row => tbody.appendChild(row));
+            hiddenRows.forEach(row => tbody.appendChild(row));
             
             // Animate match bars
             setTimeout(() => {
@@ -2523,12 +2956,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 500);
 });
 
-
 // Make table rows clickable
 const clickableRows = document.querySelectorAll('.clickable-row');
 clickableRows.forEach(row => {
     row.addEventListener('click', function(e) {
-        // Only navigate if the click wasn't on a button or link
         if (!e.target.closest('button') && !e.target.closest('a')) {
             const href = this.dataset.href;
             if (href) {
@@ -2537,7 +2968,6 @@ clickableRows.forEach(row => {
         }
     });
     
-    // Add keyboard navigation
     row.addEventListener('keydown', function(e) {
         if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
@@ -2548,7 +2978,6 @@ clickableRows.forEach(row => {
         }
     });
     
-    // Make row focusable for keyboard navigation
     row.setAttribute('tabindex', '0');
 });
 
@@ -2556,7 +2985,6 @@ clickableRows.forEach(row => {
 const clickableCards = document.querySelectorAll('.clickable-card');
 clickableCards.forEach(card => {
     card.addEventListener('click', function(e) {
-        // Only navigate if the click wasn't on a button or link
         if (!e.target.closest('button') && !e.target.closest('a')) {
             const href = this.dataset.href;
             if (href) {
@@ -2565,7 +2993,6 @@ clickableCards.forEach(card => {
         }
     });
     
-    // Add keyboard navigation
     card.addEventListener('keydown', function(e) {
         if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
@@ -2576,7 +3003,6 @@ clickableCards.forEach(card => {
         }
     });
     
-    // Make card focusable for keyboard navigation
     card.setAttribute('tabindex', '0');
 });
 
