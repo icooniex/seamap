@@ -6,14 +6,19 @@
     <!-- Header Section -->
     <div class="dashboard-header mb-4">
         <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <h1 class="h3 mb-1"><strong>Startups</strong> Matchmaking Dashboard</h1>
-                <p class="text-muted">Discover innovative startups that match your investment criteria</p>
-            </div>
-            <div class="d-flex gap-2">
-                <button class="btn btn-outline-primary" id="filterBtn" data-bs-toggle="modal" data-bs-target="#filterModal">
-                    <i class="bi bi-funnel"></i> Advance Filters
-                </button>
+            <div class="d-flex align-items-center">
+                <div class="startup-icon-container me-3">
+                    <div class="startup-icon">
+                        <i class="bi bi-rocket-takeoff"></i>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="h3 mb-1">
+                        <span class="text-primary-light">Startups</span> 
+                        <strong class="text-white">Matchmaking Dashboard</strong>
+                    </h1>
+                    <p class="header-subtitle mb-0">Discover innovative startups that match your investment criteria</p>
+                </div>
             </div>
         </div>
     </div>
@@ -34,6 +39,10 @@
 
         <!-- Filter Tags -->
         <div class="filter-tags" id="filterTags">
+            <button class="filter-tag filter-btn-primary" id="filterBtn" data-bs-toggle="modal" data-bs-target="#filterModal">
+                <i class="bi bi-funnel me-2"></i>
+                <span>Advanced Filters</span>
+            </button>
             <span class="filter-tag active" data-filter="all">All Startups</span>
             <span class="filter-tag" data-filter="early-stage">Early Stage</span>
             <span class="filter-tag" data-filter="growth">Growth Stage</span>
@@ -344,119 +353,140 @@
                             <div class="form-group">
                                 <label class="form-label">
                                     <i class="bi bi-geo-alt me-2"></i>
-                                    Location
+                                    Primary Location
                                 </label>
                                 <div class="tech-checkbox-grid">
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="locIndonesia" value="indonesia" class="form-check-input">
-                                        <label for="locIndonesia" class="checkbox-label">
-                                            <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Indonesia</span>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="locSingapore" value="singapore" class="form-check-input">
+                                        <input type="checkbox" id="locSingapore" name="primary_location" value="Singapore" class="form-check-input">
                                         <label for="locSingapore" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Singapore</span>
+                                            <span class="checkbox-text">🇸🇬 Singapore</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="locThailand" value="thailand" class="form-check-input">
+                                        <input type="checkbox" id="locIndonesia" name="primary_location" value="Indonesia" class="form-check-input">
+                                        <label for="locIndonesia" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🇮🇩 Indonesia</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="locThailand" name="primary_location" value="Thailand" class="form-check-input">
                                         <label for="locThailand" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Thailand</span>
+                                            <span class="checkbox-text">🇹🇭 Thailand</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="locMalaysia" value="malaysia" class="form-check-input">
+                                        <input type="checkbox" id="locMalaysia" name="primary_location" value="Malaysia" class="form-check-input">
                                         <label for="locMalaysia" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Malaysia</span>
+                                            <span class="checkbox-text">🇲🇾 Malaysia</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="locPhilippines" value="philippines" class="form-check-input">
+                                        <input type="checkbox" id="locPhilippines" name="primary_location" value="Philippines" class="form-check-input">
                                         <label for="locPhilippines" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Philippines</span>
+                                            <span class="checkbox-text">🇵🇭 Philippines</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="locVietnam" value="vietnam" class="form-check-input">
+                                        <input type="checkbox" id="locVietnam" name="primary_location" value="Vietnam" class="form-check-input">
                                         <label for="locVietnam" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Vietnam</span>
+                                            <span class="checkbox-text">🇻🇳 Vietnam</span>
                                         </label>
                                     </div>
                                 </div>
                             </div>
                         </div></label>
 
-                        <!-- Development Stage Filter -->
+                        <!-- Current Stage Filter -->
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label class="form-label">
                                     <i class="bi bi-graph-up me-2"></i>
-                                    Development Stage
+                                    Current Stage
                                 </label>
                                 <div class="checkbox-group">
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="stageEarly" value="early" class="form-check-input">
+                                        <input type="checkbox" id="stageIdea" name="current_stage" value="idea" class="form-check-input">
+                                        <label for="stageIdea" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Idea Stage</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="stageMvp" name="current_stage" value="mvp" class="form-check-input">
+                                        <label for="stageMvp" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">MVP/Prototype</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="stageEarly" name="current_stage" value="early_revenue" class="form-check-input">
                                         <label for="stageEarly" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Early Stage</span>
+                                            <span class="checkbox-text">Early Revenue</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="stageGrowth" value="growth" class="form-check-input">
+                                        <input type="checkbox" id="stageGrowth" name="current_stage" value="growth" class="form-check-input">
                                         <label for="stageGrowth" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Growth Stage</span>
+                                            <span class="checkbox-text">Growth</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="stageMature" value="mature" class="form-check-input">
-                                        <label for="stageMature" class="checkbox-label">
+                                        <input type="checkbox" id="stageScaling" name="current_stage" value="scaling" class="form-check-input">
+                                        <label for="stageScaling" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Mature</span>
+                                            <span class="checkbox-text">Scaling</span>
                                         </label>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Funding Range Filter -->
+                        <!-- Funding Needed Filter -->
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label class="form-label">
                                     <i class="bi bi-currency-dollar me-2"></i>
-                                    Funding Range
+                                    Funding Needed
                                 </label>
                                 <div class="checkbox-group">
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="fundingUnder500k" value="0-500000" class="form-check-input">
-                                        <label for="fundingUnder500k" class="checkbox-label">
+                                        <input type="checkbox" id="funding10k100k" name="funding_needed" value="10000-100000" class="form-check-input">
+                                        <label for="funding10k100k" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Under $500K</span>
+                                            <span class="checkbox-text">$10K - $100K</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="funding500k1m" value="500000-1000000" class="form-check-input">
+                                        <input type="checkbox" id="funding100k500k" name="funding_needed" value="100000-500000" class="form-check-input">
+                                        <label for="funding100k500k" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">$100K - $500K</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="funding500k1m" name="funding_needed" value="500000-1000000" class="form-check-input">
                                         <label for="funding500k1m" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
                                             <span class="checkbox-text">$500K - $1M</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="funding1m5m" value="1000000-5000000" class="form-check-input">
+                                        <input type="checkbox" id="funding1m5m" name="funding_needed" value="1000000-5000000" class="form-check-input">
                                         <label for="funding1m5m" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
                                             <span class="checkbox-text">$1M - $5M</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="fundingOver5m" value="5000000-999999999" class="form-check-input">
+                                        <input type="checkbox" id="fundingOver5m" name="funding_needed" value="5000000+" class="form-check-input">
                                         <label for="fundingOver5m" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
                                             <span class="checkbox-text">Over $5M</span>
@@ -475,24 +505,38 @@
                                 </label>
                                 <div class="checkbox-group">
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="teamSmall" value="1-10" class="form-check-input">
-                                        <label for="teamSmall" class="checkbox-label">
+                                        <input type="checkbox" id="team1to5" name="team_size" value="1-5" class="form-check-input">
+                                        <label for="team1to5" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">1-10 employees</span>
+                                            <span class="checkbox-text">1-5</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="teamMedium" value="11-50" class="form-check-input">
-                                        <label for="teamMedium" class="checkbox-label">
+                                        <input type="checkbox" id="team6to10" name="team_size" value="6-10" class="form-check-input">
+                                        <label for="team6to10" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">11-50 employees</span>
+                                            <span class="checkbox-text">6-10</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="teamLarge" value="51-999" class="form-check-input">
-                                        <label for="teamLarge" class="checkbox-label">
+                                        <input type="checkbox" id="team11to20" name="team_size" value="11-20" class="form-check-input">
+                                        <label for="team11to20" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">51+ employees</span>
+                                            <span class="checkbox-text">11-20</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="team21to50" name="team_size" value="21-50" class="form-check-input">
+                                        <label for="team21to50" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">21-50</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="team51plus" name="team_size" value="51+" class="form-check-input">
+                                        <label for="team51plus" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">51+</span>
                                         </label>
                                     </div>
                                 </div>
@@ -500,75 +544,150 @@
                         </div>
 
 
-                        <!-- Technologies Filter -->
+                        <!-- Innovation Types Filter -->
                         <div class="col-12">
                             <div class="form-group">
                                 <label class="form-label">
-                                    <i class="bi bi-gear me-2"></i>
-                                    Technologies
+                                    <i class="bi bi-lightbulb me-2"></i>
+                                    Innovation Types
                                 </label>
                                 <div class="tech-checkbox-grid">
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="techAI" value="ai" class="form-check-input">
-                                        <label for="techAI" class="checkbox-label">
+                                        <input type="checkbox" id="innAi" name="innovation_types" value="Artificial Intelligence" class="form-check-input">
+                                        <label for="innAi" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">AI</span>
+                                            <span class="checkbox-text">AI & Machine Learning</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="techRobotics" value="robotics" class="form-check-input">
-                                        <label for="techRobotics" class="checkbox-label">
+                                        <input type="checkbox" id="innBlockchain" name="innovation_types" value="Blockchain" class="form-check-input">
+                                        <label for="innBlockchain" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Robotics</span>
+                                            <span class="checkbox-text">Blockchain</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="techEnvironmental" value="environmental" class="form-check-input">
-                                        <label for="techEnvironmental" class="checkbox-label">
+                                        <input type="checkbox" id="innIot" name="innovation_types" value="Internet of Things" class="form-check-input">
+                                        <label for="innIot" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Environmental</span>
+                                            <span class="checkbox-text">Internet of Things</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="techSolar" value="solar" class="form-check-input">
-                                        <label for="techSolar" class="checkbox-label">
+                                        <input type="checkbox" id="innCleantech" name="innovation_types" value="Clean Technology" class="form-check-input">
+                                        <label for="innCleantech" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Solar</span>
+                                            <span class="checkbox-text">Clean Technology</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="techIoT" value="iot" class="form-check-input">
-                                        <label for="techIoT" class="checkbox-label">
+                                        <input type="checkbox" id="innBiotech" name="innovation_types" value="Biotechnology" class="form-check-input">
+                                        <label for="innBiotech" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">IoT</span>
+                                            <span class="checkbox-text">Biotechnology</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="techSmartCities" value="smart-cities" class="form-check-input">
-                                        <label for="techSmartCities" class="checkbox-label">
+                                        <input type="checkbox" id="innFintech" name="innovation_types" value="Financial Technology" class="form-check-input">
+                                        <label for="innFintech" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Smart Cities</span>
+                                            <span class="checkbox-text">Fintech</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="techAgriculture" value="agriculture" class="form-check-input">
-                                        <label for="techAgriculture" class="checkbox-label">
+                                        <input type="checkbox" id="innHealthtech" name="innovation_types" value="Health Technology" class="form-check-input">
+                                        <label for="innHealthtech" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Agriculture</span>
+                                            <span class="checkbox-text">Healthtech</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="techDrones" value="drones" class="form-check-input">
-                                        <label for="techDrones" class="checkbox-label">
+                                        <input type="checkbox" id="innEdtech" name="innovation_types" value="Education Technology" class="form-check-input">
+                                        <label for="innEdtech" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Drones</span>
+                                            <span class="checkbox-text">Edtech</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="techAnalytics" value="analytics" class="form-check-input">
-                                        <label for="techAnalytics" class="checkbox-label">
+                                        <input type="checkbox" id="innMobility" name="innovation_types" value="Smart Mobility" class="form-check-input">
+                                        <label for="innMobility" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Analytics</span>
+                                            <span class="checkbox-text">Smart Mobility</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="innAgriculture" name="innovation_types" value="Agriculture Technology" class="form-check-input">
+                                        <label for="innAgriculture" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Agritech</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="innCybersecurity" name="innovation_types" value="Cybersecurity" class="form-check-input">
+                                        <label for="innCybersecurity" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Cybersecurity</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="innOther" name="innovation_types" value="Other" class="form-check-input">
+                                        <label for="innOther" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Other</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Support Areas Filter -->
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="bi bi-headset me-2"></i>
+                                    Seeking Support Areas
+                                </label>
+                                <div class="tech-checkbox-grid">
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="supportBranding" name="support_areas" value="branding_marketing" class="form-check-input">
+                                        <label for="supportBranding" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Branding & Marketing</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="supportInvestment" name="support_areas" value="investment_funding" class="form-check-input">
+                                        <label for="supportInvestment" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Investment & Funding Access</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="supportManufacturing" name="support_areas" value="manufacturing_supply" class="form-check-input">
+                                        <label for="supportManufacturing" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Manufacturing & Supply Chain</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="supportMarket" name="support_areas" value="market_expansion" class="form-check-input">
+                                        <label for="supportMarket" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Market Expansion & Customer Acquisition</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="supportProduct" name="support_areas" value="product_development" class="form-check-input">
+                                        <label for="supportProduct" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Product Development & R&D</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="supportRegulatory" name="support_areas" value="regulatory_compliance" class="form-check-input">
+                                        <label for="supportRegulatory" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Regulatory & Compliance</span>
                                         </label>
                                     </div>
                                 </div>
@@ -605,18 +724,124 @@
     border-radius: 20px;
     margin-bottom: 2rem;
     box-shadow: 0 8px 32px rgba(44, 89, 167, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    opacity: 0.3;
+}
+
+.startup-icon-container {
+    position: relative;
+    z-index: 2;
+}
+
+.startup-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #ffffff15 0%, #ffffff25 100%);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.startup-icon i {
+    font-size: 2.5rem;
+    color: white;
+    transform: rotate(-15deg);
+    animation: rocketFloat 3s ease-in-out infinite;
+}
+
+@keyframes rocketFloat {
+    0%, 100% { transform: rotate(-15deg) translateY(0px); }
+    50% { transform: rotate(-15deg) translateY(-8px); }
 }
 
 .dashboard-header h1 {
     color: white;
     font-weight: 700;
     margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+.text-primary-light {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-weight: 500;
 }
 
 .dashboard-header p {
     color: rgba(255, 255, 255, 0.9);
     font-size: 1.1rem;
     margin-bottom: 0;
+    position: relative;
+    z-index: 2;
+}
+
+.header-subtitle {
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-size: 1.1rem;
+    font-weight: 400;
+    line-height: 1.4;
+}
+
+/* Responsive adjustments for header */
+@media (max-width: 768px) {
+    .dashboard-header {
+        padding: 2rem 1.5rem;
+    }
+    
+    .startup-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+    }
+    
+    .startup-icon i {
+        font-size: 2rem;
+    }
+    
+    .dashboard-header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .dashboard-header p {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .dashboard-header {
+        padding: 1.5rem 1rem;
+    }
+    
+    .dashboard-header .d-flex {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .startup-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+    }
+    
+    .startup-icon i {
+        font-size: 1.5rem;
+    }
 }
 
 .search-section {
@@ -673,17 +898,159 @@
     background: linear-gradient(135deg, #234a91 0%, #4a3f8a 100%);
 }
 
+/* Advanced Filter Button in Filter Bar - Tag Style */
+.filter-btn-primary {
+    background: #f8f9fa;
+    color: #6c757d;
+    border: 1px solid #dee2e6;
+    padding: 0.25rem 0.5rem;
+    border-radius: 15px;
+    font-weight: 500;
+    font-size: 0.75rem;
+    transition: all 0.2s ease;
+    margin-right: 0.375rem;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.filter-btn-primary:hover {
+    background: #e9ecef;
+    border-color: #2c59a7;
+    color: #2c59a7;
+    transform: none;
+    box-shadow: none;
+}
+
+.filter-btn-primary i {
+    font-size: 0.65rem;
+    margin-right: 0.25rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .filter-btn-primary {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.4rem;
+    }
+    
+    .filter-btn-primary span {
+        display: none;
+    }
+    
+    .filter-btn-primary:after {
+        content: 'Filters';
+        margin-left: 0.2rem;
+    }
+}
+
+/* Filter button with active filters indicator */
+#filterBtn.has-filters {
+    background: linear-gradient(135deg, #58946e 0%, #639ac0 100%);
+    color: white;
+    border-color: #58946e;
+    position: relative;
+}
+
+#filterBtn.has-filters::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 8px;
+    height: 8px;
+    background: #EBCA38;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#filterBtn.has-filters:hover {
+    background: linear-gradient(135deg, #4a7c5e 0%, #5588a3 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(88, 148, 110, 0.3);
+}
+
+/* Responsive Filter Button */
+@media (max-width: 768px) {
+    #filterBtn {
+        padding: 0.875rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    #filterBtn i {
+        font-size: 0.9rem;
+        margin-right: 0.25rem;
+    }
+    
+    .search-section form {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .search-section .d-flex {
+        flex-direction: row;
+        gap: 0.75rem;
+    }
+    
+    .search-input-group {
+        flex: 1;
+    }
+    
+    .search-btn, #filterBtn {
+        flex-shrink: 0;
+        min-width: auto;
+    }
+}
+
+@media (max-width: 576px) {
+    #filterBtn {
+        padding: 0.75rem 0.875rem;
+        font-size: 0.875rem;
+    }
+    
+    #filterBtn .d-none.d-sm-inline {
+        display: none !important;
+    }
+    
+    .search-section form .d-flex {
+        gap: 0.5rem;
+    }
+    
+    .search-btn {
+        padding: 1rem 1.5rem;
+    }
+}
+
+/* Search Button Updates for Better Alignment */
+.search-btn {
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(44, 89, 167, 0.2);
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+}
+
 .filter-tags {
     display: flex;
-    gap: 0.75rem;
+    gap: 0.5rem;
     flex-wrap: wrap;
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
     border-top: 1px solid rgba(44, 89, 167, 0.1);
 }
 
 .filter-tag {
-    padding: 0.75rem 1.5rem;
+    padding: 0.2rem 0.75rem;
     background: white;
     border: 2px solid #e9ecef;
     border-radius: 25px;
@@ -702,7 +1069,8 @@
 }
 
 .filter-tag.active {
-    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    background-color: #2c59a7;
+    /* background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%); */
     color: white;
     border-color: #2c59a7;
     box-shadow: 0 4px 16px rgba(44, 89, 167, 0.25);
@@ -962,7 +1330,7 @@
 .match-percentage-sm {
     font-size: 1.1rem;
     font-weight: 700;
-    color: #58946e;
+    color: #28a745;
     display: block;
     margin-bottom: 0.25rem;
 }
@@ -978,7 +1346,7 @@
 
 .match-fill {
     height: 100%;
-    background: linear-gradient(90deg, #58946e 0%, #639ac0 100%);
+    background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
     border-radius: 3px;
     transition: width 0.8s ease;
 }
@@ -1139,13 +1507,13 @@
 }
 
 .match-percentage-grid {
-    background: linear-gradient(135deg, #58946e 0%, #639ac0 100%);
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
     color: white;
     padding: 0.4rem 0.8rem;
     border-radius: 20px;
     font-weight: 700;
     font-size: 0.85rem;
-    box-shadow: 0 3px 10px rgba(88, 148, 110, 0.3);
+    box-shadow: 0 3px 10px rgba(40, 167, 69, 0.3);
 }
 
 .company-name-grid {
@@ -1352,13 +1720,13 @@
 }
 
 .match-percentage {
-    background: linear-gradient(135deg, #58946e 0%, #639ac0 100%);
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
     color: white;
     padding: 0.5rem 0.75rem;
     border-radius: 20px;
     font-weight: 700;
     font-size: 0.9rem;
-    box-shadow: 0 3px 10px rgba(88, 148, 110, 0.3);
+    box-shadow: 0 3px 10px rgba(40, 167, 69, 0.3);
 }
 
 .company-info {
