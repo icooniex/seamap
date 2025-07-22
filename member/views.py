@@ -510,23 +510,163 @@ def signup(request):
 
 
 
+def calculate_investor_match_score(investor):
+    """
+    Calculate a mock match score for an investor based on various factors.
+    In a real implementation, this would use ML algorithms and user preferences.
+    """
+    score = 60  # Base score
+    
+    # Add points based on investor type
+    if investor.investor_type:
+        type_scores = {
+            'angel': 75,
+            'vc': 85,
+            'pe': 80,
+            'corporate': 70,
+            'grant': 90,
+            'accelerator': 85
+        }
+        score += type_scores.get(investor.investor_type, 0) - 60
+    
+    # Add points for having clear funding stages
+    if investor.funding_stages and len(investor.funding_stages) > 0:
+        score += min(len(investor.funding_stages) * 8, 25)
+    
+    # Add points for having investment categories
+    if investor.investment_categories and len(investor.investment_categories) > 0:
+        score += min(len(investor.investment_categories) * 5, 20)
+    
+    # Add points for having clear funding size
+    if investor.funding_size:
+        score += 15
+    
+    # Add points for having website and description
+    if investor.website:
+        score += 8
+    if investor.company_description:
+        score += 7
+    
+    # Add some randomness to make it more realistic
+    import random
+    score += random.randint(-8, 12)
+    
+    # Ensure score is within bounds
+    return max(0, min(100, score))
+
+@login_required
 def investor_matchmaking(request):
-    # query = request.GET.get('q', '')
-    # investors = Company.objects.filter(company_type='investor')
-    # if query:
-    #     investors = investors.filter(company_name__icontains=query)
-    # # Add more filters as needed
-
-    # # Example: Add dummy match percentage for demo
-    # for idx, investor in enumerate(investors):
-    #     investor.match_percent = 97 - idx * 7  # Just for demo
-
-    # return render(request, 'member/investor_matchmaking.html', {
-    #     'investors': investors,
-    #     'query': query,
-    # })
-
-    return render(request, 'member/investor_matchmaking.html')
+    """Investor matchmaking view with search and filter functionality"""
+    
+    # Get search query
+    search_query = request.GET.get('q', '').strip()
+    
+    # Get filter parameters
+    filter_investor_type = request.GET.getlist('investor_type')
+    filter_location = request.GET.getlist('primary_location')
+    filter_funding_size = request.GET.getlist('funding_size')
+    filter_preferred_stages = request.GET.getlist('preferred_stages')
+    filter_investment_categories = request.GET.getlist('investment_categories')
+    filter_match_score = request.GET.get('match_score', '0')
+    
+    # Base queryset - get all investor companies
+    investors = Company.objects.filter(
+        company_type='investor',
+        is_active=True
+    ).select_related('member__user').order_by('-created_at')
+    
+    # Apply search filter
+    if search_query:
+        investors = investors.filter(
+            models.Q(company_name__icontains=search_query) |
+            models.Q(company_description__icontains=search_query) |
+            models.Q(investment_philosophy__icontains=search_query) |
+            models.Q(member__user__first_name__icontains=search_query) |
+            models.Q(member__user__last_name__icontains=search_query)
+        )
+    
+    # Apply investor type filter
+    if filter_investor_type:
+        investors = investors.filter(investor_type__in=filter_investor_type)
+    
+    # Apply location filter
+    if filter_location:
+        investors = investors.filter(primary_location__in=filter_location)
+    
+    # Apply funding size filter
+    if filter_funding_size:
+        investors = investors.filter(funding_size__in=filter_funding_size)
+    
+    # Apply preferred stages filter
+    if filter_preferred_stages:
+        stage_filters = models.Q()
+        for stage in filter_preferred_stages:
+            stage_filters |= models.Q(funding_stages__icontains=stage)
+        investors = investors.filter(stage_filters)
+    
+    # Apply investment categories filter
+    if filter_investment_categories:
+        category_filters = models.Q()
+        for category in filter_investment_categories:
+            category_filters |= models.Q(investment_categories__icontains=category)
+        investors = investors.filter(category_filters)
+    
+    # Add mock match scores and filter by minimum match score
+    investors_with_scores = []
+    for investor in investors:
+        # Calculate a mock match score based on various factors
+        match_score = calculate_investor_match_score(investor)
+        
+        # Only include if meets minimum match score
+        if int(filter_match_score) == 0 or match_score >= int(filter_match_score):
+            investor.match_score = match_score
+            # Add preferred_stages and investment_categories as lists for template compatibility
+            if investor.funding_stages:
+                investor.preferred_stages = investor.funding_stages
+            else:
+                investor.preferred_stages = []
+                
+            investors_with_scores.append(investor)
+    
+    # Sort by match score if filtering by score
+    if int(filter_match_score) > 0:
+        investors_with_scores.sort(key=lambda x: x.match_score, reverse=True)
+    
+    # Get filter options for the form
+    available_investor_types = Company.objects.filter(
+        company_type='investor',
+        is_active=True,
+        investor_type__isnull=False
+    ).values_list('investor_type', flat=True).distinct()
+    
+    available_locations = Company.objects.filter(
+        company_type='investor',
+        is_active=True,
+        primary_location__isnull=False
+    ).values_list('primary_location', flat=True).distinct()
+    
+    available_funding_sizes = Company.objects.filter(
+        company_type='investor',
+        is_active=True,
+        funding_size__isnull=False
+    ).values_list('funding_size', flat=True).distinct()
+    
+    context = {
+        'investors': investors_with_scores,
+        'search_query': search_query,
+        'filter_investor_type': filter_investor_type,
+        'filter_location': filter_location,
+        'filter_funding_size': filter_funding_size,
+        'filter_preferred_stages': filter_preferred_stages,
+        'filter_investment_categories': filter_investment_categories,
+        'filter_match_score': int(filter_match_score),
+        'available_investor_types': sorted(set(available_investor_types)),
+        'available_locations': sorted(set(available_locations)),
+        'available_funding_sizes': sorted(set(available_funding_sizes)),
+        'total_investors': len(investors_with_scores),
+    }
+    
+    return render(request, 'matchmaking/investor_matchmaking.html', context)
 
 def dashboard(request):
     return render(request, 'dashboard.html')

@@ -1,0 +1,2422 @@
+{% extends "template_parts/dashboard_base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <!-- Header Section -->
+    <div class="dashboard-header mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <div class="investor-icon-container me-3">
+                    <div class="investor-icon">
+                        <i class="bi bi-bank"></i>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="h3 mb-1">
+                        <span class="text-primary-light">Investors</span> 
+                        <strong class="text-white">Matchmaking Dashboard</strong>
+                    </h1>
+                    <p class="header-subtitle mb-0">Discover potential investors that match your funding needs and stage</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="search-section mb-4">
+        <form method="get" class="d-flex align-items-center gap-3 mb-3">
+            <div class="search-input-group flex-grow-1">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" name="q" class="form-control search-input" 
+                       placeholder="Search investors by name, focus area, or investment type..." 
+                       value="{{ request.GET.q }}">
+            </div>
+            <button type="submit" class="btn btn-primary search-btn">
+                <i class="bi bi-search me-2"></i> Search
+            </button>
+        </form>
+
+        <!-- Filter Tags -->
+        <div class="filter-tags" id="filterTags">
+            <button class="filter-tag filter-btn-primary" id="filterBtn" data-bs-toggle="modal" data-bs-target="#filterModal">
+                <i class="bi bi-funnel me-2"></i>
+                <span>Advanced Filters</span>
+            </button>
+            <span class="filter-tag active" data-filter="all">All Investors</span>
+            <span class="filter-tag" data-filter="early-stage">Early Stage Focus</span>
+            <span class="filter-tag" data-filter="growth">Growth Stage Focus</span>
+            <span class="filter-tag" data-filter="high-match">High Match (>80%)</span>
+            <span class="filter-tag" data-filter="active">Active Investors</span>
+        </div>
+    </div>
+
+    <!-- Results Summary -->
+    <div class="results-summary mb-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <span class="text-muted">Showing <strong>{{ total_investors }}</strong> investor{{ total_investors|pluralize }}</span>
+            <div class="view-options">
+                <button class="btn btn-sm btn-outline-secondary active" id="tableView">
+                    <i class="bi bi-table"></i> Table
+                </button>
+                <button class="btn btn-sm btn-outline-secondary" id="cardView">
+                    <i class="bi bi-grid"></i> Grid
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Investor Table -->
+    <div class="table-container" id="tableContainer">
+        <div class="table-wrapper">
+            <table class="table table-hover startup-table">
+                <thead class="table-header">
+                    <tr>
+                        <th class="sortable sticky-column" data-sort="name">
+                            <div class="d-flex align-items-center gap-2">
+                                <span>Investor/Company</span>
+                                <i class="bi bi-arrow-down sort-icon"></i>
+                            </div>
+                        </th>
+                        <th class="sortable" data-sort="match">
+                            <div class="d-flex align-items-center gap-2">
+                                <span>Match Score</span>
+                                <i class="bi bi-arrow-down sort-icon"></i>
+                            </div>
+                        </th>
+                        <th class="sortable" data-sort="type">
+                            <div class="d-flex align-items-center gap-2">
+                                <span>Investor Type</span>
+                                <i class="bi bi-arrow-down sort-icon"></i>
+                            </div>
+                        </th>
+                        <th class="sortable" data-sort="location">
+                            <div class="d-flex align-items-center gap-2">
+                                <span>Location</span>
+                                <i class="bi bi-arrow-down sort-icon"></i>
+                            </div>
+                        </th>
+                        <th class="sortable" data-sort="funding">
+                            <div class="d-flex align-items-center gap-2">
+                                <span>Funding Size</span>
+                                <i class="bi bi-arrow-down sort-icon"></i>
+                            </div>
+                        </th>
+                        <th class="sortable" data-sort="stages">
+                            <div class="d-flex align-items-center gap-2">
+                                <span>Preferred Stages</span>
+                                <i class="bi bi-arrow-down sort-icon"></i>
+                            </div>
+                        </th>
+                        <th class="sortable" data-sort="categories">
+                            <div class="d-flex align-items-center gap-2">
+                                <span>Investment Categories</span>
+                                <i class="bi bi-arrow-down sort-icon"></i>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for investor in investors %}
+                    <tr class="startup-row clickable-row" 
+                        data-match="{{ investor.match_score }}" 
+                        data-type="{{ investor.investor_type|default:'unknown' }}" 
+                        data-name="{{ investor.company_name|lower|cut:' '|cut:'-' }}" 
+                        data-funding-size="{{ investor.funding_size|default:'' }}"
+                        data-preferred-stages="{{ investor.preferred_stages|join:',' }}"
+                        data-investment-categories="{{ investor.investment_categories|join:',' }}"
+                        data-href="/investor/{{ investor.id }}/">
+                        <td class="company-cell sticky-column">
+                            <div class="d-flex align-items-center">
+                                <div class="company-avatar-sm me-3">
+                                    {% if investor.company_logo %}
+                                        <img src="{{ investor.company_logo.url }}" alt="{{ investor.company_name }}" class="avatar-img-sm" style="width: 40px; height: 40px; object-fit: cover; border-radius: 8px;">
+                                    {% else %}
+                                        <div class="avatar-placeholder-sm">
+                                            {{ investor.company_name|slice:":2"|upper }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <div class="company-name-sm">{{ investor.company_name }}</div>
+                                    <div class="company-description-sm">
+                                        {{ investor.investment_focus|default:investor.company_description|truncatewords:12 }}
+                                    </div>
+                                    {% if investor.investment_categories %}
+                                    <div class="tech-tags-sm mt-1">
+                                        {% for category in investor.investment_categories|slice:":3" %}
+                                            <span class="tech-tag-sm">{{ category|title }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                        <td class="match-cell">
+                            <div class="match-score-sm">
+                                <span class="match-percentage-sm">{{ investor.match_score }}%</span>
+                                <div class="match-bar">
+                                    <div class="match-fill" style="width: {{ investor.match_score }}%"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="type-cell">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-briefcase text-muted me-2"></i>
+                                <span>{{ investor.get_investor_type_display|default:investor.investor_type|default:"Not specified" }}</span>
+                            </div>
+                        </td>
+                        <td class="location-cell">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-geo-alt text-muted me-2"></i>
+                                <span>{{ investor.get_primary_location_display|default:investor.primary_location|default:"Not specified" }}</span>
+                            </div>
+                        </td>
+                        <td class="funding-cell">
+                            <div class="funding-info-sm">
+                                {% if investor.funding_size %}
+                                    <div class="funding-amount-sm">{{ investor.get_funding_size_display|default:investor.funding_size }}</div>
+                                    <div class="funding-type-sm">Investment Range</div>
+                                {% else %}
+                                    <div class="funding-amount-sm">Not specified</div>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td class="stages-cell">
+                            {% if investor.preferred_stages %}
+                                <div class="stage-badges-sm">
+                                    {% for stage in investor.preferred_stages|slice:":2" %}
+                                        <span class="stage-badge-sm stage-{{ stage }}">
+                                            {{ stage|title }}
+                                        </span>
+                                    {% endfor %}
+                                    {% if investor.preferred_stages|length > 2 %}
+                                        <span class="stage-badge-sm">+{{ investor.preferred_stages|length|add:"-2" }}</span>
+                                    {% endif %}
+                                </div>
+                            {% else %}
+                                <span class="text-muted">Not specified</span>
+                            {% endif %}
+                        </td>
+                        <td class="categories-cell">
+                            {% if investor.investment_categories %}
+                                <div class="categories-sm">
+                                    {% for category in investor.investment_categories|slice:":2" %}
+                                        <span class="category-tag-sm">{{ category|title }}</span>
+                                    {% endfor %}
+                                    {% if investor.investment_categories|length > 2 %}
+                                        <span class="category-tag-sm">+{{ investor.investment_categories|length|add:"-2" }}</span>
+                                    {% endif %}
+                                </div>
+                            {% else %}
+                                <span class="text-muted">Not specified</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-muted">
+                            <div class="d-flex flex-column align-items-center">
+                                <i class="bi bi-search fs-1 text-muted mb-3"></i>
+                                <h5>No investors found</h5>
+                                <p>Try adjusting your search criteria or filters.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Grid View (Hidden by default) -->
+    <div class="startups-grid-container" id="cardContainer" style="display: none;">
+        <div class="startups-grid">
+            {% for investor in investors %}
+            <div class="startup-grid-item clickable-card" 
+                 data-match="{{ investor.match_score }}" 
+                 data-type="{{ investor.investor_type|default:'unknown' }}" 
+                 data-funding-size="{{ investor.funding_size|default:'' }}"
+                 data-preferred-stages="{{ investor.preferred_stages|join:',' }}"
+                 data-investment-categories="{{ investor.investment_categories|join:',' }}"
+                 data-href="/investor/{{ investor.id }}/">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body d-flex flex-column">
+                        <!-- Header Section -->
+                        <div class="grid-header mb-3">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <!-- Company Logo/Avatar -->
+                                <div class="company-avatar-grid">
+                                    {% if investor.company_logo %}
+                                        <img src="{{ investor.company_logo.url }}" alt="{{ investor.company_name }}" class="avatar-img-grid">
+                                    {% else %}
+                                        <div class="avatar-placeholder-grid">
+                                            {{ investor.company_name|slice:":2"|upper }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <!-- Match Score Badge -->
+                                <div class="match-badge">
+                                    <span class="match-percentage-grid">{{ investor.match_score }}%</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Company Name -->
+                            <h5 class="company-name-grid mb-1">{{ investor.company_name }}</h5>
+                            
+                            <!-- Location & Investor Type -->
+                            <div class="company-meta mb-2">
+                                <span class="meta-item">
+                                    <i class="bi bi-geo-alt text-muted"></i> {{ investor.get_primary_location_display|default:investor.primary_location|default:"Not specified" }}
+                                </span>
+                                <span class="meta-separator">•</span>
+                                <span class="meta-item">
+                                    <i class="bi bi-briefcase text-muted"></i> {{ investor.get_investor_type_display|default:investor.investor_type|default:"Not specified" }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <p class="company-description-grid flex-grow-1">
+                            {{ investor.investment_focus|default:investor.company_description|truncatewords:15|default:"No investment focus specified." }}
+                        </p>
+
+                        <!-- Investment Categories Tags -->
+                        {% if investor.investment_categories %}
+                        <div class="tech-tags-grid mb-3">
+                            {% for category in investor.investment_categories|slice:":3" %}
+                                <span class="tech-tag-grid">{{ category|title }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <!-- Footer Section -->
+                        <div class="grid-footer mt-auto">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <!-- Preferred Stages -->
+                                {% if investor.preferred_stages %}
+                                    <div class="stage-badges-grid">
+                                        {% for stage in investor.preferred_stages|slice:":2" %}
+                                            <span class="stage-badge-grid stage-{{ stage }}">{{ stage|title }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <span class="text-muted small">No stage preference</span>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Funding Info -->
+                            {% if investor.funding_size %}
+                                <div class="funding-info-grid">
+                                    <i class="bi bi-currency-dollar text-success"></i>
+                                    <span class="funding-text">Investment Range: {{ investor.get_funding_size_display }}</span>
+                                </div>
+                            {% else %}
+                                <div class="funding-info-grid text-muted">
+                                    <i class="bi bi-info-circle"></i>
+                                    <span class="funding-text">Investment range not specified</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state">
+                <div class="d-flex flex-column align-items-center text-muted">
+                    <i class="bi bi-search fs-1 mb-3"></i>
+                    <h5>No investors found</h5>
+                    <p>Try adjusting your search criteria or filters.</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+
+<!-- Filter Modal -->
+<div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="filterModalLabel">
+                    <i class="bi bi-funnel me-2"></i>
+                    Filter Investors
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="filterForm" method="get">
+                    {% csrf_token %}
+                    <div class="row g-4">
+                        <!-- Match Score Filter -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="bi bi-percent me-2"></i>
+                                    Match Score: <span id="matchValue">0</span>%+
+                                </label>
+                                <div class="range-container">
+                                    <input type="range" class="form-range" id="matchRange" min="0" max="100" value="0">
+                                    <div class="range-labels">
+                                        <span>0%</span>
+                                        <span>100%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Investor Type Filter -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="bi bi-briefcase me-2"></i>
+                                    Investor Type
+                                </label>
+                                <div class="tech-checkbox-grid">
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="typeAngel" name="investor_type" value="angel" class="form-check-input">
+                                        <label for="typeAngel" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">👼 Angel Investor</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="typeVC" name="investor_type" value="vc" class="form-check-input">
+                                        <label for="typeVC" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🏢 Venture Capital</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="typePE" name="investor_type" value="pe" class="form-check-input">
+                                        <label for="typePE" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">💼 Private Equity</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="typeCorporate" name="investor_type" value="corporate" class="form-check-input">
+                                        <label for="typeCorporate" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🏭 Corporate Investor</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="typeGrant" name="investor_type" value="grant" class="form-check-input">
+                                        <label for="typeGrant" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🎯 Grant Provider</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="typeAccelerator" name="investor_type" value="accelerator" class="form-check-input">
+                                        <label for="typeAccelerator" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🚀 Accelerator/Incubator</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Location Filter -->
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="bi bi-geo-alt me-2"></i>
+                                    Location
+                                </label>
+                                <div class="tech-checkbox-grid">
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="locSingapore" name="primary_location" value="Singapore" class="form-check-input">
+                                        <label for="locSingapore" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🇸🇬 Singapore</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="locIndonesia" name="primary_location" value="Indonesia" class="form-check-input">
+                                        <label for="locIndonesia" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🇮🇩 Indonesia</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="locThailand" name="primary_location" value="Thailand" class="form-check-input">
+                                        <label for="locThailand" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🇹🇭 Thailand</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="locMalaysia" name="primary_location" value="Malaysia" class="form-check-input">
+                                        <label for="locMalaysia" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🇲🇾 Malaysia</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="locPhilippines" name="primary_location" value="Philippines" class="form-check-input">
+                                        <label for="locPhilippines" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🇵🇭 Philippines</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="locVietnam" name="primary_location" value="Vietnam" class="form-check-input">
+                                        <label for="locVietnam" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🇻🇳 Vietnam</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Funding Size Filter -->
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="bi bi-currency-dollar me-2"></i>
+                                    Investment Range
+                                </label>
+                                <div class="tech-checkbox-grid">
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="fundingMicro" name="funding_size" value="micro" class="form-check-input">
+                                        <label for="fundingMicro" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Micro ($1K - $25K)</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="fundingSeed" name="funding_size" value="seed" class="form-check-input">
+                                        <label for="fundingSeed" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Seed ($25K - $100K)</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="fundingEarly" name="funding_size" value="early" class="form-check-input">
+                                        <label for="fundingEarly" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Early Stage ($100K - $1M)</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="fundingSeriesA" name="funding_size" value="series_a" class="form-check-input">
+                                        <label for="fundingSeriesA" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Series A ($1M - $5M)</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="fundingSeriesB" name="funding_size" value="series_b" class="form-check-input">
+                                        <label for="fundingSeriesB" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Series B ($5M - $15M)</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="fundingGrowth" name="funding_size" value="growth" class="form-check-input">
+                                        <label for="fundingGrowth" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Growth Stage ($15M+)</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Preferred Funding Stages Filter -->
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="bi bi-graph-up me-2"></i>
+                                    Preferred Funding Stages
+                                </label>
+                                <div class="tech-checkbox-grid">
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="stageIdea" name="preferred_stages" value="idea" class="form-check-input">
+                                        <label for="stageIdea" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">💡 Ideation</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="stagePrototype" name="preferred_stages" value="prototype" class="form-check-input">
+                                        <label for="stagePrototype" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🔧 Prototype/MVP</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="stageValidation" name="preferred_stages" value="validation" class="form-check-input">
+                                        <label for="stageValidation" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🧪 Validation</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="stageEarly" name="preferred_stages" value="early" class="form-check-input">
+                                        <label for="stageEarly" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">📈 Early Growth</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="stageScaling" name="preferred_stages" value="scaling" class="form-check-input">
+                                        <label for="stageScaling" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🚀 Scaling</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="stageProfit" name="preferred_stages" value="profit" class="form-check-input">
+                                        <label for="stageProfit" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">💰 Established/Profitable</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Investment Categories Filter -->
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="bi bi-lightbulb me-2"></i>
+                                    Investment Categories
+                                </label>
+                                <div class="tech-checkbox-grid">
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="catPlasticAlternatives" name="investment_categories" value="plastic_alternatives" class="form-check-input">
+                                        <label for="catPlasticAlternatives" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Eliminate & Redesign Packaging</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="catRecyclingTech" name="investment_categories" value="recycling_technologies" class="form-check-input">
+                                        <label for="catRecyclingTech" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Refill & Reuse Solutions</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="catWasteCollection" name="investment_categories" value="waste_collection" class="form-check-input">
+                                        <label for="catWasteCollection" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Reusable Packaging Collection/Drop Off</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="catCircularEconomy" name="investment_categories" value="circular_economy" class="form-check-input">
+                                        <label for="catCircularEconomy" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Upcycling Plastic Waste</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="catMonitoringTools" name="investment_categories" value="monitoring_tools" class="form-check-input">
+                                        <label for="catMonitoringTools" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Sustainable Alternative Materials</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="catEducationPartnerships" name="investment_categories" value="education_partnerships" class="form-check-input">
+                                        <label for="catEducationPartnerships" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Education & Industry Partnerships</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="catTrackingMonitoring" name="investment_categories" value="tracking_monitoring" class="form-check-input">
+                                        <label for="catTrackingMonitoring" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Tracking & Monitoring Waste</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="catOther" name="investment_categories" value="other" class="form-check-input">
+                                        <label for="catOther" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Other Innovation</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" id="clearFiltersBtn">
+                    <i class="bi bi-x-circle me-2"></i>
+                    Clear All
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Cancel
+                </button>
+                <button type="button" class="btn btn-primary" id="applyFiltersBtn">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Apply Filters
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Investor-specific styling - inherits most from startup matchmaking */
+.investor-icon-container {
+    position: relative;
+    z-index: 2;
+}
+
+.investor-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #ffffff15 0%, #ffffff25 100%);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.investor-icon i {
+    font-size: 2.5rem;
+    color: white;
+    animation: investorFloat 3s ease-in-out infinite;
+}
+
+@keyframes investorFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+}
+
+/* Responsive adjustments for investor icon */
+@media (max-width: 768px) {
+    .investor-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+    }
+    
+    .investor-icon i {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .investor-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+    }
+    
+    .investor-icon i {
+        font-size: 1.5rem;
+    }
+}
+
+/* Investor-specific table cell styling */
+.stage-badges-sm {
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+}
+
+.stage-badges-grid {
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+}
+
+.categories-sm {
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+}
+
+.category-tag-sm {
+    background: #e8f5e8;
+    color: #58946e;
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    border: 1px solid #58946e;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.category-tag-sm:hover {
+    background: linear-gradient(135deg, #58946e 0%, #639ac0 100%);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(88, 148, 110, 0.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .stage-badges-sm,
+    .stage-badges-grid {
+        gap: 0.125rem;
+    }
+    
+    .category-tag-sm {
+        font-size: 0.7rem;
+        padding: 0.1rem 0.4rem;
+    }
+}
+
+/* Include all dashboard and filter modal styles from startup matchmaking */
+/* These styles will be the same as the startup page for consistency */
+
+/* Dashboard Styling - Onboarding Theme */
+.dashboard-header {
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    color: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(44, 89, 167, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    opacity: 0.3;
+}
+
+.text-primary-light {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-weight: 500;
+}
+
+.header-subtitle {
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-size: 1.1rem;
+    font-weight: 400;
+    line-height: 1.4;
+}
+
+/* Search Section Styling */
+.search-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem;
+}
+
+.search-input-group {
+    position: relative;
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+    z-index: 10;
+}
+
+.search-input {
+    padding-left: 2.5rem;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.search-input:focus {
+    border-color: #2c59a7;
+    background: white;
+    box-shadow: 0 0 0 0.2rem rgba(44, 89, 167, 0.1);
+}
+
+.search-btn {
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    border: none;
+    border-radius: 12px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(44, 89, 167, 0.2);
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+}
+
+.filter-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(44, 89, 167, 0.1);
+}
+
+.filter-tag {
+    padding: 0.2rem 0.75rem;
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #495057;
+}
+
+.filter-tag:hover {
+    border-color: #2c59a7;
+    color: #2c59a7;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(44, 89, 167, 0.15);
+}
+
+.filter-tag.active {
+    background-color: #2c59a7;
+    color: white;
+    border-color: #2c59a7;
+    box-shadow: 0 4px 16px rgba(44, 89, 167, 0.25);
+}
+
+.filter-btn-primary {
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%) !important;
+    color: white !important;
+    border: 2px solid #2c59a7 !important;
+    font-weight: 600;
+}
+
+.filter-btn-primary:hover {
+    background: linear-gradient(135deg, #234a91 0%, #4a3f8a 100%) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(44, 89, 167, 0.3) !important;
+}
+
+.results-summary {
+    padding: 0 0.5rem;
+}
+
+.view-options .btn {
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+}
+
+.view-options .btn.active {
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    color: white;
+    border: none;
+    box-shadow: 0 2px 8px rgba(44, 89, 167, 0.2);
+}
+
+/* Table Styling with Fixed Sticky Column */
+.table-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    position: relative;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    position: relative;
+}
+
+.startup-table {
+    margin-bottom: 0;
+    min-width: 1200px;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+}
+
+.table-header {
+    background: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.table-header th {
+    font-weight: 600;
+    color: #2c3e50;
+    padding: 1rem;
+    border-bottom: 2px solid #dee2e6;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+/* Enhanced Sticky Column Styling with Persistent Border */
+.sticky-column {
+    position: sticky;
+    left: 0;
+    background: white !important;
+    z-index: 999 !important;
+    min-width: 350px;
+    max-width: 350px;
+    border-right: 2px solid #dee2e6 !important;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
+}
+
+.sticky-column::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 0;
+    background: #dee2e6;
+    z-index: 1001;
+}
+
+.table-header .sticky-column {
+    background: #f8f9fa !important;
+    border-right: 2px solid #dee2e6 !important;
+    position: sticky;
+    left: 0;
+    z-index: 1000 !important;
+}
+
+.table-header .sticky-column::after {
+    background: #dee2e6;
+}
+
+.startup-row .sticky-column {
+    background: white !important;
+    position: sticky;
+    left: 0;
+    z-index: 999 !important;
+    border-right: 2px solid #dee2e6 !important;
+}
+
+.startup-row:hover .sticky-column {
+    background: #f8f9fa !important;
+}
+
+.startup-row:hover .sticky-column::after {
+    background: #dee2e6;
+}
+
+.sticky-column.sortable:hover {
+    background: #e9ecef !important;
+}
+
+.table-header .sticky-column.sortable:hover {
+    background: #e9ecef !important;
+}
+
+.sticky-column.sortable:hover::after {
+    background: #dee2e6;
+}
+
+.sortable {
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s ease;
+}
+
+.sortable:hover {
+    background: #e9ecef;
+}
+
+.sort-icon {
+    opacity: 0.5;
+    transition: all 0.2s ease;
+}
+
+.sortable:hover .sort-icon {
+    opacity: 1;
+}
+
+.sortable.asc .sort-icon {
+    transform: rotate(180deg);
+    opacity: 1;
+}
+
+.sortable.desc .sort-icon {
+    transform: rotate(0deg);
+    opacity: 1;
+}
+
+.startup-row {
+    border-bottom: 1px solid #f1f3f4;
+    transition: all 0.2s ease;
+}
+
+.startup-row:hover {
+    background: #f8f9fa;
+}
+
+.startup-row td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.startup-row td:not(.sticky-column) {
+    background: white;
+}
+
+.startup-row:hover td:not(.sticky-column) {
+    background: #f8f9fa;
+}
+
+.startup-table td {
+    border: none;
+}
+
+.startup-table th {
+    border: none;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.startup-table th:not(.sticky-column) {
+    border-right: 1px solid #f1f3f4;
+}
+
+.startup-table td:not(.sticky-column) {
+    border-right: 1px solid #f1f3f4;
+}
+
+/* Table Cell Styling */
+.company-avatar-sm {
+    flex-shrink: 0;
+}
+
+.avatar-placeholder-sm {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(44, 89, 167, 0.2);
+}
+
+.company-name-sm {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.25rem;
+}
+
+.company-description-sm {
+    font-size: 0.875rem;
+    color: #6c757d;
+    line-height: 1.4;
+    margin-bottom: 0.25rem;
+}
+
+.tech-tags-sm {
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+}
+
+.tech-tag-sm {
+    background: #f8f9ff;
+    color: #2c59a7;
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    border: 1px solid #2c59a7;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.tech-tag-sm:hover {
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(44, 89, 167, 0.2);
+}
+
+.match-score-sm {
+    text-align: center;
+    min-width: 80px;
+}
+
+.match-percentage-sm {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #28a745;
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.match-bar {
+    width: 60px;
+    height: 6px;
+    background: #e9ecef;
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+.match-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+    border-radius: 3px;
+    transition: width 0.8s ease;
+}
+
+.stage-badge-sm {
+    padding: 0.25rem 0.75rem;
+    border-radius: 16px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stage-early {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #EBCA38;
+}
+
+.stage-growth {
+    background: #e8f5e8;
+    color: #58946e;
+    border: 1px solid #58946e;
+}
+
+.stage-mature {
+    background: #e7f3ff;
+    color: #639ac0;
+    border: 1px solid #639ac0;
+}
+
+.stage-idea {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #EBCA38;
+}
+
+.stage-prototype {
+    background: #e8f5e8;
+    color: #58946e;
+    border: 1px solid #58946e;
+}
+
+.stage-validation {
+    background: #e7f3ff;
+    color: #639ac0;
+    border: 1px solid #639ac0;
+}
+
+.stage-scaling {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #28a745;
+}
+
+.stage-profit {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #dc3545;
+}
+
+.funding-info-sm {
+    text-align: left;
+}
+
+.funding-amount-sm {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.25rem;
+}
+
+.funding-type-sm {
+    font-size: 0.75rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Grid View Styling */
+.startups-grid-container {
+    background: transparent;
+}
+
+.startups-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    padding: 0;
+}
+
+.startup-grid-item {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.startup-grid-item:hover {
+    transform: translateY(-4px);
+}
+
+.startup-grid-item .card {
+    border: none;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.startup-grid-item:hover .card {
+    border-color: #2c59a7;
+    box-shadow: 0 8px 30px rgba(44, 89, 167, 0.15);
+}
+
+/* Grid Header */
+.grid-header {
+    border-bottom: 1px solid #f1f3f4;
+    padding-bottom: 1rem;
+}
+
+.company-avatar-grid {
+    flex-shrink: 0;
+}
+
+.avatar-img-grid {
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 2px solid #f8f9fa;
+}
+
+.avatar-placeholder-grid {
+    width: 45px;
+    height: 45px;
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    color: white;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 700;
+    box-shadow: 0 3px 10px rgba(44, 89, 167, 0.2);
+}
+
+.match-badge {
+    text-align: center;
+}
+
+.match-percentage-grid {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    box-shadow: 0 3px 10px rgba(40, 167, 69, 0.3);
+}
+
+.company-name-grid {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #2c3e50;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+}
+
+.company-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: #6c757d;
+    flex-wrap: wrap;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-weight: 500;
+}
+
+.meta-separator {
+    color: #dee2e6;
+    font-weight: bold;
+}
+
+.company-description-grid {
+    color: #495057;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 0;
+}
+
+.tech-tags-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.tech-tag-grid {
+    background: #f8f9ff;
+    color: #2c59a7;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    border: 1px solid #2c59a7;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.tech-tag-grid:hover {
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(44, 89, 167, 0.2);
+}
+
+.grid-footer {
+    border-top: 1px solid #f1f3f4;
+    padding-top: 1rem;
+}
+
+.stage-badge-grid {
+    padding: 0.25rem 0.6rem;
+    border-radius: 14px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.funding-info-grid {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: #495057;
+}
+
+.funding-text {
+    font-weight: 500;
+}
+
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem 1rem;
+}
+
+/* Clickable Row Styling */
+.clickable-row {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.clickable-row:hover {
+    background: #f8f9fa !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.clickable-row:hover .sticky-column {
+    background: #f8f9fa !important;
+}
+
+.clickable-row:hover td:not(.sticky-column) {
+    background: #f8f9fa !important;
+}
+
+.clickable-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.clickable-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(44, 89, 167, 0.15);
+}
+
+.clickable-card:hover .card {
+    border-color: #2c59a7;
+    box-shadow: 0 4px 20px rgba(44, 89, 167, 0.1);
+}
+
+.clickable-card:hover .company-name-grid {
+    color: #2c59a7;
+}
+
+.clickable-row:active,
+.clickable-card:active {
+    transform: translateY(0);
+}
+
+.clickable-row:hover .company-name-sm,
+.clickable-card:hover .company-name,
+.clickable-card:hover .company-name-grid {
+    color: #2c59a7;
+}
+
+/* Filter Modal Styling */
+.modal-dialog.modal-xl {
+    max-width: 900px;
+}
+
+.modal-content {
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #2C59A7 0%, #1e3a8a 100%);
+    color: white;
+    border-bottom: none;
+    border-radius: 16px 16px 0 0;
+    padding: 1.5rem 2rem;
+}
+
+.modal-title {
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: white;
+}
+
+.modal-title i {
+    color: white;
+}
+
+.btn-close {
+    filter: invert(1);
+    opacity: 0.8;
+}
+
+.btn-close:hover {
+    opacity: 1;
+}
+
+.modal-body {
+    padding: 2rem;
+    background: #f8f9fa;
+}
+
+.modal-footer {
+    border-top: none;
+    padding: 1.25rem 2rem 2rem;
+    background: #f8f9fa;
+    border-radius: 0 0 16px 16px;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    font-size: 0.95rem;
+}
+
+.form-label i {
+    color: #2C59A7;
+    font-size: 1.1rem;
+}
+
+.range-container {
+    position: relative;
+    margin-top: 0.5rem;
+}
+
+.form-range {
+    width: 100%;
+    height: 6px;
+    background: linear-gradient(to right, #e9ecef 0%, #2C59A7 0%);
+    border-radius: 3px;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.form-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(135deg, #2C59A7 0%, #574da1 100%);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid white;
+    box-shadow: 0 2px 6px rgba(44, 89, 167, 0.3);
+}
+
+.form-range::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(135deg, #2C59A7 0%, #574da1 100%);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid white;
+    box-shadow: 0 2px 6px rgba(44, 89, 167, 0.3);
+}
+
+.range-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.tech-checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.checkbox-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-item .form-check-input {
+    display: none;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 0.9rem;
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #495057;
+    width: 100%;
+    margin-bottom: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.checkbox-label:hover {
+    border-color: #2C59A7;
+    background: #f8f9ff;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(44, 89, 167, 0.1);
+}
+
+.checkbox-item .form-check-input:checked + .checkbox-label {
+    background: linear-gradient(135deg, #2C59A7 0%, #574da1 100%);
+    border-color: #2C59A7;
+    color: white;
+    box-shadow: 0 4px 12px rgba(44, 89, 167, 0.25);
+}
+
+.checkbox-item .form-check-input:checked + .checkbox-label:hover {
+    background: linear-gradient(135deg, #234a91 0%, #4a3f8a 100%);
+    transform: translateY(-1px);
+}
+
+.checkbox-custom {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #dee2e6;
+    border-radius: 4px;
+    margin-right: 0.6rem;
+    position: relative;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.checkbox-item .form-check-input:checked + .checkbox-label .checkbox-custom {
+    background: white;
+    border-color: white;
+}
+
+.checkbox-item .form-check-input:checked + .checkbox-label .checkbox-custom::after {
+    content: '✓';
+    position: absolute;
+    top: -2px;
+    left: 2px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #2C59A7;
+}
+
+.checkbox-text {
+    flex: 1;
+    line-height: 1.3;
+}
+
+.modal-footer .btn {
+    padding: 0.6rem 1.5rem;
+    font-weight: 600;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.modal-footer .btn-primary {
+    background: linear-gradient(135deg, #2C59A7 0%, #574da1 100%);
+    border: none;
+    box-shadow: 0 3px 10px rgba(44, 89, 167, 0.2);
+}
+
+.modal-footer .btn-primary:hover {
+    background: linear-gradient(135deg, #234a91 0%, #4a3f8a 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(44, 89, 167, 0.3);
+}
+
+.modal-footer .btn-outline-secondary {
+    border: 2px solid #dee2e6;
+    color: #6c757d;
+    background: white;
+}
+
+.modal-footer .btn-outline-secondary:hover {
+    background: #f8f9fa;
+    border-color: #adb5bd;
+    color: #495057;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .startups-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.25rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-header {
+        padding: 1rem;
+    }
+    
+    .search-section {
+        padding: 1rem;
+    }
+    
+    .search-input-group {
+        margin-bottom: 1rem;
+    }
+    
+    .filter-tags {
+        justify-content: center;
+    }
+    
+    .table-wrapper {
+        font-size: 0.875rem;
+    }
+    
+    .startup-table th,
+    .startup-table td {
+        padding: 0.5rem;
+    }
+    
+    .sticky-column {
+        min-width: 280px;
+        max-width: 280px;
+    }
+    
+    .company-name-sm {
+        font-size: 0.9rem;
+    }
+    
+    .company-description-sm {
+        font-size: 0.8rem;
+    }
+    
+    .tech-tags-sm {
+        display: none;
+    }
+    
+    .startups-grid {
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 1rem;
+    }
+    
+    .startup-grid-item .card-body {
+        padding: 1rem;
+    }
+    
+    .company-name-grid {
+        font-size: 1rem;
+    }
+    
+    .company-meta {
+        font-size: 0.75rem;
+    }
+    
+    .tech-tags-grid {
+        gap: 0.3rem;
+    }
+    
+    .tech-tag-grid {
+        font-size: 0.7rem;
+        padding: 0.15rem 0.5rem;
+    }
+    
+    .tech-checkbox-grid {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .table-container {
+        margin: 0 -15px;
+        border-radius: 0;
+    }
+    
+    .sticky-column {
+        min-width: 250px;
+        max-width: 250px;
+    }
+    
+    .startups-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .startup-grid-item .card {
+        border-radius: 12px;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Global variables
+    let currentSort = { column: null, direction: 'asc' };
+    let currentFilters = {};
+    let isTableView = true;
+
+    // DOM Elements
+    const tableContainer = document.getElementById('tableContainer');
+    const cardContainer = document.getElementById('cardContainer');
+    const tableViewBtn = document.getElementById('tableView');
+    const cardViewBtn = document.getElementById('cardView');
+    const filterModal = document.getElementById('filterModal');
+    const matchRange = document.getElementById('matchRange');
+    const matchValue = document.getElementById('matchValue');
+    const applyFiltersBtn = document.getElementById('applyFiltersBtn');
+    const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+    const filterTags = document.querySelectorAll('.filter-tag:not(.filter-btn-primary)');
+
+    // Initialize functionality
+    initializeViewToggle();
+    initializeSorting();
+    initializeFiltering();
+    initializeClickableRows();
+    initializeRangeSlider();
+    initializeQuickFilters();
+
+    // View Toggle Functionality
+    function initializeViewToggle() {
+        tableViewBtn.addEventListener('click', function() {
+            if (!isTableView) {
+                showTableView();
+            }
+        });
+
+        cardViewBtn.addEventListener('click', function() {
+            if (isTableView) {
+                showGridView();
+            }
+        });
+    }
+
+    function showTableView() {
+        isTableView = true;
+        tableContainer.style.display = 'block';
+        cardContainer.style.display = 'none';
+        
+        tableViewBtn.classList.add('active');
+        cardViewBtn.classList.remove('active');
+        
+        // Smooth transition
+        tableContainer.style.opacity = '0';
+        setTimeout(() => {
+            tableContainer.style.opacity = '1';
+        }, 50);
+    }
+
+    function showGridView() {
+        isTableView = false;
+        tableContainer.style.display = 'none';
+        cardContainer.style.display = 'block';
+        
+        cardViewBtn.classList.add('active');
+        tableViewBtn.classList.remove('active');
+        
+        // Smooth transition
+        cardContainer.style.opacity = '0';
+        setTimeout(() => {
+            cardContainer.style.opacity = '1';
+        }, 50);
+    }
+
+    // Sorting Functionality
+    function initializeSorting() {
+        const sortableHeaders = document.querySelectorAll('.sortable');
+        
+        sortableHeaders.forEach(header => {
+            header.addEventListener('click', function() {
+                const sortBy = this.getAttribute('data-sort');
+                handleSort(sortBy, this);
+            });
+        });
+    }
+
+    function handleSort(column, headerElement) {
+        // Determine sort direction
+        if (currentSort.column === column) {
+            currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+        } else {
+            currentSort.direction = 'asc';
+        }
+        currentSort.column = column;
+
+        // Update UI
+        updateSortIcons(headerElement);
+        
+        // Sort the data
+        sortTableRows(column, currentSort.direction);
+        sortGridItems(column, currentSort.direction);
+    }
+
+    function updateSortIcons(activeHeader) {
+        // Reset all sort icons
+        document.querySelectorAll('.sortable').forEach(header => {
+            header.classList.remove('asc', 'desc');
+        });
+        
+        // Set active sort icon
+        activeHeader.classList.add(currentSort.direction);
+    }
+
+    function sortTableRows(column, direction) {
+        const tbody = document.querySelector('.startup-table tbody');
+        const rows = Array.from(tbody.querySelectorAll('.startup-row'));
+        
+        rows.sort((a, b) => {
+            let aValue, bValue;
+            
+            switch(column) {
+                case 'name':
+                    aValue = a.getAttribute('data-name') || '';
+                    bValue = b.getAttribute('data-name') || '';
+                    break;
+                case 'match':
+                    aValue = parseInt(a.getAttribute('data-match')) || 0;
+                    bValue = parseInt(b.getAttribute('data-match')) || 0;
+                    break;
+                case 'type':
+                    aValue = a.getAttribute('data-type') || '';
+                    bValue = b.getAttribute('data-type') || '';
+                    break;
+                case 'funding':
+                    aValue = a.getAttribute('data-funding-size') || '';
+                    bValue = b.getAttribute('data-funding-size') || '';
+                    break;
+                default:
+                    return 0;
+            }
+            
+            if (typeof aValue === 'number') {
+                return direction === 'asc' ? aValue - bValue : bValue - aValue;
+            } else {
+                return direction === 'asc' ? 
+                    aValue.localeCompare(bValue) : 
+                    bValue.localeCompare(aValue);
+            }
+        });
+        
+        // Re-append sorted rows
+        rows.forEach(row => tbody.appendChild(row));
+        
+        // Add animation
+        rows.forEach((row, index) => {
+            row.style.transform = 'translateX(-10px)';
+            row.style.opacity = '0.8';
+            setTimeout(() => {
+                row.style.transform = 'translateX(0)';
+                row.style.opacity = '1';
+            }, index * 20);
+        });
+    }
+
+    function sortGridItems(column, direction) {
+        const grid = document.querySelector('.startups-grid');
+        const items = Array.from(grid.querySelectorAll('.startup-grid-item'));
+        
+        items.sort((a, b) => {
+            let aValue, bValue;
+            
+            switch(column) {
+                case 'name':
+                    aValue = a.querySelector('.company-name-grid').textContent.toLowerCase() || '';
+                    bValue = b.querySelector('.company-name-grid').textContent.toLowerCase() || '';
+                    break;
+                case 'match':
+                    aValue = parseInt(a.getAttribute('data-match')) || 0;
+                    bValue = parseInt(b.getAttribute('data-match')) || 0;
+                    break;
+                case 'type':
+                    aValue = a.getAttribute('data-type') || '';
+                    bValue = b.getAttribute('data-type') || '';
+                    break;
+                case 'funding':
+                    aValue = a.getAttribute('data-funding-size') || '';
+                    bValue = b.getAttribute('data-funding-size') || '';
+                    break;
+                default:
+                    return 0;
+            }
+            
+            if (typeof aValue === 'number') {
+                return direction === 'asc' ? aValue - bValue : bValue - aValue;
+            } else {
+                return direction === 'asc' ? 
+                    aValue.localeCompare(bValue) : 
+                    bValue.localeCompare(aValue);
+            }
+        });
+        
+        // Re-append sorted items
+        items.forEach(item => grid.appendChild(item));
+        
+        // Add staggered animation
+        items.forEach((item, index) => {
+            item.style.transform = 'translateY(20px)';
+            item.style.opacity = '0.8';
+            setTimeout(() => {
+                item.style.transform = 'translateY(0)';
+                item.style.opacity = '1';
+            }, index * 50);
+        });
+    }
+
+    // Filter Functionality
+    function initializeFiltering() {
+        // Apply filters button
+        applyFiltersBtn.addEventListener('click', function() {
+            applyFilters();
+            bootstrap.Modal.getInstance(filterModal).hide();
+        });
+        
+        // Clear filters button
+        clearFiltersBtn.addEventListener('click', function() {
+            clearAllFilters();
+        });
+        
+        // Listen for filter form changes
+        const filterForm = document.getElementById('filterForm');
+        filterForm.addEventListener('change', function() {
+            updateFilterPreview();
+        });
+    }
+
+    function applyFilters() {
+        currentFilters = getFilterValues();
+        filterInvestors();
+        updateFilterDisplay();
+    }
+
+    function getFilterValues() {
+        const filters = {};
+        
+        // Match score
+        filters.minMatch = parseInt(matchRange.value) || 0;
+        
+        // Investor types
+        filters.investorTypes = Array.from(document.querySelectorAll('input[name="investor_type"]:checked'))
+            .map(input => input.value);
+        
+        // Locations
+        filters.locations = Array.from(document.querySelectorAll('input[name="primary_location"]:checked'))
+            .map(input => input.value);
+        
+        // Funding sizes
+        filters.fundingSizes = Array.from(document.querySelectorAll('input[name="funding_size"]:checked'))
+            .map(input => input.value);
+        
+        // Preferred stages
+        filters.preferredStages = Array.from(document.querySelectorAll('input[name="preferred_stages"]:checked'))
+            .map(input => input.value);
+        
+        // Investment categories
+        filters.investmentCategories = Array.from(document.querySelectorAll('input[name="investment_categories"]:checked'))
+            .map(input => input.value);
+        
+        return filters;
+    }
+
+    function filterInvestors() {
+        // Filter table rows
+        const tableRows = document.querySelectorAll('.startup-row');
+        let visibleTableCount = 0;
+        
+        tableRows.forEach(row => {
+            if (matchesFilters(row)) {
+                row.style.display = '';
+                visibleTableCount++;
+                // Add fade-in animation
+                row.style.opacity = '0';
+                setTimeout(() => {
+                    row.style.opacity = '1';
+                }, Math.random() * 200);
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        
+        // Filter grid items
+        const gridItems = document.querySelectorAll('.startup-grid-item');
+        let visibleGridCount = 0;
+        
+        gridItems.forEach(item => {
+            if (matchesFilters(item)) {
+                item.style.display = '';
+                visibleGridCount++;
+                // Add fade-in animation
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                }, Math.random() * 300);
+            } else {
+                item.style.display = 'none';
+            }
+        });
+        
+        // Update results count
+        updateResultsCount(visibleTableCount);
+        
+        // Show/hide empty states
+        updateEmptyStates(visibleTableCount, visibleGridCount);
+    }
+
+    function matchesFilters(element) {
+        // Match score filter
+        const matchScore = parseInt(element.getAttribute('data-match')) || 0;
+        if (matchScore < currentFilters.minMatch) {
+            return false;
+        }
+        
+        // Investor type filter
+        if (currentFilters.investorTypes.length > 0) {
+            const elementType = element.getAttribute('data-type');
+            if (!currentFilters.investorTypes.includes(elementType)) {
+                return false;
+            }
+        }
+        
+        // Funding size filter
+        if (currentFilters.fundingSizes.length > 0) {
+            const elementFunding = element.getAttribute('data-funding-size');
+            if (!currentFilters.fundingSizes.includes(elementFunding)) {
+                return false;
+            }
+        }
+        
+        // Preferred stages filter
+        if (currentFilters.preferredStages.length > 0) {
+            const elementStages = element.getAttribute('data-preferred-stages');
+            if (!elementStages || !currentFilters.preferredStages.some(stage => 
+                elementStages.split(',').includes(stage))) {
+                return false;
+            }
+        }
+        
+        // Investment categories filter
+        if (currentFilters.investmentCategories.length > 0) {
+            const elementCategories = element.getAttribute('data-investment-categories');
+            if (!elementCategories || !currentFilters.investmentCategories.some(category => 
+                elementCategories.split(',').includes(category))) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
+    function clearAllFilters() {
+        // Reset form
+        document.getElementById('filterForm').reset();
+        matchRange.value = 0;
+        matchValue.textContent = '0';
+        
+        // Clear current filters
+        currentFilters = {};
+        
+        // Show all items
+        document.querySelectorAll('.startup-row, .startup-grid-item').forEach(item => {
+            item.style.display = '';
+        });
+        
+        // Update UI
+        updateFilterDisplay();
+        updateResultsCount();
+        updateEmptyStates();
+        
+        // Clear quick filters
+        filterTags.forEach(tag => {
+            tag.classList.remove('active');
+        });
+        document.querySelector('.filter-tag[data-filter="all"]').classList.add('active');
+    }
+
+    function updateFilterDisplay() {
+        // Update filter button to show active filters count
+        const activeFiltersCount = Object.values(currentFilters).flat().length;
+        const filterBtn = document.getElementById('filterBtn');
+        
+        if (activeFiltersCount > 0) {
+            filterBtn.innerHTML = `<i class="bi bi-funnel me-2"></i><span>Filters (${activeFiltersCount})</span>`;
+            filterBtn.classList.add('active');
+        } else {
+            filterBtn.innerHTML = '<i class="bi bi-funnel me-2"></i><span>Advanced Filters</span>';
+            filterBtn.classList.remove('active');
+        }
+    }
+
+    function updateResultsCount(count = null) {
+        if (count === null) {
+            count = document.querySelectorAll('.startup-row:not([style*="display: none"])').length;
+        }
+        
+        const resultsSummary = document.querySelector('.results-summary span');
+        if (resultsSummary) {
+            const plural = count !== 1 ? 's' : '';
+            resultsSummary.innerHTML = `Showing <strong>${count}</strong> investor${plural}`;
+        }
+    }
+
+    function updateEmptyStates(tableCount = null, gridCount = null) {
+        if (tableCount === null) {
+            tableCount = document.querySelectorAll('.startup-row:not([style*="display: none"])').length;
+        }
+        if (gridCount === null) {
+            gridCount = document.querySelectorAll('.startup-grid-item:not([style*="display: none"])').length;
+        }
+        
+        // Handle table empty state
+        const tableEmptyRow = document.querySelector('.startup-table tbody tr:last-child');
+        if (tableCount === 0 && tableEmptyRow.children[0].getAttribute('colspan')) {
+            tableEmptyRow.style.display = '';
+        } else if (tableEmptyRow.children[0].getAttribute('colspan')) {
+            tableEmptyRow.style.display = 'none';
+        }
+    }
+
+    // Quick Filter Functionality
+    function initializeQuickFilters() {
+        filterTags.forEach(tag => {
+            tag.addEventListener('click', function() {
+                const filterType = this.getAttribute('data-filter');
+                handleQuickFilter(filterType, this);
+            });
+        });
+    }
+
+    function handleQuickFilter(filterType, element) {
+        // Remove active class from all quick filters
+        filterTags.forEach(tag => tag.classList.remove('active'));
+        
+        // Add active class to clicked filter
+        element.classList.add('active');
+        
+        // Apply quick filter
+        applyQuickFilter(filterType);
+    }
+
+    function applyQuickFilter(filterType) {
+        const items = document.querySelectorAll('.startup-row, .startup-grid-item');
+        let visibleCount = 0;
+        
+        items.forEach(item => {
+            let shouldShow = false;
+            
+            switch(filterType) {
+                case 'all':
+                    shouldShow = true;
+                    break;
+                case 'early-stage':
+                    const stages = item.getAttribute('data-preferred-stages') || '';
+                    shouldShow = stages.includes('idea') || stages.includes('prototype') || stages.includes('validation');
+                    break;
+                case 'growth':
+                    const growthStages = item.getAttribute('data-preferred-stages') || '';
+                    shouldShow = growthStages.includes('early') || growthStages.includes('scaling');
+                    break;
+                case 'high-match':
+                    const matchScore = parseInt(item.getAttribute('data-match')) || 0;
+                    shouldShow = matchScore > 80;
+                    break;
+                case 'active':
+                    // Assume all investors are active for now
+                    shouldShow = true;
+                    break;
+                default:
+                    shouldShow = true;
+            }
+            
+            if (shouldShow) {
+                item.style.display = '';
+                visibleCount++;
+                // Add animation
+                item.style.opacity = '0';
+                setTimeout(() => {
+                    item.style.opacity = '1';
+                }, Math.random() * 200);
+            } else {
+                item.style.display = 'none';
+            }
+        });
+        
+        updateResultsCount(visibleCount);
+        updateEmptyStates(visibleCount, visibleCount);
+    }
+
+    // Range Slider Functionality
+    function initializeRangeSlider() {
+        if (matchRange) {
+            matchRange.addEventListener('input', function() {
+                matchValue.textContent = this.value;
+                
+                // Update slider background
+                const value = (this.value - this.min) / (this.max - this.min) * 100;
+                this.style.background = `linear-gradient(to right, #2C59A7 0%, #2C59A7 ${value}%, #e9ecef ${value}%, #e9ecef 100%)`;
+            });
+            
+            // Initialize slider appearance
+            matchRange.dispatchEvent(new Event('input'));
+        }
+    }
+
+    // Clickable Rows Functionality
+    function initializeClickableRows() {
+        // Table rows
+        document.querySelectorAll('.clickable-row').forEach(row => {
+            row.addEventListener('click', function(e) {
+                // Don't trigger if clicking on buttons
+                if (e.target.closest('button, a')) return;
+                
+                const href = this.getAttribute('data-href');
+                if (href) {
+                    window.location.href = href;
+                }
+            });
+        });
+        
+        // Grid cards
+        document.querySelectorAll('.clickable-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                // Don't trigger if clicking on buttons
+                if (e.target.closest('button, a')) return;
+                
+                const href = this.getAttribute('data-href');
+                if (href) {
+                    window.location.href = href;
+                }
+            });
+        });
+    }
+
+    // Modal Enhancement
+    function updateFilterPreview() {
+        // This could show a preview of how many results would be shown
+        // Implementation depends on whether you want real-time preview
+    }
+
+    // Utility Functions
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    // Search functionality (if search form exists)
+    const searchForm = document.querySelector('form[method="get"]');
+    if (searchForm) {
+        const searchInput = searchForm.querySelector('input[name="q"]');
+        if (searchInput) {
+            // Add real-time search with debounce
+            const debouncedSearch = debounce(() => {
+                // This would typically submit the form or filter locally
+                // For now, we'll just add visual feedback
+                searchInput.style.background = '#f8f9fa';
+                setTimeout(() => {
+                    searchInput.style.background = '';
+                }, 500);
+            }, 300);
+            
+            searchInput.addEventListener('input', debouncedSearch);
+        }
+    }
+
+    // Performance optimization: Intersection Observer for animations
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+
+    // Observe grid items for scroll animations
+    document.querySelectorAll('.startup-grid-item').forEach(item => {
+        observer.observe(item);
+    });
+
+    console.log('Investor Matchmaking Dashboard initialized successfully');
+});
+</script>
+{% endblock %}
