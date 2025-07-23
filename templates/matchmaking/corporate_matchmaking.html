@@ -144,6 +144,16 @@
                                         {% endfor %}
                                     </div>
                                     {% endif %}
+                                    {% if corporate.investment_categories %}
+                                    <div class="industry-expert-tags mt-2">
+                                        {% for category in corporate.investment_categories|slice:":3" %}
+                                            <span class="industry-expert-tag">{{ category|title }}</span>
+                                        {% endfor %}
+                                        {% if corporate.investment_categories|length > 3 %}
+                                            <span class="industry-expert-more">+{{ corporate.investment_categories|length|add:"-3" }}</span>
+                                        {% endif %}
+                                    </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </td>
@@ -309,6 +319,21 @@
                                 {% endfor %}
                                 {% if corporate.support_areas|length > 3 %}
                                     <span class="support-tag-more">+{{ corporate.support_areas|length|add:"-3" }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Industry Expert Tags -->
+                        {% if corporate.investment_categories %}
+                        <div class="industry-expert-section mt-3">
+                            <small class="text-muted d-block mb-1">Industry Expertise:</small>
+                            <div class="industry-expert-tags">
+                                {% for category in corporate.investment_categories|slice:":3" %}
+                                    <span class="industry-expert-tag">{{ category|title }}</span>
+                                {% endfor %}
+                                {% if corporate.investment_categories|length > 3 %}
+                                    <span class="industry-expert-more">+{{ corporate.investment_categories|length|add:"-3" }}</span>
                                 {% endif %}
                             </div>
                         </div>
@@ -1734,6 +1759,48 @@ document.addEventListener('DOMContentLoaded', function() {
     box-shadow: 0 2px 6px rgba(44, 89, 167, 0.2);
 }
 
+/* Industry Expert Tags */
+.industry-expert-tags {
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+}
+
+.industry-expert-tag {
+    background: #e3f2fd;
+    color: #1565c0;
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    border: 1px solid #42a5f5;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: inline-block;
+    margin-right: 0.25rem;
+    margin-bottom: 0.25rem;
+}
+
+.industry-expert-tag:hover {
+    background: #42a5f5;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(66, 165, 245, 0.2);
+}
+
+.industry-expert-more {
+    background: #f5f5f5;
+    color: #757575;
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    border: 1px solid #bdbdbd;
+    font-weight: 500;
+    display: inline-block;
+    margin-right: 0.25rem;
+    margin-bottom: 0.25rem;
+}
+
 /* Areas of Interest Tags */
 .area-tag-sm {
     background: #e8f5e8;
@@ -2021,6 +2088,45 @@ document.addEventListener('DOMContentLoaded', function() {
     font-weight: 500;
 }
 
+/* Industry Expert Section (Grid View) */
+.industry-expert-section {
+    margin-top: 1rem;
+}
+
+.industry-expert-section .industry-expert-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.industry-expert-section .industry-expert-tag {
+    background: #e3f2fd;
+    color: #1565c0;
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    border: 1px solid #42a5f5;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.industry-expert-section .industry-expert-tag:hover {
+    background: #42a5f5;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(66, 165, 245, 0.2);
+}
+
+.industry-expert-section .industry-expert-more {
+    background: #f5f5f5;
+    color: #757575;
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    border: 1px solid #bdbdbd;
+    font-weight: 500;
+}
+
 .budget-amount {
     font-weight: 600;
     color: #2e7d32;
@@ -2067,6 +2173,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     .tech-tags-sm {
+        display: none;
+    }
+    
+    .industry-expert-tags {
         display: none;
     }
 }
