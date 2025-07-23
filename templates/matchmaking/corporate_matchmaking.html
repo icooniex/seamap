@@ -711,6 +711,12 @@
                 </form>
             </div>
             <div class="modal-footer">
+                <div class="filter-preview me-auto">
+                    <small class="text-muted">
+                        <i class="bi bi-info-circle me-1"></i>
+                        <span id="filterPreview">Ready to filter</span>
+                    </small>
+                </div>
                 <button type="button" class="btn btn-outline-secondary" id="clearFiltersBtn">
                     <i class="bi bi-x-circle me-2"></i>
                     Clear All
@@ -740,6 +746,9 @@ document.addEventListener('DOMContentLoaded', function() {
         cardView.classList.remove('active');
         tableContainer.classList.remove('d-none');
         gridContainer.classList.add('d-none');
+        
+        // Preserve filter state when switching views
+        preserveFilterState();
     });
 
     cardView.addEventListener('click', function() {
@@ -747,7 +756,21 @@ document.addEventListener('DOMContentLoaded', function() {
         tableView.classList.remove('active');
         gridContainer.classList.remove('d-none');
         tableContainer.classList.add('d-none');
+        
+        // Preserve filter state when switching views
+        preserveFilterState();
     });
+    
+    // Function to preserve filter state across view changes
+    function preserveFilterState() {
+        // Re-apply any active filters
+        if (checkIfFiltersActive()) {
+            // Small delay to ensure DOM is updated
+            setTimeout(() => {
+                applyAdvancedFilters();
+            }, 50);
+        }
+    }
 
     // Match score range display
     const matchScoreRange = document.getElementById('matchRange');
@@ -756,27 +779,319 @@ document.addEventListener('DOMContentLoaded', function() {
     if (matchScoreRange && matchScoreDisplay) {
         matchScoreRange.addEventListener('input', function() {
             matchScoreDisplay.textContent = this.value;
+            updateFilterButtonState(); // Update button state in real-time
         });
     }
+    
+    // Add event listeners to all filter checkboxes for real-time updates
+    document.querySelectorAll('#filterForm input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            updateFilterButtonState(); // Update button state when checkboxes change
+            updateFilterPreview(); // Update preview count
+        });
+    });
+    
+    // Add event listener to match score range for preview updates
+    if (matchScoreRange) {
+        matchScoreRange.addEventListener('input', function() {
+            updateFilterPreview(); // Update preview count when range changes
+        });
+    }
+    
+    // Function to update filter preview
+    function updateFilterPreview() {
+        const rows = document.querySelectorAll('.corporate-row, .corporate-card');
+        let previewCount = 0;
+        
+        // Get current filter values
+        const minMatchScore = parseInt(document.getElementById('matchRange')?.value) || 0;
+        const selectedOrgTypes = Array.from(document.querySelectorAll('input[name="organization_type"]:checked')).map(cb => cb.value);
+        const selectedLocations = Array.from(document.querySelectorAll('input[name="primary_location"]:checked')).map(cb => cb.value);
+        const selectedIndustries = Array.from(document.querySelectorAll('input[name="industry_expertise"]:checked')).map(cb => cb.value);
+        const selectedTechAreas = Array.from(document.querySelectorAll('input[name="technological_areas"]:checked')).map(cb => cb.value);
+        const selectedCollabMethods = Array.from(document.querySelectorAll('input[name="collaboration_methods"]:checked')).map(cb => cb.value);
+        
+        // Check if any filters are active
+        const hasActiveFilters = minMatchScore > 0 || selectedOrgTypes.length > 0 || selectedLocations.length > 0 || 
+                                selectedIndustries.length > 0 || selectedTechAreas.length > 0 || selectedCollabMethods.length > 0;
+        
+        if (!hasActiveFilters) {
+            document.getElementById('filterPreview').textContent = 'Ready to filter';
+            return;
+        }
+        
+        // Count matching rows
+        rows.forEach(row => {
+            let show = true;
+            
+            // Apply same logic as in applyAdvancedFilters
+            if (minMatchScore > 0) {
+                const matchScore = parseInt(row.getAttribute('data-match')) || 0;
+                if (matchScore < minMatchScore) show = false;
+            }
+            
+            if (selectedOrgTypes.length > 0) {
+                const orgType = row.getAttribute('data-type') || '';
+                if (!selectedOrgTypes.includes(orgType)) show = false;
+            }
+            
+            if (selectedLocations.length > 0) {
+                const location = row.querySelector('.location-cell')?.textContent?.trim() || '';
+                let locationMatch = false;
+                selectedLocations.forEach(selectedLoc => {
+                    if (location.toLowerCase().includes(selectedLoc.toLowerCase())) {
+                        locationMatch = true;
+                    }
+                });
+                if (!locationMatch) show = false;
+            }
+            
+            if (selectedIndustries.length > 0) {
+                const industryExpertise = row.getAttribute('data-industry-expertise') || '';
+                let industryMatch = false;
+                selectedIndustries.forEach(selectedIndustry => {
+                    if (industryExpertise.toLowerCase().includes(selectedIndustry.toLowerCase())) {
+                        industryMatch = true;
+                    }
+                });
+                if (!industryMatch) show = false;
+            }
+            
+            if (selectedTechAreas.length > 0) {
+                const areasInterest = row.getAttribute('data-areas-interest') || '';
+                let techMatch = false;
+                selectedTechAreas.forEach(selectedTech => {
+                    if (areasInterest.toLowerCase().includes(selectedTech.toLowerCase())) {
+                        techMatch = true;
+                    }
+                });
+                if (!techMatch) show = false;
+            }
+            
+            if (selectedCollabMethods.length > 0) {
+                const collaborationMethods = row.getAttribute('data-collaboration') || '';
+                let collabMatch = false;
+                selectedCollabMethods.forEach(selectedCollab => {
+                    if (collaborationMethods.toLowerCase().includes(selectedCollab.toLowerCase())) {
+                        collabMatch = true;
+                    }
+                });
+                if (!collabMatch) show = false;
+            }
+            
+            if (show) previewCount++;
+        });
+        
+        const previewElement = document.getElementById('filterPreview');
+        if (previewElement) {
+            previewElement.textContent = `Will show ${previewCount} corporate${previewCount !== 1 ? 's' : ''}`;
+        }
+    }
+    
+    // Initialize filter preview
+    updateFilterPreview();
+    
+    // Add event listener for modal events
+    const filterModal = document.getElementById('filterModal');
+    if (filterModal) {
+        filterModal.addEventListener('shown.bs.modal', function() {
+            // Update preview when modal opens
+            updateFilterPreview();
+            updateFilterButtonState();
+        });
+        
+        filterModal.addEventListener('hidden.bs.modal', function() {
+            // Optionally do something when modal closes
+        });
+    }
+    
+    // Initialize filter button state
+    updateFilterButtonState();
 
     // Clear filters
     const clearFiltersBtn = document.getElementById('clearFiltersBtn');
     if (clearFiltersBtn) {
         clearFiltersBtn.addEventListener('click', function() {
+            // Clear all checkboxes
             document.querySelectorAll('#filterForm input[type="checkbox"]').forEach(cb => cb.checked = false);
+            
+            // Reset match score range
             if (matchScoreRange) {
                 matchScoreRange.value = 0;
                 matchScoreDisplay.textContent = '0';
             }
+            
+            // Clear all filters and show all corporates
+            clearAllFilters();
         });
+    }
+    
+    // Function to clear all filters and show all corporates
+    function clearAllFilters() {
+        const rows = document.querySelectorAll('.corporate-row, .corporate-card');
+        let totalCount = 0;
+        
+        rows.forEach(row => {
+            row.style.display = '';
+            row.closest('.col-12, .col-md-6, .col-lg-4')?.style.setProperty('display', '', 'important');
+            totalCount++;
+        });
+        
+        // Update count
+        const countElement = document.querySelector('.results-summary strong');
+        if (countElement) {
+            countElement.textContent = totalCount;
+        }
+        
+        // Reset filter button state
+        updateFilterButtonState();
+        
+        // Reset quick filter tags
+        document.querySelectorAll('.filter-tag:not(.filter-btn-primary)').forEach(t => t.classList.remove('active'));
+        document.querySelector('.filter-tag[data-filter="all"]')?.classList.add('active');
     }
 
     // Apply filters
     const applyFiltersBtn = document.getElementById('applyFiltersBtn');
     if (applyFiltersBtn) {
         applyFiltersBtn.addEventListener('click', function() {
-            document.getElementById('filterForm').submit();
+            applyAdvancedFilters();
+            // Close the modal using Bootstrap 5 method
+            const modalElement = document.getElementById('filterModal');
+            const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+            modal.hide();
         });
+    }
+
+    // Advanced filtering function
+    function applyAdvancedFilters() {
+        const rows = document.querySelectorAll('.corporate-row, .corporate-card');
+        let visibleCount = 0;
+        
+        // Get filter values
+        const minMatchScore = parseInt(document.getElementById('matchRange')?.value) || 0;
+        const selectedOrgTypes = Array.from(document.querySelectorAll('input[name="organization_type"]:checked')).map(cb => cb.value);
+        const selectedLocations = Array.from(document.querySelectorAll('input[name="primary_location"]:checked')).map(cb => cb.value);
+        const selectedIndustries = Array.from(document.querySelectorAll('input[name="industry_expertise"]:checked')).map(cb => cb.value);
+        const selectedTechAreas = Array.from(document.querySelectorAll('input[name="technological_areas"]:checked')).map(cb => cb.value);
+        const selectedCollabMethods = Array.from(document.querySelectorAll('input[name="collaboration_methods"]:checked')).map(cb => cb.value);
+        
+        rows.forEach(row => {
+            let show = true;
+            
+            // Match Score Filter
+            if (minMatchScore > 0) {
+                const matchScore = parseInt(row.getAttribute('data-match')) || 0;
+                if (matchScore < minMatchScore) {
+                    show = false;
+                }
+            }
+            
+            // Organization Type Filter
+            if (selectedOrgTypes.length > 0) {
+                const orgType = row.getAttribute('data-type') || '';
+                if (!selectedOrgTypes.includes(orgType)) {
+                    show = false;
+                }
+            }
+            
+            // Location Filter
+            if (selectedLocations.length > 0) {
+                const location = row.querySelector('.location-cell')?.textContent?.trim() || '';
+                let locationMatch = false;
+                selectedLocations.forEach(selectedLoc => {
+                    if (location.toLowerCase().includes(selectedLoc.toLowerCase())) {
+                        locationMatch = true;
+                    }
+                });
+                if (!locationMatch) {
+                    show = false;
+                }
+            }
+            
+            // Industry Expertise Filter
+            if (selectedIndustries.length > 0) {
+                const industryExpertise = row.getAttribute('data-industry-expertise') || '';
+                let industryMatch = false;
+                selectedIndustries.forEach(selectedIndustry => {
+                    if (industryExpertise.toLowerCase().includes(selectedIndustry.toLowerCase())) {
+                        industryMatch = true;
+                    }
+                });
+                if (!industryMatch) {
+                    show = false;
+                }
+            }
+            
+            // Technological Areas Filter
+            if (selectedTechAreas.length > 0) {
+                const areasInterest = row.getAttribute('data-areas-interest') || '';
+                let techMatch = false;
+                selectedTechAreas.forEach(selectedTech => {
+                    if (areasInterest.toLowerCase().includes(selectedTech.toLowerCase())) {
+                        techMatch = true;
+                    }
+                });
+                if (!techMatch) {
+                    show = false;
+                }
+            }
+            
+            // Collaboration Methods Filter
+            if (selectedCollabMethods.length > 0) {
+                const collaborationMethods = row.getAttribute('data-collaboration') || '';
+                let collabMatch = false;
+                selectedCollabMethods.forEach(selectedCollab => {
+                    if (collaborationMethods.toLowerCase().includes(selectedCollab.toLowerCase())) {
+                        collabMatch = true;
+                    }
+                });
+                if (!collabMatch) {
+                    show = false;
+                }
+            }
+            
+            // Apply visibility
+            if (show) {
+                row.style.display = '';
+                row.closest('.col-12, .col-md-6, .col-lg-4')?.style.setProperty('display', '', 'important');
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+                row.closest('.col-12, .col-md-6, .col-lg-4')?.style.setProperty('display', 'none', 'important');
+            }
+        });
+        
+        // Update count
+        const countElement = document.querySelector('.results-summary strong');
+        if (countElement) {
+            countElement.textContent = visibleCount;
+        }
+        
+        // Update filter button to show active state
+        updateFilterButtonState();
+    }
+    
+    // Function to update filter button state
+    function updateFilterButtonState() {
+        const filterBtn = document.querySelector('.filter-btn-primary');
+        const hasActiveFilters = checkIfFiltersActive();
+        
+        if (hasActiveFilters) {
+            filterBtn.classList.add('has-filters');
+            filterBtn.innerHTML = '<i class="bi bi-funnel-fill me-2"></i><span>Filters Active</span>';
+        } else {
+            filterBtn.classList.remove('has-filters');
+            filterBtn.innerHTML = '<i class="bi bi-funnel me-2"></i><span>Advanced Filters</span>';
+        }
+    }
+    
+    // Function to check if any filters are active
+    function checkIfFiltersActive() {
+        const minMatchScore = parseInt(document.getElementById('matchRange')?.value) || 0;
+        const hasCheckedFilters = document.querySelectorAll('#filterForm input[type="checkbox"]:checked').length > 0;
+        
+        return minMatchScore > 0 || hasCheckedFilters;
     }
 
     // Clickable rows
@@ -799,7 +1114,14 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function filterCorporates(filter) {
+        // If advanced filters are active, show a warning or combine with advanced filters
+        if (checkIfFiltersActive()) {
+            // Clear advanced filters first, then apply quick filter
+            clearAllAdvancedFilters();
+        }
+        
         const rows = document.querySelectorAll('.corporate-row, .corporate-card');
+        let visibleCount = 0;
         
         rows.forEach(row => {
             let show = true;
@@ -813,27 +1135,33 @@ document.addEventListener('DOMContentLoaded', function() {
                     const areasInterest = row.getAttribute('data-areas-interest') || '';
                     show = areasInterest.toLowerCase().includes('innovation') || 
                            areasInterest.toLowerCase().includes('ai') || 
-                           areasInterest.toLowerCase().includes('tech');
+                           areasInterest.toLowerCase().includes('tech') ||
+                           areasInterest.toLowerCase().includes('sustainable alternative materials') ||
+                           areasInterest.toLowerCase().includes('tracking & monitoring');
                     break;
                 case 'partnerships':
                     // Show corporates looking for partnerships
                     const collaborationMethods = row.getAttribute('data-collaboration') || '';
                     show = collaborationMethods.toLowerCase().includes('partnership') || 
-                           collaborationMethods.toLowerCase().includes('collaboration');
+                           collaborationMethods.toLowerCase().includes('collaboration') ||
+                           collaborationMethods.toLowerCase().includes('co-development') ||
+                           collaborationMethods.toLowerCase().includes('mentorship');
                     break;
                 case 'high-match':
                     const matchScore = parseInt(row.getAttribute('data-match')) || 0;
                     show = matchScore > 80;
                     break;
                 case 'recent':
-                    // For demo purposes, show random subset
-                    show = Math.random() > 0.5;
+                    // For demo purposes, show random subset but make it consistent
+                    const name = row.getAttribute('data-name') || '';
+                    show = name.length % 2 === 0; // More predictable than random
                     break;
             }
             
             if (show) {
                 row.style.display = '';
                 row.closest('.col-12, .col-md-6, .col-lg-4')?.style.setProperty('display', '', 'important');
+                visibleCount++;
             } else {
                 row.style.display = 'none';
                 row.closest('.col-12, .col-md-6, .col-lg-4')?.style.setProperty('display', 'none', 'important');
@@ -841,11 +1169,25 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         // Update count
-        const visibleRows = document.querySelectorAll('.corporate-row:not([style*="display: none"]), .corporate-card:not([style*="display: none"])');
         const countElement = document.querySelector('.results-summary strong');
         if (countElement) {
-            countElement.textContent = visibleRows.length;
+            countElement.textContent = visibleCount;
         }
+    }
+    
+    // Function to clear advanced filters without affecting the UI
+    function clearAllAdvancedFilters() {
+        // Clear all checkboxes silently
+        document.querySelectorAll('#filterForm input[type="checkbox"]').forEach(cb => cb.checked = false);
+        
+        // Reset match score range silently
+        if (matchScoreRange) {
+            matchScoreRange.value = 0;
+            matchScoreDisplay.textContent = '0';
+        }
+        
+        // Update filter button state
+        updateFilterButtonState();
     }
 
     // Table sorting
@@ -2051,16 +2393,32 @@ document.addEventListener('DOMContentLoaded', function() {
     box-shadow: 0 2px 6px rgba(220, 53, 69, 0.25); /* Reduced shadow */
 }
 
-/* Active Filter Indicator */
-.btn-outline-primary.has-filters {
-    background: linear-gradient(135deg, #2C59A7 0%, #1e3a8a 100%);
-    color: white;
-    border-color: #2C59A7;
+/* Filter Preview */
+.filter-preview {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
 }
 
-.btn-outline-primary.has-filters:hover {
-    background: linear-gradient(135deg, #234a91 0%, #1a2f6b 100%);
-    border-color: #234a91;
+.filter-preview i {
+    color: #2C59A7;
+}
+
+/* Active Filter Indicator */
+.btn-outline-primary.has-filters,
+.filter-btn-primary.has-filters {
+    background: linear-gradient(135deg, #2C59A7 0%, #1e3a8a 100%) !important;
+    color: white !important;
+    border-color: #2C59A7 !important;
+}
+
+.btn-outline-primary.has-filters:hover,
+.filter-btn-primary.has-filters:hover {
+    background: linear-gradient(135deg, #234a91 0%, #1a2f6b 100%) !important;
+    border-color: #234a91 !important;
     transform: translateY(-1px);
 }
 
