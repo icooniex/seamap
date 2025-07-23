@@ -217,7 +217,7 @@
     <div class="grid-container d-none" id="gridContainer">
         <div class="row g-4">
             {% for corporate in corporates %}
-            <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+            <div class="col-12 col-md-6 col-lg-4">
                 <div class="corporate-card card h-100" 
                      data-match="{{ corporate.match_score }}" 
                      data-type="{{ corporate.organization_type|default:'unknown' }}" 
@@ -331,171 +331,349 @@
 
 <!-- Advanced Filter Modal -->
 <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="filterModalLabel">
                     <i class="bi bi-funnel me-2"></i>
-                    Advanced Filters
+                    Filter Corporates
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form method="get" id="filterForm">
-                <div class="modal-body">
-                    <div class="row">
+            <div class="modal-body">
+                <form id="filterForm" method="get">
+                    {% csrf_token %}
+                    <div class="row g-4">
+                        <!-- Match Score Filter -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="bi bi-percent me-2"></i>
+                                    Match Score: <span id="matchValue">0</span>%+
+                                </label>
+                                <div class="range-container">
+                                    <input type="range" class="form-range" id="matchRange" min="0" max="100" value="0">
+                                    <div class="range-labels">
+                                        <span>0%</span>
+                                        <span>100%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Organization Type Filter -->
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Organization Type</label>
-                            <div class="filter-group">
-                                {% for type in available_organization_types %}
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="organization_type" 
-                                           value="{{ type }}" id="type_{{ type }}"
-                                           {% if type in filter_organization_type %}checked{% endif %}>
-                                    <label class="form-check-label" for="type_{{ type }}">
-                                        {{ type|title }}
-                                    </label>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="bi bi-building me-2"></i>
+                                    Organization Type
+                                </label>
+                                <div class="tech-checkbox-grid">
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="orgPrivate" name="organization_type" value="private_company" class="form-check-input">
+                                        <label for="orgPrivate" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🏢 Private Company</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="orgMultinational" name="organization_type" value="multinational_corporation" class="form-check-input">
+                                        <label for="orgMultinational" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🌐 Multinational Corporation</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="orgSME" name="organization_type" value="sme" class="form-check-input">
+                                        <label for="orgSME" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🏪 SME</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="orgStartupSub" name="organization_type" value="startup_subsidiary" class="form-check-input">
+                                        <label for="orgStartupSub" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🚀 Startup Subsidiary</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="orgOther" name="organization_type" value="other" class="form-check-input">
+                                        <label for="orgOther" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🔹 Other</span>
+                                        </label>
+                                    </div>
                                 </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-
-                        <!-- Location Filter -->
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Location</label>
-                            <div class="filter-group">
-                                {% for location in available_locations %}
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="location" 
-                                           value="{{ location }}" id="location_{{ location }}"
-                                           {% if location in filter_location %}checked{% endif %}>
-                                    <label class="form-check-label" for="location_{{ location }}">
-                                        {{ location }}
-                                    </label>
-                                </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-
-                        <!-- Average Deal Size Filter -->
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Average Deal Size</label>
-                            <div class="filter-group">
-                                {% for size in available_deal_sizes %}
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="average_deal_size" 
-                                           value="{{ size }}" id="deal_{{ size }}"
-                                           {% if size in filter_average_deal_size %}checked{% endif %}>
-                                    <label class="form-check-label" for="deal_{{ size }}">
-                                        {{ size|title }}
-                                    </label>
-                                </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-
-                        <!-- Team Size Filter -->
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Company Size (Employees)</label>
-                            <div class="filter-group">
-                                {% for size in available_team_sizes %}
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="team_size" 
-                                           value="{{ size }}" id="team_{{ size }}"
-                                           {% if size in filter_team_size %}checked{% endif %}>
-                                    <label class="form-check-label" for="team_{{ size }}">
-                                        {{ size }}
-                                    </label>
-                                </div>
-                                {% endfor %}
                             </div>
                         </div>
 
                         <!-- Innovation Types Filter -->
-                        <div class="col-12 mb-3">
-                            <label class="form-label">Innovation Areas</label>
-                            <div class="filter-group">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="innovation_types" 
-                                                   value="AI/ML" id="tech_ai"
-                                                   {% if "AI/ML" in filter_innovation_types %}checked{% endif %}>
-                                            <label class="form-check-label" for="tech_ai">AI/ML</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="innovation_types" 
-                                                   value="IoT" id="tech_iot"
-                                                   {% if "IoT" in filter_innovation_types %}checked{% endif %}>
-                                            <label class="form-check-label" for="tech_iot">IoT</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="innovation_types" 
-                                                   value="Blockchain" id="tech_blockchain"
-                                                   {% if "Blockchain" in filter_innovation_types %}checked{% endif %}>
-                                            <label class="form-check-label" for="tech_blockchain">Blockchain</label>
-                                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="bi bi-lightbulb me-2"></i>
+                                    Innovation Areas
+                                </label>
+                                <div class="tech-checkbox-grid">
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="innAI" name="innovation_types" value="AI/ML" class="form-check-input">
+                                        <label for="innAI" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🤖 AI/ML</span>
+                                        </label>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="innovation_types" 
-                                                   value="FinTech" id="tech_fintech"
-                                                   {% if "FinTech" in filter_innovation_types %}checked{% endif %}>
-                                            <label class="form-check-label" for="tech_fintech">FinTech</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="innovation_types" 
-                                                   value="HealthTech" id="tech_healthtech"
-                                                   {% if "HealthTech" in filter_innovation_types %}checked{% endif %}>
-                                            <label class="form-check-label" for="tech_healthtech">HealthTech</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="innovation_types" 
-                                                   value="EdTech" id="tech_edtech"
-                                                   {% if "EdTech" in filter_innovation_types %}checked{% endif %}>
-                                            <label class="form-check-label" for="tech_edtech">EdTech</label>
-                                        </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="innIoT" name="innovation_types" value="IoT" class="form-check-input">
+                                        <label for="innIoT" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">📡 IoT</span>
+                                        </label>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="innovation_types" 
-                                                   value="GreenTech" id="tech_greentech"
-                                                   {% if "GreenTech" in filter_innovation_types %}checked{% endif %}>
-                                            <label class="form-check-label" for="tech_greentech">GreenTech</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="innovation_types" 
-                                                   value="E-commerce" id="tech_ecommerce"
-                                                   {% if "E-commerce" in filter_innovation_types %}checked{% endif %}>
-                                            <label class="form-check-label" for="tech_ecommerce">E-commerce</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="innovation_types" 
-                                                   value="Mobility" id="tech_mobility"
-                                                   {% if "Mobility" in filter_innovation_types %}checked{% endif %}>
-                                            <label class="form-check-label" for="tech_mobility">Mobility</label>
-                                        </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="innBlockchain" name="innovation_types" value="Blockchain" class="form-check-input">
+                                        <label for="innBlockchain" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">⛓️ Blockchain</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="innFintech" name="innovation_types" value="FinTech" class="form-check-input">
+                                        <label for="innFintech" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">💳 FinTech</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="innHealthtech" name="innovation_types" value="HealthTech" class="form-check-input">
+                                        <label for="innHealthtech" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🏥 HealthTech</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="innEdtech" name="innovation_types" value="EdTech" class="form-check-input">
+                                        <label for="innEdtech" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">📚 EdTech</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="innGreentech" name="innovation_types" value="GreenTech" class="form-check-input">
+                                        <label for="innGreentech" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🌱 GreenTech</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="innEcommerce" name="innovation_types" value="E-commerce" class="form-check-input">
+                                        <label for="innEcommerce" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🛒 E-commerce</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="innMobility" name="innovation_types" value="Mobility" class="form-check-input">
+                                        <label for="innMobility" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🚗 Mobility</span>
+                                        </label>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Match Score Filter -->
+                        <!-- Location Filter -->
                         <div class="col-12">
-                            <label class="form-label">Minimum Match Score</label>
-                            <div class="d-flex align-items-center gap-3">
-                                <input type="range" class="form-range flex-grow-1" name="match_score" 
-                                       min="0" max="100" value="{{ filter_match_score }}" id="matchScoreRange">
-                                <span class="match-score-display fw-bold text-primary" id="matchScoreDisplay">{{ filter_match_score }}%</span>
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="bi bi-geo-alt me-2"></i>
+                                    Location
+                                </label>
+                                <div class="tech-checkbox-grid">
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="locSingapore" name="primary_location" value="Singapore" class="form-check-input">
+                                        <label for="locSingapore" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🇸🇬 Singapore</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="locIndonesia" name="primary_location" value="Indonesia" class="form-check-input">
+                                        <label for="locIndonesia" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🇮🇩 Indonesia</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="locThailand" name="primary_location" value="Thailand" class="form-check-input">
+                                        <label for="locThailand" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🇹🇭 Thailand</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="locMalaysia" name="primary_location" value="Malaysia" class="form-check-input">
+                                        <label for="locMalaysia" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🇲🇾 Malaysia</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="locPhilippines" name="primary_location" value="Philippines" class="form-check-input">
+                                        <label for="locPhilippines" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🇵🇭 Philippines</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="locVietnam" name="primary_location" value="Vietnam" class="form-check-input">
+                                        <label for="locVietnam" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🇻🇳 Vietnam</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Average Deal Size Filter -->
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="bi bi-currency-dollar me-2"></i>
+                                    Average Deal Size
+                                </label>
+                                <div class="tech-checkbox-grid">
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="dealUnder10k" name="average_deal_size" value="under_10k" class="form-check-input">
+                                        <label for="dealUnder10k" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Under $10K</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="deal10k50k" name="average_deal_size" value="10k_50k" class="form-check-input">
+                                        <label for="deal10k50k" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">$10K - $50K</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="deal50k100k" name="average_deal_size" value="50k_100k" class="form-check-input">
+                                        <label for="deal50k100k" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">$50K - $100K</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="deal100k500k" name="average_deal_size" value="100k_500k" class="form-check-input">
+                                        <label for="deal100k500k" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">$100K - $500K</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="deal500k1m" name="average_deal_size" value="500k_1m" class="form-check-input">
+                                        <label for="deal500k1m" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">$500K - $1M</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="deal1m5m" name="average_deal_size" value="1m_5m" class="form-check-input">
+                                        <label for="deal1m5m" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">$1M - $5M</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="deal5m10m" name="average_deal_size" value="5m_10m" class="form-check-input">
+                                        <label for="deal5m10m" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">$5M - $10M</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="dealOver10m" name="average_deal_size" value="over_10m" class="form-check-input">
+                                        <label for="dealOver10m" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Over $10M</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Support Areas Filter -->
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="bi bi-headset me-2"></i>
+                                    Seeking Support Areas
+                                </label>
+                                <div class="tech-checkbox-grid">
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="supportBranding" name="support_areas" value="branding_marketing" class="form-check-input">
+                                        <label for="supportBranding" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Branding & Marketing</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="supportInvestment" name="support_areas" value="investment_funding" class="form-check-input">
+                                        <label for="supportInvestment" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Investment & Funding Access</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="supportManufacturing" name="support_areas" value="manufacturing_supply" class="form-check-input">
+                                        <label for="supportManufacturing" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Manufacturing & Supply Chain</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="supportMarket" name="support_areas" value="market_expansion" class="form-check-input">
+                                        <label for="supportMarket" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Market Expansion & Customer Acquisition</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="supportProduct" name="support_areas" value="product_development" class="form-check-input">
+                                        <label for="supportProduct" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Product Development & R&D</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="supportRegulatory" name="support_areas" value="regulatory_compliance" class="form-check-input">
+                                        <label for="supportRegulatory" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Regulatory & Compliance</span>
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="clearFilters">Clear All</button>
-                    <button type="submit" class="btn btn-primary">Apply Filters</button>
-                </div>
-            </form>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" id="clearFiltersBtn">
+                    <i class="bi bi-x-circle me-2"></i>
+                    Clear All
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Cancel
+                </button>
+                <button type="button" class="btn btn-primary" id="applyFiltersBtn">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Apply Filters
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -523,24 +701,32 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Match score range display
-    const matchScoreRange = document.getElementById('matchScoreRange');
-    const matchScoreDisplay = document.getElementById('matchScoreDisplay');
+    const matchScoreRange = document.getElementById('matchRange');
+    const matchScoreDisplay = document.getElementById('matchValue');
     
     if (matchScoreRange && matchScoreDisplay) {
         matchScoreRange.addEventListener('input', function() {
-            matchScoreDisplay.textContent = this.value + '%';
+            matchScoreDisplay.textContent = this.value;
         });
     }
 
     // Clear filters
-    const clearFilters = document.getElementById('clearFilters');
-    if (clearFilters) {
-        clearFilters.addEventListener('click', function() {
+    const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+    if (clearFiltersBtn) {
+        clearFiltersBtn.addEventListener('click', function() {
             document.querySelectorAll('#filterForm input[type="checkbox"]').forEach(cb => cb.checked = false);
             if (matchScoreRange) {
                 matchScoreRange.value = 0;
-                matchScoreDisplay.textContent = '0%';
+                matchScoreDisplay.textContent = '0';
             }
+        });
+    }
+
+    // Apply filters
+    const applyFiltersBtn = document.getElementById('applyFiltersBtn');
+    if (applyFiltersBtn) {
+        applyFiltersBtn.addEventListener('click', function() {
+            document.getElementById('filterForm').submit();
         });
     }
 
@@ -598,10 +784,10 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (show) {
                 row.style.display = '';
-                row.closest('.col-12, .col-md-6, .col-lg-4, .col-xl-3')?.style.setProperty('display', '', 'important');
+                row.closest('.col-12, .col-md-6, .col-lg-4')?.style.setProperty('display', '', 'important');
             } else {
                 row.style.display = 'none';
-                row.closest('.col-12, .col-md-6, .col-lg-4, .col-xl-3')?.style.setProperty('display', 'none', 'important');
+                row.closest('.col-12, .col-md-6, .col-lg-4')?.style.setProperty('display', 'none', 'important');
             }
         });
         
@@ -1451,6 +1637,361 @@ document.addEventListener('DOMContentLoaded', function() {
     .sticky-column {
         min-width: 250px;
         max-width: 250px;
+    }
+}
+
+/* Filter Modal Styling - Onboarding Style - Smaller Version */
+.modal-dialog.modal-xl {
+    max-width: 900px; /* Reduced from 1200px */
+}
+
+.modal-content {
+    border-radius: 16px; /* Reduced from 20px */
+    border: none;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12); /* Reduced shadow */
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #2C59A7 0%, #1e3a8a 100%);
+    color: white;
+    border-bottom: none;
+    border-radius: 16px 16px 0 0; /* Reduced from 20px */
+    padding: 1.5rem 2rem; /* Reduced from 2rem 2.5rem */
+}
+
+.modal-title {
+    font-weight: 700;
+    font-size: 1.3rem; /* Reduced from 1.5rem */
+    color: white;
+}
+
+.modal-title i {
+    color: white;
+}
+
+.btn-close {
+    filter: invert(1);
+    opacity: 0.8;
+}
+
+.btn-close:hover {
+    opacity: 1;
+}
+
+.modal-body {
+    padding: 2rem; /* Reduced from 2.5rem */
+    background: #f8f9fa;
+}
+
+.modal-footer {
+    border-top: none;
+    padding: 1.25rem 2rem 2rem; /* Reduced from 1.5rem 2.5rem 2.5rem */
+    background: #f8f9fa;
+    border-radius: 0 0 16px 16px; /* Reduced from 20px */
+}
+
+/* Form Group Styling */
+.form-group {
+    margin-bottom: 1.5rem; /* Reduced from 2rem */
+}
+
+.form-label {
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.75rem; /* Reduced from 1rem */
+    font-size: 1rem; /* Reduced from 1.1rem */
+    display: flex;
+    align-items: center;
+}
+
+.form-label i {
+    color: #2C59A7;
+    font-size: 1.1rem; /* Reduced from 1.2rem */
+}
+
+/* Checkbox Group Styling */
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem; /* Reduced from 1rem */
+}
+
+.tech-checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); /* Reduced from 200px */
+    gap: 0.75rem; /* Reduced from 1rem */
+}
+
+.checkbox-item {
+    position: relative;
+}
+
+.checkbox-item .form-check-input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; /* Reduced from 1rem */
+    cursor: pointer;
+    padding: 0.75rem 1rem; /* Reduced from 1rem 1.5rem */
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 10px; /* Reduced from 12px */
+    transition: all 0.3s ease;
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 0;
+}
+
+.checkbox-label:hover {
+    border-color: #2C59A7;
+    background: #f0f4ff;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(44, 89, 167, 0.12); /* Reduced shadow */
+}
+
+.checkbox-custom {
+    width: 18px; /* Reduced from 20px */
+    height: 18px;
+    border: 2px solid #dee2e6;
+    border-radius: 3px; /* Reduced from 4px */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.checkbox-custom::after {
+    content: '';
+    width: 10px; /* Reduced from 12px */
+    height: 7px; /* Reduced from 8px */
+    border: 2px solid white;
+    border-top: none;
+    border-right: none;
+    transform: rotate(-45deg);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.form-check-input:checked + .checkbox-label .checkbox-custom {
+    background: #2C59A7;
+    border-color: #2C59A7;
+}
+
+.form-check-input:checked + .checkbox-label .checkbox-custom::after {
+    opacity: 1;
+}
+
+.form-check-input:checked + .checkbox-label {
+    border-color: #2C59A7;
+    background: #f0f4ff;
+    color: #2C59A7;
+}
+
+.checkbox-text {
+    font-size: 0.9rem; /* Reduced from 0.95rem */
+    font-weight: 500;
+}
+
+/* Range Slider Styling */
+.range-container {
+    margin-top: 1rem; /* Reduced from 1.5rem */
+    padding: 0.75rem; /* Reduced from 1rem */
+    background: white;
+    border-radius: 10px; /* Reduced from 12px */
+    border: 2px solid #e9ecef;
+}
+
+.form-range {
+    width: 100%;
+    height: 6px; /* Reduced from 8px */
+    background: #e9ecef;
+    border-radius: 3px; /* Reduced from 4px */
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0.75rem 0; /* Reduced from 1rem */
+}
+
+.form-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px; /* Reduced from 24px */
+    height: 20px;
+    background: #2C59A7;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 3px 8px rgba(44, 89, 167, 0.25); /* Reduced shadow */
+    transition: all 0.3s ease;
+}
+
+.form-range::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(44, 89, 167, 0.35); /* Reduced shadow */
+}
+
+.form-range::-moz-range-thumb {
+    width: 20px; /* Reduced from 24px */
+    height: 20px;
+    background: #2C59A7;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 3px 8px rgba(44, 89, 167, 0.25); /* Reduced shadow */
+    transition: all 0.3s ease;
+}
+
+.form-range::-moz-range-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(44, 89, 167, 0.35); /* Reduced shadow */
+}
+
+.range-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem; /* Reduced from 0.9rem */
+    color: #6c757d;
+    font-weight: 500;
+}
+
+/* Multi-select Styling */
+.form-select {
+    border: 2px solid #e9ecef;
+    border-radius: 10px; /* Reduced from 12px */
+    padding: 0.75rem; /* Reduced from 1rem */
+    font-size: 0.9rem; /* Reduced from 0.95rem */
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.form-select:focus {
+    border-color: #2C59A7;
+    box-shadow: 0 0 0 3px rgba(44, 89, 167, 0.1);
+}
+
+.form-select[multiple] {
+    height: auto;
+    min-height: 120px; /* Reduced from 140px */
+}
+
+.form-select option {
+    padding: 0.5rem; /* Reduced from 0.75rem */
+    font-size: 0.9rem; /* Reduced from 0.95rem */
+}
+
+.form-select option:checked {
+    background: #2C59A7;
+    color: white;
+}
+
+/* Button Styling */
+.modal-footer .btn {
+    padding: 0.75rem 1.5rem; /* Reduced from 0.875rem 2rem */
+    border-radius: 10px; /* Reduced from 12px */
+    font-weight: 600;
+    font-size: 0.9rem; /* Reduced from 0.95rem */
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.modal-footer .btn-primary {
+    background: linear-gradient(135deg, #2C59A7 0%, #1e3a8a 100%);
+    border: none;
+}
+
+.modal-footer .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(44, 89, 167, 0.25); /* Reduced shadow */
+}
+
+.modal-footer .btn-outline-secondary {
+    border-color: #dee2e6;
+    color: #6c757d;
+}
+
+.modal-footer .btn-outline-secondary:hover {
+    background: #f8f9fa;
+    border-color: #adb5bd;
+    transform: translateY(-1px);
+}
+
+.modal-footer .btn-secondary {
+    background: #6c757d;
+    border-color: #6c757d;
+}
+
+.modal-footer .btn-secondary:hover {
+    background: #5a6268;
+    border-color: #5a6268;
+    transform: translateY(-1px);
+}
+
+/* Filter Count Badge */
+.filter-count {
+    position: absolute;
+    top: -6px; /* Reduced from -8px */
+    right: -6px;
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+    border-radius: 50%;
+    width: 20px; /* Reduced from 24px */
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem; /* Reduced from 0.8rem */
+    font-weight: 700;
+    border: 2px solid white;
+    box-shadow: 0 2px 6px rgba(220, 53, 69, 0.25); /* Reduced shadow */
+}
+
+/* Active Filter Indicator */
+.btn-outline-primary.has-filters {
+    background: linear-gradient(135deg, #2C59A7 0%, #1e3a8a 100%);
+    color: white;
+    border-color: #2C59A7;
+}
+
+.btn-outline-primary.has-filters:hover {
+    background: linear-gradient(135deg, #234a91 0%, #1a2f6b 100%);
+    border-color: #234a91;
+    transform: translateY(-1px);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .modal-dialog.modal-xl {
+        margin: 0.5rem;
+        max-width: calc(100% - 1rem);
+    }
+    
+    .modal-header {
+        padding: 1.25rem 1.5rem; /* Reduced */
+    }
+    
+    .modal-body {
+        padding: 1.25rem; /* Reduced */
+    }
+    
+    .modal-footer {
+        padding: 1rem 1.25rem 1.25rem; /* Reduced */
+    }
+    
+    .tech-checkbox-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .checkbox-label {
+        padding: 0.625rem 0.75rem; /* Reduced */
+    }
+    
+    .form-label {
+        font-size: 0.95rem; /* Reduced */
     }
 }
 </style>
