@@ -97,21 +97,15 @@
                                 <i class="bi bi-arrow-down sort-icon"></i>
                             </div>
                         </th>
-                        <th class="sortable" data-sort="budget">
+                        <th class="sortable" data-sort="areas-interest">
                             <div class="d-flex align-items-center gap-2">
-                                <span>Budget</span>
+                                <span>Areas of Interest</span>
                                 <i class="bi bi-arrow-down sort-icon"></i>
                             </div>
                         </th>
-                        <th class="sortable" data-sort="employees">
+                        <th class="sortable" data-sort="collaboration">
                             <div class="d-flex align-items-center gap-2">
-                                <span>Employees</span>
-                                <i class="bi bi-arrow-down sort-icon"></i>
-                            </div>
-                        </th>
-                        <th class="sortable" data-sort="revenue">
-                            <div class="d-flex align-items-center gap-2">
-                                <span>Revenue</span>
+                                <span>Collaboration</span>
                                 <i class="bi bi-arrow-down sort-icon"></i>
                             </div>
                         </th>
@@ -123,9 +117,9 @@
                         data-match="{{ corporate.match_score }}" 
                         data-type="{{ corporate.organization_type|default:'unknown' }}" 
                         data-name="{{ corporate.company_name|lower|cut:' '|cut:'-' }}" 
-                        data-support-areas="{{ corporate.support_areas|join:',' }}"
-                        data-innovation-types="{{ corporate.innovation_types|join:',' }}"
-                        data-budget="{{ corporate.average_deal_size|default:'' }}"
+                        data-areas-interest="{{ corporate.investment_categories|join:',' }}"
+                        data-collaboration="{{ corporate.support_areas|join:',' }}"
+                        data-industry-expertise="{{ corporate.industry_expertise|join:',' }}"
                         data-href="/corporate/{{ corporate.id }}/">
                         <td class="company-cell sticky-column">
                             <div class="d-flex align-items-center">
@@ -143,10 +137,10 @@
                                     <div class="company-description-sm">
                                         {{ corporate.company_description|truncatewords:12 }}
                                     </div>
-                                    {% if corporate.innovation_types %}
+                                    {% if corporate.industry_expertise %}
                                     <div class="tech-tags-sm mt-1">
-                                        {% for tech in corporate.innovation_types|slice:":3" %}
-                                            <span class="tech-tag-sm">{{ tech|title }}</span>
+                                        {% for expertise in corporate.industry_expertise|slice:":3" %}
+                                            <span class="tech-tag-sm">{{ expertise|title }}</span>
                                         {% endfor %}
                                     </div>
                                     {% endif %}
@@ -176,32 +170,38 @@
                                 <span class="stage-badge-sm">Not specified</span>
                             {% endif %}
                         </td>
-                        <td class="budget-cell">
-                            <div class="budget-info-sm">
-                                {% if corporate.average_deal_size %}
-                                    <div class="budget-amount-sm">{{ corporate.get_average_deal_size_display }}</div>
-                                    <div class="budget-type-sm">Average Deal</div>
+                        <td class="areas-interest-cell">
+                            <div class="areas-info-sm">
+                                {% if corporate.investment_categories %}
+                                    {% for area in corporate.investment_categories|slice:":2" %}
+                                        <div class="area-tag-sm">{{ area|title|truncatewords:3 }}</div>
+                                    {% endfor %}
+                                    {% if corporate.investment_categories|length > 2 %}
+                                        <div class="area-more-sm">+{{ corporate.investment_categories|length|add:"-2" }}</div>
+                                    {% endif %}
                                 {% else %}
-                                    <div class="budget-amount-sm">Not specified</div>
+                                    <div class="text-muted">Not specified</div>
                                 {% endif %}
                             </div>
                         </td>
-                        <td class="employees-cell">
-                            <div class="d-flex align-items-center">
-                                <i class="bi bi-people text-muted me-2"></i>
-                                <span>{{ corporate.get_team_size_display|default:corporate.team_size|default:"Not specified" }}</span>
-                            </div>
-                        </td>
-                        <td class="revenue-cell">
-                            <div class="d-flex align-items-center">
-                                <i class="bi bi-currency-dollar text-muted me-2"></i>
-                                <span>{{ corporate.revenue_range|default:"Not specified" }}</span>
+                        <td class="collaboration-cell">
+                            <div class="collaboration-info-sm">
+                                {% if corporate.support_areas %}
+                                    {% for method in corporate.support_areas|slice:":2" %}
+                                        <div class="collaboration-tag-sm">{{ method|title|truncatewords:2 }}</div>
+                                    {% endfor %}
+                                    {% if corporate.support_areas|length > 2 %}
+                                        <div class="collaboration-more-sm">+{{ corporate.support_areas|length|add:"-2" }}</div>
+                                    {% endif %}
+                                {% else %}
+                                    <div class="text-muted">Not specified</div>
+                                {% endif %}
                             </div>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="7" class="text-center text-muted py-5">
+                        <td colspan="6" class="text-center text-muted py-5">
                             <i class="bi bi-building fs-1 text-muted mb-3 d-block"></i>
                             <h5>No corporates found</h5>
                             <p>Try adjusting your search criteria or filters.</p>
@@ -222,9 +222,9 @@
                      data-match="{{ corporate.match_score }}" 
                      data-type="{{ corporate.organization_type|default:'unknown' }}" 
                      data-name="{{ corporate.company_name|lower|cut:' '|cut:'-' }}" 
-                     data-support-areas="{{ corporate.support_areas|join:',' }}"
-                     data-innovation-types="{{ corporate.innovation_types|join:',' }}"
-                     data-budget="{{ corporate.average_deal_size|default:'' }}"
+                     data-areas-interest="{{ corporate.investment_categories|join:',' }}"
+                     data-collaboration="{{ corporate.support_areas|join:',' }}"
+                     data-industry-expertise="{{ corporate.industry_expertise|join:',' }}"
                      onclick="window.location.href='/corporate/profile/{{ corporate.id }}/'">
                     <div class="card-body p-3">
                         <!-- Corporate Header -->
@@ -810,16 +810,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     break;
                 case 'innovation-programs':
                     // Show corporates that have innovation-related areas
-                    const innovationAreas = row.getAttribute('data-innovation-types') || '';
-                    show = innovationAreas.toLowerCase().includes('innovation') || 
-                           innovationAreas.toLowerCase().includes('ai') || 
-                           innovationAreas.toLowerCase().includes('tech');
+                    const areasInterest = row.getAttribute('data-areas-interest') || '';
+                    show = areasInterest.toLowerCase().includes('innovation') || 
+                           areasInterest.toLowerCase().includes('ai') || 
+                           areasInterest.toLowerCase().includes('tech');
                     break;
                 case 'partnerships':
                     // Show corporates looking for partnerships
-                    const supportAreas = row.getAttribute('data-support-areas') || '';
-                    show = supportAreas.toLowerCase().includes('partnership') || 
-                           supportAreas.toLowerCase().includes('collaboration');
+                    const collaborationMethods = row.getAttribute('data-collaboration') || '';
+                    show = collaborationMethods.toLowerCase().includes('partnership') || 
+                           collaborationMethods.toLowerCase().includes('collaboration');
                     break;
                 case 'high-match':
                     const matchScore = parseInt(row.getAttribute('data-match')) || 0;
@@ -1390,6 +1390,58 @@ document.addEventListener('DOMContentLoaded', function() {
     color: white;
     transform: translateY(-1px);
     box-shadow: 0 2px 6px rgba(44, 89, 167, 0.2);
+}
+
+/* Areas of Interest Tags */
+.area-tag-sm {
+    background: #e8f5e8;
+    color: #2d5a2d;
+    padding: 0.125rem 0.375rem;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    border: 1px solid #4caf50;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+    display: inline-block;
+    margin-right: 0.25rem;
+}
+
+.area-more-sm {
+    background: #f0f8ff;
+    color: #2c59a7;
+    padding: 0.125rem 0.375rem;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    border: 1px solid #2c59a7;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+    display: inline-block;
+}
+
+/* Collaboration Tags */
+.collaboration-tag-sm {
+    background: #fff3e0;
+    color: #e65100;
+    padding: 0.125rem 0.375rem;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    border: 1px solid #ff9800;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+    display: inline-block;
+    margin-right: 0.25rem;
+}
+
+.collaboration-more-sm {
+    background: #f0f8ff;
+    color: #2c59a7;
+    padding: 0.125rem 0.375rem;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    border: 1px solid #2c59a7;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+    display: inline-block;
 }
 
 .match-score-sm {
