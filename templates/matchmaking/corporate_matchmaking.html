@@ -1,0 +1,1457 @@
+{% extends "template_parts/dashboard_base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <!-- Header Section -->
+    <div class="dashboard-header mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <div class="corporate-icon-container me-3">
+                    <div class="corporate-icon">
+                        <i class="bi bi-building"></i>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="h3 mb-1">
+                        <span class="text-primary-light">Corporates</span> 
+                        <strong class="text-white">Matchmaking Dashboard</strong>
+                    </h1>
+                    <p class="header-subtitle mb-0">Discover corporate partners that match your collaboration criteria</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="search-section mb-4">
+        <form method="get" class="d-flex align-items-center gap-3 mb-3">
+            <div class="search-input-group flex-grow-1">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" name="q" class="form-control search-input" 
+                       placeholder="Search corporates by name, description, or industry..." 
+                       value="{{ request.GET.q }}">
+            </div>
+            <button type="submit" class="btn btn-primary search-btn">
+                <i class="bi bi-search me-2"></i> Search
+            </button>
+        </form>
+
+        <!-- Filter Tags -->
+        <div class="filter-tags" id="filterTags">
+            <button class="filter-tag filter-btn-primary" id="filterBtn" data-bs-toggle="modal" data-bs-target="#filterModal">
+                <i class="bi bi-funnel me-2"></i>
+                <span>Advanced Filters</span>
+            </button>
+            <span class="filter-tag active" data-filter="all">All Corporates</span>
+            <span class="filter-tag" data-filter="innovation-programs">Innovation Programs</span>
+            <span class="filter-tag" data-filter="partnerships">Partnership Focus</span>
+            <span class="filter-tag" data-filter="high-match">High Match (>80%)</span>
+            <span class="filter-tag" data-filter="recent">Recently Added</span>
+        </div>
+    </div>
+
+    <!-- Results Summary -->
+    <div class="results-summary mb-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <span class="text-muted">Showing <strong>{{ total_corporates }}</strong> corporate{{ total_corporates|pluralize }}</span>
+            <div class="view-options">
+                <button class="btn btn-sm btn-outline-secondary active" id="tableView">
+                    <i class="bi bi-table"></i> Table
+                </button>
+                <button class="btn btn-sm btn-outline-secondary" id="cardView">
+                    <i class="bi bi-grid"></i> Grid
+                </button>
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- Corporate Table -->
+    <div class="table-container" id="tableContainer">
+        <div class="table-wrapper">
+            <table class="table table-hover corporate-table">
+                <thead class="table-header">
+                    <tr>
+                        <th class="sortable sticky-column" data-sort="name">
+                            <div class="d-flex align-items-center gap-2">
+                                <span>Company</span>
+                                <i class="bi bi-arrow-down sort-icon"></i>
+                            </div>
+                        </th>
+                        <th class="sortable" data-sort="match">
+                            <div class="d-flex align-items-center gap-2">
+                                <span>Match</span>
+                                <i class="bi bi-arrow-down sort-icon"></i>
+                            </div>
+                        </th>
+                        <th class="sortable" data-sort="location">
+                            <div class="d-flex align-items-center gap-2">
+                                <span>Location</span>
+                                <i class="bi bi-arrow-down sort-icon"></i>
+                            </div>
+                        </th>
+                        <th class="sortable" data-sort="organization-type">
+                            <div class="d-flex align-items-center gap-2">
+                                <span>Type</span>
+                                <i class="bi bi-arrow-down sort-icon"></i>
+                            </div>
+                        </th>
+                        <th class="sortable" data-sort="budget">
+                            <div class="d-flex align-items-center gap-2">
+                                <span>Budget</span>
+                                <i class="bi bi-arrow-down sort-icon"></i>
+                            </div>
+                        </th>
+                        <th class="sortable" data-sort="employees">
+                            <div class="d-flex align-items-center gap-2">
+                                <span>Employees</span>
+                                <i class="bi bi-arrow-down sort-icon"></i>
+                            </div>
+                        </th>
+                        <th class="sortable" data-sort="revenue">
+                            <div class="d-flex align-items-center gap-2">
+                                <span>Revenue</span>
+                                <i class="bi bi-arrow-down sort-icon"></i>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for corporate in corporates %}
+                    <tr class="corporate-row clickable-row" 
+                        data-match="{{ corporate.match_score }}" 
+                        data-type="{{ corporate.organization_type|default:'unknown' }}" 
+                        data-name="{{ corporate.company_name|lower|cut:' '|cut:'-' }}" 
+                        data-support-areas="{{ corporate.support_areas|join:',' }}"
+                        data-innovation-types="{{ corporate.innovation_types|join:',' }}"
+                        data-budget="{{ corporate.average_deal_size|default:'' }}"
+                        data-href="/corporate/{{ corporate.id }}/">
+                        <td class="company-cell sticky-column">
+                            <div class="d-flex align-items-center">
+                                <div class="company-avatar-sm me-3">
+                                    {% if corporate.company_logo %}
+                                        <img src="{{ corporate.company_logo.url }}" alt="{{ corporate.company_name }}" class="avatar-img-sm" style="width: 40px; height: 40px; object-fit: cover; border-radius: 8px;">
+                                    {% else %}
+                                        <div class="avatar-placeholder-sm">
+                                            {{ corporate.company_name|slice:":2"|upper }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <div class="company-name-sm">{{ corporate.company_name }}</div>
+                                    <div class="company-description-sm">
+                                        {{ corporate.company_description|truncatewords:12 }}
+                                    </div>
+                                    {% if corporate.innovation_types %}
+                                    <div class="tech-tags-sm mt-1">
+                                        {% for tech in corporate.innovation_types|slice:":3" %}
+                                            <span class="tech-tag-sm">{{ tech|title }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                        <td class="match-cell">
+                            <div class="match-score-sm">
+                                <span class="match-percentage-sm">{{ corporate.match_score }}%</span>
+                                <div class="match-bar">
+                                    <div class="match-fill" style="width: {{ corporate.match_score }}%"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="location-cell">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-geo-alt text-muted me-2"></i>
+                                <span>{{ corporate.get_primary_location_display|default:corporate.primary_location|default:"Not specified" }}</span>
+                            </div>
+                        </td>
+                        <td class="organization-type-cell">
+                            {% if corporate.organization_type %}
+                                <span class="stage-badge-sm organization-{{ corporate.organization_type }}">
+                                    {{ corporate.get_organization_type_display }}
+                                </span>
+                            {% else %}
+                                <span class="stage-badge-sm">Not specified</span>
+                            {% endif %}
+                        </td>
+                        <td class="budget-cell">
+                            <div class="budget-info-sm">
+                                {% if corporate.average_deal_size %}
+                                    <div class="budget-amount-sm">{{ corporate.get_average_deal_size_display }}</div>
+                                    <div class="budget-type-sm">Average Deal</div>
+                                {% else %}
+                                    <div class="budget-amount-sm">Not specified</div>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td class="employees-cell">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-people text-muted me-2"></i>
+                                <span>{{ corporate.get_team_size_display|default:corporate.team_size|default:"Not specified" }}</span>
+                            </div>
+                        </td>
+                        <td class="revenue-cell">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-currency-dollar text-muted me-2"></i>
+                                <span>{{ corporate.revenue_range|default:"Not specified" }}</span>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-5">
+                            <i class="bi bi-building fs-1 text-muted mb-3 d-block"></i>
+                            <h5>No corporates found</h5>
+                            <p>Try adjusting your search criteria or filters.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Grid View Container (hidden by default) -->
+    <div class="grid-container d-none" id="gridContainer">
+        <div class="row g-4">
+            {% for corporate in corporates %}
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+                <div class="corporate-card card h-100" 
+                     data-match="{{ corporate.match_score }}" 
+                     data-type="{{ corporate.organization_type|default:'unknown' }}" 
+                     data-name="{{ corporate.company_name|lower|cut:' '|cut:'-' }}" 
+                     data-support-areas="{{ corporate.support_areas|join:',' }}"
+                     data-innovation-types="{{ corporate.innovation_types|join:',' }}"
+                     data-budget="{{ corporate.average_deal_size|default:'' }}"
+                     onclick="window.location.href='/corporate/profile/{{ corporate.id }}/'">
+                    <div class="card-body p-3">
+                        <!-- Corporate Header -->
+                        <div class="corporate-header mb-3">
+                            <div class="d-flex align-items-start justify-content-between">
+                                <div class="d-flex align-items-center flex-grow-1">
+                                    <div class="company-avatar me-3">
+                                        {% if corporate.company_logo %}
+                                            <img src="{{ corporate.company_logo.url }}" alt="{{ corporate.company_name }}" class="avatar-img">
+                                        {% else %}
+                                            <div class="avatar-placeholder">
+                                                {{ corporate.company_name|slice:":2"|upper }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="company-name mb-1">{{ corporate.company_name }}</h6>
+                                        <div class="location-badge">
+                                            <i class="bi bi-geo-alt"></i>
+                                            {{ corporate.get_primary_location_display|default:corporate.primary_location|default:"Not specified" }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="match-score">
+                                    <span class="match-percentage">{{ corporate.match_score }}%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <p class="corporate-description">
+                            {{ corporate.company_description|truncatewords:15|default:"No description available." }}
+                        </p>
+
+                        <!-- Organization Type & Budget -->
+                        <div class="corporate-details mb-3">
+                            <div class="detail-row">
+                                <span class="detail-label">Type:</span>
+                                {% if corporate.organization_type %}
+                                    <span class="organization-badge organization-{{ corporate.organization_type }}">
+                                        {{ corporate.get_organization_type_display }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted">Not specified</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="detail-row">
+                                <span class="detail-label">Avg Deal:</span>
+                                {% if corporate.average_deal_size %}
+                                    <span class="budget-amount">{{ corporate.get_average_deal_size_display }}</span>
+                                {% else %}
+                                    <span class="text-muted">Not specified</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="detail-row">
+                                <span class="detail-label">Employees:</span>
+                                <span>{{ corporate.get_team_size_display|default:corporate.team_size|default:"Not specified" }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Technologies -->
+                        {% if corporate.innovation_types %}
+                        <div class="tech-tags mb-3">
+                            {% for tech in corporate.innovation_types|slice:":4" %}
+                                <span class="tech-tag">{{ tech|title }}</span>
+                            {% endfor %}
+                            {% if corporate.innovation_types|length > 4 %}
+                                <span class="tech-tag-more">+{{ corporate.innovation_types|length|add:"-4" }}</span>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+
+                        <!-- Support Areas -->
+                        {% if corporate.support_areas %}
+                        <div class="support-areas">
+                            <small class="text-muted d-block mb-1">Looking for:</small>
+                            <div class="support-tags">
+                                {% for area in corporate.support_areas|slice:":3" %}
+                                    <span class="support-tag">{{ area|title }}</span>
+                                {% endfor %}
+                                {% if corporate.support_areas|length > 3 %}
+                                    <span class="support-tag-more">+{{ corporate.support_areas|length|add:"-3" }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="text-center text-muted py-5">
+                    <i class="bi bi-building fs-1 text-muted mb-3 d-block"></i>
+                    <h5>No corporates found</h5>
+                    <p>Try adjusting your search criteria or filters.</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Advanced Filter Modal -->
+<div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="filterModalLabel">
+                    <i class="bi bi-funnel me-2"></i>
+                    Advanced Filters
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="get" id="filterForm">
+                <div class="modal-body">
+                    <div class="row">
+                        <!-- Organization Type Filter -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Organization Type</label>
+                            <div class="filter-group">
+                                {% for type in available_organization_types %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="organization_type" 
+                                           value="{{ type }}" id="type_{{ type }}"
+                                           {% if type in filter_organization_type %}checked{% endif %}>
+                                    <label class="form-check-label" for="type_{{ type }}">
+                                        {{ type|title }}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Location Filter -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Location</label>
+                            <div class="filter-group">
+                                {% for location in available_locations %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="location" 
+                                           value="{{ location }}" id="location_{{ location }}"
+                                           {% if location in filter_location %}checked{% endif %}>
+                                    <label class="form-check-label" for="location_{{ location }}">
+                                        {{ location }}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Average Deal Size Filter -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Average Deal Size</label>
+                            <div class="filter-group">
+                                {% for size in available_deal_sizes %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="average_deal_size" 
+                                           value="{{ size }}" id="deal_{{ size }}"
+                                           {% if size in filter_average_deal_size %}checked{% endif %}>
+                                    <label class="form-check-label" for="deal_{{ size }}">
+                                        {{ size|title }}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Team Size Filter -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Company Size (Employees)</label>
+                            <div class="filter-group">
+                                {% for size in available_team_sizes %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="team_size" 
+                                           value="{{ size }}" id="team_{{ size }}"
+                                           {% if size in filter_team_size %}checked{% endif %}>
+                                    <label class="form-check-label" for="team_{{ size }}">
+                                        {{ size }}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Innovation Types Filter -->
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Innovation Areas</label>
+                            <div class="filter-group">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="innovation_types" 
+                                                   value="AI/ML" id="tech_ai"
+                                                   {% if "AI/ML" in filter_innovation_types %}checked{% endif %}>
+                                            <label class="form-check-label" for="tech_ai">AI/ML</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="innovation_types" 
+                                                   value="IoT" id="tech_iot"
+                                                   {% if "IoT" in filter_innovation_types %}checked{% endif %}>
+                                            <label class="form-check-label" for="tech_iot">IoT</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="innovation_types" 
+                                                   value="Blockchain" id="tech_blockchain"
+                                                   {% if "Blockchain" in filter_innovation_types %}checked{% endif %}>
+                                            <label class="form-check-label" for="tech_blockchain">Blockchain</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="innovation_types" 
+                                                   value="FinTech" id="tech_fintech"
+                                                   {% if "FinTech" in filter_innovation_types %}checked{% endif %}>
+                                            <label class="form-check-label" for="tech_fintech">FinTech</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="innovation_types" 
+                                                   value="HealthTech" id="tech_healthtech"
+                                                   {% if "HealthTech" in filter_innovation_types %}checked{% endif %}>
+                                            <label class="form-check-label" for="tech_healthtech">HealthTech</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="innovation_types" 
+                                                   value="EdTech" id="tech_edtech"
+                                                   {% if "EdTech" in filter_innovation_types %}checked{% endif %}>
+                                            <label class="form-check-label" for="tech_edtech">EdTech</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="innovation_types" 
+                                                   value="GreenTech" id="tech_greentech"
+                                                   {% if "GreenTech" in filter_innovation_types %}checked{% endif %}>
+                                            <label class="form-check-label" for="tech_greentech">GreenTech</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="innovation_types" 
+                                                   value="E-commerce" id="tech_ecommerce"
+                                                   {% if "E-commerce" in filter_innovation_types %}checked{% endif %}>
+                                            <label class="form-check-label" for="tech_ecommerce">E-commerce</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="innovation_types" 
+                                                   value="Mobility" id="tech_mobility"
+                                                   {% if "Mobility" in filter_innovation_types %}checked{% endif %}>
+                                            <label class="form-check-label" for="tech_mobility">Mobility</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Match Score Filter -->
+                        <div class="col-12">
+                            <label class="form-label">Minimum Match Score</label>
+                            <div class="d-flex align-items-center gap-3">
+                                <input type="range" class="form-range flex-grow-1" name="match_score" 
+                                       min="0" max="100" value="{{ filter_match_score }}" id="matchScoreRange">
+                                <span class="match-score-display fw-bold text-primary" id="matchScoreDisplay">{{ filter_match_score }}%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="clearFilters">Clear All</button>
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // View switching
+    const tableView = document.getElementById('tableView');
+    const cardView = document.getElementById('cardView');
+    const tableContainer = document.getElementById('tableContainer');
+    const gridContainer = document.getElementById('gridContainer');
+
+    tableView.addEventListener('click', function() {
+        tableView.classList.add('active');
+        cardView.classList.remove('active');
+        tableContainer.classList.remove('d-none');
+        gridContainer.classList.add('d-none');
+    });
+
+    cardView.addEventListener('click', function() {
+        cardView.classList.add('active');
+        tableView.classList.remove('active');
+        gridContainer.classList.remove('d-none');
+        tableContainer.classList.add('d-none');
+    });
+
+    // Match score range display
+    const matchScoreRange = document.getElementById('matchScoreRange');
+    const matchScoreDisplay = document.getElementById('matchScoreDisplay');
+    
+    if (matchScoreRange && matchScoreDisplay) {
+        matchScoreRange.addEventListener('input', function() {
+            matchScoreDisplay.textContent = this.value + '%';
+        });
+    }
+
+    // Clear filters
+    const clearFilters = document.getElementById('clearFilters');
+    if (clearFilters) {
+        clearFilters.addEventListener('click', function() {
+            document.querySelectorAll('#filterForm input[type="checkbox"]').forEach(cb => cb.checked = false);
+            if (matchScoreRange) {
+                matchScoreRange.value = 0;
+                matchScoreDisplay.textContent = '0%';
+            }
+        });
+    }
+
+    // Clickable rows
+    document.querySelectorAll('.clickable-row').forEach(row => {
+        row.addEventListener('click', function() {
+            window.location.href = this.getAttribute('data-href');
+        });
+    });
+
+    // Filter tags functionality
+    document.querySelectorAll('.filter-tag:not(.filter-btn-primary)').forEach(tag => {
+        tag.addEventListener('click', function() {
+            // Remove active class from all tags except the clicked one and the filter button
+            document.querySelectorAll('.filter-tag:not(.filter-btn-primary)').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            
+            const filter = this.getAttribute('data-filter');
+            filterCorporates(filter);
+        });
+    });
+
+    function filterCorporates(filter) {
+        const rows = document.querySelectorAll('.corporate-row, .corporate-card');
+        
+        rows.forEach(row => {
+            let show = true;
+            
+            switch(filter) {
+                case 'all':
+                    show = true;
+                    break;
+                case 'innovation-programs':
+                    // Show corporates that have innovation-related areas
+                    const innovationAreas = row.getAttribute('data-innovation-types') || '';
+                    show = innovationAreas.toLowerCase().includes('innovation') || 
+                           innovationAreas.toLowerCase().includes('ai') || 
+                           innovationAreas.toLowerCase().includes('tech');
+                    break;
+                case 'partnerships':
+                    // Show corporates looking for partnerships
+                    const supportAreas = row.getAttribute('data-support-areas') || '';
+                    show = supportAreas.toLowerCase().includes('partnership') || 
+                           supportAreas.toLowerCase().includes('collaboration');
+                    break;
+                case 'high-match':
+                    const matchScore = parseInt(row.getAttribute('data-match')) || 0;
+                    show = matchScore > 80;
+                    break;
+                case 'recent':
+                    // For demo purposes, show random subset
+                    show = Math.random() > 0.5;
+                    break;
+            }
+            
+            if (show) {
+                row.style.display = '';
+                row.closest('.col-12, .col-md-6, .col-lg-4, .col-xl-3')?.style.setProperty('display', '', 'important');
+            } else {
+                row.style.display = 'none';
+                row.closest('.col-12, .col-md-6, .col-lg-4, .col-xl-3')?.style.setProperty('display', 'none', 'important');
+            }
+        });
+        
+        // Update count
+        const visibleRows = document.querySelectorAll('.corporate-row:not([style*="display: none"]), .corporate-card:not([style*="display: none"])');
+        const countElement = document.querySelector('.results-summary strong');
+        if (countElement) {
+            countElement.textContent = visibleRows.length;
+        }
+    }
+
+    // Table sorting
+    document.querySelectorAll('.sortable').forEach(header => {
+        header.addEventListener('click', function() {
+            const sortBy = this.getAttribute('data-sort');
+            const table = this.closest('table');
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr:not(:last-child)')); // Exclude empty state row
+            
+            // Determine sort direction
+            const isAsc = !this.classList.contains('sort-asc');
+            
+            // Remove sort classes from all headers
+            document.querySelectorAll('.sortable').forEach(h => {
+                h.classList.remove('sort-asc', 'sort-desc');
+            });
+            
+            // Add sort class to current header
+            this.classList.add(isAsc ? 'sort-asc' : 'sort-desc');
+            
+            // Sort rows
+            rows.sort((a, b) => {
+                let aVal, bVal;
+                
+                switch(sortBy) {
+                    case 'name':
+                        aVal = a.getAttribute('data-name');
+                        bVal = b.getAttribute('data-name');
+                        break;
+                    case 'match':
+                        aVal = parseInt(a.getAttribute('data-match')) || 0;
+                        bVal = parseInt(b.getAttribute('data-match')) || 0;
+                        break;
+                    case 'organization-type':
+                        aVal = a.getAttribute('data-type');
+                        bVal = b.getAttribute('data-type');
+                        break;
+                    default:
+                        aVal = a.querySelector(`td:nth-child(${Array.from(this.parentNode.children).indexOf(this) + 1})`)?.textContent || '';
+                        bVal = b.querySelector(`td:nth-child(${Array.from(this.parentNode.children).indexOf(this) + 1})`)?.textContent || '';
+                }
+                
+                if (typeof aVal === 'string') {
+                    return isAsc ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+                } else {
+                    return isAsc ? aVal - bVal : bVal - aVal;
+                }
+            });
+            
+            // Reorder DOM
+            rows.forEach(row => tbody.appendChild(row));
+        });
+    });
+});
+</script>
+
+<style>
+/* Dashboard Styling - Onboarding Theme */
+.dashboard-header {
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    color: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(44, 89, 167, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    opacity: 0.3;
+}
+
+.corporate-icon-container {
+    position: relative;
+    z-index: 2;
+}
+
+.corporate-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #ffffff15 0%, #ffffff25 100%);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.corporate-icon i {
+    font-size: 2.5rem;
+    color: white;
+    animation: buildingFloat 3s ease-in-out infinite;
+}
+
+@keyframes buildingFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+}
+
+.dashboard-header h1 {
+    color: white;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+.text-primary-light {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-weight: 500;
+}
+
+.dashboard-header p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.1rem;
+    margin-bottom: 0;
+    position: relative;
+    z-index: 2;
+}
+
+.header-subtitle {
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-size: 1.1rem;
+    font-weight: 400;
+    line-height: 1.4;
+}
+
+/* Responsive adjustments for header */
+@media (max-width: 768px) {
+    .dashboard-header {
+        padding: 2rem 1.5rem;
+    }
+    
+    .corporate-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+    }
+    
+    .corporate-icon i {
+        font-size: 2rem;
+    }
+    
+    .dashboard-header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .dashboard-header p {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .dashboard-header {
+        padding: 1.5rem 1rem;
+    }
+    
+    .dashboard-header .d-flex {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .corporate-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+    }
+    
+    .corporate-icon i {
+        font-size: 1.5rem;
+    }
+}
+
+.search-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(44, 89, 167, 0.1);
+}
+
+.search-input-group {
+    position: relative;
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #2c59a7;
+    z-index: 10;
+    font-size: 1.1rem;
+}
+
+.search-input {
+    padding: 1rem 1.25rem 1rem 3rem;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.search-input:focus {
+    border-color: #2c59a7;
+    box-shadow: 0 0 0 3px rgba(44, 89, 167, 0.1);
+    background: white;
+}
+
+.search-btn {
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(44, 89, 167, 0.2);
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+}
+
+.search-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(44, 89, 167, 0.35);
+    background: linear-gradient(135deg, #234a91 0%, #4a3f8a 100%);
+}
+
+.filter-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(44, 89, 167, 0.1);
+}
+
+.filter-tag {
+    padding: 0.2rem 0.75rem;
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #495057;
+}
+
+.filter-tag:hover {
+    border-color: #2c59a7;
+    color: #2c59a7;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(44, 89, 167, 0.15);
+}
+
+.filter-tag.active {
+    background-color: #2c59a7;
+    color: white;
+    border-color: #2c59a7;
+    box-shadow: 0 4px 16px rgba(44, 89, 167, 0.25);
+}
+
+.filter-btn-primary {
+    background: #f8f9fa;
+    color: #6c757d;
+    border: 1px solid #dee2e6;
+    padding: 0.25rem 0.5rem;
+    border-radius: 15px;
+    font-weight: 500;
+    font-size: 0.75rem;
+    transition: all 0.2s ease;
+    margin-right: 0.375rem;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.filter-btn-primary:hover {
+    background: #e9ecef;
+    border-color: #2c59a7;
+    color: #2c59a7;
+    transform: none;
+    box-shadow: none;
+}
+
+.filter-btn-primary i {
+    font-size: 0.65rem;
+    margin-right: 0.25rem;
+}
+
+.results-summary {
+    padding: 0 0.5rem;
+}
+
+.view-options .btn {
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+}
+
+.view-options .btn.active {
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    color: white;
+    border: none;
+    box-shadow: 0 2px 8px rgba(44, 89, 167, 0.2);
+}
+
+/* Table Styling with Fixed Sticky Column */
+.table-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    position: relative;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    position: relative;
+}
+
+.corporate-table {
+    margin-bottom: 0;
+    min-width: 1200px;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+}
+
+.table-header {
+    background: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.table-header th {
+    font-weight: 600;
+    color: #2c3e50;
+    padding: 1rem;
+    border-bottom: 2px solid #dee2e6;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.sticky-column {
+    position: sticky;
+    left: 0;
+    background: white !important;
+    z-index: 999 !important;
+    min-width: 350px;
+    max-width: 350px;
+    border-right: 2px solid #dee2e6 !important;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
+}
+
+.sticky-column::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 0;
+    background: #dee2e6;
+    z-index: 1001;
+}
+
+.table-header .sticky-column {
+    background: #f8f9fa !important;
+    border-right: 2px solid #dee2e6 !important;
+    position: sticky;
+    left: 0;
+    z-index: 1000 !important;
+}
+
+.table-header .sticky-column::after {
+    background: #dee2e6;
+}
+
+.corporate-row .sticky-column {
+    background: white !important;
+    position: sticky;
+    left: 0;
+    z-index: 999 !important;
+    border-right: 2px solid #dee2e6 !important;
+}
+
+.corporate-row:hover .sticky-column {
+    background: #f8f9fa !important;
+}
+
+.corporate-row:hover .sticky-column::after {
+    background: #dee2e6;
+}
+
+.sticky-column.sortable:hover {
+    background: #e9ecef !important;
+}
+
+.table-header .sticky-column.sortable:hover {
+    background: #e9ecef !important;
+}
+
+.sticky-column.sortable:hover::after {
+    background: #dee2e6;
+}
+
+.sortable {
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s ease;
+}
+
+.sortable:hover {
+    background: #e9ecef;
+}
+
+.sort-icon {
+    opacity: 0.5;
+    transition: all 0.2s ease;
+}
+
+.sortable:hover .sort-icon {
+    opacity: 1;
+}
+
+.sortable.asc .sort-icon {
+    transform: rotate(180deg);
+    opacity: 1;
+}
+
+.sortable.desc .sort-icon {
+    transform: rotate(0deg);
+    opacity: 1;
+}
+
+.corporate-row {
+    border-bottom: 1px solid #f1f3f4;
+    transition: all 0.2s ease;
+}
+
+.corporate-row:hover {
+    background: #f8f9fa;
+}
+
+.corporate-row td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.corporate-row td:not(.sticky-column) {
+    background: white;
+}
+
+.corporate-row:hover td:not(.sticky-column) {
+    background: #f8f9fa;
+}
+
+.corporate-table td {
+    border: none;
+}
+
+.corporate-table th {
+    border: none;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.corporate-table th:not(.sticky-column) {
+    border-right: 1px solid #f1f3f4;
+}
+
+.corporate-table td:not(.sticky-column) {
+    border-right: 1px solid #f1f3f4;
+}
+
+.company-avatar-sm {
+    flex-shrink: 0;
+}
+
+.avatar-placeholder-sm {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(44, 89, 167, 0.2);
+}
+
+.company-name-sm {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.25rem;
+}
+
+.company-description-sm {
+    font-size: 0.875rem;
+    color: #6c757d;
+    line-height: 1.4;
+    margin-bottom: 0.25rem;
+}
+
+.tech-tags-sm {
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+}
+
+.tech-tag-sm {
+    background: #f8f9ff;
+    color: #2c59a7;
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    border: 1px solid #2c59a7;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.tech-tag-sm:hover {
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(44, 89, 167, 0.2);
+}
+
+.match-score-sm {
+    text-align: center;
+    min-width: 80px;
+}
+
+.match-percentage-sm {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #28a745;
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.match-bar {
+    width: 60px;
+    height: 6px;
+    background: #e9ecef;
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+.match-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+    border-radius: 3px;
+    transition: width 0.8s ease;
+}
+
+.stage-badge-sm {
+    padding: 0.25rem 0.75rem;
+    border-radius: 16px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.organization-badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.organization-private_company { background-color: #e3f2fd; color: #1976d2; }
+.organization-multinational_corporation { background-color: #f3e5f5; color: #7b1fa2; }
+.organization-sme { background-color: #e8f5e8; color: #388e3c; }
+.organization-startup_subsidiary { background-color: #fff3e0; color: #f57c00; }
+.organization-other { background-color: #fce4ec; color: #c2185b; }
+
+.budget-info-sm .budget-amount-sm {
+    font-weight: 600;
+    color: #2e7d32;
+}
+
+.budget-info-sm .budget-type-sm {
+    font-size: 0.75rem;
+    color: #666;
+}
+
+.corporate-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.corporate-card:hover {
+    border-color: #2196f3;
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.15);
+    transform: translateY(-2px);
+}
+
+.clickable-row {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.clickable-row:hover {
+    background: #f8f9fa !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.clickable-row:hover .sticky-column {
+    background: #f8f9fa !important;
+}
+
+.clickable-row:hover td:not(.sticky-column) {
+    background: #f8f9fa !important;
+}
+
+.clickable-row:hover .company-name-sm {
+    color: #2c59a7;
+}
+
+/* Grid View Styling */
+.grid-container {
+    background: transparent;
+}
+
+.company-avatar {
+    flex-shrink: 0;
+}
+
+.avatar-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.avatar-placeholder {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    color: white;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(44, 89, 167, 0.2);
+}
+
+.company-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.match-score {
+    text-align: center;
+    min-width: 60px;
+}
+
+.match-percentage {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    padding: 0.5rem 0.75rem;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    box-shadow: 0 3px 10px rgba(40, 167, 69, 0.3);
+}
+
+.location-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+.corporate-description {
+    color: #495057;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.corporate-details .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #6c757d;
+}
+
+.tech-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tech-tag {
+    background: #f8f9ff;
+    color: #2c59a7;
+    padding: 0.25rem 0.75rem;
+    border-radius: 16px;
+    font-size: 0.8rem;
+    border: 1px solid #2c59a7;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.tech-tag:hover {
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(44, 89, 167, 0.2);
+}
+
+.tech-tag-more {
+    background: #e9ecef;
+    color: #6c757d;
+    padding: 0.25rem 0.75rem;
+    border-radius: 16px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.support-areas {
+    margin-top: 1rem;
+}
+
+.support-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.support-tag {
+    background: #fff3cd;
+    color: #856404;
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.support-tag-more {
+    background: #e9ecef;
+    color: #6c757d;
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.budget-amount {
+    font-weight: 600;
+    color: #2e7d32;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .dashboard-header {
+        padding: 1rem;
+    }
+    
+    .search-section {
+        padding: 1rem;
+    }
+    
+    .search-input-group {
+        margin-bottom: 1rem;
+    }
+    
+    .filter-tags {
+        justify-content: center;
+    }
+    
+    .table-wrapper {
+        font-size: 0.875rem;
+    }
+    
+    .corporate-table th,
+    .corporate-table td {
+        padding: 0.5rem;
+    }
+    
+    .sticky-column {
+        min-width: 280px;
+        max-width: 280px;
+    }
+    
+    .company-name-sm {
+        font-size: 0.9rem;
+    }
+    
+    .company-description-sm {
+        font-size: 0.8rem;
+    }
+    
+    .tech-tags-sm {
+        display: none;
+    }
+}
+
+@media (max-width: 576px) {
+    .table-container {
+        margin: 0 -15px;
+        border-radius: 0;
+    }
+    
+    .sticky-column {
+        min-width: 250px;
+        max-width: 250px;
+    }
+}
+</style>
+{% endblock %}

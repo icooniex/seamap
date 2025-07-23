@@ -668,6 +668,175 @@ def investor_matchmaking(request):
     
     return render(request, 'matchmaking/investor_matchmaking.html', context)
 
+def calculate_corporate_match_score(corporate):
+    """
+    Calculate a mock match score for a corporate based on various factors.
+    In a real implementation, this would use ML algorithms and user preferences.
+    """
+    score = 65  # Base score
+    
+    # Add points based on organization type
+    if corporate.organization_type:
+        type_scores = {
+            'enterprise': 80,
+            'startup': 85,
+            'government': 75,
+            'ngo': 70,
+            'educational': 90
+        }
+        score += type_scores.get(corporate.organization_type, 0) - 65
+    
+    # Add points for having clear funding/deal size
+    if corporate.average_deal_size:
+        score += 15
+    
+    # Add points for having innovation types
+    if corporate.innovation_types and len(corporate.innovation_types) > 0:
+        score += min(len(corporate.innovation_types) * 6, 25)
+    
+    # Add points for having support areas defined
+    if corporate.support_areas and len(corporate.support_areas) > 0:
+        score += min(len(corporate.support_areas) * 4, 20)
+    
+    # Add points for company size (larger companies often have more resources)
+    if corporate.team_size:
+        team_scores = {
+            '1': 50,
+            '2-5': 60,
+            '6-10': 70,
+            '11-25': 75,
+            '26-50': 80,
+            '51-100': 85,
+            '100+': 90
+        }
+        team_score = team_scores.get(corporate.team_size, 70)
+        score = (score + team_score) // 2
+    
+    # Add points for having website and description
+    if corporate.website:
+        score += 8
+    if corporate.company_description:
+        score += 7
+    
+    # Add some randomness to make it more realistic
+    import random
+    score += random.randint(-8, 12)
+    
+    # Ensure score is within bounds
+    return max(0, min(100, score))
+
+@login_required
+def corporate_matchmaking(request):
+    """Corporate matchmaking view with search and filter functionality"""
+    
+    # Get search query
+    search_query = request.GET.get('q', '').strip()
+    
+    # Get filter parameters
+    filter_organization_type = request.GET.getlist('organization_type')
+    filter_location = request.GET.getlist('location')
+    filter_average_deal_size = request.GET.getlist('average_deal_size')
+    filter_team_size = request.GET.getlist('team_size')
+    filter_innovation_types = request.GET.getlist('innovation_types')
+    filter_match_score = request.GET.get('match_score', '0')
+    
+    # Base queryset - get all corporate companies
+    corporates = Company.objects.filter(
+        company_type='corporate',
+        is_active=True
+    ).select_related('member__user').order_by('-created_at')
+    
+    # Apply search filter
+    if search_query:
+        corporates = corporates.filter(
+            models.Q(company_name__icontains=search_query) |
+            models.Q(company_description__icontains=search_query) |
+            models.Q(innovation_types__icontains=search_query) |
+            models.Q(member__user__first_name__icontains=search_query) |
+            models.Q(member__user__last_name__icontains=search_query)
+        )
+    
+    # Apply organization type filter
+    if filter_organization_type:
+        corporates = corporates.filter(organization_type__in=filter_organization_type)
+    
+    # Apply location filter
+    if filter_location:
+        corporates = corporates.filter(primary_location__in=filter_location)
+    
+    # Apply team size filter
+    if filter_team_size:
+        corporates = corporates.filter(team_size__in=filter_team_size)
+    
+    # Apply average deal size filter
+    if filter_average_deal_size:
+        corporates = corporates.filter(average_deal_size__in=filter_average_deal_size)
+    
+    # Apply innovation types filter
+    if filter_innovation_types:
+        tech_filters = models.Q()
+        for tech in filter_innovation_types:
+            tech_filters |= models.Q(innovation_types__icontains=tech)
+        corporates = corporates.filter(tech_filters)
+    
+    # Add mock match scores and filter by minimum match score
+    corporates_with_scores = []
+    for corporate in corporates:
+        # Calculate a mock match score based on various factors
+        match_score = calculate_corporate_match_score(corporate)
+        
+        # Only include if meets minimum match score
+        if int(filter_match_score) == 0 or match_score >= int(filter_match_score):
+            corporate.match_score = match_score
+            corporates_with_scores.append(corporate)
+    
+    # Sort by match score if filtering by score
+    if int(filter_match_score) > 0:
+        corporates_with_scores.sort(key=lambda x: x.match_score, reverse=True)
+    
+    # Get filter options for the form
+    available_organization_types = Company.objects.filter(
+        company_type='corporate',
+        is_active=True,
+        organization_type__isnull=False
+    ).values_list('organization_type', flat=True).distinct()
+    
+    available_locations = Company.objects.filter(
+        company_type='corporate',
+        is_active=True,
+        primary_location__isnull=False
+    ).values_list('primary_location', flat=True).distinct()
+    
+    available_team_sizes = Company.objects.filter(
+        company_type='corporate',
+        is_active=True,
+        team_size__isnull=False
+    ).values_list('team_size', flat=True).distinct()
+    
+    available_deal_sizes = Company.objects.filter(
+        company_type='corporate',
+        is_active=True,
+        average_deal_size__isnull=False
+    ).values_list('average_deal_size', flat=True).distinct()
+    
+    context = {
+        'corporates': corporates_with_scores,
+        'search_query': search_query,
+        'filter_organization_type': filter_organization_type,
+        'filter_location': filter_location,
+        'filter_average_deal_size': filter_average_deal_size,
+        'filter_team_size': filter_team_size,
+        'filter_innovation_types': filter_innovation_types,
+        'filter_match_score': int(filter_match_score),
+        'available_organization_types': sorted(set(available_organization_types)),
+        'available_locations': sorted(set(available_locations)),
+        'available_team_sizes': sorted(set(available_team_sizes)),
+        'available_deal_sizes': sorted(set(available_deal_sizes)),
+        'total_corporates': len(corporates_with_scores),
+    }
+    
+    return render(request, 'matchmaking/corporate_matchmaking.html', context)
+
 def dashboard(request):
     return render(request, 'dashboard.html')
 

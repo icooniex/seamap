@@ -28,11 +28,12 @@ urlpatterns = [
 
     # Match making dashboard
     path('dashboard/startups/', startup_matchmaking, name='startup_matchmaking'),
+    path('dashboard/investors/', investor_matchmaking, name='investor_matchmaking'),
+    path('dashboard/corporates/', corporate_matchmaking, name='corporate_matchmaking'),
 
     # Legacy URLs (keeping for compatibility)
     path('signup/', signup, name='signup'),
     path('dash/', dashboard2, name='dash'),
-    path('dashboard/investors/', investor_matchmaking, name='investor_matchmaking'),
     # path('dashboard/startup', dashboard, name='dashboard_startup'),
     path('dashboard/problem-statement', problem, name='problem'),
     path('dashboard/challenge', challenge, name='challenge'),
