@@ -30,8 +30,8 @@ class CustomLoginView(LoginView):
     redirect_authenticated_user = True
     
     def get_success_url(self):
-        """Redirect to dashboard after successful login"""
-        return '/dashboard/'
+        """Redirect to startup matchmaking dashboard after successful login"""
+        return '/dashboard/startups/'
     
     def form_valid(self, form):
         """Handle successful form submission"""
