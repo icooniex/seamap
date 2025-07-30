@@ -17,4 +17,11 @@ urlpatterns = [
     
     # Dashboard
     path('dashboard/', views.dashboard, name='dashboard'),
+    
+    # Account Settings
+    path('account-settings/', views.account_settings, name='account_settings'),
+    path('account-settings/personal/', views.personal_profile_edit, name='personal_profile_edit'),
+    path('account-settings/company/', views.company_profile_edit, name='company_profile_edit'),
+    path('account-settings/documents/', views.document_management, name='document_management'),
+    path('account-settings/verification/', views.verification_center, name='verification_center'),
 ]

@@ -1,0 +1,760 @@
+{% extends "template_parts/dashboard_base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <!-- Header Section -->
+    <div class="company-edit-header mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <div class="company-icon-container me-3">
+                    <div class="company-icon">
+                        <i class="bi bi-building"></i>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="h3 mb-1">Company Profile</h1>
+                    <p class="header-subtitle mb-0">Manage your organization information and business details</p>
+                </div>
+            </div>
+            <div>
+                <a href="{% url 'account_settings' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Back to Settings
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Company Form -->
+    <div class="company-form-container">
+        <form method="post" enctype="multipart/form-data" class="company-form">
+            {% csrf_token %}
+            
+            <!-- Company Logo Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <h4 class="section-title">
+                        <i class="bi bi-image me-2"></i>
+                        Company Logo
+                    </h4>
+                    <p class="section-subtitle">Upload your company's logo for branding</p>
+                </div>
+                
+                <div class="logo-section">
+                    <div class="current-logo">
+                        {% if company.company_logo %}
+                            <img src="{{ company.company_logo.url }}" alt="Company Logo" class="logo-img">
+                        {% else %}
+                            <div class="logo-placeholder">
+                                <i class="bi bi-building"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="logo-upload">
+                        <div class="form-group">
+                            <label for="company_logo" class="form-label">Choose New Logo</label>
+                            <input type="file" class="form-control" id="company_logo" name="company_logo" accept="image/*">
+                            <small class="form-text text-muted">Recommended: Square logo, at least 200x200px, max 5MB</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Basic Company Information -->
+            <div class="form-section">
+                <div class="section-header">
+                    <h4 class="section-title">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Basic Information
+                    </h4>
+                    <p class="section-subtitle">Core details about your organization</p>
+                </div>
+                
+                <div class="row g-4">
+                    <div class="col-md-8">
+                        <div class="form-group">
+                            <label for="company_name" class="form-label">Company Name *</label>
+                            <input type="text" class="form-control" id="company_name" name="company_name" 
+                                   value="{{ company.company_name|default:'' }}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="company_type" class="form-label">Company Type</label>
+                            <select class="form-select" id="company_type" name="company_type">
+                                <option value="">Select Type</option>
+                                <option value="startup" {% if company.company_type == 'startup' %}selected{% endif %}>Startup</option>
+                                <option value="sme" {% if company.company_type == 'sme' %}selected{% endif %}>SME</option>
+                                <option value="corporation" {% if company.company_type == 'corporation' %}selected{% endif %}>Corporation</option>
+                                <option value="non_profit" {% if company.company_type == 'non_profit' %}selected{% endif %}>Non-Profit</option>
+                                <option value="government" {% if company.company_type == 'government' %}selected{% endif %}>Government</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="company_description" class="form-label">Company Description *</label>
+                            <textarea class="form-control" id="company_description" name="company_description" rows="4" 
+                                      placeholder="Describe your company's mission, products, services, and what makes you unique..." required>{{ company.company_description|default:'' }}</textarea>
+                            <small class="form-text text-muted">This description will be visible on your company profile</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="website_url" class="form-label">Website URL</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-globe"></i>
+                                </span>
+                                <input type="url" class="form-control" id="website_url" name="website_url" 
+                                       value="{{ company.website_url|default:'' }}" 
+                                       placeholder="https://www.yourcompany.com">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="founded_year" class="form-label">Founded Year</label>
+                            <input type="number" class="form-control" id="founded_year" name="founded_year" 
+                                   value="{{ company.founded_year|default:'' }}" min="1800" max="2025">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location & Size -->
+            <div class="form-section">
+                <div class="section-header">
+                    <h4 class="section-title">
+                        <i class="bi bi-geo-alt me-2"></i>
+                        Location & Organization
+                    </h4>
+                    <p class="section-subtitle">Where your company operates and organizational details</p>
+                </div>
+                
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="primary_location" class="form-label">Primary Location</label>
+                            <select class="form-select" id="primary_location" name="primary_location">
+                                <option value="">Select Location</option>
+                                <option value="Singapore" {% if company.primary_location == 'Singapore' %}selected{% endif %}>Singapore</option>
+                                <option value="Indonesia" {% if company.primary_location == 'Indonesia' %}selected{% endif %}>Indonesia</option>
+                                <option value="Thailand" {% if company.primary_location == 'Thailand' %}selected{% endif %}>Thailand</option>
+                                <option value="Malaysia" {% if company.primary_location == 'Malaysia' %}selected{% endif %}>Malaysia</option>
+                                <option value="Philippines" {% if company.primary_location == 'Philippines' %}selected{% endif %}>Philippines</option>
+                                <option value="Vietnam" {% if company.primary_location == 'Vietnam' %}selected{% endif %}>Vietnam</option>
+                                <option value="Other" {% if company.primary_location == 'Other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="organization_type" class="form-label">Organization Type</label>
+                            <select class="form-select" id="organization_type" name="organization_type">
+                                <option value="">Select Type</option>
+                                <option value="private_company" {% if company.organization_type == 'private_company' %}selected{% endif %}>Private Company</option>
+                                <option value="multinational_corporation" {% if company.organization_type == 'multinational_corporation' %}selected{% endif %}>Multinational Corporation</option>
+                                <option value="sme" {% if company.organization_type == 'sme' %}selected{% endif %}>SME</option>
+                                <option value="startup_subsidiary" {% if company.organization_type == 'startup_subsidiary' %}selected{% endif %}>Startup Subsidiary</option>
+                                <option value="other" {% if company.organization_type == 'other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="team_size" class="form-label">Team Size</label>
+                            <select class="form-select" id="team_size" name="team_size">
+                                <option value="">Select Team Size</option>
+                                <option value="1-10" {% if company.team_size == '1-10' %}selected{% endif %}>1-10 employees</option>
+                                <option value="11-50" {% if company.team_size == '11-50' %}selected{% endif %}>11-50 employees</option>
+                                <option value="51-200" {% if company.team_size == '51-200' %}selected{% endif %}>51-200 employees</option>
+                                <option value="201-500" {% if company.team_size == '201-500' %}selected{% endif %}>201-500 employees</option>
+                                <option value="500+" {% if company.team_size == '500+' %}selected{% endif %}>500+ employees</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="average_deal_size" class="form-label">Average Deal Size</label>
+                            <select class="form-select" id="average_deal_size" name="average_deal_size">
+                                <option value="">Select Deal Size</option>
+                                <option value="under_50k" {% if company.average_deal_size == 'under_50k' %}selected{% endif %}>Under $50K</option>
+                                <option value="50k_250k" {% if company.average_deal_size == '50k_250k' %}selected{% endif %}>$50K - $250K</option>
+                                <option value="250k_1m" {% if company.average_deal_size == '250k_1m' %}selected{% endif %}>$250K - $1M</option>
+                                <option value="1m_5m" {% if company.average_deal_size == '1m_5m' %}selected{% endif %}>$1M - $5M</option>
+                                <option value="over_5m" {% if company.average_deal_size == 'over_5m' %}selected{% endif %}>Over $5M</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Industry & Expertise -->
+            <div class="form-section">
+                <div class="section-header">
+                    <h4 class="section-title">
+                        <i class="bi bi-briefcase me-2"></i>
+                        Industry & Expertise
+                    </h4>
+                    <p class="section-subtitle">Your company's areas of expertise and industry focus</p>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Industry Expertise</label>
+                    <div class="checkbox-grid">
+                        {% for expertise in industry_expertise_choices %}
+                        <div class="checkbox-card" data-value="{{ expertise.0 }}">
+                            <input type="checkbox" name="industry_expertise" value="{{ expertise.0 }}" 
+                                   {% if expertise.0 in company.industry_expertise.all|default:'' %}checked{% endif %}>
+                            <div class="checkbox-card-content">
+                                <div class="checkbox-icon">
+                                    <i class="bi bi-check"></i>
+                                </div>
+                                <span class="checkbox-label">{{ expertise.1 }}</span>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="checkbox-card" data-value="technology">
+                            <input type="checkbox" name="industry_expertise" value="technology">
+                            <div class="checkbox-card-content">
+                                <div class="checkbox-icon"><i class="bi bi-check"></i></div>
+                                <span class="checkbox-label">Technology</span>
+                            </div>
+                        </div>
+                        <div class="checkbox-card" data-value="manufacturing">
+                            <input type="checkbox" name="industry_expertise" value="manufacturing">
+                            <div class="checkbox-card-content">
+                                <div class="checkbox-icon"><i class="bi bi-check"></i></div>
+                                <span class="checkbox-label">Manufacturing</span>
+                            </div>
+                        </div>
+                        <div class="checkbox-card" data-value="retail">
+                            <input type="checkbox" name="industry_expertise" value="retail">
+                            <div class="checkbox-card-content">
+                                <div class="checkbox-icon"><i class="bi bi-check"></i></div>
+                                <span class="checkbox-label">Retail & Consumer Goods</span>
+                            </div>
+                        </div>
+                        <div class="checkbox-card" data-value="healthcare">
+                            <input type="checkbox" name="industry_expertise" value="healthcare">
+                            <div class="checkbox-card-content">
+                                <div class="checkbox-icon"><i class="bi bi-check"></i></div>
+                                <span class="checkbox-label">Healthcare</span>
+                            </div>
+                        </div>
+                        <div class="checkbox-card" data-value="financial">
+                            <input type="checkbox" name="industry_expertise" value="financial">
+                            <div class="checkbox-card-content">
+                                <div class="checkbox-icon"><i class="bi bi-check"></i></div>
+                                <span class="checkbox-label">Financial Services</span>
+                            </div>
+                        </div>
+                        <div class="checkbox-card" data-value="energy">
+                            <input type="checkbox" name="industry_expertise" value="energy">
+                            <div class="checkbox-card-content">
+                                <div class="checkbox-icon"><i class="bi bi-check"></i></div>
+                                <span class="checkbox-label">Energy & Utilities</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Investment Categories (Areas of Interest)</label>
+                    <div class="checkbox-grid">
+                        <div class="checkbox-card" data-value="eliminate_packaging">
+                            <input type="checkbox" name="investment_categories" value="Eliminate & Redesign Packaging">
+                            <div class="checkbox-card-content">
+                                <div class="checkbox-icon"><i class="bi bi-check"></i></div>
+                                <span class="checkbox-label">📦 Eliminate & Redesign Packaging</span>
+                            </div>
+                        </div>
+                        <div class="checkbox-card" data-value="refill_reuse">
+                            <input type="checkbox" name="investment_categories" value="Refill & Reuse Solutions">
+                            <div class="checkbox-card-content">
+                                <div class="checkbox-icon"><i class="bi bi-check"></i></div>
+                                <span class="checkbox-label">🔄 Refill & Reuse Solutions</span>
+                            </div>
+                        </div>
+                        <div class="checkbox-card" data-value="collection_dropoff">
+                            <input type="checkbox" name="investment_categories" value="Reusable Packaging Collection/Drop Off">
+                            <div class="checkbox-card-content">
+                                <div class="checkbox-icon"><i class="bi bi-check"></i></div>
+                                <span class="checkbox-label">📍 Reusable Packaging Collection/Drop Off</span>
+                            </div>
+                        </div>
+                        <div class="checkbox-card" data-value="upcycling">
+                            <input type="checkbox" name="investment_categories" value="Upcycling Plastic Waste">
+                            <div class="checkbox-card-content">
+                                <div class="checkbox-icon"><i class="bi bi-check"></i></div>
+                                <span class="checkbox-label">♻️ Upcycling Plastic Waste</span>
+                            </div>
+                        </div>
+                        <div class="checkbox-card" data-value="sustainable_materials">
+                            <input type="checkbox" name="investment_categories" value="Sustainable Alternative Materials">
+                            <div class="checkbox-card-content">
+                                <div class="checkbox-icon"><i class="bi bi-check"></i></div>
+                                <span class="checkbox-label">🌱 Sustainable Alternative Materials</span>
+                            </div>
+                        </div>
+                        <div class="checkbox-card" data-value="tracking_monitoring">
+                            <input type="checkbox" name="investment_categories" value="Tracking & Monitoring Waste">
+                            <div class="checkbox-card-content">
+                                <div class="checkbox-icon"><i class="bi bi-check"></i></div>
+                                <span class="checkbox-label">📊 Tracking & Monitoring Waste</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Collaboration & Support -->
+            <div class="form-section">
+                <div class="section-header">
+                    <h4 class="section-title">
+                        <i class="bi bi-handshake me-2"></i>
+                        Collaboration & Support
+                    </h4>
+                    <p class="section-subtitle">How your company collaborates and supports innovation</p>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Support Areas</label>
+                    <div class="checkbox-grid">
+                        <div class="checkbox-card" data-value="co_development">
+                            <input type="checkbox" name="support_areas" value="Co-Development – Collaborating on tailored solutions">
+                            <div class="checkbox-card-content">
+                                <div class="checkbox-icon"><i class="bi bi-check"></i></div>
+                                <span class="checkbox-label">🤝 Co-Development – Collaborating on tailored solutions</span>
+                            </div>
+                        </div>
+                        <div class="checkbox-card" data-value="financial_support">
+                            <input type="checkbox" name="support_areas" value="Financial Support – Funding startups and projects">
+                            <div class="checkbox-card-content">
+                                <div class="checkbox-icon"><i class="bi bi-check"></i></div>
+                                <span class="checkbox-label">💰 Financial Support – Funding startups and projects</span>
+                            </div>
+                        </div>
+                        <div class="checkbox-card" data-value="mentorship">
+                            <input type="checkbox" name="support_areas" value="Mentorship & Expertise – Guiding startups with knowledge">
+                            <div class="checkbox-card-content">
+                                <div class="checkbox-icon"><i class="bi bi-check"></i></div>
+                                <span class="checkbox-label">🎓 Mentorship & Expertise – Guiding startups with knowledge</span>
+                            </div>
+                        </div>
+                        <div class="checkbox-card" data-value="pilot_programs">
+                            <input type="checkbox" name="support_areas" value="Pilot Programs – Testing innovative solution">
+                            <div class="checkbox-card-content">
+                                <div class="checkbox-icon"><i class="bi bi-check"></i></div>
+                                <span class="checkbox-label">🚀 Pilot Programs – Testing innovative solution</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'account_settings' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle me-2"></i>Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-2"></i>Save Company Profile
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+/* Onboarding Form Styles - Only what we need */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.form-control {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    outline: none;
+}
+
+.form-select {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    outline: none;
+}
+
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.checkbox-card {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.checkbox-card:hover {
+    border-color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.1);
+}
+
+.checkbox-card.selected {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #667eea08 0%, #764ba208 100%);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+}
+
+.checkbox-card input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.checkbox-card-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.checkbox-icon {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #e2e8f0;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.checkbox-card.selected .checkbox-icon {
+    background: #667eea;
+    border-color: #667eea;
+    color: white;
+}
+
+.checkbox-label {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #2c3e50;
+    line-height: 1.3;
+}
+
+/* Company Edit Header */
+.company-edit-header {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(240, 147, 251, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.company-edit-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    opacity: 0.3;
+}
+
+.company-icon-container {
+    position: relative;
+    z-index: 2;
+}
+
+.company-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #ffffff15 0%, #ffffff25 100%);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.company-icon i {
+    font-size: 2.5rem;
+    color: white;
+}
+
+.company-edit-header h1 {
+    color: white;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+.header-subtitle {
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-size: 1.1rem;
+    font-weight: 400;
+    line-height: 1.4;
+    position: relative;
+    z-index: 2;
+}
+
+/* Company Form Container */
+.company-form-container {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.company-form {
+    padding: 0;
+}
+
+/* Form Sections */
+.form-section {
+    padding: 2.5rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.form-section:last-child {
+    border-bottom: none;
+}
+
+.section-header {
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.section-subtitle {
+    color: #6c757d;
+    margin-bottom: 0;
+    font-size: 0.95rem;
+}
+
+/* Logo Section */
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.current-logo {
+    flex-shrink: 0;
+}
+
+.logo-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 20px;
+    object-fit: cover;
+    border: 4px solid #e9ecef;
+}
+
+.logo-placeholder {
+    width: 120px;
+    height: 120px;
+    border-radius: 20px;
+    background: #f8f9fa;
+    border: 4px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: #6c757d;
+}
+
+.logo-upload {
+    flex: 1;
+}
+
+/* Input Group Styling */
+.input-group-text {
+    background: #f8f9fa;
+    border-color: #e2e8f0;
+    color: #6c757d;
+}
+
+/* Form Actions */
+.form-actions {
+    padding: 2rem 2.5rem;
+    background: #f8f9fa;
+}
+
+.form-actions .btn {
+    padding: 0.75rem 2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.form-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .company-edit-header {
+        padding: 1.5rem;
+    }
+    
+    .company-edit-header .d-flex {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .form-section {
+        padding: 1.5rem;
+    }
+    
+    .logo-section {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .form-actions {
+        padding: 1.5rem;
+    }
+    
+    .form-actions .d-flex {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Company logo preview
+    const logoInput = document.getElementById('company_logo');
+    const currentLogo = document.querySelector('.current-logo');
+    
+    if (logoInput) {
+        logoInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = currentLogo.querySelector('.logo-img') || 
+                              currentLogo.querySelector('.logo-placeholder');
+                    
+                    if (img) {
+                        if (img.classList.contains('logo-placeholder')) {
+                            // Replace placeholder with image
+                            currentLogo.innerHTML = `<img src="${e.target.result}" alt="Company Logo" class="logo-img">`;
+                        } else {
+                            img.src = e.target.result;
+                        }
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+    
+    // Checkbox card interactions
+    document.querySelectorAll('.checkbox-card').forEach(card => {
+        const checkbox = card.querySelector('input[type="checkbox"]');
+        
+        card.addEventListener('click', function(e) {
+            if (e.target.type !== 'checkbox') {
+                checkbox.checked = !checkbox.checked;
+            }
+            
+            if (checkbox.checked) {
+                card.classList.add('selected');
+            } else {
+                card.classList.remove('selected');
+            }
+        });
+        
+        // Initialize state
+        if (checkbox.checked) {
+            card.classList.add('selected');
+        }
+    });
+    
+    // Form validation
+    const form = document.querySelector('.company-form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const requiredFields = form.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+            
+            if (!isValid) {
+                e.preventDefault();
+                alert('Please fill in all required fields.');
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

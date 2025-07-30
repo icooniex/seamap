@@ -1,0 +1,409 @@
+{% extends "template_parts/dashboard_base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <!-- Header Section -->
+    <div class="account-settings-header mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <div class="settings-icon-container me-3">
+                    <div class="settings-icon">
+                        <i class="bi bi-gear"></i>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="h3 mb-1">Account Settings</h1>
+                    <p class="header-subtitle mb-0">Manage your personal information, company profile, and account preferences</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Grid -->
+    <div class="row g-4">
+        <!-- Personal Profile Card -->
+        <div class="col-lg-6">
+            <div class="settings-card h-100">
+                <div class="settings-card-header">
+                    <div class="settings-card-icon personal-icon">
+                        <i class="bi bi-person-circle"></i>
+                    </div>
+                    <div>
+                        <h5 class="settings-card-title">Personal Profile</h5>
+                        <p class="settings-card-subtitle">Update your personal information and contact details</p>
+                    </div>
+                </div>
+                <div class="settings-card-body">
+                    <div class="current-info">
+                        <div class="info-item">
+                            <label>Full Name</label>
+                            <span>{{ user.get_full_name|default:"Not provided" }}</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Email</label>
+                            <span>{{ user.email }}</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Phone</label>
+                            <span>{{ user.member.phone_number|default:"Not provided" }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-card-footer">
+                    <a href="{% url 'personal_profile_edit' %}" class="btn btn-outline-primary">
+                        <i class="bi bi-pencil me-2"></i>Edit Personal Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Company Profile Card -->
+        <div class="col-lg-6">
+            <div class="settings-card h-100">
+                <div class="settings-card-header">
+                    <div class="settings-card-icon company-icon">
+                        <i class="bi bi-building"></i>
+                    </div>
+                    <div>
+                        <h5 class="settings-card-title">Company Profile</h5>
+                        <p class="settings-card-subtitle">Manage your organization information and details</p>
+                    </div>
+                </div>
+                <div class="settings-card-body">
+                    <div class="current-info">
+                        {% if user.member.companies.exists %}
+                            {% for company in user.member.companies.all %}
+                            <div class="info-item">
+                                <label>Company Name</label>
+                                <span>{{ company.company_name }}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Industry</label>
+                                <span>{{ company.industry_expertise.all|join:", "|default:"Not specified" }}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Location</label>
+                                <span>{{ company.get_primary_location_display|default:"Not specified" }}</span>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="info-item">
+                                <span class="text-muted">No company profile created yet</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="settings-card-footer">
+                    <a href="{% url 'company_profile_edit' %}" class="btn btn-outline-primary">
+                        <i class="bi bi-building me-2"></i>Edit Company Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security & Privacy Card -->
+        <div class="col-lg-6">
+            <div class="settings-card h-100">
+                <div class="settings-card-header">
+                    <div class="settings-card-icon security-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <div>
+                        <h5 class="settings-card-title">Security & Privacy</h5>
+                        <p class="settings-card-subtitle">Manage your password and privacy settings</p>
+                    </div>
+                </div>
+                <div class="settings-card-body">
+                    <div class="current-info">
+                        <div class="info-item">
+                            <label>Password</label>
+                            <span>••••••••••••</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Two-Factor Authentication</label>
+                            <span class="badge bg-warning">Not Enabled</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Last Login</label>
+                            <span>{{ user.last_login|date:"M d, Y H:i" }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-card-footer">
+                    <button class="btn btn-outline-primary" onclick="alert('Coming Soon!')">
+                        <i class="bi bi-key me-2"></i>Security Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifications Card -->
+        <div class="col-lg-6">
+            <div class="settings-card h-100">
+                <div class="settings-card-header">
+                    <div class="settings-card-icon notification-icon">
+                        <i class="bi bi-bell"></i>
+                    </div>
+                    <div>
+                        <h5 class="settings-card-title">Notifications</h5>
+                        <p class="settings-card-subtitle">Control your email and push notification preferences</p>
+                    </div>
+                </div>
+                <div class="settings-card-body">
+                    <div class="current-info">
+                        <div class="info-item">
+                            <label>Email Notifications</label>
+                            <span class="badge bg-success">Enabled</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Match Alerts</label>
+                            <span class="badge bg-success">Enabled</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Weekly Digest</label>
+                            <span class="badge bg-secondary">Disabled</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-card-footer">
+                    <button class="btn btn-outline-primary" onclick="alert('Coming Soon!')">
+                        <i class="bi bi-bell me-2"></i>Notification Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Account Settings Styling */
+.account-settings-header {
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    color: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(44, 89, 167, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.account-settings-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    opacity: 0.3;
+}
+
+.settings-icon-container {
+    position: relative;
+    z-index: 2;
+}
+
+.settings-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #ffffff15 0%, #ffffff25 100%);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.settings-icon i {
+    font-size: 2.5rem;
+    color: white;
+    animation: settingsRotate 4s ease-in-out infinite;
+}
+
+@keyframes settingsRotate {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(15deg); }
+}
+
+.account-settings-header h1 {
+    color: white;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+.header-subtitle {
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-size: 1.1rem;
+    font-weight: 400;
+    line-height: 1.4;
+    position: relative;
+    z-index: 2;
+}
+
+/* Settings Cards */
+.settings-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(44, 89, 167, 0.1);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.settings-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(44, 89, 167, 0.15);
+}
+
+.settings-card-header {
+    padding: 2rem 2rem 1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.settings-card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    flex-shrink: 0;
+}
+
+.personal-icon {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.company-icon {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.security-icon {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.notification-icon {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.settings-card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.settings-card-subtitle {
+    color: #6c757d;
+    margin-bottom: 0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.settings-card-body {
+    padding: 0 2rem 1rem;
+}
+
+.current-info {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.info-item:last-child {
+    margin-bottom: 0;
+}
+
+.info-item label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0;
+}
+
+.info-item span {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.settings-card-footer {
+    padding: 1rem 2rem 2rem;
+}
+
+.settings-card-footer .btn {
+    width: 100%;
+    border-radius: 12px;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.settings-card-footer .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(44, 89, 167, 0.2);
+}
+
+/* Badge Styling */
+.badge {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: 8px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .account-settings-header {
+        padding: 1.5rem;
+    }
+    
+    .account-settings-header .d-flex {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .settings-icon {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .settings-icon i {
+        font-size: 2rem;
+    }
+    
+    .settings-card-header {
+        padding: 1.5rem 1.5rem 1rem;
+    }
+    
+    .settings-card-body {
+        padding: 0 1.5rem 1rem;
+    }
+    
+    .settings-card-footer {
+        padding: 1rem 1.5rem 1.5rem;
+    }
+    
+    .info-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+}
+</style>
+{% endblock %}

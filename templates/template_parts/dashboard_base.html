@@ -654,6 +654,19 @@
                     </li>
                 </ul>
             </div>
+
+            <!-- Account Section -->
+            <div class="nav-section">
+                <h6 class="nav-section-title">ACCOUNT</h6>
+                <ul class="nav-list list-unstyled">
+                    <li class="nav-item">
+                        <a href="{% url 'account_settings' %}" class="nav-link" data-tooltip="Account Settings">
+                            <i class="nav-icon bi bi-gear"></i>
+                            <span class="nav-text">Account Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </nav>
     </div>
 
@@ -713,7 +726,7 @@
                         </a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="#">
+                        <a class="dropdown-item" href="{% url 'account_settings' %}">
                             <i class="bi bi-gear"></i>
                             Account Settings
                         </a>

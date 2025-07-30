@@ -1,6 +1,6 @@
 from multiprocessing import context
 from django.contrib.auth.models import User
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout as auth_logout
 from django import forms
 from django.contrib.auth.views import LoginView
@@ -1903,3 +1903,74 @@ def onboarding_startup_new(request):
         'member': member,
     }
     return render(request, 'onboarding/startup_onboarding_new.html', context)
+
+
+# Account Settings Views
+@login_required
+def account_settings(request):
+    """Account settings dashboard"""
+    member = get_object_or_404(Member, user=request.user)
+    context = {
+        'member': member,
+    }
+    return render(request, 'member/account_settings.html', context)
+
+
+@login_required
+def personal_profile_edit(request):
+    """Personal profile edit form"""
+    member = get_object_or_404(Member, user=request.user)
+    context = {
+        'member': member,
+    }
+    return render(request, 'member/personal_profile_edit.html', context)
+
+
+@login_required
+def company_profile_edit(request):
+    """Company profile edit form"""
+    member = get_object_or_404(Member, user=request.user)
+    company = None
+    if hasattr(member, 'company'):
+        company = member.company
+    
+    # Sample industry expertise choices for template
+    industry_expertise_choices = [
+        ('technology', 'Technology'),
+        ('manufacturing', 'Manufacturing'),
+        ('retail', 'Retail & Consumer Goods'),
+        ('healthcare', 'Healthcare'),
+        ('financial', 'Financial Services'),
+        ('energy', 'Energy & Utilities'),
+        ('agriculture', 'Agriculture'),
+        ('education', 'Education'),
+        ('transportation', 'Transportation'),
+        ('real_estate', 'Real Estate'),
+    ]
+    
+    context = {
+        'member': member,
+        'company': company,
+        'industry_expertise_choices': industry_expertise_choices,
+    }
+    return render(request, 'member/company_profile_edit.html', context)
+
+
+@login_required
+def document_management(request):
+    """Document management page"""
+    member = get_object_or_404(Member, user=request.user)
+    context = {
+        'member': member,
+    }
+    return render(request, 'member/document_management.html', context)
+
+
+@login_required
+def verification_center(request):
+    """Verification center page"""
+    member = get_object_or_404(Member, user=request.user)
+    context = {
+        'member': member,
+    }
+    return render(request, 'member/verification_center.html', context)

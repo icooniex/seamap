@@ -1,0 +1,922 @@
+{% extends "template_parts/dashboard_base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <!-- Header Section -->
+    <div class="verification-header mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <div class="verification-icon-container me-3">
+                    <div class="verification-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="h3 mb-1">Verification Center</h1>
+                    <p class="header-subtitle mb-0">Track your account and document verification status</p>
+                </div>
+            </div>
+            <div>
+                <a href="{% url 'account_settings' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Back to Settings
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Verification Overview -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="verification-overview-card">
+                <div class="overview-icon verified">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+                <div class="overview-content">
+                    <h4 class="overview-number">5</h4>
+                    <p class="overview-label">Verified</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="verification-overview-card">
+                <div class="overview-icon pending">
+                    <i class="bi bi-clock"></i>
+                </div>
+                <div class="overview-content">
+                    <h4 class="overview-number">2</h4>
+                    <p class="overview-label">Pending</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="verification-overview-card">
+                <div class="overview-icon rejected">
+                    <i class="bi bi-x-circle-fill"></i>
+                </div>
+                <div class="overview-content">
+                    <h4 class="overview-number">1</h4>
+                    <p class="overview-label">Rejected</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="verification-overview-card">
+                <div class="overview-icon total">
+                    <i class="bi bi-files"></i>
+                </div>
+                <div class="overview-content">
+                    <h4 class="overview-number">8</h4>
+                    <p class="overview-label">Total Items</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Verification Sections -->
+    <div class="row g-4">
+        <!-- Account Verification -->
+        <div class="col-lg-6">
+            <div class="verification-section-card">
+                <div class="section-header">
+                    <div class="section-icon account">
+                        <i class="bi bi-person-check"></i>
+                    </div>
+                    <div>
+                        <h5 class="section-title">Account Verification</h5>
+                        <p class="section-subtitle">Verify your personal and professional information</p>
+                    </div>
+                </div>
+                
+                <div class="verification-items">
+                    <div class="verification-item">
+                        <div class="item-info">
+                            <div class="item-icon">
+                                <i class="bi bi-envelope"></i>
+                            </div>
+                            <div>
+                                <h6 class="item-title">Email Address</h6>
+                                <p class="item-description">Your email has been verified</p>
+                            </div>
+                        </div>
+                        <div class="item-status verified">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Verified</span>
+                        </div>
+                    </div>
+                    
+                    <div class="verification-item">
+                        <div class="item-info">
+                            <div class="item-icon">
+                                <i class="bi bi-phone"></i>
+                            </div>
+                            <div>
+                                <h6 class="item-title">Phone Number</h6>
+                                <p class="item-description">Phone verification pending</p>
+                            </div>
+                        </div>
+                        <div class="item-status pending">
+                            <i class="bi bi-clock"></i>
+                            <span>Pending</span>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-sm btn-outline-primary">Verify Now</button>
+                        </div>
+                    </div>
+                    
+                    <div class="verification-item">
+                        <div class="item-info">
+                            <div class="item-icon">
+                                <i class="bi bi-linkedin"></i>
+                            </div>
+                            <div>
+                                <h6 class="item-title">LinkedIn Profile</h6>
+                                <p class="item-description">Professional profile verified</p>
+                            </div>
+                        </div>
+                        <div class="item-status verified">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Verified</span>
+                        </div>
+                    </div>
+                    
+                    <div class="verification-item">
+                        <div class="item-info">
+                            <div class="item-icon">
+                                <i class="bi bi-credit-card"></i>
+                            </div>
+                            <div>
+                                <h6 class="item-title">Identity Document</h6>
+                                <p class="item-description">Government ID verification</p>
+                            </div>
+                        </div>
+                        <div class="item-status pending">
+                            <i class="bi bi-clock"></i>
+                            <span>Pending</span>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#uploadIdModal">Upload ID</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Document Verification -->
+        <div class="col-lg-6">
+            <div class="verification-section-card">
+                <div class="section-header">
+                    <div class="section-icon documents">
+                        <i class="bi bi-file-earmark-check"></i>
+                    </div>
+                    <div>
+                        <h5 class="section-title">Document Verification</h5>
+                        <p class="section-subtitle">Status of your uploaded business documents</p>
+                    </div>
+                </div>
+                
+                <div class="verification-items">
+                    <div class="verification-item">
+                        <div class="item-info">
+                            <div class="item-icon">
+                                <i class="bi bi-building"></i>
+                            </div>
+                            <div>
+                                <h6 class="item-title">Business Registration</h6>
+                                <p class="item-description">Company incorporation certificate</p>
+                            </div>
+                        </div>
+                        <div class="item-status verified">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Verified</span>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-sm btn-outline-secondary">View</button>
+                        </div>
+                    </div>
+                    
+                    <div class="verification-item">
+                        <div class="item-info">
+                            <div class="item-icon">
+                                <i class="bi bi-receipt"></i>
+                            </div>
+                            <div>
+                                <h6 class="item-title">Tax Registration</h6>
+                                <p class="item-description">Tax identification document</p>
+                            </div>
+                        </div>
+                        <div class="item-status verified">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Verified</span>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-sm btn-outline-secondary">View</button>
+                        </div>
+                    </div>
+                    
+                    <div class="verification-item">
+                        <div class="item-info">
+                            <div class="item-icon">
+                                <i class="bi bi-bank"></i>
+                            </div>
+                            <div>
+                                <h6 class="item-title">Bank Statements</h6>
+                                <p class="item-description">Financial verification document</p>
+                            </div>
+                        </div>
+                        <div class="item-status rejected">
+                            <i class="bi bi-x-circle-fill"></i>
+                            <span>Rejected</span>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#rejectionReasonModal">View Reason</button>
+                            <button class="btn btn-sm btn-primary">Re-upload</button>
+                        </div>
+                    </div>
+                    
+                    <div class="verification-item">
+                        <div class="item-info">
+                            <div class="item-icon">
+                                <i class="bi bi-graph-up"></i>
+                            </div>
+                            <div>
+                                <h6 class="item-title">Financial Statements</h6>
+                                <p class="item-description">Annual financial reports</p>
+                            </div>
+                        </div>
+                        <div class="item-status verified">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Verified</span>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-sm btn-outline-secondary">View</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Verification Progress -->
+    <div class="row g-4 mt-2">
+        <div class="col-12">
+            <div class="verification-progress-card">
+                <div class="progress-header">
+                    <h5 class="progress-title">
+                        <i class="bi bi-trophy me-2"></i>
+                        Verification Progress
+                    </h5>
+                    <p class="progress-subtitle">Complete all verifications to unlock premium features</p>
+                </div>
+                
+                <div class="progress-content">
+                    <div class="overall-progress">
+                        <div class="progress-info">
+                            <span class="progress-label">Overall Completion</span>
+                            <span class="progress-percentage">75%</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-custom">
+                                <div class="progress-fill" style="width: 75%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-benefits">
+                        <h6 class="benefits-title">Unlock with full verification:</h6>
+                        <div class="benefits-grid">
+                            <div class="benefit-item">
+                                <i class="bi bi-shield-check text-success"></i>
+                                <span>Verified Badge</span>
+                            </div>
+                            <div class="benefit-item">
+                                <i class="bi bi-star text-warning"></i>
+                                <span>Priority Support</span>
+                            </div>
+                            <div class="benefit-item">
+                                <i class="bi bi-people text-info"></i>
+                                <span>Advanced Matching</span>
+                            </div>
+                            <div class="benefit-item">
+                                <i class="bi bi-graph-up text-primary"></i>
+                                <span>Enhanced Analytics</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Upload ID Modal -->
+<div class="modal fade" id="uploadIdModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Upload Identity Document</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="upload-id-form">
+                    <div class="form-group">
+                        <label class="form-label">Document Type</label>
+                        <select class="form-select">
+                            <option>Select Document Type</option>
+                            <option>National ID Card</option>
+                            <option>Passport</option>
+                            <option>Driver's License</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Upload Document</label>
+                        <div class="upload-area-small">
+                            <div class="upload-content">
+                                <i class="bi bi-cloud-upload"></i>
+                                <p>Drop files here or click to browse</p>
+                                <small class="text-muted">Supported: JPG, PNG, PDF • Max 5MB</small>
+                            </div>
+                            <input type="file" class="form-control" accept=".jpg,.jpeg,.png,.pdf">
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Important:</strong> Please ensure your document is clear, readable, and all corners are visible.
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary">Upload Document</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Rejection Reason Modal -->
+<div class="modal fade" id="rejectionReasonModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Document Rejection Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="rejection-details">
+                    <div class="rejection-item">
+                        <strong>Document:</strong> Bank Statements
+                    </div>
+                    <div class="rejection-item">
+                        <strong>Rejection Date:</strong> January 20, 2024
+                    </div>
+                    <div class="rejection-item">
+                        <strong>Reason:</strong>
+                        <div class="rejection-reason">
+                            The submitted bank statements are not recent enough. Please provide statements from the last 3 months. Additionally, ensure that all pages are clearly visible and account details are legible.
+                        </div>
+                    </div>
+                    <div class="rejection-item">
+                        <strong>Required Actions:</strong>
+                        <ul class="rejection-actions">
+                            <li>Submit statements from the last 3 months</li>
+                            <li>Ensure all pages are clearly scanned</li>
+                            <li>Verify account holder name matches your profile</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Re-upload Document</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Verification Center Styles */
+
+/* Verification Header */
+.verification-header {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(79, 172, 254, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.verification-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="verify-grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23verify-grid)"/></svg>');
+    opacity: 0.3;
+}
+
+.verification-icon-container {
+    position: relative;
+    z-index: 2;
+}
+
+.verification-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #ffffff15 0%, #ffffff25 100%);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.verification-icon i {
+    font-size: 2.5rem;
+    color: white;
+}
+
+/* Verification Overview Cards */
+.verification-overview-card {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.verification-overview-card:hover {
+    transform: translateY(-5px);
+}
+
+.overview-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    flex-shrink: 0;
+}
+
+.overview-icon.verified {
+    background: linear-gradient(135deg, #198754 0%, #20c997 100%);
+}
+
+.overview-icon.pending {
+    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+}
+
+.overview-icon.rejected {
+    background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%);
+}
+
+.overview-icon.total {
+    background: linear-gradient(135deg, #6f42c1 0%, #9775dd 100%);
+}
+
+.overview-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.25rem;
+}
+
+.overview-label {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-bottom: 0;
+    font-weight: 500;
+}
+
+/* Verification Section Cards */
+.verification-section-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    height: 100%;
+}
+
+.section-header {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.section-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    flex-shrink: 0;
+}
+
+.section-icon.account {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.section-icon.documents {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.25rem;
+}
+
+.section-subtitle {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+/* Verification Items */
+.verification-items {
+    padding: 0;
+}
+
+.verification-item {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: background-color 0.2s ease;
+}
+
+.verification-item:hover {
+    background: #f8f9fa;
+}
+
+.verification-item:last-child {
+    border-bottom: none;
+}
+
+.item-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.item-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 8px;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: #6c757d;
+    flex-shrink: 0;
+}
+
+.item-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.25rem;
+}
+
+.item-description {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+.item-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    margin-right: 1rem;
+}
+
+.item-status.verified {
+    background: rgba(25, 135, 84, 0.1);
+    color: #198754;
+}
+
+.item-status.pending {
+    background: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+}
+
+.item-status.rejected {
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.item-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.item-actions .btn {
+    border-radius: 8px;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.8rem;
+}
+
+/* Verification Progress Card */
+.verification-progress-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+}
+
+.progress-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.progress-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.progress-subtitle {
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+.overall-progress {
+    margin-bottom: 2rem;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: between;
+    margin-bottom: 1rem;
+}
+
+.progress-label {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.progress-percentage {
+    font-weight: 700;
+    color: #4facfe;
+    font-size: 1.1rem;
+}
+
+.progress-bar-container {
+    margin-bottom: 1rem;
+}
+
+.progress-bar-custom {
+    height: 12px;
+    background: #e9ecef;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+    border-radius: 10px;
+    transition: width 0.8s ease;
+    position: relative;
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.benefits-title {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.benefit-item i {
+    font-size: 1.25rem;
+}
+
+/* Modal Customizations */
+.upload-area-small {
+    border: 2px dashed #e9ecef;
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background: #fafbfc;
+}
+
+.upload-area-small:hover {
+    border-color: #4facfe;
+    background: #f8f9ff;
+}
+
+.upload-area-small i {
+    font-size: 2rem;
+    color: #4facfe;
+    margin-bottom: 0.5rem;
+}
+
+.rejection-details {
+    margin-bottom: 1rem;
+}
+
+.rejection-item {
+    margin-bottom: 1rem;
+}
+
+.rejection-item strong {
+    color: #2c3e50;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.rejection-reason {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 1rem;
+    color: #856404;
+    margin-top: 0.5rem;
+}
+
+.rejection-actions {
+    margin-top: 0.5rem;
+    padding-left: 1.5rem;
+}
+
+.rejection-actions li {
+    margin-bottom: 0.25rem;
+    color: #6c757d;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .verification-header {
+        padding: 1.5rem;
+    }
+    
+    .verification-header .d-flex {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .verification-item {
+        padding: 1rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .item-actions {
+        width: 100%;
+        justify-content: flex-end;
+        margin-top: 0.5rem;
+    }
+    
+    .benefits-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .verification-progress-card {
+        padding: 1.5rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Upload functionality for ID modal
+    const uploadArea = document.querySelector('#uploadIdModal .upload-area-small');
+    const fileInput = document.querySelector('#uploadIdModal input[type="file"]');
+    
+    if (uploadArea && fileInput) {
+        uploadArea.addEventListener('click', () => fileInput.click());
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#4facfe';
+            uploadArea.style.background = '#f8f9ff';
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = '#e9ecef';
+            uploadArea.style.background = '#fafbfc';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#e9ecef';
+            uploadArea.style.background = '#fafbfc';
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                handleFileUpload(files[0]);
+            }
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileUpload(e.target.files[0]);
+            }
+        });
+    }
+    
+    function handleFileUpload(file) {
+        const uploadContent = uploadArea.querySelector('.upload-content');
+        uploadContent.innerHTML = `
+            <i class="bi bi-check-circle text-success"></i>
+            <p class="text-success">File selected: ${file.name}</p>
+            <small class="text-muted">${(file.size / 1024 / 1024).toFixed(2)} MB</small>
+        `;
+    }
+    
+    // Animation for progress bar on page load
+    const progressFill = document.querySelector('.progress-fill');
+    if (progressFill) {
+        const targetWidth = progressFill.style.width;
+        progressFill.style.width = '0%';
+        
+        setTimeout(() => {
+            progressFill.style.width = targetWidth;
+        }, 500);
+    }
+    
+    // Verification action handlers
+    document.addEventListener('click', function(e) {
+        if (e.target.textContent === 'Verify Now') {
+            // Handle phone verification
+            alert('SMS verification code will be sent to your phone number.');
+        }
+        
+        if (e.target.textContent === 'Re-upload') {
+            // Handle document re-upload
+            console.log('Re-upload document functionality');
+        }
+    });
+});
+</script>
+{% endblock %}

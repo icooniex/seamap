@@ -1,0 +1,641 @@
+{% extends "template_parts/dashboard_base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <!-- Header Section -->
+    <div class="profile-edit-header mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <div class="profile-icon-container me-3">
+                    <div class="profile-icon">
+                        <i class="bi bi-person-circle"></i>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="h3 mb-1">Personal Profile</h1>
+                    <p class="header-subtitle mb-0">Update your personal information and contact details</p>
+                </div>
+            </div>
+            <div>
+                <a href="{% url 'account_settings' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Back to Settings
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Form -->
+    <div class="profile-form-container">
+        <form method="post" enctype="multipart/form-data" class="profile-form">
+            {% csrf_token %}
+            
+            <!-- Profile Picture Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <h4 class="section-title">
+                        <i class="bi bi-image me-2"></i>
+                        Profile Picture
+                    </h4>
+                    <p class="section-subtitle">Upload a professional photo for your profile</p>
+                </div>
+                
+                <div class="profile-picture-section">
+                    <div class="current-picture">
+                        {% if user.member.profile_picture %}
+                            <img src="{{ user.member.profile_picture.url }}" alt="Profile Picture" class="profile-img">
+                        {% else %}
+                            <div class="profile-placeholder">
+                                <i class="bi bi-person-circle"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="picture-upload">
+                        <div class="form-group">
+                            <label for="profile_picture" class="form-label">Choose New Picture</label>
+                            <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/*">
+                            <small class="form-text text-muted">Recommended: Square image, at least 200x200px, max 5MB</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Basic Information Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <h4 class="section-title">
+                        <i class="bi bi-person me-2"></i>
+                        Basic Information
+                    </h4>
+                    <p class="section-subtitle">Your personal details and identification</p>
+                </div>
+                
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="first_name" class="form-label">First Name *</label>
+                            <input type="text" class="form-control" id="first_name" name="first_name" 
+                                   value="{{ user.first_name }}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="last_name" class="form-label">Last Name *</label>
+                            <input type="text" class="form-control" id="last_name" name="last_name" 
+                                   value="{{ user.last_name }}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="email" class="form-label">Email Address *</label>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   value="{{ user.email }}" required>
+                            <small class="form-text text-muted">This will be your login email</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="phone_number" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="phone_number" name="phone_number" 
+                                   value="{{ user.member.phone_number|default:'' }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Professional Information Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <h4 class="section-title">
+                        <i class="bi bi-briefcase me-2"></i>
+                        Professional Information
+                    </h4>
+                    <p class="section-subtitle">Your current role and professional background</p>
+                </div>
+                
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="job_position" class="form-label">Job Title/Position</label>
+                            <input type="text" class="form-control" id="job_position" name="job_position" 
+                                   value="{{ user.member.job_position|default:'' }}">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="linkedin_url" class="form-label">LinkedIn Profile</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-linkedin"></i>
+                                </span>
+                                <input type="url" class="form-control" id="linkedin_url" name="linkedin_url" 
+                                       value="{{ user.member.linkedin_url|default:'' }}" 
+                                       placeholder="https://linkedin.com/in/yourprofile">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="bio" class="form-label">Professional Bio</label>
+                            <textarea class="form-control" id="bio" name="bio" rows="4" 
+                                      placeholder="Tell us about your professional background, expertise, and interests...">{{ user.member.bio|default:'' }}</textarea>
+                            <small class="form-text text-muted">This will be visible on your public profile</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location Information Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <h4 class="section-title">
+                        <i class="bi bi-geo-alt me-2"></i>
+                        Location Information
+                    </h4>
+                    <p class="section-subtitle">Where you're located and operating</p>
+                </div>
+                
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="country" class="form-label">Country</label>
+                            <select class="form-select" id="country" name="country">
+                                <option value="">Select Country</option>
+                                <option value="SG" {% if user.member.country == 'SG' %}selected{% endif %}>Singapore</option>
+                                <option value="ID" {% if user.member.country == 'ID' %}selected{% endif %}>Indonesia</option>
+                                <option value="TH" {% if user.member.country == 'TH' %}selected{% endif %}>Thailand</option>
+                                <option value="MY" {% if user.member.country == 'MY' %}selected{% endif %}>Malaysia</option>
+                                <option value="PH" {% if user.member.country == 'PH' %}selected{% endif %}>Philippines</option>
+                                <option value="VN" {% if user.member.country == 'VN' %}selected{% endif %}>Vietnam</option>
+                                <option value="other" {% if user.member.country == 'other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="city" class="form-label">City</label>
+                            <input type="text" class="form-control" id="city" name="city" 
+                                   value="{{ user.member.city|default:'' }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preferences Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <h4 class="section-title">
+                        <i class="bi bi-toggles me-2"></i>
+                        Profile Preferences
+                    </h4>
+                    <p class="section-subtitle">Control how your profile appears to others</p>
+                </div>
+                
+                <div class="preferences-grid">
+                    <div class="preference-item">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="profile_public" name="profile_public"
+                                   {% if user.member.profile_public %}checked{% endif %}>
+                            <label class="form-check-label" for="profile_public">
+                                <strong>Public Profile</strong>
+                                <span class="preference-desc">Make your profile visible to other platform members</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="preference-item">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="show_contact" name="show_contact"
+                                   {% if user.member.show_contact %}checked{% endif %}>
+                            <label class="form-check-label" for="show_contact">
+                                <strong>Show Contact Information</strong>
+                                <span class="preference-desc">Allow others to see your email and phone number</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="preference-item">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="email_notifications" name="email_notifications"
+                                   {% if user.member.email_notifications %}checked{% endif %}>
+                            <label class="form-check-label" for="email_notifications">
+                                <strong>Email Notifications</strong>
+                                <span class="preference-desc">Receive updates about matches and platform activities</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'account_settings' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle me-2"></i>Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-2"></i>Save Changes
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+/* Onboarding Form Styles - Only what we need */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.form-control {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    outline: none;
+}
+
+.form-select {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    outline: none;
+}
+
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.checkbox-card {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.checkbox-card:hover {
+    border-color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.1);
+}
+
+.checkbox-card.selected {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #667eea08 0%, #764ba208 100%);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+}
+
+.checkbox-card input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.checkbox-card-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.checkbox-icon {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #e2e8f0;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.checkbox-card.selected .checkbox-icon {
+    background: #667eea;
+    border-color: #667eea;
+    color: white;
+}
+
+.checkbox-label {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #2c3e50;
+    line-height: 1.3;
+}
+
+/* Profile Edit Header */
+.profile-edit-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.profile-edit-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    opacity: 0.3;
+}
+
+.profile-icon-container {
+    position: relative;
+    z-index: 2;
+}
+
+.profile-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #ffffff15 0%, #ffffff25 100%);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.profile-icon i {
+    font-size: 2.5rem;
+    color: white;
+}
+
+.profile-edit-header h1 {
+    color: white;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+.header-subtitle {
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-size: 1.1rem;
+    font-weight: 400;
+    line-height: 1.4;
+    position: relative;
+    z-index: 2;
+}
+
+/* Profile Form Container */
+.profile-form-container {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.profile-form {
+    padding: 0;
+}
+
+/* Form Sections */
+.form-section {
+    padding: 2.5rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.form-section:last-child {
+    border-bottom: none;
+}
+
+.section-header {
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.section-subtitle {
+    color: #6c757d;
+    margin-bottom: 0;
+    font-size: 0.95rem;
+}
+
+/* Profile Picture Section */
+.profile-picture-section {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.current-picture {
+    flex-shrink: 0;
+}
+
+.profile-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 20px;
+    object-fit: cover;
+    border: 4px solid #e9ecef;
+}
+
+.profile-placeholder {
+    width: 120px;
+    height: 120px;
+    border-radius: 20px;
+    background: #f8f9fa;
+    border: 4px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: #6c757d;
+}
+
+.picture-upload {
+    flex: 1;
+}
+
+/* Preferences Grid */
+.preferences-grid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.preference-item {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid #e9ecef;
+}
+
+.form-check-label {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.preference-desc {
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: normal;
+}
+
+.form-check-input:checked {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+
+/* Input Group Styling */
+.input-group-text {
+    background: #f8f9fa;
+    border-color: #e2e8f0;
+    color: #6c757d;
+}
+
+/* Form Actions */
+.form-actions {
+    padding: 2rem 2.5rem;
+    background: #f8f9fa;
+}
+
+.form-actions .btn {
+    padding: 0.75rem 2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.form-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .profile-edit-header {
+        padding: 1.5rem;
+    }
+    
+    .profile-edit-header .d-flex {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .form-section {
+        padding: 1.5rem;
+    }
+    
+    .profile-picture-section {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .form-actions {
+        padding: 1.5rem;
+    }
+    
+    .form-actions .d-flex {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Profile picture preview
+    const profilePictureInput = document.getElementById('profile_picture');
+    const currentPicture = document.querySelector('.current-picture');
+    
+    if (profilePictureInput) {
+        profilePictureInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = currentPicture.querySelector('.profile-img') || 
+                              currentPicture.querySelector('.profile-placeholder');
+                    
+                    if (img) {
+                        if (img.classList.contains('profile-placeholder')) {
+                            // Replace placeholder with image
+                            currentPicture.innerHTML = `<img src="${e.target.result}" alt="Profile Picture" class="profile-img">`;
+                        } else {
+                            img.src = e.target.result;
+                        }
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+    
+    // Form validation
+    const form = document.querySelector('.profile-form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const requiredFields = form.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+            
+            if (!isValid) {
+                e.preventDefault();
+                alert('Please fill in all required fields.');
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
