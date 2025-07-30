@@ -20,37 +20,48 @@
     --shadow-heavy: 0 25px 50px rgba(0, 0, 0, 0.15);
 }
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.6;
+    color: var(--text-dark);
+    overflow-x: hidden;
+}
+
 /* ========================================
    HERO SECTION
    ======================================== */
 
 .hero-section {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    background: linear-gradient(135deg, 
+        rgba(14, 14, 14, 0.7) 0%, 
+        rgba(89, 89, 89, 0.3) 50%,
+        rgba(14, 14, 14, 0.7) 100%),
+        url('../images/hero-background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
     color: white;
     position: relative;
     overflow: hidden;
 }
 
-.hero-section::before {
-    content: '';
-    position: absolute;
-    top: -200px;
-    right: -200px;
-    width: 400px;
-    height: 400px;
-    border: 100px solid rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-    z-index: 0;
-}
-
 .hero-section::after {
     content: '';
     position: absolute;
-    bottom: -300px;
-    left: -300px;
-    width: 600px;
-    height: 600px;
-    border: 150px solid rgba(40, 167, 69, 0.2);
+    bottom: -500px;
+    right: -500px;
+    width: 1000px;
+    height: 1000px;
+    border: 250px solid rgba(235, 202, 56, 0.4);
     border-radius: 50%;
     z-index: 0;
 }
@@ -61,17 +72,28 @@
 }
 
 .hero-title {
-    font-size: 3.5rem;
+    font-size: 4rem;
     font-weight: 800;
-    line-height: 1.2;
+    line-height: 1.1;
     margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .hero-subtitle {
-    font-size: 1.25rem;
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    opacity: 0.95;
+    font-weight: 500;
+}
+
+.hero-description {
+    font-size: 1.2rem;
+    margin-bottom: 3rem;
     opacity: 0.9;
-    margin-bottom: 2rem;
-    line-height: 1.6;
+    max-width: 600px;
 }
 
 .hero-cta {
@@ -82,39 +104,36 @@
 }
 
 .btn-hero-primary {
-    background: linear-gradient(135deg, var(--success-color) 0%, var(--success-light) 100%);
-    color: white;
+    background: var(--yellow-accent);
+    color: var(--text-dark);
     border: none;
-    padding: 15px 32px;
+    padding: 15px 40px;
     border-radius: 12px;
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     transition: all 0.3s ease;
     text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
+    display: inline-block;
 }
 
 .btn-hero-primary:hover {
+    background: #d4b82e;
     transform: translateY(-3px);
-    box-shadow: 0 15px 30px rgba(40, 167, 69, 0.3);
-    color: white;
+    box-shadow: 0 15px 30px rgba(235, 202, 56, 0.4);
+    color: var(--text-dark);
 }
 
 .btn-hero-secondary {
     background: transparent;
     color: white;
     border: 2px solid rgba(255, 255, 255, 0.8);
-    padding: 13px 30px;
+    padding: 13px 38px;
     border-radius: 12px;
     font-weight: 600;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     transition: all 0.3s ease;
     text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
+    display: inline-block;
 }
 
 .btn-hero-secondary:hover {
@@ -172,8 +191,13 @@
 }
 
 /* ========================================
-   SECTION STYLES
+   PLATFORM APPROACH SECTION
    ======================================== */
+
+.platform-approach-section {
+    padding: 100px 0;
+    background: var(--background-light);
+}
 
 .section-title {
     font-size: 3rem;
@@ -184,14 +208,14 @@
 }
 
 .section-subtitle {
-    font-size: 1.25rem;
+    font-size: 1.3rem;
     color: var(--text-light);
     margin-bottom: 3rem;
-    line-height: 1.6;
+    line-height: 1.4;
 }
 
 .section-accent {
-    color: var(--success-color);
+    color: var(--yellow-accent);
 }
 
 /* ========================================
