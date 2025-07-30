@@ -1920,6 +1920,49 @@ def account_settings(request):
 def personal_profile_edit(request):
     """Personal profile edit form"""
     member = get_object_or_404(Member, user=request.user)
+    
+    if request.method == 'POST':
+        try:
+            # Update User model fields
+            user = request.user
+            user.first_name = request.POST.get('first_name', '').strip()
+            user.last_name = request.POST.get('last_name', '').strip()
+            user.email = request.POST.get('email', '').strip()
+            user.save()
+            
+            # Update Member model fields
+            member.phone_number = request.POST.get('phone_number', '').strip()
+            member.job_position = request.POST.get('job_position', '').strip()
+            member.linkedin_url = request.POST.get('linkedin_url', '').strip()
+            member.short_bio = request.POST.get('bio', '').strip()
+            member.country = request.POST.get('country', '').strip()
+            member.city = request.POST.get('city', '').strip()
+            
+            # Handle profile picture upload
+            if 'profile_picture' in request.FILES:
+                profile_picture = request.FILES['profile_picture']
+                # Validate file size (max 5MB)
+                if profile_picture.size > 5 * 1024 * 1024:
+                    messages.error(request, 'Profile picture must be less than 5MB.')
+                    return render(request, 'member/personal_profile_edit.html', {'member': member})
+                
+                # Validate file type
+                allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
+                if profile_picture.content_type not in allowed_types:
+                    messages.error(request, 'Profile picture must be a JPEG, PNG, or GIF image.')
+                    return render(request, 'member/personal_profile_edit.html', {'member': member})
+                
+                member.profile_picture = profile_picture
+            
+            member.save()
+            
+            messages.success(request, 'Your profile has been updated successfully!')
+            return redirect('personal_profile_edit')
+            
+        except Exception as e:
+            messages.error(request, f'An error occurred while updating your profile: {str(e)}')
+            return render(request, 'member/personal_profile_edit.html', {'member': member})
+    
     context = {
         'member': member,
     }
