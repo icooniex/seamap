@@ -181,52 +181,6 @@
                 </div>
             </div>
 
-            <!-- Preferences Section -->
-            <div class="form-section">
-                <div class="section-header">
-                    <h4 class="section-title">
-                        <i class="bi bi-toggles me-2"></i>
-                        Profile Preferences
-                    </h4>
-                    <p class="section-subtitle">Control how your profile appears to others</p>
-                </div>
-                
-                <div class="preferences-grid">
-                    <div class="preference-item">
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="profile_public" name="profile_public"
-                                   {% if user.member.profile_public %}checked{% endif %}>
-                            <label class="form-check-label" for="profile_public">
-                                <strong>Public Profile</strong>
-                                <span class="preference-desc">Make your profile visible to other platform members</span>
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <div class="preference-item">
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="show_contact" name="show_contact"
-                                   {% if user.member.show_contact %}checked{% endif %}>
-                            <label class="form-check-label" for="show_contact">
-                                <strong>Show Contact Information</strong>
-                                <span class="preference-desc">Allow others to see your email and phone number</span>
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <div class="preference-item">
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="email_notifications" name="email_notifications"
-                                   {% if user.member.email_notifications %}checked{% endif %}>
-                            <label class="form-check-label" for="email_notifications">
-                                <strong>Email Notifications</strong>
-                                <span class="preference-desc">Receive updates about matches and platform activities</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Form Actions -->
             <div class="form-actions">
                 <div class="d-flex justify-content-between">

@@ -102,6 +102,78 @@
             </div>
         </div>
 
+        <!-- Document Management Card -->
+        <div class="col-lg-6">
+            <div class="settings-card h-100">
+                <div class="settings-card-header">
+                    <div class="settings-card-icon document-icon">
+                        <i class="bi bi-folder2"></i>
+                    </div>
+                    <div>
+                        <h5 class="settings-card-title">Document Management</h5>
+                        <p class="settings-card-subtitle">Upload and manage your important business documents</p>
+                    </div>
+                </div>
+                <div class="settings-card-body">
+                    <div class="current-info">
+                        <div class="info-item">
+                            <label>Corporate Documents</label>
+                            <span>3 documents</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Financial Documents</label>
+                            <span>2 documents</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Compliance Documents</label>
+                            <span>1 document</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-card-footer">
+                    <a href="{% url 'document_management' %}" class="btn btn-outline-primary">
+                        <i class="bi bi-folder2 me-2"></i>Manage Documents
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Verification Center Card -->
+        <div class="col-lg-6">
+            <div class="settings-card h-100">
+                <div class="settings-card-header">
+                    <div class="settings-card-icon verification-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <div>
+                        <h5 class="settings-card-title">Verification Center</h5>
+                        <p class="settings-card-subtitle">Track your account and document verification status</p>
+                    </div>
+                </div>
+                <div class="settings-card-body">
+                    <div class="current-info">
+                        <div class="info-item">
+                            <label>Account Verification</label>
+                            <span class="badge bg-warning">75% Complete</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Document Verification</label>
+                            <span class="badge bg-success">5 Verified</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Overall Status</label>
+                            <span class="badge bg-info">In Progress</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-card-footer">
+                    <a href="{% url 'verification_center' %}" class="btn btn-outline-primary">
+                        <i class="bi bi-shield-check me-2"></i>View Verification Status
+                    </a>
+                </div>
+            </div>
+        </div>
+
         <!-- Security & Privacy Card -->
         <div class="col-lg-6">
             <div class="settings-card h-100">
@@ -288,8 +360,16 @@
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
 }
 
-.security-icon {
+.document-icon {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.verification-icon {
     background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.security-icon {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
 }
 
 .notification-icon {
