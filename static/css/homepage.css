@@ -25,7 +25,7 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     line-height: 1.6;
     color: var(--text-dark);
     overflow-x: hidden;
@@ -41,7 +41,7 @@ body {
     position: sticky;
     top: 0;
     z-index: 1000;
-    padding: 1rem 0;
+    padding: 0.3rem 0;
 }
 
 .navbar-brand {
@@ -57,14 +57,18 @@ body {
 .navbar-logo {
     width: 50px;
     height: 50px;
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    /* background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%); */
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
     color: white;
-    box-shadow: 0 4px 10px rgba(44, 89, 167, 0.2);
+    /* box-shadow: 0 4px 10px rgba(44, 89, 167, 0.2); */
+}
+
+.navbar-title{
+    color: var(--primary-color);
 }
 
 .nav-link {
@@ -118,12 +122,13 @@ body {
 
 .hero-section {
     background: linear-gradient(135deg, 
-        rgba(44, 89, 167, 0.95) 0%, 
-        rgba(59, 108, 193, 0.9) 50%,
-        rgba(44, 89, 167, 0.95) 100%),
-        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="rgba(255,255,255,0.1)" points="0,0 300,200 0,400"/><polygon fill="rgba(255,255,255,0.05)" points="1000,0 700,200 1000,400"/><circle cx="200" cy="600" r="100" fill="rgba(255,255,255,0.03)"/><circle cx="800" cy="300" r="150" fill="rgba(255,255,255,0.03)"/></svg>');
+        rgba(44, 89, 167, 0.3) 0%, 
+        rgba(59, 108, 193, 0.2) 50%,
+        rgba(44, 89, 167, 0.3) 100%),
+        url('../images/hero-background.jpg');
     background-size: cover;
     background-position: center;
+    background-repeat: no-repeat;
     min-height: 100vh;
     display: flex;
     align-items: center;

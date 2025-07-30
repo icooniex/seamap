@@ -22,11 +22,11 @@
             <div class="container">
                 <a class="navbar-brand" href="{% url 'homepage' %}">
                     <div class="navbar-logo">
-                        🌏
+                        <img src="{% static 'images/logo.webp' %}" alt="SEA-MaP Logo" style="width:50px;">
                     </div>
                     <div>
-                        <div class="navbar-title">SEA-MAP</div>
-                        <div class="navbar-tagline" style="font-size: 0.7rem; color: #718096;">Southeast Asia Matchmaking Platform</div>
+                        <div class="navbar-title">SEA-MaP</div>
+                        <div class="navbar-tagline" style="font-size: 0.7rem; color: #718096;">Regional Platform for Innovation and Investments</div>
                     </div>
                 </a>
                 
@@ -83,10 +83,9 @@
                         <div class="hero-cta">
                             {% if not user.is_authenticated %}
                                 <a href="{% url 'signup' %}" class="btn-hero-primary">Join Now</a>
-                                <a href="#how-it-works" class="btn-hero-secondary">Start Investing →</a>
+                                <a href="#features" class="btn-hero-secondary">Explore Features</a>
                             {% else %}
                                 <a href="{% url 'dashboard' %}" class="btn-hero-primary">Go to Dashboard</a>
-                                <a href="#features" class="btn-hero-secondary">Explore Features</a>
                             {% endif %}
                         </div>
                     </div>
