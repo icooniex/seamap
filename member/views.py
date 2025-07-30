@@ -16,6 +16,11 @@ import random
 from django.views import View
 
 
+def homepage(request):
+    """Homepage view with platform overview"""
+    return render(request, 'homepage.html')
+
+
 class CustomLoginView(LoginView):
     """
     Custom login view with email authentication and remember me functionality

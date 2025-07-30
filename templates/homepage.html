@@ -1,0 +1,568 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEA-MAP - Connecting Innovation with Investment</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/homepage.css' %}">
+    
+    <meta name="description" content="SEA-MAP connects innovative startups with strategic investors and corporates across Southeast Asia. Discover opportunities, foster partnerships, and drive sustainable growth.">
+</head>
+<body>
+    <!-- Navigation -->
+    <header class="homepage-header">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+                <a class="navbar-brand" href="{% url 'homepage' %}">
+                    <div class="navbar-logo">
+                        🌏
+                    </div>
+                    <div>
+                        <div class="navbar-title">SEA-MAP</div>
+                        <div class="navbar-tagline" style="font-size: 0.7rem; color: #718096;">Southeast Asia Matchmaking Platform</div>
+                    </div>
+                </a>
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto align-items-center">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#about">About Us</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#features">Platform Features</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#how-it-works">How It Works</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#join">Who Can Join</a>
+                        </li>
+                        {% if user.is_authenticated %}
+                            <li class="nav-item">
+                                <a href="{% url 'dashboard' %}" class="btn btn-primary">Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'logout' %}" class="btn btn-outline-primary">Logout</a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a href="{% url 'login' %}" class="btn btn-outline-primary">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'signup' %}" class="btn btn-primary">Sign Up</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <div class="hero-content">
+                        <h1 class="hero-title">Connecting Innovation with Investment</h1>
+                        <p class="hero-subtitle">Pioneering Matchmaking for Promising Startups in ASEAN</p>
+                        <p class="hero-description">
+                            Unlock the potential of Southeast Asia's most dynamic startups with our intelligent matchmaking platform. Connecting startups, investors, and corporates for sustainable growth and innovation.
+                        </p>
+                        <div class="hero-cta">
+                            {% if not user.is_authenticated %}
+                                <a href="{% url 'signup' %}" class="btn-hero-primary">Join Now</a>
+                                <a href="#how-it-works" class="btn-hero-secondary">Start Investing →</a>
+                            {% else %}
+                                <a href="{% url 'dashboard' %}" class="btn-hero-primary">Go to Dashboard</a>
+                                <a href="#features" class="btn-hero-secondary">Explore Features</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About the Platform -->
+    <section class="about-section" id="about">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">About the Platform</h2>
+                <p class="section-subtitle">
+                    The Platform supports partnerships that accelerate globally-innovative startups across Southeast Asia.
+                </p>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-6">
+                    <h3 style="color: #2c59a7; font-weight: 700; margin-bottom: 20px;">Intelligent Matchmaking for Impact</h3>
+                    <p style="font-size: 1.1rem; line-height: 1.7; color: #4a5568;">
+                        Our platform connects mission-driven startups with strategic investors and corporates who share their vision for positive impact. Using advanced algorithms and comprehensive screening, we facilitate meaningful partnerships that drive innovation and sustainable growth across ASEAN markets.
+                    </p>
+                </div>
+                <div class="col-lg-6">
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <div class="stat-number primary">500+</div>
+                            <div class="stat-label">Active Startups</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number yellow">200+</div>
+                            <div class="stat-label">Registered Investors</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number primary">$50M+</div>
+                            <div class="stat-label">Funding Facilitated</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number yellow">150+</div>
+                            <div class="stat-label">Successful Matches</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Platform Features -->
+    <section class="features-section" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Platform Features</h2>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon discovery">
+                        <i class="bi bi-search"></i>
+                    </div>
+                    <h3 class="feature-title">Smart Discovery</h3>
+                    <p class="feature-description">
+                        Explore qualified profiles for your ideal investment opportunity or funding partner using intelligent search and filtering tools.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon targeting">
+                        <i class="bi bi-bullseye"></i>
+                    </div>
+                    <h3 class="feature-title">Precision Targeting</h3>
+                    <p class="feature-description">
+                        Advanced filters help investors easily find startups that align with their preferred sectors and investment criteria.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon analytics">
+                        <i class="bi bi-graph-up"></i>
+                    </div>
+                    <h3 class="feature-title">Comprehensive Analytics</h3>
+                    <p class="feature-description">
+                        Data and insights are carefully curated for an optimal investment and partnership experience.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon assessment">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h3 class="feature-title">Impact Assessment</h3>
+                    <p class="feature-description">
+                        Assess environmental, economic, and social impact of investment opportunities through detailed metrics.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon verification">
+                        <i class="bi bi-patch-check"></i>
+                    </div>
+                    <h3 class="feature-title">Verification & Support</h3>
+                    <p class="feature-description">
+                        Comprehensive support through due diligence, verification, and ongoing relationship management.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon support">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <h3 class="feature-title">Accelerated Growth</h3>
+                    <p class="feature-description">
+                        Connect startups, accelerators, funding opportunities and corporates for maximum growth potential.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works-section" id="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">How It Works</h2>
+                <p class="section-subtitle">
+                    Four simple steps to connect with the right partners and accelerate your impact.
+                </p>
+            </div>
+            
+            <div class="steps-container">
+                <div class="steps-row">
+                    <div class="step-item">
+                        <div class="step-number step-1">1</div>
+                        <h3 class="step-title">Join Platform</h3>
+                        <p class="step-description">
+                            Sign up and complete your comprehensive profile with company details and investment criteria.
+                        </p>
+                        <div class="step-connector"></div>
+                    </div>
+                    
+                    <div class="step-item">
+                        <div class="step-number step-2">2</div>
+                        <h3 class="step-title">Smart Matching</h3>
+                        <p class="step-description">
+                            Our intelligent algorithms match startups and investors based on sector, stage, and impact goals.
+                        </p>
+                        <div class="step-connector"></div>
+                    </div>
+                    
+                    <div class="step-item">
+                        <div class="step-number step-3">3</div>
+                        <h3 class="step-title">Connect & Collaborate</h3>
+                        <p class="step-description">
+                            Engage with potential partners through our secure platform and schedule meetings.
+                        </p>
+                        <div class="step-connector"></div>
+                    </div>
+                    
+                    <div class="step-item">
+                        <div class="step-number step-4">4</div>
+                        <h3 class="step-title">Scale Together</h3>
+                        <p class="step-description">
+                            Close deals, foster partnerships, and track the impact of your collaborative growth journey.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="cta-buttons">
+                    {% if not user.is_authenticated %}
+                        <a href="{% url 'signup' %}" class="btn btn-primary">Start as Startup 🚀</a>
+                        <a href="{% url 'signup' %}" class="btn btn-outline-primary">Start as Investor 💰</a>
+                    {% else %}
+                        <a href="{% url 'dashboard' %}" class="btn btn-primary">Explore Dashboard</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Who Can Join -->
+    <section class="who-can-join-section" id="join">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Who Can Join</h2>
+                <p class="section-subtitle">
+                    The platform brings together diverse players in the innovation ecosystem for impactful collaboration.
+                </p>
+            </div>
+            
+            <div class="roles-grid">
+                <div class="role-card startup">
+                    <div class="role-icon-large startup">
+                        <i class="bi bi-rocket"></i>
+                    </div>
+                    <h3 class="role-title">Startups</h3>
+                    <p class="role-description">
+                        Early-stage and growth companies seeking strategic funding and partnerships.
+                    </p>
+                    <ul class="role-features">
+                        <li>Access to pre-qualified investors</li>
+                        <li>Streamlined fundraising process</li>
+                        <li>Exposure to corporate partners</li>
+                        <li>Comprehensive due diligence support</li>
+                        <li>Growth mentorship opportunities</li>
+                    </ul>
+                </div>
+                
+                <div class="role-card investor">
+                    <div class="role-icon-large investor">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+                    <h3 class="role-title">Investors</h3>
+                    <p class="role-description">
+                        VCs, Angel Investors, and Family Offices focused on ASEAN opportunities.
+                    </p>
+                    <ul class="role-features">
+                        <li>Curated high-quality deal flow</li>
+                        <li>Comprehensive startup analytics</li>
+                        <li>Industry and sector filtering</li>
+                        <li>Impact measurement tools</li>
+                        <li>Portfolio management features</li>
+                    </ul>
+                </div>
+                
+                <div class="role-card corporate">
+                    <div class="role-icon-large corporate">
+                        <i class="bi bi-building"></i>
+                    </div>
+                    <h3 class="role-title">Corporates</h3>
+                    <p class="role-description">
+                        Large enterprises seeking innovation partnerships and strategic investments.
+                    </p>
+                    <ul class="role-features">
+                        <li>Innovation partnership opportunities</li>
+                        <li>Corporate venture capital deals</li>
+                        <li>Technology acquisition prospects</li>
+                        <li>Startup collaboration platforms</li>
+                        <li>Strategic alliance development</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Platform Impact -->
+    <section class="impact-section">
+        <div class="container">
+            <div class="impact-content">
+                <div class="section-header">
+                    <h2 class="section-title" style="color: white;">Platform Impact</h2>
+                    <p class="section-subtitle" style="color: rgba(255,255,255,0.9);">
+                        Measurable results in connecting innovation with investment, driving sustainable change across Southeast Asia.
+                    </p>
+                </div>
+                
+                <div class="impact-stats">
+                    <div class="impact-stat">
+                        <div class="impact-number">$50M+</div>
+                        <div class="impact-label">Total Funding</div>
+                    </div>
+                    <div class="impact-stat">
+                        <div class="impact-number">150+</div>
+                        <div class="impact-label">Successful Matches</div>
+                    </div>
+                    <div class="impact-stat">
+                        <div class="impact-number">500+</div>
+                        <div class="impact-label">Active Startups</div>
+                    </div>
+                    <div class="impact-stat">
+                        <div class="impact-number">200+</div>
+                        <div class="impact-label">Investor Network</div>
+                    </div>
+                    <div class="impact-stat">
+                        <div class="impact-number">75%</div>
+                        <div class="impact-label">Success Rate</div>
+                    </div>
+                    <div class="impact-stat">
+                        <div class="impact-number">10M+</div>
+                        <div class="impact-label">Lives Impacted</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ready to Get Started -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Ready to Get Started?</h2>
+                <p class="section-subtitle">
+                    Choose your path and join our platform to start discovering impactful opportunities in Southeast Asia.
+                </p>
+            </div>
+            
+            <div class="cta-grid">
+                <div class="cta-card startup">
+                    <div class="cta-icon startup">
+                        <i class="bi bi-rocket"></i>
+                    </div>
+                    <h3 class="cta-title">For Startups</h3>
+                    <p class="cta-description">
+                        Connect with investors and corporates who understand your vision and can accelerate your growth.
+                    </p>
+                    <ul class="cta-features">
+                        <li>Access to capital networks</li>
+                        <li>Strategic partnership opportunities</li>
+                        <li>Growth mentorship programs</li>
+                        <li>Market expansion support</li>
+                    </ul>
+                    {% if not user.is_authenticated %}
+                        <a href="{% url 'signup' %}" class="btn btn-primary">Start as Startup</a>
+                    {% else %}
+                        <a href="{% url 'dashboard' %}" class="btn btn-primary">Explore Opportunities</a>
+                    {% endif %}
+                </div>
+                
+                <div class="cta-card investor">
+                    <div class="cta-icon investor">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+                    <h3 class="cta-title">For Investors</h3>
+                    <p class="cta-description">
+                        Discover high-quality investment opportunities with comprehensive due diligence and impact metrics.
+                    </p>
+                    <ul class="cta-features">
+                        <li>Curated deal flow</li>
+                        <li>Comprehensive analytics</li>
+                        <li>Impact measurement</li>
+                        <li>Portfolio tracking</li>
+                    </ul>
+                    {% if not user.is_authenticated %}
+                        <a href="{% url 'signup' %}" class="btn btn-primary">Start as Investor</a>
+                    {% else %}
+                        <a href="{% url 'dashboard' %}" class="btn btn-primary">Find Startups</a>
+                    {% endif %}
+                </div>
+                
+                <div class="cta-card corporate">
+                    <div class="cta-icon corporate">
+                        <i class="bi bi-building"></i>
+                    </div>
+                    <h3 class="cta-title">For Corporates</h3>
+                    <p class="cta-description">
+                        Foster innovation partnerships and identify acquisition opportunities that align with your strategic goals.
+                    </p>
+                    <ul class="cta-features">
+                        <li>Innovation partnerships</li>
+                        <li>Strategic investments</li>
+                        <li>Technology acquisition</li>
+                        <li>Corporate venture capital</li>
+                    </ul>
+                    {% if not user.is_authenticated %}
+                        <a href="{% url 'signup' %}" class="btn btn-primary">Join as Corporate</a>
+                    {% else %}
+                        <a href="{% url 'dashboard' %}" class="btn btn-primary">Discover Innovations</a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="text-center mt-5">
+                <h3 style="margin-bottom: 20px; color: #2d3748;">Join the Platform</h3>
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    {% if not user.is_authenticated %}
+                        <a href="{% url 'signup' %}" class="btn btn-primary btn-lg">Create Account 🚀</a>
+                        <a href="{% url 'login' %}" class="btn btn-outline-primary btn-lg">Learn More</a>
+                    {% else %}
+                        <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg">Go to Dashboard</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="homepage-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h5>SEA-MAP</h5>
+                    <p style="color: #cbd5e0; line-height: 1.6;">
+                        Connecting innovation with investment across Southeast Asia. Building sustainable partnerships for a better future.
+                    </p>
+                </div>
+                
+                <div class="footer-section">
+                    <h5>Platform</h5>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#how-it-works">How It Works</a></li>
+                        <li><a href="#join">Who Can Join</a></li>
+                        <li><a href="{% url 'signup' %}">Sign Up</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h5>Resources</h5>
+                    <ul>
+                        <li><a href="#">Success Stories</a></li>
+                        <li><a href="#">Investment Guide</a></li>
+                        <li><a href="#">Startup Resources</a></li>
+                        <li><a href="#">Impact Reports</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h5>Support</h5>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 SEA-MAP. All rights reserved. | Building bridges between innovation and investment.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Smooth Scrolling -->
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add navbar background on scroll
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('.homepage-header');
+            if (window.scrollY > 50) {
+                header.style.background = 'rgba(255, 255, 255, 0.98)';
+                header.style.backdropFilter = 'blur(10px)';
+            } else {
+                header.style.background = 'white';
+                header.style.backdropFilter = 'none';
+            }
+        });
+
+        // Animate numbers on scroll
+        const observerOptions = {
+            threshold: 0.5,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe stat numbers and feature cards
+        document.querySelectorAll('.stat-item, .feature-card, .role-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

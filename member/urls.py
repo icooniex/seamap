@@ -3,6 +3,9 @@ from . import views
 from .views import OnboardingRoleSelectionView
 
 urlpatterns = [
+    # Homepage
+    path('', views.homepage, name='homepage'),
+    
     # Authentication
     path('login/', views.CustomLoginView.as_view(), name='login'),
     path('logout/', views.custom_logout, name='logout'),
