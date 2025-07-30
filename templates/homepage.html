@@ -514,46 +514,52 @@
     <footer class="homepage-footer">
         <div class="container">
             <div class="footer-content">
-                <div class="footer-section">
-                    <h5>SEA-MAP</h5>
-                    <p style="color: #cbd5e0; line-height: 1.6;">
-                        Connecting innovation with investment across Southeast Asia. Building sustainable partnerships for a better future.
-                    </p>
+                <!-- Left Section - Logo and Description -->
+                <div class="footer-section footer-brand">
+                    <div class="footer-logo">
+                        <img src="{% static 'images/logo.webp' %}" alt="SEA-MaP Logo" class="footer-logo-img">
+                        <div class="footer-brand-text">
+                            <h3>SEA-MaP</h3>
+                            <p class="footer-tagline">SOUTHEAST ASIA REGIONAL PROGRAM<br>ON COMBATING MARINE PLASTICS</p>
+                        </div>
+                    </div>
                 </div>
                 
-                <div class="footer-section">
-                    <h5>Platform</h5>
-                    <ul>
-                        <li><a href="#features">Features</a></li>
-                        <li><a href="#how-it-works">How It Works</a></li>
-                        <li><a href="#join">Who Can Join</a></li>
-                        <li><a href="{% url 'signup' %}">Sign Up</a></li>
-                    </ul>
+                <!-- Contact Section -->
+                <div class="footer-section footer-contact">
+                    <h5>CONTACT</h5>
+                    <div class="contact-info">
+                        <p>Project Management Unit (PMU)</p>
+                        <p>1st Floor, Heritage Building<br>
+                        The ASEAN Secretariat<br>
+                        70A Jalan Sisingamangaraja<br>
+                        Jakarta 12110, Indonesia</p>
+                        <p>E: seamap.feedback@asean.org</p>
+                    </div>
                 </div>
                 
-                <div class="footer-section">
-                    <h5>Resources</h5>
-                    <ul>
-                        <li><a href="#">Success Stories</a></li>
-                        <li><a href="#">Investment Guide</a></li>
-                        <li><a href="#">Startup Resources</a></li>
-                        <li><a href="#">Impact Reports</a></li>
-                    </ul>
+                <!-- Follow Us Section -->
+                <div class="footer-section footer-social">
+                    <h5>FOLLOW US</h5>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" class="social-link"><i class="bi bi-twitter-x"></i></a>
+                        <a href="#" class="social-link"><i class="bi bi-facebook"></i></a>
+                    </div>
                 </div>
                 
-                <div class="footer-section">
-                    <h5>Support</h5>
-                    <ul>
-                        <li><a href="#">Help Center</a></li>
-                        <li><a href="#">Contact Us</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Terms of Service</a></li>
-                    </ul>
+                <!-- Partners Section -->
+                <div class="footer-section footer-partners">
+                    <p class="partners-text">An ASEAN project supported by the World Bank</p>
+                    <div class="partner-logos">
+                        <div class="partner-logo">
+                            <img src="{% static 'images/world-bank-logo.png' %}" alt="World Bank" class="wb-logo">
+                        </div>
+                        <div class="partner-logo">
+                            <img src="{% static 'images/asean-logo.png' %}" alt="ASEAN" class="asean-logo">
+                        </div>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <p>&copy; 2025 SEA-MAP. All rights reserved. | Building bridges between innovation and investment.</p>
             </div>
         </div>
     </footer>
