@@ -20,227 +20,265 @@
         </div>
     </div>
 
-    <!-- Settings Grid -->
-    <div class="row g-4">
-        <!-- Personal Profile Card -->
-        <div class="col-lg-6">
-            <div class="settings-card h-100">
-                <div class="settings-card-header">
-                    <div class="settings-card-icon personal-icon">
-                        <i class="bi bi-person-circle"></i>
-                    </div>
-                    <div>
-                        <h5 class="settings-card-title">Personal Profile</h5>
-                        <p class="settings-card-subtitle">Update your personal information and contact details</p>
-                    </div>
-                </div>
-                <div class="settings-card-body">
-                    <div class="current-info">
-                        <div class="info-item">
-                            <label>Full Name</label>
-                            <span>{{ user.get_full_name|default:"Not provided" }}</span>
+    <!-- Priority Settings Section -->
+    <div class="priority-section mb-5">
+        <div class="section-header mb-3">
+            <h2 class="h5 text-muted mb-0">
+                <i class="bi bi-star-fill text-warning me-2"></i>
+                Essential Account Features
+            </h2>
+        </div>
+        
+        <div class="priority-container">
+            <!-- Personal Profile Card -->
+            <div class="setting-item priority-item">
+                <div class="setting-content">
+                    <div class="setting-left">
+                        <div class="setting-icon-large personal-bg">
+                            <i class="bi bi-person-circle"></i>
                         </div>
-                        <div class="info-item">
-                            <label>Email</label>
-                            <span>{{ user.email }}</span>
-                        </div>
-                        <div class="info-item">
-                            <label>Phone</label>
-                            <span>{{ user.member.phone_number|default:"Not provided" }}</span>
+                        <div class="setting-details-expanded">
+                            <div class="d-flex align-items-center mb-2">
+                                <h4 class="mb-0">Personal Profile</h4>
+                            </div>
+                            <p class="expanded-description">Update your personal information, contact details, professional background, and profile picture. Keep your profile current to maximize networking opportunities.</p>
+                            <div class="setting-meta-expanded">
+                                <div class="meta-item">
+                                    <i class="bi bi-person text-primary"></i>
+                                    <span>{{ user.get_full_name|default:"Name not provided" }}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="bi bi-envelope text-success"></i>
+                                    <span>{{ user.email }}</span>
+                                </div>
+                                {% if user.member.job_position %}
+                                <div class="meta-item">
+                                    <i class="bi bi-briefcase text-info"></i>
+                                    <span>{{ user.member.job_position }}</span>
+                                </div>
+                                {% endif %}
+                                <div class="meta-item">
+                                    <i class="bi bi-calendar text-warning"></i>
+                                    <span>Last updated {{ user.member.updated_at|date:"M d, Y"|default:"Never" }}</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="settings-card-footer">
-                    <a href="{% url 'personal_profile_edit' %}" class="btn btn-outline-primary">
-                        <i class="bi bi-pencil me-2"></i>Edit Personal Profile
-                    </a>
+                    <div class="setting-action-expanded">
+                        <a href="{% url 'personal_profile_edit' %}" class="setting-btn-primary">
+                            <i class="bi bi-pencil"></i>
+                            Edit Profile
+                        </a>
+                        <div class="action-meta">Complete your profile</div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Company Profile Card -->
-        <div class="col-lg-6">
-            <div class="settings-card h-100">
-                <div class="settings-card-header">
-                    <div class="settings-card-icon company-icon">
-                        <i class="bi bi-building"></i>
+            <!-- Company Profile Card -->
+            <div class="setting-item priority-item">
+                <div class="setting-content">
+                    <div class="setting-left">
+                        <div class="setting-icon-large company-bg">
+                            <i class="bi bi-building"></i>
+                        </div>
+                        <div class="setting-details-expanded">
+                            <div class="d-flex align-items-center mb-2">
+                                <h4 class="mb-0">Company Profile</h4>
+                            </div>
+                            <p class="expanded-description">Manage your organization information, company details, funding information, and business focus areas. Essential for investment matching and partnerships.</p>
+                            <div class="setting-meta-expanded">
+                                {% if user.member.companies.exists %}
+                                    {% for company in user.member.companies.all %}
+                                    <div class="meta-item">
+                                        <i class="bi bi-building text-primary"></i>
+                                        <span>{{ company.company_name }}</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <i class="bi bi-tag text-success"></i>
+                                        <span>{{ company.get_company_type_display|default:"Company" }}</span>
+                                    </div>
+                                    {% if company.organization_type %}
+                                    <div class="meta-item">
+                                        <i class="bi bi-diagram-3 text-info"></i>
+                                        <span>{{ company.get_organization_type_display }}</span>
+                                    </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="meta-item">
+                                        <i class="bi bi-exclamation-triangle text-warning"></i>
+                                        <span class="text-warning">No company profile created yet</span>
+                                    </div>
+                                {% endif %}
+                                <div class="meta-item">
+                                    <i class="bi bi-calendar text-muted"></i>
+                                    <span>Last updated recently</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <h5 class="settings-card-title">Company Profile</h5>
-                        <p class="settings-card-subtitle">Manage your organization information and details</p>
+                    <div class="setting-action-expanded">
+                        <a href="{% url 'company_profile_edit' %}" class="setting-btn-primary">
+                            <i class="bi bi-building"></i>
+                            Manage Company
+                        </a>
+                        <div class="action-meta">Setup your business</div>
                     </div>
-                </div>
-                <div class="settings-card-body">
-                    <div class="current-info">
-                        {% if user.member.companies.exists %}
-                            {% for company in user.member.companies.all %}
-                            <div class="info-item">
-                                <label>Company Name</label>
-                                <span>{{ company.company_name }}</span>
-                            </div>
-                            <div class="info-item">
-                                <label>Industry</label>
-                                <span>{{ company.industry_expertise.all|join:", "|default:"Not specified" }}</span>
-                            </div>
-                            <div class="info-item">
-                                <label>Location</label>
-                                <span>{{ company.get_primary_location_display|default:"Not specified" }}</span>
-                            </div>
-                            {% endfor %}
-                        {% else %}
-                            <div class="info-item">
-                                <span class="text-muted">No company profile created yet</span>
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="settings-card-footer">
-                    <a href="{% url 'company_profile_edit' %}" class="btn btn-outline-primary">
-                        <i class="bi bi-building me-2"></i>Edit Company Profile
-                    </a>
                 </div>
             </div>
-        </div>
 
-        <!-- Document Management Card -->
-        <div class="col-lg-6">
-            <div class="settings-card h-100">
-                <div class="settings-card-header">
-                    <div class="settings-card-icon document-icon">
-                        <i class="bi bi-folder2"></i>
-                    </div>
-                    <div>
-                        <h5 class="settings-card-title">Document Management</h5>
-                        <p class="settings-card-subtitle">Upload and manage your important business documents</p>
-                    </div>
-                </div>
-                <div class="settings-card-body">
-                    <div class="current-info">
-                        <div class="info-item">
-                            <label>Corporate Documents</label>
-                            <span>3 documents</span>
+            <!-- Document Management Card -->
+            <div class="setting-item priority-item">
+                <div class="setting-content">
+                    <div class="setting-left">
+                        <div class="setting-icon-large document-bg">
+                            <i class="bi bi-folder2"></i>
                         </div>
-                        <div class="info-item">
-                            <label>Financial Documents</label>
-                            <span>2 documents</span>
-                        </div>
-                        <div class="info-item">
-                            <label>Compliance Documents</label>
-                            <span>1 document</span>
+                        <div class="setting-details-expanded">
+                            <div class="d-flex align-items-center mb-2">
+                                <h4 class="mb-0">Document Management</h4>
+                            </div>
+                            <p class="expanded-description">Upload and organize important business documents including pitch decks, financial statements, legal documents, and certificates. Secure cloud storage with version control.</p>
+                            <div class="setting-meta-expanded">
+                                <div class="meta-item">
+                                    <i class="bi bi-files text-primary"></i>
+                                    <span class="badge-mini bg-primary">6 documents uploaded</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="bi bi-hdd text-info"></i>
+                                    <span>12.5 MB of 100 MB used</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="bi bi-shield-check text-success"></i>
+                                    <span>4 documents verified</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="bi bi-clock text-warning"></i>
+                                    <span>2 documents pending review</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="settings-card-footer">
-                    <a href="{% url 'document_management' %}" class="btn btn-outline-primary">
-                        <i class="bi bi-folder2 me-2"></i>Manage Documents
-                    </a>
+                    <div class="setting-action-expanded">
+                        <a href="{% url 'document_management' %}" class="setting-btn-primary">
+                            <i class="bi bi-folder2"></i>
+                            Manage Files
+                        </a>
+                        <div class="action-meta">Upload documents</div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Verification Center Card -->
-        <div class="col-lg-6">
-            <div class="settings-card h-100">
-                <div class="settings-card-header">
-                    <div class="settings-card-icon verification-icon">
-                        <i class="bi bi-shield-check"></i>
-                    </div>
-                    <div>
-                        <h5 class="settings-card-title">Verification Center</h5>
-                        <p class="settings-card-subtitle">Track your account and document verification status</p>
-                    </div>
-                </div>
-                <div class="settings-card-body">
-                    <div class="current-info">
-                        <div class="info-item">
-                            <label>Account Verification</label>
-                            <span class="badge bg-warning">75% Complete</span>
+            <!-- Verification Center Card -->
+            <div class="setting-item priority-item">
+                <div class="setting-content">
+                    <div class="setting-left">
+                        <div class="setting-icon-large verification-bg">
+                            <i class="bi bi-shield-check"></i>
                         </div>
-                        <div class="info-item">
-                            <label>Document Verification</label>
-                            <span class="badge bg-success">5 Verified</span>
-                        </div>
-                        <div class="info-item">
-                            <label>Overall Status</label>
-                            <span class="badge bg-info">In Progress</span>
+                        <div class="setting-details-expanded">
+                            <div class="d-flex align-items-center mb-2">
+                                <h4 class="mb-0">Verification Center</h4>
+                            </div>
+                            <p class="expanded-description">Track your account and document verification status. Complete verification to gain full access to premium features and build trust with potential partners.</p>
+                            <div class="setting-meta-expanded">
+                                <div class="meta-item">
+                                    <i class="bi bi-check-circle text-success"></i>
+                                    <span class="badge-mini bg-success">Profile Verified</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="bi bi-check-circle text-success"></i>
+                                    <span class="badge-mini bg-success">Email Verified</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="bi bi-clock text-warning"></i>
+                                    <span class="badge-mini bg-warning">Documents Pending</span>
+                                </div>
+                                <div class="meta-item progress-item">
+                                    <i class="bi bi-graph-up text-info"></i>
+                                    <div class="progress-container">
+                                        <div class="progress-info">
+                                            <span class="progress-text"><strong>75% Complete</strong></span>
+                                            <span class="progress-steps">3 steps remaining</span>
+                                        </div>
+                                        <div class="progress-bar-custom">
+                                            <div class="progress-bar-fill" style="width: 75%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="settings-card-footer">
-                    <a href="{% url 'verification_center' %}" class="btn btn-outline-primary">
-                        <i class="bi bi-shield-check me-2"></i>View Verification Status
-                    </a>
+                    <div class="setting-action-expanded">
+                        <a href="{% url 'verification_center' %}" class="setting-btn-primary">
+                            <i class="bi bi-shield-check"></i>
+                            View Status
+                        </a>
+                        <div class="action-meta">Complete verification</div>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Secondary Settings Section -->
+    <div class="secondary-section">
+        <div class="section-header mb-3">
+            <h2 class="h5 text-muted mb-0">
+                <i class="bi bi-gear text-secondary me-2"></i>
+                Additional Settings
+            </h2>
+        </div>
+        
+        <div class="settings-container">
 
         <!-- Security & Privacy Card -->
-        <div class="col-lg-6">
-            <div class="settings-card h-100">
-                <div class="settings-card-header">
-                    <div class="settings-card-icon security-icon">
-                        <i class="bi bi-shield-check"></i>
+        <div class="setting-item">
+            <div class="setting-content">
+                <div class="setting-left">
+                    <div class="setting-icon security-bg">
+                        <i class="bi bi-shield-lock"></i>
                     </div>
-                    <div>
-                        <h5 class="settings-card-title">Security & Privacy</h5>
-                        <p class="settings-card-subtitle">Manage your password and privacy settings</p>
-                    </div>
-                </div>
-                <div class="settings-card-body">
-                    <div class="current-info">
-                        <div class="info-item">
-                            <label>Password</label>
-                            <span>••••••••••••</span>
-                        </div>
-                        <div class="info-item">
-                            <label>Two-Factor Authentication</label>
-                            <span class="badge bg-warning">Not Enabled</span>
-                        </div>
-                        <div class="info-item">
-                            <label>Last Login</label>
-                            <span>{{ user.last_login|date:"M d, Y H:i" }}</span>
+                    <div class="setting-details">
+                        <h4>Security & Privacy</h4>
+                        <p>Manage your password and privacy settings</p>
+                        <div class="setting-meta">
+                            <span class="badge-mini bg-success">Secure</span>
+                            <span>•</span>
+                            <span>Last login {{ user.last_login|date:"M d" }}</span>
                         </div>
                     </div>
                 </div>
-                <div class="settings-card-footer">
-                    <button class="btn btn-outline-primary" onclick="alert('Coming Soon!')">
-                        <i class="bi bi-key me-2"></i>Security Settings
+                <div class="setting-action">
+                    <button class="setting-btn" onclick="alert('Coming Soon!')">
+                        <i class="bi bi-key"></i>
+                        Settings
                     </button>
                 </div>
             </div>
         </div>
 
         <!-- Notifications Card -->
-        <div class="col-lg-6">
-            <div class="settings-card h-100">
-                <div class="settings-card-header">
-                    <div class="settings-card-icon notification-icon">
+        <div class="setting-item">
+            <div class="setting-content">
+                <div class="setting-left">
+                    <div class="setting-icon notification-bg">
                         <i class="bi bi-bell"></i>
                     </div>
-                    <div>
-                        <h5 class="settings-card-title">Notifications</h5>
-                        <p class="settings-card-subtitle">Control your email and push notification preferences</p>
-                    </div>
-                </div>
-                <div class="settings-card-body">
-                    <div class="current-info">
-                        <div class="info-item">
-                            <label>Email Notifications</label>
-                            <span class="badge bg-success">Enabled</span>
-                        </div>
-                        <div class="info-item">
-                            <label>Match Alerts</label>
-                            <span class="badge bg-success">Enabled</span>
-                        </div>
-                        <div class="info-item">
-                            <label>Weekly Digest</label>
-                            <span class="badge bg-secondary">Disabled</span>
+                    <div class="setting-details">
+                        <h4>Notifications</h4>
+                        <p>Control your email and push notification preferences</p>
+                        <div class="setting-meta">
+                            <span class="badge-mini bg-success">Email On</span>
+                            <span>•</span>
+                            <span class="badge-mini bg-info">Push On</span>
                         </div>
                     </div>
                 </div>
-                <div class="settings-card-footer">
-                    <button class="btn btn-outline-primary" onclick="alert('Coming Soon!')">
-                        <i class="bi bi-bell me-2"></i>Notification Settings
+                <div class="setting-action">
+                    <button class="setting-btn" onclick="alert('Coming Soon!')">
+                        <i class="bi bi-bell"></i>
+                        Configure
                     </button>
                 </div>
             </div>
@@ -251,7 +289,7 @@
 <style>
 /* Account Settings Styling */
 .account-settings-header {
-    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    background: linear-gradient(135deg, #2c59a7 0%, #3b6cc1 100%);
     color: white;
     padding: 2.5rem;
     border-radius: 20px;
@@ -301,6 +339,12 @@
     50% { transform: rotate(15deg); }
 }
 
+@keyframes progressShine {
+    0% { transform: translateX(-100%); }
+    50% { transform: translateX(100%); }
+    100% { transform: translateX(100%); }
+}
+
 .account-settings-header h1 {
     color: white;
     font-weight: 700;
@@ -310,7 +354,7 @@
 }
 
 .header-subtitle {
-    color: rgba(255, 255, 255, 0.6) !important;
+    color: rgba(255, 255, 255, 0.8) !important;
     font-size: 1.1rem;
     font-weight: 400;
     line-height: 1.4;
@@ -318,135 +362,374 @@
     z-index: 2;
 }
 
-/* Settings Cards */
-.settings-card {
+/* Section Headers */
+.section-header {
+    border-bottom: 2px solid #f8f9fa;
+    padding-bottom: 0.75rem;
+}
+
+.section-header h2 {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* Priority Section Styling */
+.priority-section {
+    margin-bottom: 3rem;
+}
+
+.priority-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.priority-item {
+    background: white;
+    border-radius: 20px;
+    border: 2px solid #e9ecef;
+    transition: all 0.4s ease;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.priority-item:hover {
+    border-color: #2c59a7;
+    box-shadow: 0 12px 40px rgba(44, 89, 167, 0.15);
+    transform: translateY(-3px);
+}
+
+.priority-item .setting-content {
+    padding: 2rem;
+    gap: 1.5rem;
+}
+
+.setting-icon-large {
+    width: 70px;
+    height: 70px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    color: white;
+    flex-shrink: 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.setting-details-expanded h4 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0;
+}
+
+.priority-badge {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+    color: white;
+    font-size: 0.7rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(255, 154, 158, 0.3);
+}
+
+.expanded-description {
+    font-size: 0.95rem;
+    color: #6c757d;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.setting-meta-expanded {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.meta-item i {
+    width: 16px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+/* Progress Bar Styling */
+.progress-item {
+    align-items: flex-start !important;
+}
+
+.progress-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+}
+
+.progress-text {
+    color: #495057;
+    font-weight: 600;
+}
+
+.progress-steps {
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.progress-bar-custom {
+    width: 100%;
+    height: 10px;
+    background-color: #e9ecef;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4facfe 0%, #00c9ff 100%);
+    border-radius: 10px;
+    transition: width 0.3s ease;
+    position: relative;
+}
+
+.progress-bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+    animation: progressShine 2s ease-in-out infinite;
+}
+
+.setting-action-expanded {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.setting-btn-primary {
+    background: #2c59a7;
+    border: none;
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 14px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(44, 89, 167, 0.25);
+    min-width: 140px;
+    justify-content: center;
+}
+
+.setting-btn-primary:hover {
+    background: #3b6cc1;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(44, 89, 167, 0.35);
+    text-decoration: none;
+    color: white;
+}
+
+.action-meta {
+    font-size: 0.8rem;
+    color: #6c757d;
+    text-align: right;
+    font-style: italic;
+}
+
+/* Secondary Settings Container */
+.secondary-section .settings-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.setting-item {
     background: white;
     border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    border: 1px solid rgba(44, 89, 167, 0.1);
+    border: 1px solid #e9ecef;
     transition: all 0.3s ease;
     overflow: hidden;
 }
 
-.settings-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 40px rgba(44, 89, 167, 0.15);
+.setting-item:hover {
+    border-color: #2c59a7;
+    box-shadow: 0 8px 25px rgba(44, 89, 167, 0.1);
+    transform: translateY(-2px);
 }
 
-.settings-card-header {
-    padding: 2rem 2rem 1rem;
+.setting-content {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
+    padding: 1.5rem;
     gap: 1rem;
 }
 
-.settings-card-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 15px;
+.setting-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+}
+
+.setting-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     color: white;
     flex-shrink: 0;
 }
 
-.personal-icon {
+.personal-bg {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-.company-icon {
+.company-bg {
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
 }
 
-.document-icon {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.verification-icon {
+.document-bg {
     background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
 }
 
-.security-icon {
-    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-}
-
-.notification-icon {
+.verification-bg {
     background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
 }
 
-.settings-card-title {
-    font-size: 1.25rem;
-    font-weight: 700;
+.security-bg {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+.notification-bg {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+}
+
+.setting-details h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
     color: #2c3e50;
+    margin-bottom: 0.25rem;
+}
+
+.setting-details p {
+    font-size: 0.9rem;
+    color: #6c757d;
     margin-bottom: 0.5rem;
 }
 
-.settings-card-subtitle {
-    color: #6c757d;
-    margin-bottom: 0;
-    font-size: 0.9rem;
-    line-height: 1.4;
-}
-
-.settings-card-body {
-    padding: 0 2rem 1rem;
-}
-
-.current-info {
-    background: #f8f9fa;
-    border-radius: 12px;
-    padding: 1.5rem;
-}
-
-.info-item {
+.setting-meta {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
-}
-
-.info-item:last-child {
-    margin-bottom: 0;
-}
-
-.info-item label {
-    font-weight: 600;
-    color: #495057;
-    margin-bottom: 0;
-}
-
-.info-item span {
+    gap: 0.5rem;
+    font-size: 0.85rem;
     color: #6c757d;
-    font-size: 0.9rem;
 }
 
-.settings-card-footer {
-    padding: 1rem 2rem 2rem;
+.setting-meta span:nth-child(even) {
+    color: #dee2e6;
 }
 
-.settings-card-footer .btn {
-    width: 100%;
+.badge-mini {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    font-weight: 500;
+    color: white !important;
+}
+
+.setting-action {
+    flex-shrink: 0;
+}
+
+.setting-btn {
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    color: #495057;
+    padding: 0.75rem 1.25rem;
     border-radius: 12px;
-    font-weight: 600;
-    padding: 0.75rem 1.5rem;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     transition: all 0.3s ease;
+    cursor: pointer;
 }
 
-.settings-card-footer .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(44, 89, 167, 0.2);
+.setting-btn:hover {
+    background: #2c59a7;
+    border-color: #2c59a7;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(44, 89, 167, 0.3);
+    text-decoration: none;
 }
 
-/* Badge Styling */
-.badge {
-    font-size: 0.75rem;
-    padding: 0.35rem 0.65rem;
-    border-radius: 8px;
+.setting-btn i {
+    font-size: 0.9rem;
 }
 
 /* Responsive Design */
+@media (max-width: 992px) {
+    .priority-item .setting-content {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1.5rem;
+    }
+    
+    .setting-left {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .setting-details-expanded {
+        text-align: center;
+    }
+    
+    .setting-meta-expanded {
+        align-items: center;
+    }
+    
+    .setting-action-expanded {
+        align-items: center;
+    }
+    
+    .action-meta {
+        text-align: center;
+    }
+}
+
 @media (max-width: 768px) {
     .account-settings-header {
         padding: 1.5rem;
@@ -467,23 +750,81 @@
         font-size: 2rem;
     }
     
-    .settings-card-header {
-        padding: 1.5rem 1.5rem 1rem;
+    .priority-item .setting-content {
+        padding: 1.5rem;
     }
     
-    .settings-card-body {
-        padding: 0 1.5rem 1rem;
+    .setting-icon-large {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
     }
     
-    .settings-card-footer {
-        padding: 1rem 1.5rem 1.5rem;
-    }
-    
-    .info-item {
+    .setting-content {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 0.25rem;
+        align-items: stretch;
+        gap: 1rem;
+        padding: 1.25rem;
+    }
+    
+    .setting-left {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.75rem;
+    }
+    
+    .setting-details {
+        text-align: center;
+    }
+    
+    .setting-meta {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .setting-btn,
+    .setting-btn-primary {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .priority-item .setting-content {
+        padding: 1.25rem;
+    }
+    
+    .setting-content {
+        padding: 1rem;
+    }
+    
+    .setting-icon-large {
+        width: 50px;
+        height: 50px;
+        font-size: 1.25rem;
+    }
+    
+    .setting-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .setting-details h4,
+    .setting-details-expanded h4 {
+        font-size: 1rem;
+    }
+    
+    .setting-details p,
+    .expanded-description {
+        font-size: 0.85rem;
+    }
+    
+    .setting-meta,
+    .meta-item {
+        font-size: 0.8rem;
     }
 }
 </style>
+
 {% endblock %}
