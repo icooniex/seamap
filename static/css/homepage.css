@@ -527,7 +527,7 @@ body {
 .steps-row {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     gap: 20px;
     margin-bottom: 60px;
 }
@@ -536,6 +536,9 @@ body {
     flex: 1;
     text-align: center;
     position: relative;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
 }
 
 .step-number {
@@ -557,20 +560,6 @@ body {
 .step-3 { background: linear-gradient(135deg, var(--yellow-accent) 0%, #fbbf24 100%); color: var(--text-dark) !important; box-shadow: 0 8px 25px rgba(235, 202, 56, 0.4); }
 .step-4 { background: linear-gradient(135deg, var(--red-accent) 0%, #ef4444 100%); box-shadow: 0 8px 25px rgba(199, 56, 52, 0.4); }
 
-.step-connector {
-    position: absolute;
-    top: 40px;
-    left: calc(100% + 10px);
-    width: calc(100% - 100px);
-    height: 3px;
-    background: linear-gradient(90deg, rgba(44, 89, 167, 0.2) 0%, rgba(44, 89, 167, 0.5) 100%);
-    z-index: -1;
-}
-
-.step-item:last-child .step-connector {
-    display: none;
-}
-
 .step-title {
     font-size: 1.3rem;
     font-weight: 700;
@@ -581,6 +570,10 @@ body {
 .step-description {
     color: var(--text-light);
     font-size: 1rem;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    min-height: 60px;
 }
 
 .cta-buttons {
