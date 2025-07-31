@@ -19,7 +19,7 @@ urlpatterns = [
     path('onboarding/corporate/', views.onboarding_corporate, name='onboarding_corporate'),
     
     # Dashboard
-    path('dashboard/', views.dashboard, name='dashboard'),
+    path('dashboard/startups/', views.startup_matchmaking, name='dashboard'),
     
     # Account Settings
     path('account-settings/', views.account_settings, name='account_settings'),
