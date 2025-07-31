@@ -8,6 +8,25 @@
 <style>
   body { background: #f7fafc; }
   .content { padding: 0; }
+  .main-content { padding: 0 !important; }
+  
+  /* Add nice internal padding to sections */
+  .hero-section,
+  .platform-approach-section,
+  section.py-5 {
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+  }
+  
+  /* Responsive padding */
+  @media (max-width: 768px) {
+    .hero-section,
+    .platform-approach-section,
+    section.py-5 {
+      padding-left: 1rem !important;
+      padding-right: 1rem !important;
+    }
+  }
 </style>
 
 <!-- Hero Section -->
