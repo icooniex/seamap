@@ -196,7 +196,26 @@ body {
 
 .platform-approach-section {
     padding: 100px 0;
-    background: var(--background-light);
+    background: #DEF1EF;
+    position: relative;
+    overflow: hidden;
+}
+
+.platform-approach-section::after {
+    content: '';
+    position: absolute;
+    bottom: -500px;
+    right: -500px;
+    width: 1000px;
+    height: 1000px;
+    border: 200px solid rgba(44, 89, 167, 0.06);
+    border-radius: 50%;
+    z-index: 0;
+}
+
+.platform-approach-section .container {
+    position: relative;
+    z-index: 1;
 }
 
 .section-title {
