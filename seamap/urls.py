@@ -31,26 +31,15 @@ urlpatterns = [
     path('dashboard/investors/', investor_matchmaking, name='investor_matchmaking'),
     path('dashboard/corporates/', corporate_matchmaking, name='corporate_matchmaking'),
 
-    # Legacy URLs (keeping for compatibility)
-    path('signup/', signup, name='signup'),
-    path('dash/', dashboard2, name='dash'),
-    # path('dashboard/startup', dashboard, name='dashboard_startup'),
+
     path('dashboard/problem-statement/', problem, name='problem'),
     path('dashboard/challenge/', challenge, name='challenge'),
     path('dashboard/accelerator-landing/', accelerator_landing, name='accelerator_landing'),
-    path('dashboard/startup-detail', startup_detail, name='startup_detail'),
-    path('dashboard/investor-detail', investor_detail, name='investor_detail'),
+    
     path('startup/profile/<int:startup_id>/', startup_profile, name='startup_profile'),
     path('investor/profile/<int:investor_id>/', investor_profile, name='investor_profile'),
     path('corporate/profile/<int:corporate_id>/', corporate_profile, name='corporate_profile'),
 
-    # path('onboarding/startup/1', onboarding_startup_step1, name='onboarding_startup_step1'),
-    # path('onboarding/startup/2', onboarding_startup_step2, name='onboarding_startup_step2'),
-    # path('onboarding/startup/3', onboarding_startup_step3, name='onboarding_startup_step3'),
-    # path('onboarding/startup/4', onboarding_startup_step4, name='onboarding_startup_step4'),
-    # path('onboarding/startup/5', onboarding_startup_step5, name='onboarding_startup_step5'),
-    # path('onboarding/startup/6', onboarding_startup_step6, name='onboarding_startup_step6'),
-    # path('onboarding/startup/single', onboarding_startup_single_page, name='onboarding_startup_single_page'),
 ]
 
 # Serve media files during development

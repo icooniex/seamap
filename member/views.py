@@ -15,6 +15,12 @@ import json
 import random
 from django.views import View
 
+import os
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+from django.conf import settings
+from django.views import View
+
 
 def homepage(request):
     """Homepage view with platform overview"""
@@ -842,11 +848,9 @@ def corporate_matchmaking(request):
     
     return render(request, 'matchmaking/corporate_matchmaking.html', context)
 
-def dashboard(request):
-    return render(request, 'dashboard.html')
 
-def dashboard2(request):
-    return render(request, 'dash2.html')
+
+
 
 def problem(request):
     return render(request, 'resources/problem.html')
@@ -856,12 +860,6 @@ def challenge(request):
 
 def accelerator_landing(request):
     return render(request, 'accelerator_landing.html')
-
-def startup_detail(request):
-    return render(request, 'member/startup_detail.html')
-
-def investor_detail(request):
-    return render(request, 'member/investor_detail.html')
 
 
 def startup_profile(request, startup_id):
@@ -1640,51 +1638,8 @@ def onboarding_role_selection(request):
     return render(request, 'onboarding/index.html')
 
 
-def onboarding_startup_step1(request):
-    """Handle startup onboarding step 1 - company information"""
-    if request.method == 'POST':
-        # Get form data
-        company_data = {
-            'company_name': request.POST.get('company_name'),
-            'website': request.POST.get('website'),
-            'founded_year': request.POST.get('founded_year'),
-            'team_size': request.POST.get('team_size'),
-            'primary_location': request.POST.get('primary_location'),
-            'company_description': request.POST.get('company_description'),
-        }
-        
-        # Store in session
-        request.session['startup_company_data'] = company_data
-        
-        # Redirect to next step
-        return redirect('onboarding_startup_step2')
-    
-    return render(request, 'onboarding/startup_step1.html')
-
-def onboarding_startup_step2(request):
-    """Handle startup onboarding step 2 - innovation information"""
-    if request.method == 'POST':
-        # Get form data
-        innovation_data = {
-            'innovation_type': request.POST.getlist('innovation_type'),
-            'current_stage': request.POST.get('current_stage'),
-            'funding_needed': request.POST.get('funding_needed'),
-        }
-        
-        # Store in session
-        request.session['startup_innovation_data'] = innovation_data
-        
-        # Redirect to next step
-        return redirect('onboarding_startup_step3')
-    
-    return render(request, 'onboarding/startup_step2.html')
 
 
-import os
-from django.core.files.storage import default_storage
-from django.core.files.base import ContentFile
-from django.conf import settings
-from django.views import View
 
 def onboarding_startup_step3(request):
     """Handle startup onboarding step 3 - file uploads"""
@@ -1733,15 +1688,7 @@ def onboarding_startup_step3(request):
     
     return render(request, 'onboarding/startup_step3.html')
 
-def onboarding_startup_step4(request):
-    """Handle startup onboarding step 4 - final step"""
-    
-    return render(request, 'onboarding/startup_step4.html')
 
-def onboarding_startup_step5(request):
-    return render(request, 'onboarding/startup_step5.html')
-def onboarding_startup_step6(request):
-    return render(request, 'onboarding/startup_step6.html')
 
 def onboarding_startup_single_page(request):
     """Handle single-page startup onboarding flow with all 3 steps"""
