@@ -13,6 +13,66 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/homepage.css' %}">
     
+    <style>
+        /* Footer Legal Links Styles */
+        .footer-legal {
+            border-top: 1px solid #e2e8f0;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .legal-links {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .legal-link {
+            color: #64748b;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+        
+        .legal-link:hover {
+            color: #2c59a7;
+            text-decoration: underline;
+        }
+        
+        .legal-separator {
+            color: #cbd5e1;
+            margin: 0 0.25rem;
+        }
+        
+        .copyright {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+        
+        .copyright p {
+            margin: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .footer-legal {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.5rem;
+            }
+            
+            .legal-links {
+                justify-content: center;
+            }
+        }
+    </style>
+    
     <meta name="description" content="SEA-MaP connects innovative startups with strategic investors and corporates across Southeast Asia. Discover opportunities, foster partnerships, and drive sustainable growth.">
 </head>
 <body>
@@ -558,6 +618,20 @@ regional policies on plastic circularity.
                             <img src="{% static 'images/asean-logo.png' %}" alt="ASEAN" class="asean-logo">
                         </div>
                     </div>
+                </div>
+            </div>
+            
+            <!-- Legal Links Section -->
+            <div class="footer-legal">
+                <div class="legal-links">
+                    <a href="{% url 'disclaimer' %}" class="legal-link">Disclaimer</a>
+                    <span class="legal-separator">|</span>
+                    <a href="{% url 'privacy_policy' %}" class="legal-link">Privacy Policy</a>
+                    <span class="legal-separator">|</span>
+                    <a href="{% url 'terms_and_conditions' %}" class="legal-link">Terms and Conditions</a>
+                </div>
+                <div class="copyright">
+                    <p>&copy; 2025 SEA-MAP. All rights reserved.</p>
                 </div>
             </div>
         </div>

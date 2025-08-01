@@ -33,4 +33,9 @@ urlpatterns = [
     path('account-settings/startup/', views.startup_company_profile_edit, name='startup_company_profile_edit'),
     path('account-settings/documents/', views.document_management, name='document_management'),
     path('account-settings/verification/', views.verification_center, name='verification_center'),
+    
+    # Legal Pages
+    path('disclaimer/', views.disclaimer, name='disclaimer'),
+    path('privacy-policy/', views.privacy_policy, name='privacy_policy'),
+    path('terms-and-conditions/', views.terms_and_conditions, name='terms_and_conditions'),
 ]

@@ -1,0 +1,218 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - SEA-MAP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --bs-primary: #2c59a7;
+            --bs-primary-rgb: 44, 89, 167;
+        }
+        
+        .legal-header {
+            background: linear-gradient(135deg, var(--bs-primary) 0%, #1e3a5f 100%);
+            color: white;
+            padding: 4rem 0;
+        }
+        
+        .legal-content {
+            padding: 3rem 0;
+            line-height: 1.8;
+        }
+        
+        .legal-content h2 {
+            color: var(--bs-primary);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .back-btn {
+            color: var(--bs-primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .back-btn:hover {
+            color: #1e3a5f;
+        }
+        
+        .data-table {
+            background: #f8f9fa;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="legal-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <a href="{% url 'homepage' %}" class="back-btn text-white mb-3 d-inline-block">
+                        <i class="bi bi-arrow-left"></i> Back to Homepage
+                    </a>
+                    <h1 class="display-4 mb-3">Privacy Policy</h1>
+                    <p class="lead">How we collect, use, and protect your personal information</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="legal-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="card shadow-sm">
+                        <div class="card-body p-5">
+                            <p class="text-muted mb-4"><strong>Effective Date:</strong> August 1, 2025</p>
+                            
+                            <h2>Introduction</h2>
+                            <p>SEA-MAP ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform to connect startups, investors, and corporate partners in Southeast Asia.</p>
+
+                            <h2>Information We Collect</h2>
+                            
+                            <h3>Personal Information</h3>
+                            <div class="data-table">
+                                <h5>We may collect the following personal information:</h5>
+                                <ul>
+                                    <li><strong>Contact Information:</strong> Name, email address, phone number, business address</li>
+                                    <li><strong>Professional Information:</strong> Job title, company name, industry, experience</li>
+                                    <li><strong>Account Information:</strong> Username, password, profile preferences</li>
+                                    <li><strong>Financial Information:</strong> Investment preferences, funding requirements (for verification purposes)</li>
+                                    <li><strong>Identity Verification:</strong> Government-issued ID, business registration documents</li>
+                                </ul>
+                            </div>
+
+                            <h3>Business Information</h3>
+                            <p>For companies using our platform, we collect:</p>
+                            <ul>
+                                <li>Company name, description, and business model</li>
+                                <li>Financial information, funding history, and investment goals</li>
+                                <li>Business documents and regulatory compliance information</li>
+                                <li>Market data and business performance metrics</li>
+                            </ul>
+
+                            <h3>Automatically Collected Information</h3>
+                            <p>We automatically collect certain information when you use our platform:</p>
+                            <ul>
+                                <li>IP address, browser type, and device information</li>
+                                <li>Platform usage data and interaction patterns</li>
+                                <li>Cookies and similar tracking technologies</li>
+                                <li>Log files and system activity</li>
+                            </ul>
+
+                            <h2>How We Use Your Information</h2>
+                            
+                            <div class="data-table">
+                                <h5>We use your information to:</h5>
+                                <ul>
+                                    <li><strong>Provide Platform Services:</strong> Enable matchmaking between startups, investors, and corporates</li>
+                                    <li><strong>Verify Identity:</strong> Ensure platform security and prevent fraud</li>
+                                    <li><strong>Improve User Experience:</strong> Personalize content and recommendations</li>
+                                    <li><strong>Communication:</strong> Send important updates, notifications, and marketing materials</li>
+                                    <li><strong>Analytics:</strong> Analyze platform usage to improve our services</li>
+                                    <li><strong>Legal Compliance:</strong> Meet regulatory requirements and legal obligations</li>
+                                </ul>
+                            </div>
+
+                            <h2>Information Sharing and Disclosure</h2>
+                            
+                            <h3>Within the Platform</h3>
+                            <p>Your business profile information may be visible to other verified users on the platform to facilitate connections. You control what information is displayed in your public profile.</p>
+
+                            <h3>Third-Party Service Providers</h3>
+                            <p>We may share information with trusted third parties who assist us in:</p>
+                            <ul>
+                                <li>Identity verification and KYC (Know Your Customer) processes</li>
+                                <li>Payment processing and financial services</li>
+                                <li>Cloud hosting and data storage</li>
+                                <li>Analytics and platform improvement</li>
+                                <li>Customer support and communication tools</li>
+                            </ul>
+
+                            <h3>Legal Requirements</h3>
+                            <p>We may disclose your information when required by law, regulation, or legal process, or to protect the rights, property, or safety of SEA-MAP, our users, or others.</p>
+
+                            <h2>Data Security</h2>
+                            <p>We implement industry-standard security measures to protect your information:</p>
+                            <ul>
+                                <li>Data encryption in transit and at rest</li>
+                                <li>Secure server infrastructure and access controls</li>
+                                <li>Regular security audits and vulnerability assessments</li>
+                                <li>Employee training on data protection practices</li>
+                            </ul>
+
+                            <h2>Your Rights and Choices</h2>
+                            
+                            <div class="data-table">
+                                <h5>You have the right to:</h5>
+                                <ul>
+                                    <li><strong>Access:</strong> Request a copy of your personal information</li>
+                                    <li><strong>Rectification:</strong> Correct inaccurate or incomplete information</li>
+                                    <li><strong>Erasure:</strong> Request deletion of your personal information</li>
+                                    <li><strong>Portability:</strong> Receive your data in a machine-readable format</li>
+                                    <li><strong>Objection:</strong> Object to processing of your information</li>
+                                    <li><strong>Restriction:</strong> Request limitation of processing</li>
+                                </ul>
+                            </div>
+
+                            <h2>Cookies and Tracking Technologies</h2>
+                            <p>We use cookies and similar technologies to:</p>
+                            <ul>
+                                <li>Maintain your login session</li>
+                                <li>Remember your preferences</li>
+                                <li>Analyze platform usage</li>
+                                <li>Provide personalized content</li>
+                            </ul>
+                            <p>You can control cookie settings through your browser preferences.</p>
+
+                            <h2>International Data Transfers</h2>
+                            <p>Your information may be transferred to and processed in countries other than your own. We ensure appropriate safeguards are in place to protect your information in accordance with applicable data protection laws.</p>
+
+                            <h2>Data Retention</h2>
+                            <p>We retain your information for as long as necessary to provide our services and comply with legal obligations. Account information is typically retained for 7 years after account closure for regulatory compliance purposes.</p>
+
+                            <h2>Children's Privacy</h2>
+                            <p>Our platform is not intended for individuals under 18 years of age. We do not knowingly collect personal information from children under 18.</p>
+
+                            <h2>Updates to This Policy</h2>
+                            <p>We may update this Privacy Policy periodically. We will notify you of significant changes via email or platform notification. Your continued use of the platform after such modifications constitutes acceptance of the updated policy.</p>
+
+                            <h2>Contact Us</h2>
+                            <p>If you have questions about this Privacy Policy or our data practices, please contact us:</p>
+                            <p><strong>Email:</strong> <br>
+                            <strong>Data Protection Officer:</strong> <br>
+                            <strong>Address:</strong> Singapore</p>
+
+                            <div class="alert alert-info mt-4">
+                                <i class="bi bi-shield-check"></i>
+                                <strong>Your Privacy Matters:</strong> We are committed to protecting your personal information and maintaining your trust. If you have any concerns about how we handle your data, please don't hesitate to contact us.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p class="text-muted mb-0">&copy; 2025 SEA-MAP. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

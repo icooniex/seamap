@@ -1954,3 +1954,18 @@ def verification_center(request):
         'member': member,
     }
     return render(request, 'member/verification_center.html', context)
+
+
+def disclaimer(request):
+    """Disclaimer page"""
+    return render(request, 'member/disclaimer.html')
+
+
+def privacy_policy(request):
+    """Privacy Policy page"""
+    return render(request, 'member/privacy_policy.html')
+
+
+def terms_and_conditions(request):
+    """Terms and Conditions page"""
+    return render(request, 'member/terms_and_conditions.html')

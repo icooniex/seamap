@@ -1,0 +1,127 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disclaimer - SEA-MAP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --bs-primary: #2c59a7;
+            --bs-primary-rgb: 44, 89, 167;
+        }
+        
+        .legal-header {
+            background: linear-gradient(135deg, var(--bs-primary) 0%, #1e3a5f 100%);
+            color: white;
+            padding: 4rem 0;
+        }
+        
+        .legal-content {
+            padding: 3rem 0;
+            line-height: 1.8;
+        }
+        
+        .legal-content h2 {
+            color: var(--bs-primary);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .back-btn {
+            color: var(--bs-primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .back-btn:hover {
+            color: #1e3a5f;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="legal-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <a href="{% url 'homepage' %}" class="back-btn text-white mb-3 d-inline-block">
+                        <i class="bi bi-arrow-left"></i> Back to Homepage
+                    </a>
+                    <h1 class="display-4 mb-3">Disclaimer</h1>
+                    <p class="lead">Important information regarding the use of SEA-MAP platform</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="legal-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="card shadow-sm">
+                        <div class="card-body p-5">
+                            <p class="text-muted mb-4"><strong>Effective Date:</strong> August 1, 2025</p>
+                            
+                            <h2>General Disclaimer</h2>
+                            <p>The information contained on the SEA-MAP platform is for general information purposes only. The information is provided by SEA-MAP and while we endeavor to keep the information up to date and correct, we make no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, suitability or availability with respect to the platform or the information, products, services, or related graphics contained on the platform for any purpose.</p>
+
+                            <h2>Investment and Financial Disclaimer</h2>
+                            <p>SEA-MAP is a matchmaking platform that connects startups, investors, and corporate partners. We do not provide investment advice or financial services. All investment decisions are made at your own risk and discretion. Past performance of any startup or investment opportunity presented on our platform does not guarantee future results.</p>
+
+                            <p><strong>Important:</strong> Any investment involves substantial risks, including complete loss of capital. Investors should conduct their own due diligence and consult with qualified financial advisors before making any investment decisions.</p>
+
+                            <h2>Platform Content</h2>
+                            <p>The content on SEA-MAP, including but not limited to company profiles, investment opportunities, and market data, is provided for informational purposes only. While we strive to ensure accuracy, we cannot guarantee that all information is current, complete, or error-free.</p>
+
+                            <h2>Third-Party Content</h2>
+                            <p>Our platform may contain links to external websites or display content from third parties. We have no control over the nature, content, and availability of those sites or content. The inclusion of any links or third-party content does not necessarily imply a recommendation or endorse the views expressed within them.</p>
+
+                            <h2>No Professional Relationship</h2>
+                            <p>Use of the SEA-MAP platform does not create a professional relationship between you and SEA-MAP. We are not acting as your agent, advisor, or representative, and we do not owe you any fiduciary duties.</p>
+
+                            <h2>Limitation of Liability</h2>
+                            <p>In no event will SEA-MAP be liable for any loss or damage including without limitation, indirect or consequential loss or damage, or any loss or damage whatsoever arising from loss of data or profits arising out of, or in connection with, the use of this platform.</p>
+
+                            <h2>Platform Availability</h2>
+                            <p>We strive to maintain platform availability, but cannot guarantee uninterrupted access. Temporary unavailability may occur due to maintenance, updates, or technical issues. We reserve the right to modify or discontinue the platform at any time without notice.</p>
+
+                            <h2>Regulatory Compliance</h2>
+                            <p>Users are responsible for ensuring their use of the platform complies with applicable laws and regulations in their jurisdiction. Investment activities may be subject to regulatory requirements that vary by location.</p>
+
+                            <h2>Updates to Disclaimer</h2>
+                            <p>We reserve the right to update this disclaimer at any time. Users are encouraged to review this page periodically for changes. Continued use of the platform after any modifications constitutes acceptance of the updated disclaimer.</p>
+
+                            <h2>Contact Information</h2>
+                            <p>If you have any questions about this disclaimer, please contact us at:</p>
+                            <p><strong>Email:</strong> <br>
+                            <strong>Address:</strong> Singapore</p>
+
+                            <div class="alert alert-info mt-4">
+                                <i class="bi bi-info-circle"></i>
+                                <strong>Note:</strong> This disclaimer is part of our Terms and Conditions. Please read our full Terms and Conditions and Privacy Policy for complete information about using SEA-MAP.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p class="text-muted mb-0">&copy; 2025 SEA-MAP. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
