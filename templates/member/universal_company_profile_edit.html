@@ -69,50 +69,52 @@
 
     <!-- Progress Section (Only for Startup) -->
     {% if company.company_type == 'startup' and progress %}
-    <div class="progress-section">
-        <div class="progress-header">
-            <h4 class="progress-title">
-                <i class="bi bi-graph-up me-2"></i>Profile Completion
-            </h4>
-            <span class="progress-percentage">{{ progress.percentage }}%</span>
-        </div>
-        <div class="progress-bar-container">
-            <div class="progress-bar-fill" style="width: {{ progress.percentage }}%"></div>
-        </div>
-        <div class="progress-details">
-            <span>{{ progress.completed }} of {{ progress.total }} fields completed</span>
-            <small>
-                {% if progress.percentage == 100 %}
-                    <i class="bi bi-check-circle-fill text-success me-1"></i>Profile Complete
-                {% elif progress.percentage >= 75 %}
-                    <i class="bi bi-clock-fill text-warning me-1"></i>Almost Done
-                {% elif progress.percentage >= 50 %}
-                    <i class="bi bi-hourglass-split text-info me-1"></i>Good Progress
-                {% else %}
-                    <i class="bi bi-exclamation-triangle-fill text-danger me-1"></i>Needs Attention
-                {% endif %}
-            </small>
+    <div class="progress-section-modern">
+        <div class="progress-header-modern">
+            <div class="progress-title-container">
+                <div class="progress-icon-large">
+                    <i class="bi bi-graph-up"></i>
+                </div>
+                <div class="progress-text">
+                    <h4 class="progress-title">Profile Completion</h4>
+                    <p class="progress-subtitle">Complete your startup profile to maximize opportunities</p>
+                </div>
+            </div>
+            <div class="progress-percentage-large">{{ progress.percentage }}%</div>
         </div>
         
-        <!-- Progress Summary Cards -->
-        <div class="progress-summary">
-            <div class="progress-card {% if progress.tabs.company_info.status == 'complete' %}complete{% else %}incomplete{% endif %}">
-                <div class="progress-card-title">Company Info</div>
-                <div class="progress-card-percentage">{{ progress.tabs.company_info.percentage }}%</div>
-            </div>
-            <div class="progress-card {% if progress.tabs.market_traction.status == 'complete' %}complete{% else %}incomplete{% endif %}">
-                <div class="progress-card-title">Market & Traction</div>
-                <div class="progress-card-percentage">{{ progress.tabs.market_traction.percentage }}%</div>
-            </div>
-            <div class="progress-card {% if progress.tabs.financing.status == 'complete' %}complete{% else %}incomplete{% endif %}">
-                <div class="progress-card-title">Financing</div>
-                <div class="progress-card-percentage">{{ progress.tabs.financing.percentage }}%</div>
-            </div>
-            <div class="progress-card {% if progress.tabs.team.status == 'complete' %}complete{% else %}incomplete{% endif %}">
-                <div class="progress-card-title">Team</div>
-                <div class="progress-card-percentage">{{ progress.tabs.team.percentage }}%</div>
+        <div class="progress-bar-container-modern">
+            <div class="progress-bar-track">
+                <div class="progress-bar-fill-modern" style="width: {{ progress.percentage }}%"></div>
+                <div class="progress-bar-glow" style="width: {{ progress.percentage }}%"></div>
             </div>
         </div>
+        
+        <div class="progress-details-modern">
+            <div class="progress-stats">
+                <span class="progress-completed">{{ progress.completed }} of {{ progress.total }} fields completed</span>
+                <div class="progress-badge">
+                    {% if progress.percentage == 100 %}
+                        <span class="badge badge-success">
+                            <i class="bi bi-check-circle-fill me-1"></i>Complete
+                        </span>
+                    {% elif progress.percentage >= 75 %}
+                        <span class="badge badge-warning">
+                            <i class="bi bi-clock-fill me-1"></i>Almost Done
+                        </span>
+                    {% elif progress.percentage >= 50 %}
+                        <span class="badge badge-info">
+                            <i class="bi bi-hourglass-split me-1"></i>Good Progress
+                        </span>
+                    {% else %}
+                        <span class="badge badge-danger">
+                            <i class="bi bi-exclamation-triangle-fill me-1"></i>Needs Attention
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
     </div>
     {% endif %}
 
