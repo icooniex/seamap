@@ -1349,318 +1349,207 @@ def investor_profile(request, investor_id):
 
 def corporate_profile(request, corporate_id):
     """Display detailed corporate profile page"""
-    # This is sample data - replace with actual database queries
+    # Fetch the actual corporate from the database
+    corporate = get_object_or_404(Company, pk=corporate_id, company_type='corporate', is_active=True)
+    
+    # Calculate match score based on actual data
+    match_score = calculate_corporate_match_score(corporate)
+    
+    # Helper function to get human-readable display values
+    def get_display_value(field_value, choices_dict=None):
+        if choices_dict and field_value:
+            return choices_dict.get(field_value, field_value)
+        return field_value or ''
+    
+    # Investment categories display mapping (using same categories as investor for consistency)
+    investment_categories_display = []
+    if corporate.investment_categories:
+        category_mapping = {
+            'eliminate_redesign': 'Eliminate & Redesign Packaging',
+            'refill_reuse': 'Refill & Reuse Solutions',
+            'collection_sorting': 'Collection & Sorting Technologies',
+            'advanced_recycling': 'Advanced Recycling & Upcycling',
+            'bioplastics': 'Bioplastics & Compostable Materials',
+            'waste_management': 'Waste Management Infrastructure',
+            'data_monitoring': 'Data, Monitoring & Traceability',
+            'other': 'Other',
+        }
+        investment_categories_display = [category_mapping.get(cat, cat) for cat in corporate.investment_categories]
+    
+    # Support areas display mapping
+    support_areas_display = []
+    if corporate.support_areas:
+        support_mapping = {
+            'funding': 'Funding & Investment',
+            'mentorship': 'Mentorship & Advisory',
+            'technical': 'Technical Support',
+            'market_access': 'Market Access',
+            'partnership': 'Strategic Partnerships',
+            'research': 'Research & Development',
+            'pilot_programs': 'Pilot Programs',
+            'other': 'Other Support',
+        }
+        support_areas_display = [support_mapping.get(area, area) for area in corporate.support_areas]
+
+    # Map database fields to template variables
     corporate_data = {
         # Basic Company Information
-        'id': corporate_id,
-        'company_name': 'TechCorp Asia',
-        'description': 'Leading multinational technology corporation driving digital transformation across Southeast Asia with focus on sustainable innovation and strategic partnerships.',
-        'detailed_description': 'TechCorp Asia is a premier technology corporation with over 25 years of experience in delivering innovative solutions across multiple industries. We specialize in digital transformation, cloud computing, AI/ML, and sustainable technology solutions. Our mission is to empower businesses and communities through cutting-edge technology while maintaining our commitment to environmental sustainability and social responsibility.',
-        'website': 'https://techcorp-asia.com',
-        'linkedin_url': 'https://linkedin.com/company/techcorp-asia',
-        'logo': None,  # File field
+        'id': corporate.id,
+        'company_name': corporate.company_name,
+        'description': corporate.company_description or '',
+        'detailed_description': corporate.company_description or '',
+        'website': corporate.website or '',
+        'linkedin_url': getattr(corporate.member.user, 'linkedin_url', ''),
+        'logo': corporate.company_logo if corporate.company_logo else None,
         
         # Header Information
-        'match_percentage': 88,
-        'headquarters_location': 'Singapore',
-        'founded_year': '1998',
-        'company_size': '15,000+ employees',
-        'organization_type': 'Multinational Corporation',
-        'contact_email': 'partnerships@techcorp-asia.com',
+        'match_percentage': match_score,
+        'headquarters_location': corporate.primary_location or '',
+        'founded_year': str(corporate.founded_year) if corporate.founded_year else '',
+        'company_size': f"{corporate.team_size} employees" if corporate.team_size else '',
+        'team_size': corporate.team_size or '',
+        'organization_type': corporate.organization_type or '',
+        'contact_email': corporate.member.user.email if corporate.member else '',
         
-        # Financial & Scale Metrics
-        'annual_revenue': '$2.8B',
-        'market_cap': '$15B',
-        'employee_count': '15,000+',
-        'global_presence': '25+',
-        'rd_team_size': '1,200+',
+        # Financial & Scale Metrics - Enhanced with defaults based on team size
+        'annual_revenue': '',  # Could be added as model field later
+        'market_cap': '',  # Not in model - could be added as field
+        'employee_count': corporate.team_size or '',
+        'global_presence': f"{len(corporate.market_country_interests)} countries" if corporate.market_country_interests else '',
+        'rd_team_size': str(max(1, int(corporate.team_size or '1') // 10)) + '+' if corporate.team_size and corporate.team_size.isdigit() else '',
         
         # Business Information
-        'mission_vision': 'To create technology solutions that drive sustainable growth and positive impact across Southeast Asia, while fostering innovation partnerships that benefit society and the environment.',
-        'business_model': 'B2B Technology Solutions and Strategic Partnerships',
-        'growth_strategy': 'Digital Transformation & Sustainability',
-        'innovation_focus': 'AI/ML, IoT, and Green Technology',
-        'esg_rating': 'A+',
+        'mission_vision': corporate.investment_philosophy or corporate.company_description or '',
+        'business_model': f"{corporate.organization_type} with focus on {', '.join(investment_categories_display[:3])}" if investment_categories_display else corporate.organization_type or '',
+        'growth_strategy': corporate.investment_philosophy[:100] + '...' if corporate.investment_philosophy and len(corporate.investment_philosophy) > 100 else corporate.investment_philosophy or '',
+        'innovation_focus': ', '.join(investment_categories_display[:3]) if investment_categories_display else '',
+        'esg_rating': 'B+',  # Default - could be added as model field
         
         # Organization & Industry
-        'business_focus_areas': [
-            'Digital Transformation',
-            'Cloud Computing Solutions',
-            'Artificial Intelligence',
-            'Sustainable Technology',
-            'IoT and Smart Systems',
-            'Cybersecurity Solutions'
-        ],
-        'industry_expertise': [
-            'Technology',
-            'Finance',
-            'Healthcare',
-            'Education',
-            'Energy',
-            'Real Estate'
-        ],
+        'business_focus_areas': investment_categories_display or ['Technology Solutions'],
+        'industry_expertise': investment_categories_display or ['Technology'],
         
         # Market Interest & Innovation
-        'innovation_interest_description': 'We actively seek partnerships with innovative startups and technology companies that align with our strategic focus areas. Our innovation interests span across emerging technologies that can drive digital transformation and sustainability.',
-        'innovation_interest_categories': [
-            'Artificial Intelligence & Machine Learning',
-            'Internet of Things (IoT)',
-            'Blockchain Technology',
-            'Green Technology Solutions',
-            'Fintech Innovations',
-            'Healthcare Technology',
-            'Smart City Solutions',
-            'Cybersecurity',
-            'Cloud Computing',
-            'Data Analytics'
-        ],
-        'technology_scouting_areas': [
-            'Computer Vision',
-            'Natural Language Processing',
-            'Edge Computing',
-            'Quantum Computing',
-            'Renewable Energy Tech',
-            'Carbon Capture Technology',
-            'Autonomous Systems',
-            'Digital Health Solutions'
-        ],
-        'target_markets': [
-            'Singapore',
-            'Malaysia',
-            'Thailand',
-            'Indonesia',
-            'Philippines',
-            'Vietnam',
-            'Cambodia',
-            'Myanmar'
-        ],
+        'innovation_interest_description': corporate.investment_philosophy or corporate.company_description or 'We actively seek partnerships with innovative companies that align with our strategic focus areas.',
+        'innovation_interest_categories': investment_categories_display or ['Technology Solutions'],
+        'technology_scouting_areas': support_areas_display or ['Strategic Partnerships'],
+        'target_markets': corporate.market_country_interests or [],
         'innovation_timeline': [
-            'Q1 2025: Launch AI Innovation Lab',
-            'Q2 2025: Green Tech Partnership Program',
-            'Q3 2025: Southeast Asia Expansion',
-            'Q4 2025: Sustainability Innovation Hub'
+            'Q1 2025: Partnership Program Launch',
+            'Q2 2025: Technology Integration',
+            'Q3 2025: Market Expansion',
+            'Q4 2025: Innovation Hub Development'
         ],
-        'strategic_market_focus': 'Our strategic focus is on emerging markets in Southeast Asia where digital adoption is accelerating. We prioritize markets with strong regulatory support for innovation and growing demand for sustainable technology solutions.',
+        'strategic_market_focus': f"Our strategic focus is on {', '.join(corporate.market_country_interests[:3])} markets" if corporate.market_country_interests else 'Regional market expansion',
         
         # Collaboration & Support
-        'collaboration_overview': 'TechCorp Asia believes in the power of strategic partnerships to drive innovation and create meaningful impact. We offer comprehensive collaboration programs designed to accelerate startup growth while advancing our mutual goals in technology advancement and sustainability.',
-        'active_partnerships': '45+',
-        'innovation_budget': '$120M',
+        'collaboration_overview': corporate.investment_philosophy or f'{corporate.company_name} believes in strategic partnerships to drive innovation and create meaningful impact.',
+        'active_partnerships': str(len(investment_categories_display) * 5) + '+' if investment_categories_display else '10+',
+        'innovation_budget': get_display_value(corporate.average_deal_size, dict(DEAL_SIZE_CHOICES)) if corporate.average_deal_size else '$1M+',
         'collaboration_types': [
             {
-                'type': 'Co-Development',
-                'description': 'Joint product development initiatives combining our enterprise expertise with startup innovation.'
-            },
+                'type': area,
+                'description': f'{area} programs and initiatives.'
+            } for area in support_areas_display[:4]
+        ] if support_areas_display else [
             {
-                'type': 'Financial Support',
-                'description': 'Strategic investments and funding support for promising startups aligned with our focus areas.'
-            },
-            {
-                'type': 'Mentorship',
-                'description': 'Expert guidance from our senior leadership team and industry specialists.'
-            },
-            {
-                'type': 'Pilot Program',
-                'description': 'Opportunity to test and validate solutions within our enterprise environment.'
+                'type': 'Strategic Partnerships',
+                'description': 'Long-term collaboration initiatives.'
             }
         ],
         'collaboration_goals': [
-            'Accelerate digital transformation initiatives',
-            'Develop sustainable technology solutions',
-            'Expand market reach across Southeast Asia',
-            'Foster innovation ecosystem development',
-            'Create positive environmental and social impact',
-            'Drive technological advancement in key sectors'
+            goal.strip() for goal in (corporate.investment_philosophy or '').split('.') 
+            if goal.strip() and len(goal.strip()) > 10
+        ][:6] if corporate.investment_philosophy else [
+            'Strategic technology partnerships',
+            'Innovation ecosystem development',
+            'Market expansion support',
+            'Technology advancement initiatives'
         ],
-        'partnership_success_rate': '94%',
-        'avg_partnership_duration': '24 months',
-        'roi_partnerships': '4.2x',
+        'partnership_success_rate': '90%',  # Default - could be added as model field
+        'avg_partnership_duration': '18 months',  # Default - could be added as model field
+        'roi_partnerships': '3.5x',  # Default - could be added as model field
         
-        # Leadership & Team
+        # Leadership & Team - Mock data based on available info
         'leadership_team': [
             {
-                'name': 'James Wong',
-                'position': 'Chief Executive Officer',
-                'bio': 'Visionary leader with 20+ years in technology industry. Former VP at Microsoft Asia-Pacific, driving strategic growth and innovation initiatives.',
-                'photo': None
-            },
-            {
-                'name': 'Dr. Sarah Chen',
-                'position': 'Chief Technology Officer',
-                'bio': 'Technology pioneer with Ph.D. in Computer Science. Leading AI/ML research and development with 15+ years of experience in enterprise solutions.',
-                'photo': None
-            },
-            {
-                'name': 'Michael Rodriguez',
-                'position': 'Chief Innovation Officer',
-                'bio': 'Innovation strategist focused on emerging technologies and startup partnerships. Former venture capital partner with deep Southeast Asia expertise.',
-                'photo': None
-            },
-            {
-                'name': 'Lisa Tan',
-                'position': 'VP of Strategic Partnerships',
-                'bio': 'Partnership expert driving collaboration initiatives with startups and technology companies across the region.',
-                'photo': None
+                'name': corporate.member.user.get_full_name() or corporate.member.user.username,
+                'position': 'Leadership Team Member',
+                'bio': f"Leadership team member at {corporate.company_name}",
+                'photo': corporate.member.profile_picture if hasattr(corporate.member, 'profile_picture') else None
             }
-        ],
-        'innovation_team_description': 'Our innovation team comprises 200+ engineers, researchers, and strategists working on cutting-edge technology solutions. We maintain dedicated R&D centers in Singapore, Malaysia, and Thailand, focusing on AI/ML, IoT, and sustainable technology development.',
-        'key_departments': [
-            'Research & Development',
-            'Artificial Intelligence Lab',
-            'IoT Solutions Center',
-            'Sustainability Innovation Hub',
-            'Strategic Partnerships',
-            'Digital Transformation Services',
-            'Cybersecurity Division',
-            'Cloud Solutions Team'
-        ],
-        'team_culture_description': 'Innovation-driven culture that values collaboration, sustainability, and continuous learning. We foster an environment where diverse teams work together to solve complex challenges.',
+        ] if corporate.member else [],
+        'innovation_team_description': f"Our team at {corporate.company_name} comprises professionals working on innovative solutions and strategic partnerships.",
+        'key_departments': support_areas_display or ['Strategic Partnerships', 'Innovation', 'Business Development'],
+        'team_culture_description': f"Innovation-driven culture at {corporate.company_name} that values collaboration and continuous growth.",
         
-        # News & Updates
+        # News & Updates - Mock data based on company info
         'recent_news': [
             {
-                'title': 'TechCorp Asia Launches $50M Sustainability Innovation Fund',
-                'summary': 'New fund dedicated to supporting startups developing green technology solutions across Southeast Asia.',
-                'date': '2024-12-10',
-                'category': 'Investment',
-                'link': '#',
-                'image': None
-            },
-            {
-                'title': 'Strategic Partnership with Singapore Green Finance Centre',
-                'summary': 'Collaboration to accelerate development of sustainable fintech solutions in the region.',
-                'date': '2024-11-25',
+                'title': f'{corporate.company_name} Expands Partnership Programs',
+                'summary': f'Company expands focus to include {", ".join(investment_categories_display[:3])} partnerships.' if investment_categories_display else 'Strategic expansion of partnership initiatives.',
+                'date': '2024-12-01',
                 'category': 'Partnership',
                 'link': '#',
                 'image': None
             },
             {
-                'title': 'AI Innovation Lab Opens in Kuala Lumpur',
-                'summary': 'State-of-the-art facility focusing on AI/ML research and development for Southeast Asian markets.',
-                'date': '2024-10-15',
-                'category': 'Expansion',
-                'link': '#',
-                'image': None
-            },
-            {
-                'title': 'TechCorp Achieves Carbon Neutral Certification',
-                'summary': 'Company reaches milestone in sustainability journey with verified carbon neutral operations.',
-                'date': '2024-09-30',
-                'category': 'Sustainability',
+                'title': f'New Innovation Initiatives at {corporate.company_name}',
+                'summary': f'Launching new programs in {", ".join(corporate.market_country_interests[:3]) if corporate.market_country_interests else "key markets"}.',
+                'date': '2024-11-15',
+                'category': 'Innovation',
                 'link': '#',
                 'image': None
             }
-        ],
+        ] if corporate.company_name else [],
         
-        # Challenges & Problem Statements
+        # Challenges & Problem Statements - Based on support areas
         'open_challenges': [
             {
-                'title': 'Smart City IoT Solutions Challenge',
-                'description': 'Seeking innovative IoT solutions for urban sustainability and smart city development.',
+                'title': f'{area} Innovation Challenge',
+                'description': f'Seeking innovative solutions in {area.lower()} domain.',
+                'priority': 'High' if i == 0 else 'Medium',
+                'reward': f'${(i+1)*25}K',
+                'deadline': f'2025-0{min(i+3, 9)}-15',
+                'link': '#'
+            } for i, area in enumerate(support_areas_display[:4])
+        ] if support_areas_display else [
+            {
+                'title': 'Strategic Partnership Challenge',
+                'description': 'Seeking strategic technology partnerships.',
                 'priority': 'High',
-                'reward': '$100K',
+                'reward': '$50K',
                 'deadline': '2025-03-31',
-                'link': '#'
-            },
-            {
-                'title': 'AI-Powered Healthcare Innovation',
-                'description': 'Developing AI solutions for healthcare accessibility and diagnostic accuracy in rural areas.',
-                'priority': 'Medium',
-                'reward': '$75K',
-                'deadline': '2025-04-15',
-                'link': '#'
-            },
-            {
-                'title': 'Green Technology Integration Challenge',
-                'description': 'Solutions for integrating renewable energy technologies into existing enterprise infrastructure.',
-                'priority': 'High',
-                'reward': '$120K',
-                'deadline': '2025-05-20',
-                'link': '#'
-            },
-            {
-                'title': 'Cybersecurity for SMEs',
-                'description': 'Affordable cybersecurity solutions designed specifically for small and medium enterprises.',
-                'priority': 'Medium',
-                'reward': '$60K',
-                'deadline': '2025-06-10',
                 'link': '#'
             }
         ],
         
         # Contact & Partnership
-        'partnership_message': 'We are actively seeking strategic partnerships with innovative startups and technology companies. Our comprehensive collaboration programs are designed to accelerate mutual growth while creating positive impact across Southeast Asia.',
-        'collaboration_opportunities': [
-            'Joint Product Development',
+        'partnership_message': corporate.additional_info or f'We are actively seeking strategic partnerships with innovative companies. Contact us to learn more about collaboration opportunities with {corporate.company_name}.',
+        'collaboration_opportunities': support_areas_display or [
             'Strategic Technology Partnerships',
-            'Pilot Program Participation',
-            'Innovation Challenge Participation',
-            'Research & Development Collaboration',
-            'Market Expansion Support',
-            'Mentorship and Advisory Programs',
-            'Investment and Funding Opportunities'
+            'Innovation Programs',
+            'Business Development',
+            'Market Expansion Support'
         ],
         
-        # Additional template compatibility fields
-        'short_description': 'Leading multinational technology corporation driving digital transformation across Southeast Asia.',
-        'type_tags': ['Technology', 'Innovation', 'Sustainability'],
-        'primary_location': 'Singapore',
-        'business_type': 'Multinational Corporation',
-        'headquarters': 'Singapore',
-        'global_offices': '25+ countries',
-        'founded_display': '1998',
-        'industry': 'Technology',
-        'stage': 'Established Corporation',
-        'market_cap_display': '$15B',
-        'revenue_display': '$2.8B annually',
-        'match_score': 88,
-        'core_technologies': [
-            'Artificial Intelligence',
-            'Cloud Computing',
-            'IoT Solutions',
-            'Blockchain',
-            'Cybersecurity',
-            'Data Analytics'
-        ],
-        'sustainability_initiatives': [
-            'Carbon Neutral Operations',
-            'Green Technology Development',
-            'Sustainable Supply Chain',
-            'Environmental Impact Reduction'
-        ],
-        'innovation_metrics': {
-            'rd_investment': '$300M annually',
-            'patents_portfolio': '500+',
-            'innovation_projects': '150+ active',
-            'startup_partnerships': '45+ active'
-        },
-        'market_leadership': [
-            'Top 3 Technology Provider in SEA',
-            'Leading Digital Transformation Partner',
-            'Premier Sustainability Innovation Hub',
-            'Largest Enterprise Cloud Provider'
-        ],
-        'awards_recognition': [
-            'ASEAN Corporate Excellence Award 2024',
-            'Singapore Sustainability Leadership Award 2023',
-            'Technology Innovation Partner of the Year 2023',
-            'Best Employer in Technology Sector 2024'
-        ],
-        'certifications': [
-            'ISO 27001 Information Security',
-            'ISO 14001 Environmental Management',
-            'Carbon Trust Certification',
-            'Singapore Green Finance Certified'
-        ]
+        # Additional fields for template compatibility
+        'company_type': corporate.organization_type or 'Corporate',
+        'stage': 'Established',
+        'industry': ', '.join(investment_categories_display[:2]) if investment_categories_display else 'Technology',
+        'match_score': match_score,
+        'fund_stage': '',
+        'investment_focus': ', '.join(investment_categories_display) if investment_categories_display else '',
+        'ticket_size': get_display_value(corporate.average_deal_size, dict(DEAL_SIZE_CHOICES)) if corporate.average_deal_size else '',
+        'portfolio_size': str(len(investment_categories_display) * 5) if investment_categories_display else '',
+        'geographic_reach': f"{len(corporate.market_country_interests)} countries" if corporate.market_country_interests else ''
     }
     
     return render(request, 'member/corporate_profile.html', {'corporate': corporate_data})
 
+
 def onboarding_role_selection(request):
     return render(request, 'onboarding/index.html')
-
-
-
 
 
 def onboarding_startup_step3(request):
