@@ -1,0 +1,997 @@
+{% extends "template_parts/dashboard_base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <!-- Header Section -->
+    <div class="company-edit-header mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <div class="company-icon-container me-3">
+                    <div class="company-icon">
+                        <i class="bi bi-rocket-takeoff"></i>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="h3 mb-1">Startup Profile</h1>
+                    <p class="header-subtitle mb-0">Manage your startup information and business details</p>
+                </div>
+            </div>
+            <div>
+                <a href="{% url 'account_settings' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Back to Settings
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-container mb-4">
+        <div class="progress-header">
+            <h5 class="mb-2">Profile Completion</h5>
+            <span class="progress-text">75% Complete</span>
+        </div>
+        <div class="progress" style="height: 8px;">
+            <div class="progress-bar bg-success" style="width: 75%"></div>
+        </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="company-form-container">
+        <div class="tab-navigation">
+            <ul class="nav nav-tabs" id="startupTabs">
+                <li class="nav-item">
+                    <a class="nav-link active" id="company-info-tab" data-bs-toggle="tab" href="#company-info" role="tab">
+                        <i class="bi bi-info-circle me-2"></i>Company Information
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="market-traction-tab" data-bs-toggle="tab" href="#market-traction" role="tab">
+                        <i class="bi bi-graph-up-arrow me-2"></i>Market & Traction
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="financing-tab" data-bs-toggle="tab" href="#financing" role="tab">
+                        <i class="bi bi-cash-stack me-2"></i>Financing & Funding
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="team-tab" data-bs-toggle="tab" href="#team" role="tab">
+                        <i class="bi bi-people me-2"></i>Founders & Team
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Form Content -->
+        <form method="post" enctype="multipart/form-data" class="startup-form" id="startupProfileForm">
+            {% csrf_token %}
+            
+            <div class="tab-content" id="startupTabsContent">
+                
+                <!-- Tab 1: Company Information -->
+                <div class="tab-pane fade show active" id="company-info" role="tabpanel">
+                    <!-- Company Logo Section -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <h4 class="section-title">
+                                <i class="bi bi-image me-2"></i>
+                                Company Logo
+                            </h4>
+                            <p class="section-subtitle">Upload your company's logo for branding</p>
+                        </div>
+                        
+                        <div class="logo-section">
+                            <div class="current-logo">
+                                {% if company.company_logo %}
+                                    <img src="{{ company.company_logo.url }}" alt="Company Logo" class="logo-img">
+                                {% else %}
+                                    <div class="logo-placeholder">
+                                        <i class="bi bi-rocket-takeoff"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="logo-upload">
+                                <div class="form-group">
+                                    <label for="company_logo" class="form-label">Choose New Logo</label>
+                                    <input type="file" class="form-control" id="company_logo" name="company_logo" accept="image/*">
+                                    <small class="form-text text-muted">Recommended: Square logo, at least 200x200px, max 5MB</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Basic Company Information -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <h4 class="section-title">
+                                <i class="bi bi-info-circle me-2"></i>
+                                Basic Information
+                            </h4>
+                            <p class="section-subtitle">Core details about your startup</p>
+                        </div>
+                        
+                        <div class="row g-4">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label for="company_name" class="form-label">Company Name *</label>
+                                    <input type="text" class="form-control" id="company_name" name="company_name" 
+                                           value="{{ company.company_name|default:'' }}" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="company_type" class="form-label">Company Type</label>
+                                    <select class="form-select" id="company_type" name="company_type">
+                                        <option value="startup" selected>Startup</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="company_description" class="form-label">Company Description *</label>
+                                    <textarea class="form-control" id="company_description" name="company_description" rows="4" 
+                                              placeholder="Describe your startup's mission, products, services, and what makes you unique..." required>{{ company.company_description|default:'' }}</textarea>
+                                    <small class="form-text text-muted">This description will be visible on your company profile</small>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="problem_statement" class="form-label">Problem Statement *</label>
+                                    <textarea class="form-control" id="problem_statement" name="problem_statement" rows="4" 
+                                              placeholder="What problem does your startup solve? Describe the pain point your solution addresses..." required>{{ company.problem_statement|default:'' }}</textarea>
+                                    <small class="form-text text-muted">Clearly articulate the problem your startup is solving</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="website" class="form-label">Website URL</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-globe"></i>
+                                        </span>
+                                        <input type="url" class="form-control" id="website" name="website" 
+                                               value="{{ company.website|default:'' }}" 
+                                               placeholder="https://www.yourcompany.com">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="founded_year" class="form-label">Founded Year</label>
+                                    <input type="number" class="form-control" id="founded_year" name="founded_year" 
+                                           value="{{ company.founded_year|default:'' }}" min="1800" max="2025">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="primary_location" class="form-label">Primary Location</label>
+                                    <select class="form-select" id="primary_location" name="primary_location">
+                                        <option value="">Select Location</option>
+                                        <option value="Singapore" {% if company.primary_location == 'Singapore' %}selected{% endif %}>Singapore</option>
+                                        <option value="Indonesia" {% if company.primary_location == 'Indonesia' %}selected{% endif %}>Indonesia</option>
+                                        <option value="Thailand" {% if company.primary_location == 'Thailand' %}selected{% endif %}>Thailand</option>
+                                        <option value="Malaysia" {% if company.primary_location == 'Malaysia' %}selected{% endif %}>Malaysia</option>
+                                        <option value="Philippines" {% if company.primary_location == 'Philippines' %}selected{% endif %}>Philippines</option>
+                                        <option value="Vietnam" {% if company.primary_location == 'Vietnam' %}selected{% endif %}>Vietnam</option>
+                                        <option value="Other" {% if company.primary_location == 'Other' %}selected{% endif %}>Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="current_stage" class="form-label">Current Stage</label>
+                                    <select class="form-select" id="current_stage" name="current_stage">
+                                        <option value="">Select Stage</option>
+                                        <option value="idea" {% if company.current_stage == 'idea' %}selected{% endif %}>💡 Ideation – Developing an idea, no product yet</option>
+                                        <option value="prototype" {% if company.current_stage == 'prototype' %}selected{% endif %}>🔧 Prototype – Initial MVP or prototype created</option>
+                                        <option value="validation" {% if company.current_stage == 'validation' %}selected{% endif %}>🧪 Validation – Testing with early customers</option>
+                                        <option value="early" {% if company.current_stage == 'early' %}selected{% endif %}>📈 Early Growth – Generating revenue</option>
+                                        <option value="scaling" {% if company.current_stage == 'scaling' %}selected{% endif %}>🚀 Scaling – Expanding with proven model</option>
+                                        <option value="profitable" {% if company.current_stage == 'profitable' %}selected{% endif %}>💰 Established – Profitable and exploring new markets</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Market & Traction -->
+                <div class="tab-pane fade" id="market-traction" role="tabpanel">
+                    <div class="form-section">
+                        <div class="section-header">
+                            <h4 class="section-title">
+                                <i class="bi bi-graph-up-arrow me-2"></i>
+                                Market & Traction
+                            </h4>
+                            <p class="section-subtitle">Information about your target market and current traction</p>
+                        </div>
+                        
+                        <div class="row g-4">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="target_markets" class="form-label">Target Markets</label>
+                                    <textarea class="form-control" id="target_markets" name="target_markets" rows="4" 
+                                              placeholder="Describe your target markets, including geographic regions, industry sectors, and market size...">{{ company.target_markets|default:'' }}</textarea>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label class="form-label">Customer Segments</label>
+                                    <div class="checkbox-grid">
+                                        <div class="checkbox-card" data-value="b2b">
+                                            <input type="checkbox" name="customer_segments" value="B2B" 
+                                                   {% if 'B2B' in company.customer_segments %}checked{% endif %}>
+                                            <div class="checkbox-card-content">
+                                                <div class="checkbox-icon"><i class="bi bi-check"></i></div>
+                                                <span class="checkbox-label">🏢 B2B (Business to Business)</span>
+                                            </div>
+                                        </div>
+                                        <div class="checkbox-card" data-value="b2c">
+                                            <input type="checkbox" name="customer_segments" value="B2C" 
+                                                   {% if 'B2C' in company.customer_segments %}checked{% endif %}>
+                                            <div class="checkbox-card-content">
+                                                <div class="checkbox-icon"><i class="bi bi-check"></i></div>
+                                                <span class="checkbox-label">👥 B2C (Business to Consumer)</span>
+                                            </div>
+                                        </div>
+                                        <div class="checkbox-card" data-value="b2g">
+                                            <input type="checkbox" name="customer_segments" value="B2G" 
+                                                   {% if 'B2G' in company.customer_segments %}checked{% endif %}>
+                                            <div class="checkbox-card-content">
+                                                <div class="checkbox-icon"><i class="bi bi-check"></i></div>
+                                                <span class="checkbox-label">🏛️ B2G (Business to Government)</span>
+                                            </div>
+                                        </div>
+                                        <div class="checkbox-card" data-value="enterprise">
+                                            <input type="checkbox" name="customer_segments" value="Enterprise" 
+                                                   {% if 'Enterprise' in company.customer_segments %}checked{% endif %}>
+                                            <div class="checkbox-card-content">
+                                                <div class="checkbox-icon"><i class="bi bi-check"></i></div>
+                                                <span class="checkbox-label">🏭 Enterprise Clients</span>
+                                            </div>
+                                        </div>
+                                        <div class="checkbox-card" data-value="sme">
+                                            <input type="checkbox" name="customer_segments" value="SME" 
+                                                   {% if 'SME' in company.customer_segments %}checked{% endif %}>
+                                            <div class="checkbox-card-content">
+                                                <div class="checkbox-icon"><i class="bi bi-check"></i></div>
+                                                <span class="checkbox-label">🏪 SME (Small & Medium Enterprise)</span>
+                                            </div>
+                                        </div>
+                                        <div class="checkbox-card" data-value="startups">
+                                            <input type="checkbox" name="customer_segments" value="Startups" 
+                                                   {% if 'Startups' in company.customer_segments %}checked{% endif %}>
+                                            <div class="checkbox-card-content">
+                                                <div class="checkbox-icon"><i class="bi bi-check"></i></div>
+                                                <span class="checkbox-label">🚀 Other Startups</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="active_users_count" class="form-label">Active Users Count</label>
+                                    <input type="text" class="form-control" id="active_users_count" name="active_users_count" 
+                                           value="{{ company.active_users_count|default:'' }}" 
+                                           placeholder="e.g., 1,000+, 10K, 100K+">
+                                    <small class="form-text text-muted">How many active users does your product/solution currently have?</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="paying_customers_count" class="form-label">Paying Customers Count</label>
+                                    <input type="text" class="form-control" id="paying_customers_count" name="paying_customers_count" 
+                                           value="{{ company.paying_customers_count|default:'' }}" 
+                                           placeholder="e.g., 50+, 500, 1,000+">
+                                    <small class="form-text text-muted">How many paying customers does your company currently have?</small>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="annual_recurring_revenue" class="form-label">Annual Recurring Revenue (USD)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input type="text" class="form-control" id="annual_recurring_revenue" name="annual_recurring_revenue" 
+                                               value="{{ company.annual_recurring_revenue|default:'' }}" 
+                                               placeholder="e.g., 50,000, 500K, 1M">
+                                    </div>
+                                    <small class="form-text text-muted">What is your annual recurring revenue in USD?</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Financing & Funding -->
+                <div class="tab-pane fade" id="financing" role="tabpanel">
+                    <div class="form-section">
+                        <div class="section-header">
+                            <h4 class="section-title">
+                                <i class="bi bi-cash-stack me-2"></i>
+                                Financing & Funding
+                            </h4>
+                            <p class="section-subtitle">Information about your funding status and financial projections</p>
+                        </div>
+                        
+                        <div class="row g-4">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label class="form-label">Has your company secured any external funding to date?</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="has_external_funding" id="funding_yes" value="true" 
+                                               {% if company.has_external_funding %}checked{% endif %}>
+                                        <label class="form-check-label" for="funding_yes">
+                                            Yes, we have secured external funding
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="has_external_funding" id="funding_no" value="false" 
+                                               {% if not company.has_external_funding %}checked{% endif %}>
+                                        <label class="form-check-label" for="funding_no">
+                                            No, we have not secured external funding yet
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="funding_history" class="form-label">Funding History</label>
+                                    <textarea class="form-control" id="funding_history" name="funding_history" rows="4" 
+                                              placeholder="Describe your funding history, including previous rounds, investors, and timeline...">{{ company.funding_history|default:'' }}</textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="amount_raised" class="form-label">Total Amount Raised (USD)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input type="text" class="form-control" id="amount_raised" name="amount_raised" 
+                                               value="{{ company.amount_raised|default:'' }}" 
+                                               placeholder="e.g., 100K, 1M, 5M">
+                                    </div>
+                                    <small class="form-text text-muted">Please specify the total amount raised to date</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="funding_needed" class="form-label">Current Funding Need</label>
+                                    <select class="form-select" id="funding_needed" name="funding_needed">
+                                        <option value="">Select Funding Need</option>
+                                        <option value="under_10k" {% if company.funding_needed == 'under_10k' %}selected{% endif %}>Under $10K</option>
+                                        <option value="10k_50k" {% if company.funding_needed == '10k_50k' %}selected{% endif %}>$10K - $50K</option>
+                                        <option value="50k_100k" {% if company.funding_needed == '50k_100k' %}selected{% endif %}>$50K - $100K</option>
+                                        <option value="100k_500k" {% if company.funding_needed == '100k_500k' %}selected{% endif %}>$100K - $500K</option>
+                                        <option value="500k_1m" {% if company.funding_needed == '500k_1m' %}selected{% endif %}>$500K - $1M</option>
+                                        <option value="1m_5m" {% if company.funding_needed == '1m_5m' %}selected{% endif %}>$1M - $5M</option>
+                                        <option value="5m_10m" {% if company.funding_needed == '5m_10m' %}selected{% endif %}>$5M - $10M</option>
+                                        <option value="over_10m" {% if company.funding_needed == 'over_10m' %}selected{% endif %}>Over $10M</option>
+                                        <option value="not_seeking" {% if company.funding_needed == 'not_seeking' %}selected{% endif %}>Not currently seeking funding</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="use_of_funds" class="form-label">Use of Funds</label>
+                                    <textarea class="form-control" id="use_of_funds" name="use_of_funds" rows="4" 
+                                              placeholder="How do you plan to use the funding? (e.g., product development, marketing, team expansion, operations...)">{{ company.use_of_funds|default:'' }}</textarea>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="financial_projections" class="form-label">Financial Projections</label>
+                                    <textarea class="form-control" id="financial_projections" name="financial_projections" rows="4" 
+                                              placeholder="Share your financial projections for the next 2-3 years, including revenue goals, growth rates, and key milestones...">{{ company.financial_projections|default:'' }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 4: Founders & Team -->
+                <div class="tab-pane fade" id="team" role="tabpanel">
+                    <div class="form-section">
+                        <div class="section-header">
+                            <h4 class="section-title">
+                                <i class="bi bi-people me-2"></i>
+                                Founders & Team
+                            </h4>
+                            <p class="section-subtitle">Information about your founding team and core team members</p>
+                        </div>
+                        
+                        <div class="row g-4">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label class="form-label">Is the startup led or co-led by a female founder?</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="is_female_led" id="female_led_yes" value="true" 
+                                               {% if company.is_female_led %}checked{% endif %}>
+                                        <label class="form-check-label" for="female_led_yes">
+                                            Yes, led or co-led by a female founder
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="is_female_led" id="female_led_no" value="false" 
+                                               {% if not company.is_female_led %}checked{% endif %}>
+                                        <label class="form-check-label" for="female_led_no">
+                                            No, not led by a female founder
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="core_team_size" class="form-label">Core Team Size (including founders)</label>
+                                    <input type="text" class="form-control" id="core_team_size" name="core_team_size" 
+                                           value="{{ company.core_team_size|default:'' }}" 
+                                           placeholder="e.g., 3, 5-7, 10+">
+                                    <small class="form-text text-muted">What is the core team size including founders?</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="team_size" class="form-label">Total Team Size</label>
+                                    <select class="form-select" id="team_size" name="team_size">
+                                        <option value="">Select Team Size</option>
+                                        <option value="1" {% if company.team_size == '1' %}selected{% endif %}>1 person (Solo founder)</option>
+                                        <option value="2-5" {% if company.team_size == '2-5' %}selected{% endif %}>2-5 people</option>
+                                        <option value="6-10" {% if company.team_size == '6-10' %}selected{% endif %}>6-10 people</option>
+                                        <option value="11-25" {% if company.team_size == '11-25' %}selected{% endif %}>11-25 people</option>
+                                        <option value="26-50" {% if company.team_size == '26-50' %}selected{% endif %}>26-50 people</option>
+                                        <option value="51-100" {% if company.team_size == '51-100' %}selected{% endif %}>51-100 people</option>
+                                        <option value="100+" {% if company.team_size == '100+' %}selected{% endif %}>100+ people</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="team_overview" class="form-label">Team Overview</label>
+                                    <textarea class="form-control" id="team_overview" name="team_overview" rows="4" 
+                                              placeholder="Provide an overview of your team, including key roles, experience, and how the team complements each other...">{{ company.team_overview|default:'' }}</textarea>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="core_expertise" class="form-label">Core Expertise</label>
+                                    <textarea class="form-control" id="core_expertise" name="core_expertise" rows="4" 
+                                              placeholder="Describe the core expertise and key competencies of your team members...">{{ company.core_expertise|default:'' }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'account_settings' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle me-2"></i>Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-2"></i>Save Startup Profile
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+/* Base Form Styles */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.form-control, .form-select {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    outline: none;
+}
+
+/* Progress Bar */
+.progress-container {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.progress-header {
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.progress-text {
+    color: #6c757d;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.progress {
+    border-radius: 6px;
+    background: #f1f3f4;
+}
+
+.progress-bar {
+    border-radius: 6px;
+    transition: width 0.6s ease;
+}
+
+/* Tab Navigation */
+.tab-navigation {
+    background: white;
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.nav-tabs {
+    border: none;
+    padding: 1rem 2rem 0;
+}
+
+.nav-tabs .nav-link {
+    border: none;
+    background: none;
+    color: #6c757d;
+    font-weight: 600;
+    padding: 1rem 1.5rem;
+    border-radius: 12px 12px 0 0;
+    margin-right: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.nav-tabs .nav-link:hover {
+    background: #f8f9fa;
+    color: #495057;
+}
+
+.nav-tabs .nav-link.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+}
+
+/* Startup Edit Header */
+.company-edit-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.company-edit-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    opacity: 0.3;
+}
+
+.company-icon-container {
+    position: relative;
+    z-index: 2;
+}
+
+.company-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #ffffff15 0%, #ffffff25 100%);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.company-icon i {
+    font-size: 2.5rem;
+    color: white;
+}
+
+.company-edit-header h1 {
+    color: white;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+.header-subtitle {
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-size: 1.1rem;
+    font-weight: 400;
+    line-height: 1.4;
+    position: relative;
+    z-index: 2;
+}
+
+/* Form Container */
+.company-form-container {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.startup-form {
+    padding: 0;
+}
+
+/* Form Sections */
+.form-section {
+    padding: 2.5rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.form-section:last-child {
+    border-bottom: none;
+}
+
+.section-header {
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.section-subtitle {
+    color: #6c757d;
+    margin-bottom: 0;
+    font-size: 0.95rem;
+}
+
+/* Logo Section */
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.current-logo {
+    flex-shrink: 0;
+}
+
+.logo-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 20px;
+    object-fit: cover;
+    border: 4px solid #e9ecef;
+}
+
+.logo-placeholder {
+    width: 120px;
+    height: 120px;
+    border-radius: 20px;
+    background: #f8f9fa;
+    border: 4px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: #6c757d;
+}
+
+.logo-upload {
+    flex: 1;
+}
+
+/* Checkbox Grid */
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.checkbox-card {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.checkbox-card:hover {
+    border-color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.1);
+}
+
+.checkbox-card.selected {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #667eea08 0%, #764ba208 100%);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+}
+
+.checkbox-card input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.checkbox-card-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.checkbox-icon {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #e2e8f0;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.checkbox-card.selected .checkbox-icon {
+    background: #667eea;
+    border-color: #667eea;
+    color: white;
+}
+
+.checkbox-label {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #2c3e50;
+    line-height: 1.3;
+}
+
+/* Input Group Styling */
+.input-group-text {
+    background: #f8f9fa;
+    border-color: #e2e8f0;
+    color: #6c757d;
+}
+
+/* Form Actions */
+.form-actions {
+    padding: 2rem 2.5rem;
+    background: #f8f9fa;
+}
+
+.form-actions .btn {
+    padding: 0.75rem 2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.form-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Radio Button Styling */
+.form-check {
+    margin-bottom: 0.75rem;
+    padding-left: 1.75rem;
+}
+
+.form-check-input {
+    margin-left: -1.75rem;
+    margin-top: 0.25rem;
+}
+
+.form-check-label {
+    font-size: 0.95rem;
+    color: #495057;
+    cursor: pointer;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .company-edit-header {
+        padding: 1.5rem;
+    }
+    
+    .company-edit-header .d-flex {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .form-section {
+        padding: 1.5rem;
+    }
+    
+    .logo-section {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .form-actions {
+        padding: 1.5rem;
+    }
+    
+    .form-actions .d-flex {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+    }
+    
+    .nav-tabs {
+        padding: 1rem 1rem 0;
+    }
+    
+    .nav-tabs .nav-link {
+        padding: 0.75rem 1rem;
+        margin-right: 0.25rem;
+        font-size: 0.85rem;
+    }
+    
+    .checkbox-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Logo preview functionality
+    const logoInput = document.getElementById('company_logo');
+    const currentLogo = document.querySelector('.current-logo');
+    
+    if (logoInput) {
+        logoInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = currentLogo.querySelector('.logo-img') || 
+                              currentLogo.querySelector('.logo-placeholder');
+                    
+                    if (img) {
+                        if (img.classList.contains('logo-placeholder')) {
+                            currentLogo.innerHTML = `<img src="${e.target.result}" alt="Company Logo" class="logo-img">`;
+                        } else {
+                            img.src = e.target.result;
+                        }
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+    
+    // Checkbox card interactions
+    document.querySelectorAll('.checkbox-card').forEach(card => {
+        const checkbox = card.querySelector('input[type="checkbox"]');
+        
+        card.addEventListener('click', function(e) {
+            if (e.target.type !== 'checkbox') {
+                checkbox.checked = !checkbox.checked;
+            }
+            
+            if (checkbox.checked) {
+                card.classList.add('selected');
+            } else {
+                card.classList.remove('selected');
+            }
+        });
+        
+        // Initialize state
+        if (checkbox.checked) {
+            card.classList.add('selected');
+        }
+    });
+    
+    // Tab switching with validation
+    document.querySelectorAll('#startupTabs .nav-link').forEach(tab => {
+        tab.addEventListener('click', function(e) {
+            // Optional: Add validation before switching tabs
+            // validateCurrentTab();
+        });
+    });
+    
+    // Form validation
+    const form = document.getElementById('startupProfileForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const requiredFields = form.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+            
+            if (!isValid) {
+                e.preventDefault();
+                alert('Please fill in all required fields.');
+                
+                // Switch to the first tab with errors
+                const firstErrorField = form.querySelector('.is-invalid');
+                if (firstErrorField) {
+                    const tabPane = firstErrorField.closest('.tab-pane');
+                    if (tabPane) {
+                        const tabId = tabPane.id;
+                        const tabLink = document.querySelector(`#startupTabs a[href="#${tabId}"]`);
+                        if (tabLink) {
+                            tabLink.click();
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    // Progress calculation (simple example)
+    function updateProgress() {
+        const form = document.getElementById('startupProfileForm');
+        const allFields = form.querySelectorAll('input, textarea, select');
+        const filledFields = Array.from(allFields).filter(field => 
+            field.value && field.value.trim() !== ''
+        );
+        
+        const progress = Math.round((filledFields.length / allFields.length) * 100);
+        const progressBar = document.querySelector('.progress-bar');
+        const progressText = document.querySelector('.progress-text');
+        
+        if (progressBar && progressText) {
+            progressBar.style.width = progress + '%';
+            progressText.textContent = progress + '% Complete';
+        }
+    }
+    
+    // Update progress on field changes
+    document.querySelectorAll('input, textarea, select').forEach(field => {
+        field.addEventListener('change', updateProgress);
+        field.addEventListener('input', updateProgress);
+    });
+    
+    // Initial progress calculation
+    updateProgress();
+});
+</script>
+{% endblock %}

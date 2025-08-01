@@ -1965,7 +1965,56 @@ def company_profile_edit(request):
     member = get_object_or_404(Member, user=request.user)
     company = None
     if hasattr(member, 'company'):
-        company = member.company
+        try:
+            company = Company.objects.get(member=member, is_primary=True)
+        except Company.DoesNotExist:
+            company = None
+    
+    # Check if this is a startup company to render different template
+    if company and company.company_type == 'startup':
+        return startup_company_profile_edit(request)
+    
+    if request.method == 'POST':
+        try:
+            # Get or create company
+            if company:
+                # Update existing company
+                pass
+            else:
+                # Create new company
+                company = Company.objects.create(
+                    member=member,
+                    company_type=request.POST.get('company_type', 'corporation'),
+                    is_primary=True
+                )
+            
+            # Update basic company information
+            company.company_name = request.POST.get('company_name', '').strip()
+            company.company_type = request.POST.get('company_type', '').strip()
+            company.company_description = request.POST.get('company_description', '').strip()
+            company.website = request.POST.get('website_url', '').strip() or None
+            company.founded_year = int(request.POST.get('founded_year')) if request.POST.get('founded_year') else None
+            company.primary_location = request.POST.get('primary_location', '').strip()
+            company.organization_type = request.POST.get('organization_type', '').strip()
+            company.team_size = request.POST.get('team_size', '').strip()
+            company.average_deal_size = request.POST.get('average_deal_size', '').strip()
+            
+            # Handle multiple selections
+            industry_expertise = request.POST.getlist('industry_expertise')
+            investment_categories = request.POST.getlist('investment_categories')
+            support_areas = request.POST.getlist('support_areas')
+            
+            # Handle company logo upload
+            if 'company_logo' in request.FILES:
+                company.company_logo = request.FILES['company_logo']
+            
+            company.save()
+            
+            messages.success(request, 'Your company profile has been updated successfully!')
+            return redirect('company_profile_edit')
+            
+        except Exception as e:
+            messages.error(request, f'An error occurred while updating your profile: {str(e)}')
     
     # Sample industry expertise choices for template
     industry_expertise_choices = [
@@ -1987,6 +2036,87 @@ def company_profile_edit(request):
         'industry_expertise_choices': industry_expertise_choices,
     }
     return render(request, 'member/company_profile_edit.html', context)
+
+
+@login_required
+def startup_company_profile_edit(request):
+    """Startup-specific company profile edit form with tabs"""
+    member = get_object_or_404(Member, user=request.user)
+    
+    # Get or create company profile
+    try:
+        company = Company.objects.get(member=member, is_primary=True)
+    except Company.DoesNotExist:
+        company = None
+    
+    if request.method == 'POST':
+        try:
+            # Get or create company
+            if company:
+                # Update existing company
+                pass
+            else:
+                # Create new company
+                company = Company.objects.create(
+                    member=member,
+                    company_type='startup',
+                    is_primary=True
+                )
+            
+            # Update basic company information
+            company.company_name = request.POST.get('company_name', '').strip()
+            company.company_description = request.POST.get('company_description', '').strip()
+            company.website = request.POST.get('website', '').strip() or None
+            company.founded_year = int(request.POST.get('founded_year')) if request.POST.get('founded_year') else None
+            company.primary_location = request.POST.get('primary_location', '').strip()
+            company.current_stage = request.POST.get('current_stage', '').strip()
+            company.team_size = request.POST.get('team_size', '').strip()
+            
+            # Startup-specific fields
+            # Company Information tab
+            company.problem_statement = request.POST.get('problem_statement', '').strip()
+            
+            # Market & Traction tab
+            company.target_markets = request.POST.get('target_markets', '').strip()
+            customer_segments = request.POST.getlist('customer_segments')
+            company.customer_segments = customer_segments
+            company.active_users_count = request.POST.get('active_users_count', '').strip()
+            company.paying_customers_count = request.POST.get('paying_customers_count', '').strip()
+            company.annual_recurring_revenue = request.POST.get('annual_recurring_revenue', '').strip()
+            
+            # Financing & Funding tab
+            has_external_funding = request.POST.get('has_external_funding')
+            company.has_external_funding = has_external_funding == 'true'
+            company.funding_history = request.POST.get('funding_history', '').strip()
+            company.amount_raised = request.POST.get('amount_raised', '').strip()
+            company.funding_needed = request.POST.get('funding_needed', '').strip()
+            company.use_of_funds = request.POST.get('use_of_funds', '').strip()
+            company.financial_projections = request.POST.get('financial_projections', '').strip()
+            
+            # Founders and Team tab
+            is_female_led = request.POST.get('is_female_led')
+            company.is_female_led = is_female_led == 'true'
+            company.core_team_size = request.POST.get('core_team_size', '').strip()
+            company.team_overview = request.POST.get('team_overview', '').strip()
+            company.core_expertise = request.POST.get('core_expertise', '').strip()
+            
+            # Handle company logo upload
+            if 'company_logo' in request.FILES:
+                company.company_logo = request.FILES['company_logo']
+            
+            company.save()
+            
+            messages.success(request, 'Your startup profile has been updated successfully!')
+            return redirect('startup_company_profile_edit')
+            
+        except Exception as e:
+            messages.error(request, f'An error occurred while updating your profile: {str(e)}')
+    
+    context = {
+        'member': member,
+        'company': company,
+    }
+    return render(request, 'member/startup_company_profile_edit.html', context)
 
 
 @login_required

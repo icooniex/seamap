@@ -153,6 +153,30 @@ class Company(models.Model):
     current_stage = models.CharField(max_length=20, choices=CURRENT_STAGE_CHOICES, blank=True)
     funding_needed = models.CharField(max_length=20, choices=FUNDING_NEEDED_CHOICES, blank=True)
     
+    # Startup-specific fields
+    # Company Information tab
+    problem_statement = models.TextField(blank=True, help_text="Problem statement for startup")
+    
+    # Market & Traction tab
+    target_markets = models.TextField(blank=True, help_text="Target markets description")
+    customer_segments = models.JSONField(default=list, blank=True, help_text="Customer segments")
+    active_users_count = models.CharField(max_length=100, blank=True, help_text="Number of active users")
+    paying_customers_count = models.CharField(max_length=100, blank=True, help_text="Number of paying customers")
+    annual_recurring_revenue = models.CharField(max_length=100, blank=True, help_text="Annual recurring revenue in USD")
+    
+    # Financing & Funding tab
+    has_external_funding = models.BooleanField(default=False, help_text="Has secured external funding")
+    funding_history = models.TextField(blank=True, help_text="Funding history details")
+    amount_raised = models.CharField(max_length=100, blank=True, help_text="Amount raised in USD")
+    use_of_funds = models.TextField(blank=True, help_text="Use of funds description")
+    financial_projections = models.TextField(blank=True, help_text="Financial projections")
+    
+    # Founders and Team tab
+    is_female_led = models.BooleanField(default=False, help_text="Led or co-led by female founder")
+    core_team_size = models.CharField(max_length=50, blank=True, help_text="Core team size including founders")
+    team_overview = models.TextField(blank=True, help_text="Team overview description")
+    core_expertise = models.TextField(blank=True, help_text="Core expertise description")
+    
     # Support Information (Step 3)
     support_areas = models.JSONField(default=list, blank=True)  # Store multiple selections
     support_details = models.TextField(blank=True)
