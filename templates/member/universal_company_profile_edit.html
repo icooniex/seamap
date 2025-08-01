@@ -1,0 +1,217 @@
+{% extends "template_parts/dashboard_base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/company_profile_edit.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <!-- Display Messages -->
+    {% if messages %}
+        <div class="messages-container mb-4">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    <i class="bi {% if message.tags == 'success' %}bi-check-circle{% elif message.tags == 'error' %}bi-exclamation-triangle{% else %}bi-info-circle{% endif %} me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Header Section -->
+    <div class="company-edit-header mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <div class="company-icon-container me-3">
+                    <div class="company-icon">
+                        {% if company.company_type == 'startup' %}
+                            <i class="bi bi-rocket-takeoff"></i>
+                        {% elif company.company_type == 'investor' %}
+                            <i class="bi bi-cash-stack"></i>
+                        {% elif company.company_type == 'corporate' %}
+                            <i class="bi bi-building"></i>
+                        {% else %}
+                            <i class="bi bi-building"></i>
+                        {% endif %}
+                    </div>
+                </div>
+                <div>
+                    <h1 class="h3 mb-1">
+                        {% if company.company_type == 'startup' %}
+                            Startup Profile
+                        {% elif company.company_type == 'investor' %}
+                            Investor Profile
+                        {% elif company.company_type == 'corporate' %}
+                            Corporate Profile
+                        {% else %}
+                            Company Profile
+                        {% endif %}
+                    </h1>
+                    <p class="header-subtitle mb-0">
+                        {% if company.company_type == 'startup' %}
+                            Manage your startup's information and business details
+                        {% elif company.company_type == 'investor' %}
+                            Manage your investment organization information
+                        {% elif company.company_type == 'corporate' %}
+                            Manage your corporate organization information
+                        {% else %}
+                            Manage your organization information and business details
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+            <div>
+                <a href="{% url 'account_settings' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Back to Settings
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Company Form Container -->
+    <div class="company-form-container">
+        
+        <!-- Navigation Tabs (Only for Startup) -->
+        {% if company.company_type == 'startup' or not company.company_type %}
+        <div class="nav-tabs-container">
+            <ul class="nav nav-tabs" id="startupTabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="company-info-tab" data-bs-toggle="tab" href="#company-info" role="tab">
+                        <i class="bi bi-building me-2"></i>Company Information
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="market-traction-tab" data-bs-toggle="tab" href="#market-traction" role="tab">
+                        <i class="bi bi-graph-up-arrow me-2"></i>Market & Traction
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="financing-tab" data-bs-toggle="tab" href="#financing" role="tab">
+                        <i class="bi bi-cash-stack me-2"></i>Financing & Funding
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="team-tab" data-bs-toggle="tab" href="#team" role="tab">
+                        <i class="bi bi-people me-2"></i>Founders & Team
+                    </a>
+                </li>
+            </ul>
+        </div>
+        {% endif %}
+
+        <!-- Form Content -->
+        <form method="post" enctype="multipart/form-data" class="company-form" id="companyProfileForm">
+            {% csrf_token %}
+            
+            {% if company.company_type == 'startup' or not company.company_type %}
+                <!-- Startup: Tabbed Interface -->
+                <div class="tab-content" id="startupTabsContent">
+                    <!-- Tab 1: Company Information -->
+                    <div class="tab-pane fade show active" id="company-info" role="tabpanel">
+                        {% include 'member/forms/startup_company_info.html' %}
+                    </div>
+                    
+                    <!-- Tab 2: Market & Traction -->
+                    <div class="tab-pane fade" id="market-traction" role="tabpanel">
+                        {% include 'member/forms/startup_market_traction.html' %}
+                    </div>
+
+                    <!-- Tab 3: Financing & Funding -->
+                    <div class="tab-pane fade" id="financing" role="tabpanel">
+                        {% include 'member/forms/startup_financing.html' %}
+                    </div>
+
+                    <!-- Tab 4: Founders & Team -->
+                    <div class="tab-pane fade" id="team" role="tabpanel">
+                        {% include 'member/forms/startup_team.html' %}
+                    </div>
+                </div>
+                
+            {% elif company.company_type == 'investor' %}
+                <!-- Investor: Single Form -->
+                {% include 'member/forms/investor_company_info.html' %}
+                
+            {% elif company.company_type == 'corporate' %}
+                <!-- Corporate: Single Form -->
+                {% include 'member/forms/corporate_company_info.html' %}
+                
+            {% else %}
+                <!-- Default Company Form -->
+                {% include 'member/forms/general_company_info.html' %}
+            {% endif %}
+
+            <!-- Submit Button -->
+            <div class="form-section">
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-check-circle me-2"></i>Save Profile
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Tab functionality and checkbox card functionality - copied from onboarding
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Bootstrap tabs if they exist
+    const tabTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tab"]'));
+    tabTriggerList.map(function(tabTriggerEl) {
+        return new bootstrap.Tab(tabTriggerEl);
+    });
+    
+    // Checkbox card functionality - copied from onboarding
+    const checkboxCards = document.querySelectorAll('.checkbox-card');
+    
+    checkboxCards.forEach(card => {
+        const checkbox = card.querySelector('input[type="checkbox"]');
+        
+        if (checkbox) {
+            // Set initial state
+            if (checkbox.checked) {
+                card.classList.add('selected');
+            }
+            
+            // Add click handler
+            card.addEventListener('click', function(e) {
+                // Don't trigger if clicked on the actual checkbox
+                if (e.target === checkbox) return;
+                
+                checkbox.checked = !checkbox.checked;
+                
+                if (checkbox.checked) {
+                    card.classList.add('selected');
+                } else {
+                    card.classList.remove('selected');
+                }
+                
+                // Trigger change event
+                checkbox.dispatchEvent(new Event('change'));
+            });
+            
+            // Handle checkbox change
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    card.classList.add('selected');
+                } else {
+                    card.classList.remove('selected');
+                }
+            });
+        }
+    });
+    
+    // Form validation
+    const form = document.getElementById('companyProfileForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            // Basic validation logic can be added here
+            console.log('Form submitted');
+        });
+    }
+});
+</script>
+
+{% endblock %}

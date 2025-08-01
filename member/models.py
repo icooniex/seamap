@@ -147,6 +147,9 @@ class Company(models.Model):
     market_country_interests = models.JSONField(default=list, blank=True)  # Store multiple selections
     investment_philosophy = models.TextField(blank=True)
     
+    # Corporate-specific fields
+    industry_expertise = models.JSONField(default=list, blank=True)  # Store multiple industry expertise selections
+    
     # Innovation Information (Step 2) - Mainly for startups
     innovation_types = models.JSONField(default=list, blank=True)  # Store multiple selections
     solution_description = models.TextField(blank=True)

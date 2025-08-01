@@ -1,0 +1,74 @@
+<!-- Startup Founders & Team Tab -->
+<div class="form-section">
+    <div class="section-header">
+        <h4 class="section-title">
+            <i class="bi bi-people me-2"></i>
+            Founders & Team
+        </h4>
+        <p class="section-subtitle">Information about your founding team and core team members</p>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="form-group">
+                <label class="form-label">Is the startup led or co-led by a female founder?</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="is_female_led" id="female_led_yes" value="true" 
+                           {% if company.is_female_led %}checked{% endif %}>
+                    <label class="form-check-label" for="female_led_yes">
+                        Yes, led or co-led by a female founder
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="is_female_led" id="female_led_no" value="false" 
+                           {% if not company.is_female_led %}checked{% endif %}>
+                    <label class="form-check-label" for="female_led_no">
+                        No, not led by a female founder
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="core_team_size" class="form-label">Core Team Size (including founders)</label>
+                <input type="text" class="form-control" id="core_team_size" name="core_team_size" 
+                       value="{{ company.core_team_size|default:'' }}" 
+                       placeholder="e.g., 3, 5-7, 10+">
+                <small class="form-text text-muted">What is the core team size including founders?</small>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="team_size" class="form-label">Total Team Size</label>
+                <select class="form-select" id="team_size" name="team_size">
+                    <option value="">Select Team Size</option>
+                    <option value="1" {% if company.team_size == '1' %}selected{% endif %}>1 person (Solo founder)</option>
+                    <option value="2-5" {% if company.team_size == '2-5' %}selected{% endif %}>2-5 people</option>
+                    <option value="6-10" {% if company.team_size == '6-10' %}selected{% endif %}>6-10 people</option>
+                    <option value="11-25" {% if company.team_size == '11-25' %}selected{% endif %}>11-25 people</option>
+                    <option value="26-50" {% if company.team_size == '26-50' %}selected{% endif %}>26-50 people</option>
+                    <option value="51-100" {% if company.team_size == '51-100' %}selected{% endif %}>51-100 people</option>
+                    <option value="100+" {% if company.team_size == '100+' %}selected{% endif %}>100+ people</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <label for="team_overview" class="form-label">Team Overview</label>
+                <textarea class="form-control" id="team_overview" name="team_overview" rows="4" 
+                          placeholder="Provide an overview of your team structure, key roles, and team dynamics...">{{ company.team_overview|default:'' }}</textarea>
+                <small class="form-text text-muted">Describe your team's structure and how it supports your startup's goals</small>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <label for="core_expertise" class="form-label">Core Expertise</label>
+                <textarea class="form-control" id="core_expertise" name="core_expertise" rows="4" 
+                          placeholder="Describe the core expertise and skills that your team brings to the startup...">{{ company.core_expertise|default:'' }}</textarea>
+                <small class="form-text text-muted">Highlight the key skills, experience, and expertise of your founding team and core members</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+

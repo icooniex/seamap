@@ -1,0 +1,475 @@
+<!-- Investor Company Information Form -->
+<!-- Company Logo Section -->
+<div class="form-section">
+    <div class="section-header">
+        <h4 class="section-title">
+            <i class="bi bi-image me-2"></i>
+            Organization Logo
+        </h4>
+        <p class="section-subtitle">Upload your organization's logo for branding</p>
+    </div>
+    
+    <div class="logo-section">
+        <div class="current-logo">
+            {% if company.company_logo %}
+                <img src="{{ company.company_logo.url }}" alt="Organization Logo" class="logo-img">
+            {% else %}
+                <div class="logo-placeholder">
+                    <i class="bi bi-cash-stack"></i>
+                </div>
+            {% endif %}
+        </div>
+        <div class="logo-upload">
+            <div class="form-group">
+                <label for="company_logo" class="form-label">Choose New Logo</label>
+                <input type="file" class="form-control" id="company_logo" name="company_logo" accept="image/*">
+                <small class="form-text text-muted">Recommended: Square logo, at least 200x200px, max 5MB</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Basic Organization Information -->
+<div class="form-section">
+    <div class="section-header">
+        <h4 class="section-title">
+            <i class="bi bi-info-circle me-2"></i>
+            Basic Information
+        </h4>
+        <p class="section-subtitle">Core details about your investment organization</p>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-md-8">
+            <div class="form-group">
+                <label for="company_name" class="form-label">Organization Name *</label>
+                <input type="text" class="form-control" id="company_name" name="company_name" 
+                       value="{{ company.company_name|default:'' }}" required>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="investor_type" class="form-label">Type of Investor *</label>
+                <select class="form-select" id="investor_type" name="investor_type" required>
+                    <option value="">Select investor type</option>
+                    <option value="angel" {% if company.investor_type == 'angel' %}selected{% endif %}>🦸 Angel Investor</option>
+                    <option value="vc" {% if company.investor_type == 'vc' %}selected{% endif %}>💼 Venture Capital (VC)</option>
+                    <option value="corporate" {% if company.investor_type == 'corporate' %}selected{% endif %}>🏢 Corporate Investor</option>
+                    <option value="family_office" {% if company.investor_type == 'family_office' %}selected{% endif %}>👨‍👩‍👧‍👦 Family Office</option>
+                    <option value="impact_fund" {% if company.investor_type == 'impact_fund' %}selected{% endif %}>🌱 Impact Fund</option>
+                    <option value="government" {% if company.investor_type == 'government' %}selected{% endif %}>🏛️ Government/Development Agency</option>
+                    <option value="other" {% if company.investor_type == 'other' %}selected{% endif %}>🔎 Other</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <label for="company_description" class="form-label">Organization Description</label>
+                <textarea class="form-control" id="company_description" name="company_description" rows="4" 
+                          placeholder="Tell us about your organization's mission, vision, and what makes you unique...">{{ company.company_description|default:'' }}</textarea>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="website" class="form-label">Website URL</label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-globe"></i>
+                    </span>
+                    <input type="url" class="form-control" id="website" name="website_url" 
+                           value="{{ company.website|default:'' }}" 
+                           placeholder="https://www.yourcompany.com">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="founded_year" class="form-label">Founded Year</label>
+                <input type="number" class="form-control" id="founded_year" name="founded_year" 
+                       value="{{ company.founded_year|default:'' }}" min="1800" max="2025">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Location & Size -->
+<div class="form-section">
+    <div class="section-header">
+        <h4 class="section-title">
+            <i class="bi bi-geo-alt me-2"></i>
+            Location & Organization
+        </h4>
+        <p class="section-subtitle">Where your organization operates and organizational details</p>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="primary_location" class="form-label">Primary Location *</label>
+                <select class="form-select" id="primary_location" name="primary_location" required>
+                    <option value="">Select Location</option>
+                    <option value="Singapore" {% if company.primary_location == 'Singapore' %}selected{% endif %}>🇸🇬 Singapore</option>
+                    <option value="Indonesia" {% if company.primary_location == 'Indonesia' %}selected{% endif %}>🇮🇩 Indonesia</option>
+                    <option value="Thailand" {% if company.primary_location == 'Thailand' %}selected{% endif %}>🇹🇭 Thailand</option>
+                    <option value="Malaysia" {% if company.primary_location == 'Malaysia' %}selected{% endif %}>🇲🇾 Malaysia</option>
+                    <option value="Philippines" {% if company.primary_location == 'Philippines' %}selected{% endif %}>🇵🇭 Philippines</option>
+                    <option value="Vietnam" {% if company.primary_location == 'Vietnam' %}selected{% endif %}>🇻🇳 Vietnam</option>
+                    <option value="Cambodia" {% if company.primary_location == 'Cambodia' %}selected{% endif %}>🇰🇭 Cambodia</option>
+                    <option value="Laos" {% if company.primary_location == 'Laos' %}selected{% endif %}>🇱🇦 Laos</option>
+                    <option value="Myanmar" {% if company.primary_location == 'Myanmar' %}selected{% endif %}>🇲🇲 Myanmar</option>
+                    <option value="Brunei" {% if company.primary_location == 'Brunei' %}selected{% endif %}>🇧🇳 Brunei</option>
+                    <option value="Other" {% if company.primary_location == 'Other' %}selected{% endif %}>🌍 Other</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="team_size" class="form-label">Team Size *</label>
+                <select class="form-select" id="team_size" name="team_size" required>
+                    <option value="">Select Team Size</option>
+                    <option value="1" {% if company.team_size == '1' %}selected{% endif %}>1 person (Solo investor)</option>
+                    <option value="2-5" {% if company.team_size == '2-5' %}selected{% endif %}>2-5 people</option>
+                    <option value="6-10" {% if company.team_size == '6-10' %}selected{% endif %}>6-10 people</option>
+                    <option value="11-25" {% if company.team_size == '11-25' %}selected{% endif %}>11-25 people</option>
+                    <option value="26-50" {% if company.team_size == '26-50' %}selected{% endif %}>26-50 people</option>
+                    <option value="51-100" {% if company.team_size == '51-100' %}selected{% endif %}>51-100 people</option>
+                    <option value="100+" {% if company.team_size == '100+' %}selected{% endif %}>100+ people</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Investment Information -->
+<div class="form-section">
+    <div class="section-header">
+        <h4 class="section-title">
+            <i class="bi bi-cash-stack me-2"></i>
+            Investment Information
+        </h4>
+        <p class="section-subtitle">Details about your investment approach and criteria</p>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="funding_size" class="form-label">Fund Size *</label>
+                <select class="form-select" id="funding_size" name="funding_size" required>
+                    <option value="">Select fund size</option>
+                    <option value="under_1m" {% if company.funding_size == 'under_1m' %}selected{% endif %}>Under $1M</option>
+                    <option value="1m_50m" {% if company.funding_size == '1m_50m' %}selected{% endif %}>$1M - $50M</option>
+                    <option value="50m_250m" {% if company.funding_size == '50m_250m' %}selected{% endif %}>$50M - $250M</option>
+                    <option value="250m_1b" {% if company.funding_size == '250m_1b' %}selected{% endif %}>$250M - $1B</option>
+                    <option value="over_1b" {% if company.funding_size == 'over_1b' %}selected{% endif %}>Over $1B</option>
+                    <option value="undisclosed" {% if company.funding_size == 'undisclosed' %}selected{% endif %}>Undisclosed</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="average_deal_size" class="form-label">Average Deal Size *</label>
+                <select class="form-select" id="average_deal_size" name="average_deal_size" required>
+                    <option value="">Select deal size</option>
+                    <option value="under_50k" {% if company.average_deal_size == 'under_50k' %}selected{% endif %}>Under $50K</option>
+                    <option value="50k_250k" {% if company.average_deal_size == '50k_250k' %}selected{% endif %}>$50K - $250K</option>
+                    <option value="250k_1m" {% if company.average_deal_size == '250k_1m' %}selected{% endif %}>$250K - $1M</option>
+                    <option value="1m_5m" {% if company.average_deal_size == '1m_5m' %}selected{% endif %}>$1M - $5M</option>
+                    <option value="5m_25m" {% if company.average_deal_size == '5m_25m' %}selected{% endif %}>$5M - $25M</option>
+                    <option value="over_25m" {% if company.average_deal_size == 'over_25m' %}selected{% endif %}>Over $25M</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <label class="form-label">Preferred Funding Stages *</label>
+                <div class="checkbox-grid">
+                    <div class="checkbox-card">
+                        <input type="checkbox" name="funding_stages" value="pre_seed" 
+                               {% if 'pre_seed' in company.funding_stages %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                                <i class="bi bi-check"></i>
+                            </div>
+                            <span class="checkbox-label">Pre-Seed</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" name="funding_stages" value="seed" 
+                               {% if 'seed' in company.funding_stages %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                                <i class="bi bi-check"></i>
+                            </div>
+                            <span class="checkbox-label">Seed</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" name="funding_stages" value="series_a" 
+                               {% if 'series_a' in company.funding_stages %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                                <i class="bi bi-check"></i>
+                            </div>
+                            <span class="checkbox-label">Series A</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" name="funding_stages" value="series_b" 
+                               {% if 'series_b' in company.funding_stages %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                                <i class="bi bi-check"></i>
+                            </div>
+                            <span class="checkbox-label">Series B</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" name="funding_stages" value="series_c" 
+                               {% if 'series_c' in company.funding_stages %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                                <i class="bi bi-check"></i>
+                            </div>
+                            <span class="checkbox-label">Series C</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" name="funding_stages" value="series_d_plus" 
+                               {% if 'series_d_plus' in company.funding_stages %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                                <i class="bi bi-check"></i>
+                            </div>
+                            <span class="checkbox-label">Series D+</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <label class="form-label">Investment Categories *</label>
+                <div class="checkbox-grid">
+                    <div class="checkbox-card">
+                        <input type="checkbox" name="investment_categories" value="eliminate_redesign" 
+                               {% if 'eliminate_redesign' in company.investment_categories %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                                <i class="bi bi-check"></i>
+                            </div>
+                            <span class="checkbox-label">Eliminate & Redesign Packaging</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" name="investment_categories" value="refill_reuse" 
+                               {% if 'refill_reuse' in company.investment_categories %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                                <i class="bi bi-check"></i>
+                            </div>
+                            <span class="checkbox-label">Refill & Reuse Solutions</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" name="investment_categories" value="collection_sorting" 
+                               {% if 'collection_sorting' in company.investment_categories %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                                <i class="bi bi-check"></i>
+                            </div>
+                            <span class="checkbox-label">Collection & Sorting Technologies</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" name="investment_categories" value="advanced_recycling" 
+                               {% if 'advanced_recycling' in company.investment_categories %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                                <i class="bi bi-check"></i>
+                            </div>
+                            <span class="checkbox-label">Advanced Recycling & Upcycling</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" name="investment_categories" value="bioplastics" 
+                               {% if 'bioplastics' in company.investment_categories %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                                <i class="bi bi-check"></i>
+                            </div>
+                            <span class="checkbox-label">Bioplastics & Compostable Materials</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" name="investment_categories" value="waste_management" 
+                               {% if 'waste_management' in company.investment_categories %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                                <i class="bi bi-check"></i>
+                            </div>
+                            <span class="checkbox-label">Waste Management Infrastructure</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" name="investment_categories" value="data_monitoring" 
+                               {% if 'data_monitoring' in company.investment_categories %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                                <i class="bi bi-check"></i>
+                            </div>
+                            <span class="checkbox-label">Data, Monitoring & Traceability</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" name="investment_categories" value="other" 
+                               {% if 'other' in company.investment_categories %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                                <i class="bi bi-check"></i>
+                            </div>
+                            <span class="checkbox-label">Other</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <label for="investment_philosophy" class="form-label">Investment Philosophy *</label>
+                <textarea class="form-control" id="investment_philosophy" name="investment_philosophy" rows="4" 
+                          placeholder="Describe your investment philosophy, criteria, and what you look for in startups..." required>{{ company.investment_philosophy|default:'' }}</textarea>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Market Interests -->
+<div class="form-section">
+    <div class="section-header">
+        <h4 class="section-title">
+            <i class="bi bi-globe me-2"></i>
+            Market Interests
+        </h4>
+        <p class="section-subtitle">Geographic markets where you prefer to invest</p>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="form-group">
+                <label class="form-label">Market Country Interests</label>
+                <div class="checkbox-grid">
+                    <div class="checkbox-card">
+                        <input type="checkbox" name="market_country_interests" value="Singapore" 
+                               {% if 'Singapore' in company.market_country_interests %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                                <i class="bi bi-check"></i>
+                            </div>
+                            <span class="checkbox-label">🇸🇬 Singapore</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" name="market_country_interests" value="Indonesia" 
+                               {% if 'Indonesia' in company.market_country_interests %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                                <i class="bi bi-check"></i>
+                            </div>
+                            <span class="checkbox-label">🇮🇩 Indonesia</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" name="market_country_interests" value="Thailand" 
+                               {% if 'Thailand' in company.market_country_interests %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                                <i class="bi bi-check"></i>
+                            </div>
+                            <span class="checkbox-label">🇹🇭 Thailand</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" name="market_country_interests" value="Malaysia" 
+                               {% if 'Malaysia' in company.market_country_interests %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                                <i class="bi bi-check"></i>
+                            </div>
+                            <span class="checkbox-label">🇲🇾 Malaysia</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" name="market_country_interests" value="Philippines" 
+                               {% if 'Philippines' in company.market_country_interests %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                                <i class="bi bi-check"></i>
+                            </div>
+                            <span class="checkbox-label">🇵🇭 Philippines</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" name="market_country_interests" value="Vietnam" 
+                               {% if 'Vietnam' in company.market_country_interests %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                                <i class="bi bi-check"></i>
+                            </div>
+                            <span class="checkbox-label">🇻🇳 Vietnam</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" name="market_country_interests" value="Cambodia" 
+                               {% if 'Cambodia' in company.market_country_interests %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                                <i class="bi bi-check"></i>
+                            </div>
+                            <span class="checkbox-label">🇰🇭 Cambodia</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" name="market_country_interests" value="Laos" 
+                               {% if 'Laos' in company.market_country_interests %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                                <i class="bi bi-check"></i>
+                            </div>
+                            <span class="checkbox-label">🇱🇦 Laos</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" name="market_country_interests" value="Myanmar" 
+                               {% if 'Myanmar' in company.market_country_interests %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                                <i class="bi bi-check"></i>
+                            </div>
+                            <span class="checkbox-label">🇲🇲 Myanmar</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" name="market_country_interests" value="Brunei" 
+                               {% if 'Brunei' in company.market_country_interests %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                                <i class="bi bi-check"></i>
+                            </div>
+                            <span class="checkbox-label">🇧🇳 Brunei</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" name="market_country_interests" value="Other" 
+                               {% if 'Other' in company.market_country_interests %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                                <i class="bi bi-check"></i>
+                            </div>
+                            <span class="checkbox-label">🌍 Other</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

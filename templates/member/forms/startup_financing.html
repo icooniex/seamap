@@ -1,0 +1,84 @@
+<!-- Startup Financing & Funding Tab -->
+<div class="form-section">
+    <div class="section-header">
+        <h4 class="section-title">
+            <i class="bi bi-cash-stack me-2"></i>
+            Financing & Funding
+        </h4>
+        <p class="section-subtitle">Information about your funding status and financial projections</p>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="form-group">
+                <label class="form-label">Has your company secured any external funding to date?</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="has_external_funding" id="funding_yes" value="true" 
+                           {% if company.has_external_funding %}checked{% endif %}>
+                    <label class="form-check-label" for="funding_yes">
+                        Yes, we have secured external funding
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="has_external_funding" id="funding_no" value="false" 
+                           {% if not company.has_external_funding %}checked{% endif %}>
+                    <label class="form-check-label" for="funding_no">
+                        No, we have not secured external funding yet
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <label for="funding_history" class="form-label">Funding History</label>
+                <textarea class="form-control" id="funding_history" name="funding_history" rows="4" 
+                          placeholder="Describe your funding history, including previous rounds, investors, and timeline...">{{ company.funding_history|default:'' }}</textarea>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="amount_raised" class="form-label">Total Amount Raised (USD)</label>
+                <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input type="text" class="form-control" id="amount_raised" name="amount_raised" 
+                           value="{{ company.amount_raised|default:'' }}" 
+                           placeholder="e.g., 100K, 1M, 5M">
+                </div>
+                <small class="form-text text-muted">Please specify the total amount raised to date</small>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="funding_needed" class="form-label">Current Funding Need</label>
+                <select class="form-select" id="funding_needed" name="funding_needed">
+                    <option value="">Select Funding Need</option>
+                    <option value="under_10k" {% if company.funding_needed == 'under_10k' %}selected{% endif %}>Under $10K</option>
+                    <option value="10k_50k" {% if company.funding_needed == '10k_50k' %}selected{% endif %}>$10K - $50K</option>
+                    <option value="50k_100k" {% if company.funding_needed == '50k_100k' %}selected{% endif %}>$50K - $100K</option>
+                    <option value="100k_500k" {% if company.funding_needed == '100k_500k' %}selected{% endif %}>$100K - $500K</option>
+                    <option value="500k_1m" {% if company.funding_needed == '500k_1m' %}selected{% endif %}>$500K - $1M</option>
+                    <option value="1m_5m" {% if company.funding_needed == '1m_5m' %}selected{% endif %}>$1M - $5M</option>
+                    <option value="5m_10m" {% if company.funding_needed == '5m_10m' %}selected{% endif %}>$5M - $10M</option>
+                    <option value="over_10m" {% if company.funding_needed == 'over_10m' %}selected{% endif %}>Over $10M</option>
+                    <option value="not_seeking" {% if company.funding_needed == 'not_seeking' %}selected{% endif %}>Not currently seeking funding</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <label for="use_of_funds" class="form-label">Use of Funds</label>
+                <textarea class="form-control" id="use_of_funds" name="use_of_funds" rows="4" 
+                          placeholder="How do you plan to use the funding? (e.g., product development, marketing, team expansion, operations...)">{{ company.use_of_funds|default:'' }}</textarea>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <label for="financial_projections" class="form-label">Financial Projections</label>
+                <textarea class="form-control" id="financial_projections" name="financial_projections" rows="4" 
+                          placeholder="Share your financial projections for the next 2-3 years, including revenue goals, growth rates, and key milestones...">{{ company.financial_projections|default:'' }}</textarea>
+            </div>
+        </div>
+    </div>
+</div>
+
+

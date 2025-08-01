@@ -1,0 +1,106 @@
+<!-- Startup Market & Traction Tab -->
+<div class="form-section">
+    <div class="section-header">
+        <h4 class="section-title">
+            <i class="bi bi-graph-up-arrow me-2"></i>
+            Market & Traction
+        </h4>
+        <p class="section-subtitle">Information about your target market and current traction</p>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="form-group">
+                <label for="target_markets" class="form-label">Target Markets</label>
+                <textarea class="form-control" id="target_markets" name="target_markets" rows="4" 
+                          placeholder="Describe your target markets, including geographic regions, industry sectors, and market size...">{{ company.target_markets|default:'' }}</textarea>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <label class="form-label">Customer Segments</label>
+                <div class="checkbox-grid">
+                    <div class="checkbox-card" data-value="b2b">
+                        <input type="checkbox" name="customer_segments" value="B2B" 
+                               {% if 'B2B' in company.customer_segments %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"><i class="bi bi-check"></i></div>
+                            <span class="checkbox-label">🏢 B2B (Business to Business)</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-value="b2c">
+                        <input type="checkbox" name="customer_segments" value="B2C" 
+                               {% if 'B2C' in company.customer_segments %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"><i class="bi bi-check"></i></div>
+                            <span class="checkbox-label">👥 B2C (Business to Consumer)</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-value="b2g">
+                        <input type="checkbox" name="customer_segments" value="B2G" 
+                               {% if 'B2G' in company.customer_segments %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"><i class="bi bi-check"></i></div>
+                            <span class="checkbox-label">🏛️ B2G (Business to Government)</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-value="enterprise">
+                        <input type="checkbox" name="customer_segments" value="Enterprise" 
+                               {% if 'Enterprise' in company.customer_segments %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"><i class="bi bi-check"></i></div>
+                            <span class="checkbox-label">🏭 Enterprise Clients</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-value="sme">
+                        <input type="checkbox" name="customer_segments" value="SME" 
+                               {% if 'SME' in company.customer_segments %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"><i class="bi bi-check"></i></div>
+                            <span class="checkbox-label">🏪 SME (Small & Medium Enterprise)</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-value="startups">
+                        <input type="checkbox" name="customer_segments" value="Startups" 
+                               {% if 'Startups' in company.customer_segments %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"><i class="bi bi-check"></i></div>
+                            <span class="checkbox-label">🚀 Other Startups</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="active_users_count" class="form-label">Active Users Count</label>
+                <input type="text" class="form-control" id="active_users_count" name="active_users_count" 
+                       value="{{ company.active_users_count|default:'' }}" 
+                       placeholder="e.g., 1,000+, 10K, 100K+">
+                <small class="form-text text-muted">How many active users does your product/solution currently have?</small>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="paying_customers_count" class="form-label">Paying Customers Count</label>
+                <input type="text" class="form-control" id="paying_customers_count" name="paying_customers_count" 
+                       value="{{ company.paying_customers_count|default:'' }}" 
+                       placeholder="e.g., 100, 500, 1K+">
+                <small class="form-text text-muted">How many paying customers do you currently have?</small>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <label for="annual_recurring_revenue" class="form-label">Annual Recurring Revenue (ARR)</label>
+                <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input type="text" class="form-control" id="annual_recurring_revenue" name="annual_recurring_revenue" 
+                           value="{{ company.annual_recurring_revenue|default:'' }}" 
+                           placeholder="e.g., 50,000, 500K, 1M">
+                </div>
+                <small class="form-text text-muted">What is your annual recurring revenue in USD?</small>
+            </div>
+        </div>
+    </div>
+</div>
+

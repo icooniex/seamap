@@ -1961,18 +1961,20 @@ def personal_profile_edit(request):
 
 @login_required
 def company_profile_edit(request):
-    """Company profile edit form"""
+    """Universal company profile edit form for all company types"""
     member = get_object_or_404(Member, user=request.user)
     company = None
-    if hasattr(member, 'company'):
-        try:
-            company = Company.objects.get(member=member, is_primary=True)
-        except Company.DoesNotExist:
-            company = None
     
-    # Check if this is a startup company to render different template
-    if company and company.company_type == 'startup':
-        return startup_company_profile_edit(request)
+    try:
+        company = Company.objects.filter(member=member).order_by('id').first()
+    except Company.DoesNotExist:
+        company = None
+    
+    # Determine company type for template rendering
+    company_type = company.company_type if company else None
+    
+    # Note: All company types now use the universal template
+    # No need to redirect startup companies to separate view
     
     if request.method == 'POST':
         try:
@@ -1988,25 +1990,86 @@ def company_profile_edit(request):
                     is_primary=True
                 )
             
-            # Update basic company information
+            # Update basic company information (common to all types)
             company.company_name = request.POST.get('company_name', '').strip()
-            company.company_type = request.POST.get('company_type', '').strip()
             company.company_description = request.POST.get('company_description', '').strip()
             company.website = request.POST.get('website_url', '').strip() or None
             company.founded_year = int(request.POST.get('founded_year')) if request.POST.get('founded_year') else None
             company.primary_location = request.POST.get('primary_location', '').strip()
-            company.organization_type = request.POST.get('organization_type', '').strip()
             company.team_size = request.POST.get('team_size', '').strip()
-            company.average_deal_size = request.POST.get('average_deal_size', '').strip()
-            
-            # Handle multiple selections
-            industry_expertise = request.POST.getlist('industry_expertise')
-            investment_categories = request.POST.getlist('investment_categories')
-            support_areas = request.POST.getlist('support_areas')
             
             # Handle company logo upload
             if 'company_logo' in request.FILES:
                 company.company_logo = request.FILES['company_logo']
+            
+            # Type-specific field handling
+            if company.company_type == 'startup':
+                # Startup-specific fields
+                company.problem_statement = request.POST.get('problem_statement', '').strip()
+                company.current_stage = request.POST.get('current_stage', '').strip()
+                
+                # Market & Traction tab
+                company.target_markets = request.POST.get('target_markets', '').strip()
+                customer_segments = request.POST.getlist('customer_segments')
+                company.customer_segments = customer_segments
+                company.active_users_count = request.POST.get('active_users_count', '').strip()
+                company.paying_customers_count = request.POST.get('paying_customers_count', '').strip()
+                company.annual_recurring_revenue = request.POST.get('annual_recurring_revenue', '').strip()
+                
+                # Financing & Funding tab
+                has_external_funding = request.POST.get('has_external_funding')
+                company.has_external_funding = has_external_funding == 'true'
+                company.funding_history = request.POST.get('funding_history', '').strip()
+                company.amount_raised = request.POST.get('amount_raised', '').strip()
+                company.funding_needed = request.POST.get('funding_needed', '').strip()
+                company.use_of_funds = request.POST.get('use_of_funds', '').strip()
+                company.financial_projections = request.POST.get('financial_projections', '').strip()
+                
+                # Founders and Team tab
+                is_female_led = request.POST.get('is_female_led')
+                company.is_female_led = is_female_led == 'true'
+                company.core_team_size = request.POST.get('core_team_size', '').strip()
+                company.team_overview = request.POST.get('team_overview', '').strip()
+                company.core_expertise = request.POST.get('core_expertise', '').strip()
+                
+            elif company.company_type == 'investor':
+                # Investor-specific fields
+                company.investor_type = request.POST.get('investor_type', '').strip()
+                company.funding_size = request.POST.get('funding_size', '').strip()
+                company.average_deal_size = request.POST.get('average_deal_size', '').strip()
+                company.investment_philosophy = request.POST.get('investment_philosophy', '').strip()
+                
+                # Handle multiple selections for investors
+                funding_stages = request.POST.getlist('funding_stages')
+                investment_categories = request.POST.getlist('investment_categories')
+                market_country_interests = request.POST.getlist('market_country_interests')
+                
+                company.funding_stages = funding_stages
+                company.investment_categories = investment_categories
+                company.market_country_interests = market_country_interests
+                
+            elif company.company_type == 'corporate':
+                # Corporate-specific fields
+                company.organization_type = request.POST.get('organization_type', '').strip()
+                company.funding_size = request.POST.get('funding_size', '').strip()
+                company.average_deal_size = request.POST.get('average_deal_size', '').strip()
+                company.investment_philosophy = request.POST.get('investment_philosophy', '').strip()
+                
+                # Handle multiple selections for corporates
+                industry_expertise = request.POST.getlist('industry_expertise')
+                investment_categories = request.POST.getlist('investment_categories')
+                market_country_interests = request.POST.getlist('market_country_interests')
+                support_areas = request.POST.getlist('support_areas')
+                
+                company.industry_expertise = industry_expertise
+                company.investment_categories = investment_categories
+                company.market_country_interests = market_country_interests
+                company.support_areas = support_areas
+                
+            else:
+                # General company fields
+                company.organization_type = request.POST.get('organization_type', '').strip()
+                company.average_deal_size = request.POST.get('average_deal_size', '').strip()
             
             company.save()
             
@@ -2035,7 +2098,9 @@ def company_profile_edit(request):
         'company': company,
         'industry_expertise_choices': industry_expertise_choices,
     }
-    return render(request, 'member/company_profile_edit.html', context)
+    
+    # Use universal template that handles all company types
+    return render(request, 'member/universal_company_profile_edit.html', context)
 
 
 @login_required
@@ -2107,7 +2172,7 @@ def startup_company_profile_edit(request):
             company.save()
             
             messages.success(request, 'Your startup profile has been updated successfully!')
-            return redirect('startup_company_profile_edit')
+            return redirect('company_profile_edit')  # Redirect to unified company profile edit
             
         except Exception as e:
             messages.error(request, f'An error occurred while updating your profile: {str(e)}')
@@ -2116,7 +2181,7 @@ def startup_company_profile_edit(request):
         'member': member,
         'company': company,
     }
-    return render(request, 'member/startup_company_profile_edit.html', context)
+    return render(request, 'member/universal_company_profile_edit.html', context)  # Use unified template
 
 
 @login_required

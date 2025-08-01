@@ -1,0 +1,127 @@
+<!-- Startup Company Information Tab -->
+<div class="form-section">
+    <div class="section-header">
+        <h4 class="section-title">
+            <i class="bi bi-image me-2"></i>
+            Company Logo
+        </h4>
+        <p class="section-subtitle">Upload your startup's logo for branding</p>
+    </div>
+    
+    <div class="logo-section">
+        <div class="current-logo">
+            {% if company.company_logo %}
+                <img src="{{ company.company_logo.url }}" alt="Company Logo" class="logo-img">
+            {% else %}
+                <div class="logo-placeholder">
+                    <i class="bi bi-rocket-takeoff"></i>
+                </div>
+            {% endif %}
+        </div>
+        <div class="logo-upload">
+            <div class="form-group">
+                <label for="company_logo" class="form-label">Choose New Logo</label>
+                <input type="file" class="form-control" id="company_logo" name="company_logo" accept="image/*">
+                <small class="form-text text-muted">Recommended: Square logo, at least 200x200px, max 5MB</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Basic Company Information -->
+<div class="form-section">
+    <div class="section-header">
+        <h4 class="section-title">
+            <i class="bi bi-info-circle me-2"></i>
+            Basic Information
+        </h4>
+        <p class="section-subtitle">Core details about your startup</p>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-md-8">
+            <div class="form-group">
+                <label for="company_name" class="form-label">Company Name *</label>
+                <input type="text" class="form-control" id="company_name" name="company_name" 
+                       value="{{ company.company_name|default:'' }}" required>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="company_type" class="form-label">Company Type</label>
+                <select class="form-select" id="company_type" name="company_type">
+                    <option value="startup" selected>Startup</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <label for="company_description" class="form-label">Company Description *</label>
+                <textarea class="form-control" id="company_description" name="company_description" rows="4" 
+                          placeholder="Describe your startup's mission, products, services, and what makes you unique..." required>{{ company.company_description|default:'' }}</textarea>
+                <small class="form-text text-muted">This description will be visible on your company profile</small>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <label for="problem_statement" class="form-label">Problem Statement *</label>
+                <textarea class="form-control" id="problem_statement" name="problem_statement" rows="4" 
+                          placeholder="What problem does your startup solve? Describe the pain point your solution addresses..." required>{{ company.problem_statement|default:'' }}</textarea>
+                <small class="form-text text-muted">Clearly articulate the problem your startup is solving</small>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="website" class="form-label">Website URL</label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-globe"></i>
+                    </span>
+                    <input type="url" class="form-control" id="website" name="website" 
+                           value="{{ company.website|default:'' }}" 
+                           placeholder="https://www.yourcompany.com">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="founded_year" class="form-label">Founded Year</label>
+                <input type="number" class="form-control" id="founded_year" name="founded_year" 
+                       value="{{ company.founded_year|default:'' }}" min="1800" max="2025">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="primary_location" class="form-label">Primary Location</label>
+                <select class="form-select" id="primary_location" name="primary_location">
+                    <option value="">Select Location</option>
+                    <option value="Singapore" {% if company.primary_location == 'Singapore' %}selected{% endif %}>🇸🇬 Singapore</option>
+                    <option value="Indonesia" {% if company.primary_location == 'Indonesia' %}selected{% endif %}>🇮🇩 Indonesia</option>
+                    <option value="Thailand" {% if company.primary_location == 'Thailand' %}selected{% endif %}>🇹🇭 Thailand</option>
+                    <option value="Malaysia" {% if company.primary_location == 'Malaysia' %}selected{% endif %}>🇲🇾 Malaysia</option>
+                    <option value="Philippines" {% if company.primary_location == 'Philippines' %}selected{% endif %}>🇵🇭 Philippines</option>
+                    <option value="Vietnam" {% if company.primary_location == 'Vietnam' %}selected{% endif %}>🇻🇳 Vietnam</option>
+                    <option value="Cambodia" {% if company.primary_location == 'Cambodia' %}selected{% endif %}>🇰🇭 Cambodia</option>
+                    <option value="Laos" {% if company.primary_location == 'Laos' %}selected{% endif %}>🇱🇦 Laos</option>
+                    <option value="Myanmar" {% if company.primary_location == 'Myanmar' %}selected{% endif %}>🇲🇲 Myanmar</option>
+                    <option value="Brunei" {% if company.primary_location == 'Brunei' %}selected{% endif %}>🇧🇳 Brunei</option>
+                    <option value="Other" {% if company.primary_location == 'Other' %}selected{% endif %}>🌍 Other</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="current_stage" class="form-label">Current Stage</label>
+                <select class="form-select" id="current_stage" name="current_stage">
+                    <option value="">Select Stage</option>
+                    <option value="idea" {% if company.current_stage == 'idea' %}selected{% endif %}>💡 Ideation – Developing an idea, no product yet</option>
+                    <option value="prototype" {% if company.current_stage == 'prototype' %}selected{% endif %}>🔧 Prototype – Initial MVP or prototype created</option>
+                    <option value="validation" {% if company.current_stage == 'validation' %}selected{% endif %}>🧪 Validation – Testing with early customers</option>
+                    <option value="early" {% if company.current_stage == 'early' %}selected{% endif %}>📈 Early Growth – Generating revenue</option>
+                    <option value="scaling" {% if company.current_stage == 'scaling' %}selected{% endif %}>🚀 Scaling – Expanding with proven model</option>
+                    <option value="profitable" {% if company.current_stage == 'profitable' %}selected{% endif %}>💰 Established – Profitable and exploring new markets</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
