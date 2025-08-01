@@ -9,7 +9,7 @@ from django.contrib import messages
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
 from django.db import models
-from .models import Member, Company
+from .models import Member, Company, INVESTOR_TYPE_CHOICES, FUNDING_SIZE_CHOICES, DEAL_SIZE_CHOICES
 from .forms import EmailLoginForm, SignUpForm, CompanyForm, StartupForm, InvestorForm, CorporateForm
 import json
 import random
@@ -1165,238 +1165,184 @@ def startup_profile(request, startup_id):
 
 def investor_profile(request, investor_id):
     """Display detailed investor profile page"""
-    # This is sample data - replace with actual database queries
+    # Fetch the actual investor from the database
+    investor = get_object_or_404(Company, pk=investor_id, company_type='investor', is_active=True)
+    
+    # Calculate match score based on actual data
+    match_score = calculate_investor_match_score(investor)
+    
+    # Helper function to get human-readable display values
+    def get_display_value(field_value, choices_dict=None):
+        if choices_dict and field_value:
+            return choices_dict.get(field_value, field_value)
+        return field_value or ''
+    
+    # Investment categories display mapping
+    investment_categories_display = []
+    if investor.investment_categories:
+        category_mapping = {
+            'eliminate_redesign': 'Eliminate & Redesign Packaging',
+            'refill_reuse': 'Refill & Reuse Solutions',
+            'collection_sorting': 'Collection & Sorting Technologies',
+            'advanced_recycling': 'Advanced Recycling & Upcycling',
+            'bioplastics': 'Bioplastics & Compostable Materials',
+            'waste_management': 'Waste Management Infrastructure',
+            'data_monitoring': 'Data, Monitoring & Traceability',
+            'other': 'Other',
+        }
+        investment_categories_display = [category_mapping.get(cat, cat) for cat in investor.investment_categories]
+    
+    # Funding stages display mapping
+    funding_stages_display = []
+    if investor.funding_stages:
+        stages_mapping = {
+            'pre_seed': 'Pre-Seed',
+            'seed': 'Seed',
+            'series_a': 'Series A',
+            'series_b': 'Series B',
+            'series_c': 'Series C',
+            'series_d_plus': 'Series D+',
+            'growth': 'Growth',
+        }
+        funding_stages_display = [stages_mapping.get(stage, stage) for stage in investor.funding_stages]
+    
+    # Map database fields to template variables
     investor_data = {
         # Basic Company Information
-        'id': investor_id,
-        'company_name': 'Southeast Asia Growth Capital',
-        'investor_type': 'Venture Capital',
-        'description': 'Leading venture capital firm focused on high-growth technology startups across Southeast Asia, with expertise in fintech, healthtech, and sustainability solutions.',
-        'short_description': 'Leading VC firm investing in high-growth tech startups across SEA.',
-        'website': 'https://seagrowthcapital.com',
-        'linkedin_url': 'https://linkedin.com/company/sea-growth-capital',
-        'logo': None,  # File field
+        'id': investor.id,
+        'company_name': investor.company_name,
+        'investor_type': get_display_value(investor.investor_type, dict(INVESTOR_TYPE_CHOICES)),
+        'description': investor.company_description or '',
+        'short_description': investor.company_description[:120] + '...' if investor.company_description and len(investor.company_description) > 120 else investor.company_description or '',
+        'detailed_description': investor.company_description or '',
+        'website': investor.website or '',
+        'linkedin_url': getattr(investor.member.user, 'linkedin_url', ''),
+        'logo': investor.company_logo if investor.company_logo else None,
         
         # Header Information
-        'match_percentage': 92,
-        'headquarters_location': 'Singapore',
-        'founded_year': 2015,
-        'team_size': '25',
-        'aum': '$500M',  # Assets Under Management
+        'match_percentage': match_score,
+        'headquarters_location': investor.primary_location or '',
+        'founded_year': investor.founded_year or '',
+        'team_size': investor.team_size or '',
+        'aum': get_display_value(investor.funding_size, dict(FUNDING_SIZE_CHOICES)) if investor.funding_size else '',
         
         # Investment Categories
-        'investment_sectors': ['FinTech', 'HealthTech', 'EdTech', 'Sustainability', 'AI/ML'],
-        'investment_types': ['Series A', 'Series B', 'Growth Equity'],
-        'geographic_focus': ['Singapore', 'Malaysia', 'Thailand', 'Indonesia', 'Philippines', 'Vietnam'],
+        'investment_sectors': investment_categories_display,
+        'investment_categories': investment_categories_display,
+        'investment_types': funding_stages_display,
+        'geographic_focus': investor.market_country_interests or [],
         
         # Investment Information
-        'total_fund_size': '$500M',
-        'average_deal_size': '$2-8M',
-        'min_investment': '$1M',
-        'max_investment': '$15M',
-        'preferred_stages': ['Series A', 'Series B', 'Growth Stage'],
-        'investment_timeline': '3-6 months',
-        'board_participation': 'Active',
-        'follow_on_strategy': 'Yes',
+        'total_fund_size': get_display_value(investor.funding_size, dict(FUNDING_SIZE_CHOICES)) if investor.funding_size else '',
+        'funding_size': get_display_value(investor.funding_size, dict(FUNDING_SIZE_CHOICES)) if investor.funding_size else '',
+        'average_deal_size': get_display_value(investor.average_deal_size, dict(DEAL_SIZE_CHOICES)) if investor.average_deal_size else '',
+        'min_investment': '',  # Not in model - could be calculated or added as field
+        'max_investment': '',  # Not in model - could be calculated or added as field
+        'preferred_stages': funding_stages_display,
+        'investment_timeline': '3-6 months',  # Default - could be added as model field
+        'board_participation': 'Active',  # Default - could be added as model field
+        'follow_on_strategy': 'Yes',  # Default - could be added as model field
         
         # About Company
-        'detailed_description': 'Southeast Asia Growth Capital is a premier venture capital firm dedicated to identifying and nurturing the next generation of technology leaders in Southeast Asia. Founded in 2015, we have built a reputation for backing exceptional entrepreneurs who are solving real problems with innovative technology solutions. Our team combines deep regional expertise with global investment experience, providing portfolio companies with strategic guidance, operational support, and access to our extensive network.',
-        'investment_philosophy': 'We believe in backing exceptional entrepreneurs who are building category-defining companies that can scale across the Southeast Asian region. Our investment approach focuses on companies with strong unit economics, clear paths to profitability, and the potential for significant market impact.',
-        'value_proposition': 'Beyond capital, we provide hands-on support in areas including strategic planning, business development, talent acquisition, and follow-on funding. Our team has operational experience in building and scaling technology companies.',
+        'investment_philosophy': investor.investment_philosophy or '',
+        'value_proposition': investor.investment_philosophy or '',  # Using same field for now
         
         # Market Interest
         'sector_focus': [
             {
-                'name': 'Financial Technology',
-                'percentage': 35,
-                'description': 'Digital banking, payments, lending, insurtech'
-            },
-            {
-                'name': 'Healthcare Technology',
-                'percentage': 25,
-                'description': 'Telemedicine, health data, medical devices'
-            },
-            {
-                'name': 'Education Technology',
-                'percentage': 20,
-                'description': 'Online learning, workforce development, skills training'
-            },
-            {
-                'name': 'Sustainability',
-                'percentage': 15,
-                'description': 'Clean energy, waste management, sustainable agriculture'
-            },
-            {
-                'name': 'Enterprise Software',
-                'percentage': 5,
-                'description': 'B2B SaaS, productivity tools, analytics platforms'
-            }
+                'name': cat,
+                'percentage': 100 // len(investment_categories_display) if investment_categories_display else 0,
+                'description': cat
+            } for cat in investment_categories_display[:5]  # Limit to 5 for display
         ],
-        'target_markets': ['Singapore', 'Malaysia', 'Thailand', 'Indonesia', 'Philippines', 'Vietnam'],
-        'market_opportunity_focus': 'We focus on markets with strong digital adoption, growing middle class, and regulatory support for innovation. Southeast Asia represents one of the fastest-growing digital economies globally.',
+        'target_markets': investor.market_country_interests or [],
+        'market_opportunity_focus': investor.investment_philosophy or '',
         
-        # Portfolio Information
+        # Portfolio Information - Mock data for now (could be implemented with a Portfolio model)
         'portfolio_companies': [
             {
-                'name': 'PayLink Solutions',
-                'sector': 'FinTech',
-                'stage': 'Series B',
-                'description': 'Digital payment platform for SMEs',
+                'name': f"Portfolio Company {i+1}",
+                'sector': cat if i < len(investment_categories_display) else 'Technology',
+                'stage': funding_stages_display[i % len(funding_stages_display)] if funding_stages_display else 'Series A',
+                'description': f"Description for portfolio company {i+1}",
                 'logo': None,
-                'status': 'Active',
-                'investment_year': '2022'
-            },
-            {
-                'name': 'HealthMate',
-                'sector': 'HealthTech',
-                'stage': 'Series A',
-                'description': 'Telemedicine and health monitoring app',
-                'logo': None,
-                'status': 'Active',
-                'investment_year': '2023'
-            },
-            {
-                'name': 'EduFlow',
-                'sector': 'EdTech',
-                'stage': 'Series A',
-                'description': 'Corporate learning and development platform',
-                'logo': None,
-                'status': 'Active',
-                'investment_year': '2023'
-            },
-            {
-                'name': 'GreenEnergy Tech',
-                'sector': 'Sustainability',
-                'stage': 'Growth',
-                'description': 'Solar energy solutions for commercial buildings',
-                'logo': None,
-                'status': 'Active',
-                'investment_year': '2021'
-            },
-            {
-                'name': 'LogiTech Systems',
-                'sector': 'Enterprise',
-                'stage': 'Series B',
-                'description': 'Supply chain optimization software',
-                'logo': None,
-                'status': 'Exited',
-                'investment_year': '2019'
-            },
-            {
-                'name': 'FoodDelivery Pro',
-                'sector': 'Marketplace',
-                'stage': 'Series A',
-                'description': 'B2B food delivery platform',
-                'logo': None,
-                'status': 'Active',
-                'investment_year': '2022'
-            }
-        ],
-        'total_investments': 45,
-        'active_portfolio': 32,
-        'successful_exits': 8,
-        'portfolio_valuation': '$2.8B',
+                'status': 'Active' if i % 3 != 0 else 'Exited',
+                'investment_year': str(2020 + i)
+            } for i, cat in enumerate(investment_categories_display[:6])  # Show up to 6 companies
+        ] if investment_categories_display else [],
+        'total_investments': len(investment_categories_display) * 5 if investment_categories_display else 0,
+        'active_portfolio': len(investment_categories_display) * 3 if investment_categories_display else 0,
+        'successful_exits': len(investment_categories_display) if investment_categories_display else 0,
+        'portfolio_valuation': get_display_value(investor.funding_size, dict(FUNDING_SIZE_CHOICES)) if investor.funding_size else '',
         
-        # Team Information
+        # Team Information - Mock data based on available data
         'partners': [
             {
-                'name': 'David Chen',
-                'position': 'Managing Partner',
-                'bio': 'Former investment banker at Goldman Sachs with 15+ years in Southeast Asian markets. Led Series A-C rounds for 25+ companies.',
-                'photo': None,
-                'linkedin': '#'
-            },
-            {
-                'name': 'Sarah Lim',
-                'position': 'Investment Partner',
-                'bio': 'Ex-McKinsey consultant and former startup founder. Specialist in FinTech and digital transformation with deep operational experience.',
-                'photo': None,
-                'linkedin': '#'
-            },
-            {
-                'name': 'Michael Rodriguez',
-                'position': 'Principal',
-                'bio': 'Former product manager at Google and Grab. Focuses on early-stage investments in mobility and logistics technology.',
-                'photo': None,
+                'name': investor.member.user.get_full_name() or investor.member.user.username,
+                'position': 'Partner',
+                'bio': f"Partner at {investor.company_name}",
+                'photo': investor.member.profile_picture if hasattr(investor.member, 'profile_picture') else None,
                 'linkedin': '#'
             }
-        ],
-        'investment_team_size': '12',
-        'total_team_size': '25',
-        'team_description': 'Our investment team combines deep sector expertise with operational experience. We have former entrepreneurs, consultants, and industry experts who understand the challenges of building companies in Southeast Asia.',
-        'advisory_board': [
-            'Former CEO of leading Southeast Asian bank',
-            'Founder of successful fintech unicorn',
-            'Former government minister of digital economy'
-        ],
+        ] if investor.member else [],
+        'investment_team_size': str(max(1, int(investor.team_size or '1') // 2)) if investor.team_size and investor.team_size.isdigit() else '1',
+        'total_team_size': investor.team_size or '',
+        'team_description': f"Our team at {investor.company_name} combines industry expertise with investment experience.",
+        'advisory_board': [],
         
-        # Investment Criteria
+        # Investment Criteria - Based on investment philosophy
         'investment_criteria': [
+            line.strip() for line in (investor.investment_philosophy or '').split('.') 
+            if line.strip() and len(line.strip()) > 10
+        ][:5] if investor.investment_philosophy else [
             'Strong founding team with relevant experience',
             'Large addressable market opportunity',
-            'Differentiated technology or business model',
-            'Clear path to profitability and scale',
-            'Regional expansion potential'
+            'Scalable business model',
+            'Clear path to profitability'
         ],
-        'due_diligence_process': 'Our investment process typically takes 8-12 weeks from initial meeting to term sheet. We conduct thorough market research, technical due diligence, and reference checks.',
+        'due_diligence_process': 'Our investment process typically involves initial screening, due diligence, and investment committee review.',
         
-        # News & Updates
+        # News & Updates - Mock data based on company info
         'recent_news': [
             {
-                'title': 'Southeast Asia Growth Capital Closes $500M Fund III',
-                'summary': 'Successfully raised largest fund to date with strong LP support, focusing on Series A and B investments across the region.',
-                'date': '2024-11-15',
-                'category': 'Funding',
-                'link': '#',
-                'image': None
-            },
-            {
-                'title': 'Investment in HealthMate Telemedicine Platform',
-                'summary': 'Led Series A round of $5M in Malaysian healthtech startup expanding across Southeast Asia.',
-                'date': '2024-10-28',
+                'title': f'{investor.company_name} Expands Investment Focus',
+                'summary': f'Investment firm expands focus to include {", ".join(investment_categories_display[:3])}.',
+                'date': '2024-12-01',
                 'category': 'Investment',
                 'link': '#',
                 'image': None
             },
             {
-                'title': 'Portfolio Company PayLink Achieves Profitability',
-                'summary': 'Digital payment platform reaches break-even milestone with 500K+ active merchants across 4 countries.',
-                'date': '2024-09-20',
-                'category': 'Portfolio',
-                'link': '#',
-                'image': None
-            },
-            {
-                'title': 'Partnership with Singapore FinTech Association',
-                'summary': 'Strategic partnership to support early-stage fintech startups through mentorship and funding programs.',
-                'date': '2024-08-15',
+                'title': f'New Partnership Opportunities at {investor.company_name}',
+                'summary': f'Seeking partnerships in {", ".join(investor.market_country_interests[:3]) if investor.market_country_interests else "Southeast Asia"}.',
+                'date': '2024-11-15',
                 'category': 'Partnership',
                 'link': '#',
                 'image': None
             }
-        ],
+        ] if investor.company_name else [],
         
         # Contact & Partnership
-        'contact_email': 'investments@seagrowthcapital.com',
-        'partnership_message': 'We are actively seeking investment opportunities in high-growth technology startups across Southeast Asia. If you are building something meaningful and looking for a partner who can help you scale, we would love to hear from you.',
+        'contact_email': investor.member.user.email if investor.member else '',
+        'partnership_message': investor.additional_info or f'We are actively seeking investment opportunities. Contact us to learn more about partnership with {investor.company_name}.',
         'pitch_requirements': [
-            'Executive Summary (1-2 pages)',
+            'Executive Summary',
             'Business Plan or Pitch Deck',
-            'Financial Projections (3 years)',
-            'Team Backgrounds and References',
-            'Product Demo or Prototype'
+            'Financial Projections',
+            'Team Background',
+            'Product Information'
         ],
         
         # Additional fields for template compatibility
-        'company_type': 'Venture Capital',
+        'company_type': get_display_value(investor.investor_type, dict(INVESTOR_TYPE_CHOICES)),
         'stage': 'Established',
         'industry': 'Investment Management',
-        'match_score': 92,
-        'fund_stage': 'Fund III',
-        'investment_focus': 'Series A & B Technology Companies',
-        'ticket_size': '$2-8M',
-        'portfolio_size': '45+ companies',
-        'geographic_reach': '6 SEA countries'
+        'match_score': match_score,
+        'fund_stage': '',
+        'investment_focus': ', '.join(funding_stages_display) if funding_stages_display else '',
+        'ticket_size': get_display_value(investor.average_deal_size, dict(DEAL_SIZE_CHOICES)) if investor.average_deal_size else '',
+        'portfolio_size': '',
+        'geographic_reach': f"{len(investor.market_country_interests)} countries" if investor.market_country_interests else ''
     }
     
     return render(request, 'member/investor_profile.html', {'investor': investor_data})

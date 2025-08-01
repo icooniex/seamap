@@ -21,6 +21,11 @@ urlpatterns = [
     # Dashboard
     path('dashboard/startups/', views.startup_matchmaking, name='dashboard'),
     
+    # Profile Pages
+    path('startup/<int:startup_id>/', views.startup_profile, name='startup_profile'),
+    path('investor/<int:investor_id>/', views.investor_profile, name='investor_profile'),
+    path('corporate/<int:corporate_id>/', views.corporate_profile, name='corporate_profile'),
+    
     # Account Settings
     path('account-settings/', views.account_settings, name='account_settings'),
     path('account-settings/personal/', views.personal_profile_edit, name='personal_profile_edit'),
