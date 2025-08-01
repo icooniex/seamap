@@ -67,6 +67,55 @@
         </div>
     </div>
 
+    <!-- Progress Section (Only for Startup) -->
+    {% if company.company_type == 'startup' and progress %}
+    <div class="progress-section">
+        <div class="progress-header">
+            <h4 class="progress-title">
+                <i class="bi bi-graph-up me-2"></i>Profile Completion
+            </h4>
+            <span class="progress-percentage">{{ progress.percentage }}%</span>
+        </div>
+        <div class="progress-bar-container">
+            <div class="progress-bar-fill" style="width: {{ progress.percentage }}%"></div>
+        </div>
+        <div class="progress-details">
+            <span>{{ progress.completed }} of {{ progress.total }} fields completed</span>
+            <small>
+                {% if progress.percentage == 100 %}
+                    <i class="bi bi-check-circle-fill text-success me-1"></i>Profile Complete
+                {% elif progress.percentage >= 75 %}
+                    <i class="bi bi-clock-fill text-warning me-1"></i>Almost Done
+                {% elif progress.percentage >= 50 %}
+                    <i class="bi bi-hourglass-split text-info me-1"></i>Good Progress
+                {% else %}
+                    <i class="bi bi-exclamation-triangle-fill text-danger me-1"></i>Needs Attention
+                {% endif %}
+            </small>
+        </div>
+        
+        <!-- Progress Summary Cards -->
+        <div class="progress-summary">
+            <div class="progress-card {% if progress.tabs.company_info.status == 'complete' %}complete{% else %}incomplete{% endif %}">
+                <div class="progress-card-title">Company Info</div>
+                <div class="progress-card-percentage">{{ progress.tabs.company_info.percentage }}%</div>
+            </div>
+            <div class="progress-card {% if progress.tabs.market_traction.status == 'complete' %}complete{% else %}incomplete{% endif %}">
+                <div class="progress-card-title">Market & Traction</div>
+                <div class="progress-card-percentage">{{ progress.tabs.market_traction.percentage }}%</div>
+            </div>
+            <div class="progress-card {% if progress.tabs.financing.status == 'complete' %}complete{% else %}incomplete{% endif %}">
+                <div class="progress-card-title">Financing</div>
+                <div class="progress-card-percentage">{{ progress.tabs.financing.percentage }}%</div>
+            </div>
+            <div class="progress-card {% if progress.tabs.team.status == 'complete' %}complete{% else %}incomplete{% endif %}">
+                <div class="progress-card-title">Team</div>
+                <div class="progress-card-percentage">{{ progress.tabs.team.percentage }}%</div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     <!-- Company Form Container -->
     <div class="company-form-container">
         
@@ -76,21 +125,80 @@
             <ul class="nav nav-tabs" id="startupTabs" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link active" id="company-info-tab" data-bs-toggle="tab" href="#company-info" role="tab">
-                        <i class="bi bi-building me-2"></i>Company Information
+                        <span class="tab-text">
+                            <i class="bi bi-building tab-icon"></i>
+                            Company Information
+                        </span>
+                        {% if progress %}
+                        <span class="tab-status {% if progress.tabs.company_info.status == 'complete' %}complete{% elif progress.tabs.company_info.percentage > 0 %}incomplete{% else %}empty{% endif %}">
+                            {% if progress.tabs.company_info.status == 'complete' %}
+                                <i class="bi bi-check"></i>
+                            {% elif progress.tabs.company_info.percentage > 0 %}
+                                !
+                            {% else %}
+                                <i class="bi bi-x"></i>
+                            {% endif %}
+                        </span>
+                        {% endif %}
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="market-traction-tab" data-bs-toggle="tab" href="#market-traction" role="tab">
-                        <i class="bi bi-graph-up-arrow me-2"></i>Market & Traction
+                        <span class="tab-text">
+                            <i class="bi bi-graph-up-arrow tab-icon"></i>
+                            Market & Traction
+                        </span>
+                        {% if progress %}
+                        <span class="tab-status {% if progress.tabs.market_traction.status == 'complete' %}complete{% elif progress.tabs.market_traction.percentage > 0 %}incomplete{% else %}empty{% endif %}">
+                            {% if progress.tabs.market_traction.status == 'complete' %}
+                                <i class="bi bi-check"></i>
+                            {% elif progress.tabs.market_traction.percentage > 0 %}
+                                !
+                            {% else %}
+                                <i class="bi bi-x"></i>
+                            {% endif %}
+                        </span>
+                        {% endif %}
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="financing-tab" data-bs-toggle="tab" href="#financing" role="tab">
-                        <i class="bi bi-cash-stack me-2"></i>Financing & Funding
+                        <span class="tab-text">
+                            <i class="bi bi-cash-stack tab-icon"></i>
+                            Financing & Funding
+                        </span>
+                        {% if progress %}
+                        <span class="tab-status {% if progress.tabs.financing.status == 'complete' %}complete{% elif progress.tabs.financing.percentage > 0 %}incomplete{% else %}empty{% endif %}">
+                            {% if progress.tabs.financing.status == 'complete' %}
+                                <i class="bi bi-check"></i>
+                            {% elif progress.tabs.financing.percentage > 0 %}
+                                !
+                            {% else %}
+                                <i class="bi bi-x"></i>
+                            {% endif %}
+                        </span>
+                        {% endif %}
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="team-tab" data-bs-toggle="tab" href="#team" role="tab">
+                        <span class="tab-text">
+                            <i class="bi bi-people tab-icon"></i>
+                            Founders & Team
+                        </span>
+                        {% if progress %}
+                        <span class="tab-status {% if progress.tabs.team.status == 'complete' %}complete{% elif progress.tabs.team.percentage > 0 %}incomplete{% else %}empty{% endif %}">
+                            {% if progress.tabs.team.status == 'complete' %}
+                                <i class="bi bi-check"></i>
+                            {% elif progress.tabs.team.percentage > 0 %}
+                                !
+                            {% else %}
+                                <i class="bi bi-x"></i>
+                            {% endif %}
+                        </span>
+                        {% endif %}
+                    </a>
+                </li>
                         <i class="bi bi-people me-2"></i>Founders & Team
                     </a>
                 </li>
@@ -169,6 +277,40 @@ document.addEventListener('DOMContentLoaded', function() {
             companyInfoPane.classList.add('show', 'active');
         }
     }
+    
+    // Progress bar animation
+    const progressBars = document.querySelectorAll('.progress-bar-fill, .account-progress-fill');
+    progressBars.forEach(function(bar) {
+        const width = bar.style.width;
+        bar.style.width = '0%';
+        setTimeout(function() {
+            bar.style.width = width;
+        }, 500);
+    });
+    
+    // Tab status indicator tooltips
+    const tabStatusElements = document.querySelectorAll('.tab-status');
+    tabStatusElements.forEach(function(element) {
+        let tooltipText = '';
+        if (element.classList.contains('complete')) {
+            tooltipText = 'Section completed';
+        } else if (element.classList.contains('incomplete')) {
+            tooltipText = 'Section partially filled';
+        } else if (element.classList.contains('empty')) {
+            tooltipText = 'Section needs attention';
+        }
+        
+        if (tooltipText) {
+            element.setAttribute('title', tooltipText);
+            element.setAttribute('data-bs-toggle', 'tooltip');
+        }
+    });
+    
+    // Initialize tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
     
     // Checkbox card functionality - copied from onboarding
     const checkboxCards = document.querySelectorAll('.checkbox-card');

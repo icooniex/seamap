@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block content %}
+<link rel="stylesheet" href="{% static 'css/company_profile_edit.css' %}">
 <div class="container-fluid p-0">
     <!-- Header Section -->
     <div class="account-settings-header mb-4">
@@ -110,6 +111,23 @@
                                         <span class="text-warning">No company profile created yet</span>
                                     </div>
                                 {% endif %}
+                                
+                                <!-- Progress bar for startup companies -->
+                                {% if company.company_type == 'startup' and progress %}
+                                <div class="meta-item progress-item">
+                                    <i class="bi bi-graph-up text-info"></i>
+                                    <div class="progress-container">
+                                        <div class="progress-info">
+                                            <span class="progress-text"><strong>{{ progress.percentage }}% Complete</strong></span>
+                                            <span class="progress-steps">{{ progress.completed }} of {{ progress.total }} fields</span>
+                                        </div>
+                                        <div class="progress-bar-custom">
+                                            <div class="progress-bar-fill" style="width: {{ progress.percentage }}%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                
                                 <div class="meta-item">
                                     <i class="bi bi-calendar text-muted"></i>
                                     <span>Last updated recently</span>
@@ -118,19 +136,11 @@
                         </div>
                     </div>
                     <div class="setting-action-expanded">
-                        {% if member.companies.first.company_type == 'startup' %}
-                        <a href="{% url 'startup_company_profile_edit' %}" class="setting-btn-primary">
-                            <i class="bi bi-rocket-takeoff"></i>
-                            Manage Startup
-                        </a>
-                        <div class="action-meta">Setup your startup profile</div>
-                        {% else %}
                         <a href="{% url 'company_profile_edit' %}" class="setting-btn-primary">
                             <i class="bi bi-building"></i>
                             Manage Company
                         </a>
                         <div class="action-meta">Setup your business</div>
-                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -836,5 +846,19 @@
     }
 }
 </style>
+
+<script>
+// Animate progress bars on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const progressBars = document.querySelectorAll('.progress-bar-fill');
+    progressBars.forEach(function(bar) {
+        const targetWidth = bar.style.width;
+        bar.style.width = '0%';
+        setTimeout(function() {
+            bar.style.width = targetWidth;
+        }, 300);
+    });
+});
+</script>
 
 {% endblock %}

@@ -1900,8 +1900,17 @@ def onboarding_startup_new(request):
 def account_settings(request):
     """Account settings dashboard"""
     member = get_object_or_404(Member, user=request.user)
+    company = Company.objects.filter(member=member).first()
+    
+    # Get progress data for startup companies
+    progress_data = None
+    if company and company.company_type == 'startup':
+        progress_data = company.get_startup_profile_progress()
+    
     context = {
         'member': member,
+        'company': company,
+        'progress': progress_data,
     }
     return render(request, 'member/account_settings.html', context)
 
@@ -2107,6 +2116,11 @@ def company_profile_edit(request):
         'industry_expertise_choices': industry_expertise_choices,
         'support_areas_choices': support_areas_choices,
     }
+    
+    # Add progress data for startup companies
+    if company and company.company_type == 'startup':
+        progress_data = company.get_startup_profile_progress()
+        context['progress'] = progress_data
     
     return render(request, 'member/universal_company_profile_edit.html', context)
 

@@ -194,6 +194,139 @@ class Company(models.Model):
     def __str__(self):
         return f"{self.company_name} ({self.get_company_type_display()}) - by {self.member.user.get_full_name() or self.member.user.username}"
 
+    def get_startup_profile_progress(self):
+        """Calculate startup profile completion progress"""
+        if self.company_type != 'startup':
+            return {'total': 100, 'completed': 100, 'tabs': {}}
+        
+        tabs_progress = {
+            'company_info': self._get_company_info_progress(),
+            'market_traction': self._get_market_traction_progress(),
+            'financing': self._get_financing_progress(),
+            'team': self._get_team_progress()
+        }
+        
+        total_fields = sum(tab['total'] for tab in tabs_progress.values())
+        completed_fields = sum(tab['completed'] for tab in tabs_progress.values())
+        
+        return {
+            'total': total_fields,
+            'completed': completed_fields,
+            'percentage': round((completed_fields / total_fields * 100) if total_fields > 0 else 0),
+            'tabs': tabs_progress
+        }
+    
+    def _get_company_info_progress(self):
+        """Calculate company information tab progress"""
+        required_fields = [
+            'company_name', 'company_description', 'website', 'founded_year',
+            'team_size', 'primary_location', 'problem_statement', 'current_stage'
+        ]
+        
+        completed = 0
+        for field in required_fields:
+            value = getattr(self, field, None)
+            if value and str(value).strip():
+                completed += 1
+        
+        # Check company logo
+        if self.company_logo:
+            completed += 1
+            
+        return {
+            'completed': completed,
+            'total': len(required_fields) + 1,  # +1 for logo
+            'percentage': round((completed / (len(required_fields) + 1)) * 100),
+            'status': 'complete' if completed == len(required_fields) + 1 else 'incomplete'
+        }
+    
+    def _get_market_traction_progress(self):
+        """Calculate market & traction tab progress"""
+        required_fields = ['target_markets']
+        completed = 0
+        
+        # Check text fields
+        for field in required_fields:
+            value = getattr(self, field, None)
+            if value and str(value).strip():
+                completed += 1
+                
+        # Check customer segments (JSON field)
+        if self.customer_segments and len(self.customer_segments) > 0:
+            completed += 1
+            
+        # Optional but counted fields
+        optional_fields = ['active_users_count', 'paying_customers_count', 'annual_recurring_revenue']
+        for field in optional_fields:
+            value = getattr(self, field, None)
+            if value and str(value).strip():
+                completed += 1
+        
+        total_fields = len(required_fields) + 1 + len(optional_fields)  # +1 for customer_segments
+        return {
+            'completed': completed,
+            'total': total_fields,
+            'percentage': round((completed / total_fields) * 100),
+            'status': 'complete' if completed >= len(required_fields) + 1 else 'incomplete'
+        }
+    
+    def _get_financing_progress(self):
+        """Calculate financing & funding tab progress"""
+        completed = 0
+        total_fields = 6
+        
+        # Always check external funding status (boolean field)
+        if hasattr(self, 'has_external_funding'):
+            completed += 1
+            
+        # If has external funding, check related fields
+        if self.has_external_funding:
+            if self.funding_history and self.funding_history.strip():
+                completed += 1
+            if self.amount_raised and self.amount_raised.strip():
+                completed += 1
+        else:
+            # If no external funding, auto-complete these fields
+            completed += 2
+            
+        # Check other funding fields
+        if self.funding_needed and self.funding_needed.strip():
+            completed += 1
+        if self.use_of_funds and self.use_of_funds.strip():
+            completed += 1
+        if self.financial_projections and self.financial_projections.strip():
+            completed += 1
+            
+        return {
+            'completed': completed,
+            'total': total_fields,
+            'percentage': round((completed / total_fields) * 100),
+            'status': 'complete' if completed >= 4 else 'incomplete'  # At least 4 out of 6 fields
+        }
+    
+    def _get_team_progress(self):
+        """Calculate team tab progress"""
+        required_fields = ['core_team_size', 'team_overview', 'core_expertise']
+        completed = 0
+        
+        # Check if female-led status is set (boolean field)
+        if hasattr(self, 'is_female_led'):
+            completed += 1
+            
+        # Check text fields
+        for field in required_fields:
+            value = getattr(self, field, None)
+            if value and str(value).strip():
+                completed += 1
+        
+        total_fields = len(required_fields) + 1  # +1 for is_female_led
+        return {
+            'completed': completed,
+            'total': total_fields,
+            'percentage': round((completed / total_fields) * 100),
+            'status': 'complete' if completed == total_fields else 'incomplete'
+        }
+
     def get_innovation_types_display(self):
         """Return human-readable innovation types"""
         type_mapping = {
