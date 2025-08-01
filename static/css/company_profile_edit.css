@@ -100,25 +100,89 @@
 
 .nav-tabs .nav-link {
     color: #6c757d;
-    border: none;
-    border-radius: 0;
+    border: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-top: none !important;
+    border-bottom: none !important;
+    border-radius: 12px 12px 0 0;
     padding: 1rem 1.5rem;
     font-weight: 500;
     transition: all 0.3s ease;
-    border-bottom: 3px solid transparent;
+    margin-right: 4px;
 }
 
 .nav-tabs .nav-link:hover {
-    border-color: transparent;
-    color: #007bff;
-    background: rgba(0, 123, 255, 0.05);
+    color: var(--bs-primary);
+    background: linear-gradient(135deg, rgba(44, 89, 167, 0.1) 0%, rgba(74, 144, 226, 0.15) 50%, rgba(107, 182, 255, 0.1) 100%);
+    border: none !important;
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
 }
 
 .nav-tabs .nav-link.active {
-    color: #007bff;
-    background: white;
-    border-bottom: 3px solid #007bff;
+    color: white;
+    background: linear-gradient(135deg, #2c59a7 0%, #4a90e2 50%, #6bb6ff 100%);
     font-weight: 600;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(44, 89, 167, 0.3);
+}
+
+/* Tab content styling */
+.tab-content {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    border: none !important;
+    border-left: none !important;
+}
+
+.tab-pane {
+    padding: 0;
+    border: none !important;
+    border-left: none !important;
+}
+
+/* Override any Bootstrap tab borders */
+.nav-tabs .nav-item.show .nav-link, 
+.nav-tabs .nav-link.active {
+    border: none !important;
+    border-left: none !important;
+    border-color: transparent !important;
+}
+
+/* Complete border removal for all tab states */
+.nav-tabs .nav-item, 
+.nav-tabs .nav-item *,
+.nav-tabs .nav-item::before,
+.nav-tabs .nav-item::after,
+.nav-tabs .nav-link,
+.nav-tabs .nav-link *,
+.nav-tabs .nav-link::before,
+.nav-tabs .nav-link::after {
+    border: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-top: none !important;
+    border-bottom: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Force remove any Bootstrap default borders */
+.nav-tabs {
+    border-bottom: none !important;
+}
+
+.nav-tabs .nav-item {
+    margin-bottom: 0 !important;
+}
+
+.nav-tabs .nav-item .nav-link {
+    border: 0 !important;
+    border-width: 0 !important;
+    border-style: none !important;
 }
 
 /* Form Sections */
@@ -522,7 +586,7 @@
         padding: 1.5rem;
     }
     
-    .checkbox-grid {
+    .checkbox-grid, .radio-grid {
         grid-template-columns: 1fr;
     }
     
@@ -538,11 +602,11 @@
 }
 
 @media (max-width: 576px) {
-    .checkbox-card {
+    .checkbox-card, .radio-card {
         padding: 0.75rem;
     }
     
-    .checkbox-label {
+    .checkbox-label, .radio-label {
         font-size: 0.9rem;
     }
     
@@ -554,4 +618,42 @@
     .company-icon i {
         font-size: 2rem;
     }
+}
+
+/* Final override to remove any remaining tab borders */
+.nav-tabs .nav-link,
+.nav-tabs .nav-link:focus {
+    border: 0 !important;
+    border-left: 0 !important;
+    border-right: 0 !important;
+    border-top: 0 !important;
+    border-bottom: 0 !important;
+    border-width: 0 !important;
+    border-style: none !important;
+    border-color: transparent !important;
+    outline: none !important;
+}
+
+.nav-tabs .nav-link.active,
+.nav-tabs .nav-link:hover,
+.nav-tabs .nav-item.show .nav-link {
+    border: 0 !important;
+    border-left: 0 !important;
+    border-right: 0 !important;
+    border-top: 0 !important;
+    border-bottom: 0 !important;
+    border-width: 0 !important;
+    border-style: none !important;
+    border-color: transparent !important;
+    outline: none !important;
+}
+
+/* Remove any pseudo-element borders */
+.nav-tabs .nav-link::before,
+.nav-tabs .nav-link::after,
+.nav-tabs .nav-item::before,
+.nav-tabs .nav-item::after {
+    content: none !important;
+    border: none !important;
+    background: none !important;
 }

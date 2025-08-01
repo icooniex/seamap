@@ -160,6 +160,16 @@ document.addEventListener('DOMContentLoaded', function() {
         return new bootstrap.Tab(tabTriggerEl);
     });
     
+    // Auto-activate Company Information tab on page load
+    const companyInfoTab = document.getElementById('company-info-tab');
+    if (companyInfoTab && !document.querySelector('.nav-link.active')) {
+        companyInfoTab.classList.add('active');
+        const companyInfoPane = document.getElementById('company-info');
+        if (companyInfoPane) {
+            companyInfoPane.classList.add('show', 'active');
+        }
+    }
+    
     // Checkbox card functionality - copied from onboarding
     const checkboxCards = document.querySelectorAll('.checkbox-card');
     
