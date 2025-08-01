@@ -864,301 +864,196 @@ def accelerator_landing(request):
 
 def startup_profile(request, startup_id):
     """Display detailed startup profile page"""
-    # This is sample data - replace with actual database queries
-
-    # In a real application, you would fetch the startup from the database
+    # Fetch the actual startup from the database
     startup = get_object_or_404(Company, pk=startup_id, company_type='startup', is_active=True)
+    
+    # Calculate match score based on actual data
+    match_score = calculate_match_score(startup)
+    
+    # Helper function to get human-readable display values
+    def get_display_value(field_value, choices_dict=None):
+        if choices_dict and field_value:
+            return choices_dict.get(field_value, field_value)
+        return field_value or ''
+    
+    # Innovation types display mapping
+    innovation_types_display = []
+    if startup.innovation_types:
+        innovation_mapping = {
+            'eliminate_redesign': 'Eliminate & Redesign Packaging',
+            'refill_reuse': 'Refill & Reuse Solutions',
+            'collection_sorting': 'Collection & Sorting Technologies',
+            'advanced_recycling': 'Advanced Recycling & Upcycling',
+            'bioplastics': 'Bioplastics & Compostable Materials',
+            'waste_management': 'Waste Management Infrastructure',
+            'data_monitoring': 'Data, Monitoring & Traceability',
+            'other': 'Other Innovation',
+        }
+        innovation_types_display = [innovation_mapping.get(cat, cat) for cat in startup.innovation_types]
+    
+    # Support areas display mapping
+    support_areas_display = []
+    if startup.support_areas:
+        support_mapping = {
+            'funding': 'Funding & Investment',
+            'mentorship': 'Mentorship & Advisory',
+            'technical': 'Technical Support',
+            'market_access': 'Market Access',
+            'partnership': 'Strategic Partnerships',
+            'research': 'Research & Development',
+            'pilot_programs': 'Pilot Programs',
+            'other': 'Other Support',
+        }
+        support_areas_display = [support_mapping.get(area, area) for area in startup.support_areas]
+
+    # Map database fields to template variables
     startup_data = {
+        # Basic Company Information
         'id': startup.id,
         'company_name': startup.company_name,
-        'description': startup.company_description,
-        'short_description': startup.solution_description,
-        'detailed_description': startup.company_description,
-        'website': startup.website,
-        'linkedin_url': getattr(startup, 'linkedin_url', ''),
+        'description': startup.company_description or '',
+        'short_description': startup.solution_description or startup.company_description[:120] + '...' if startup.company_description and len(startup.company_description) > 120 else startup.company_description or '',
+        'detailed_description': startup.company_description or '',
+        'website': startup.website or '',
+        'linkedin_url': getattr(startup.member.user, 'linkedin_url', ''),
         'logo': startup.company_logo if startup.company_logo else None,
-        'match_percentage': calculate_match_score(startup),
-        'headquarters_location': startup.primary_location,
-        'founding_year': startup.founded_year,
-        'team_size': startup.team_size,
-        'development_stage': startup.current_stage,
-        'primary_sectors': getattr(startup, 'innovation_types', []),
-        'solution_categories': getattr(startup, 'solution_categories', []),
-        'funding_goal': startup.funding_needed,
-        'funding_raised': getattr(startup, 'funding_raised', ''),
-        'funding_progress': getattr(startup, 'funding_progress', 0),
-        'development_progress': getattr(startup, 'development_progress', 0),
-        'problem_statement': getattr(startup, 'problem_statement', ''),
-        'technology_stack': getattr(startup, 'technology_stack', []),
-        'innovation_description': getattr(startup, 'solution_description', ''),
-        'innovation_stage_description': getattr(startup, 'innovation_stage_description', ''),
-        'intellectual_property': getattr(startup, 'intellectual_property', []),
-        'target_markets': getattr(startup, 'target_markets', []),
-        'customer_segments': getattr(startup, 'customer_segments', []),
-        'customers_count': getattr(startup, 'customers_count', ''),
-        'revenue_growth': getattr(startup, 'revenue_growth', ''),
-        'annual_revenue': getattr(startup, 'annual_revenue', ''),
-        'market_opportunity_description': getattr(startup, 'market_opportunity_description', ''),
-        'use_of_funds': getattr(startup, 'use_of_funds', ''),
-        'financial_projections': getattr(startup, 'financial_projections', ''),
-        'funding_history': getattr(startup, 'funding_history', []),
-        'founders': getattr(startup, 'founders', []),
-        'engineering_team_size': getattr(startup, 'engineering_team_size', ''),
-        'team_description': getattr(startup, 'team_description', ''),
-        'core_expertise': getattr(startup, 'core_expertise', []),
-        'recent_news': getattr(startup, 'recent_news', []),
-        'contact_email': getattr(startup, 'contact_email', ''),
-        'partnership_message': getattr(startup, 'partnership_message', ''),
-        'partnership_opportunities': getattr(startup, 'partnership_opportunities', []),
-        'short_summary': getattr(startup, 'short_summary', ''),
-        'type_tags': getattr(startup, 'type_tags', []),
-        'primary_location': startup.primary_location,
-        'business_model': getattr(startup, 'business_model', ''),
-        'headquarters': getattr(startup, 'headquarters', startup.primary_location),
-        'deployment_sites': getattr(startup, 'deployment_sites', ''),
-        'coverage_area': getattr(startup, 'coverage_area', ''),
-        'founded_display': str(startup.founded_year) if startup.founded_year else '',
-        'team_size_display': f"{startup.team_size} members" if startup.team_size else '',
-        'industry': getattr(startup, 'industry', ''),
-        'stage': startup.current_stage,
-        'revenue': getattr(startup, 'annual_revenue', ''),
-        'match_score': calculate_match_score(startup),
-        'core_technologies': getattr(startup, 'core_technologies', []),
-        'current_stage': startup.current_stage,
-        'innovation_progress': getattr(startup, 'innovation_progress', 0),
-        'patents_pending': getattr(startup, 'patents_pending', 0),
-        'ip_description': getattr(startup, 'ip_description', ''),
-        'revenue_type': getattr(startup, 'revenue_type', ''),
-        'customer_count': getattr(startup, 'customer_count', ''),
-        'growth_rate': getattr(startup, 'growth_rate', ''),
-        'growth_period': getattr(startup, 'growth_period', ''),
-        'funding_needed': startup.funding_needed,
-        'funding_round': getattr(startup, 'funding_round', ''),
-        'team_breakdown': getattr(startup, 'team_breakdown', {}),
-        'team_experience': getattr(startup, 'team_experience', ''),
-        'investment_highlights': getattr(startup, 'investment_highlights', []),
-        'awards': getattr(startup, 'awards', []),
-        'certifications': getattr(startup, 'certifications', []),
-    }
-
-    startup_data_temp = {
-        # Basic Company Information
-        'id': startup_id,
-        'company_name': 'AquaTech Solutions',
-        'description': 'AI-powered water quality monitoring and plastic pollution detection system for coastal communities and marine conservation efforts.',
-        'short_description': 'Revolutionary marine conservation technology using AI and IoT for water quality monitoring.',
-        'detailed_description': 'AquaTech Solutions is a pioneering technology company focused on revolutionizing marine conservation through advanced AI-powered monitoring systems. Founded in 2019, we develop comprehensive solutions for water quality assessment and plastic pollution detection in coastal and marine environments. Our mission is to provide actionable environmental data to governments, NGOs, and research institutions, enabling evidence-based decision making for marine conservation efforts across Southeast Asia.',
-        'website': 'https://aquatech-solutions.com',
-        'linkedin_url': 'https://linkedin.com/company/aquatech-solutions',
-        'logo': None,  # File field - would be actual logo URL in production
         
         # Header Information
-        'match_percentage': 95,
-        'headquarters_location': 'Singapore',
-        'founding_year': 2019,
-        'team_size': '15',
-        'development_stage': 'Series A',
+        'match_percentage': match_score,
+        'headquarters_location': startup.primary_location or '',
+        'founding_year': startup.founded_year or '',
+        'team_size': startup.team_size or '',
+        'development_stage': startup.current_stage or '',
+        'current_stage': startup.current_stage or '',
         
-        # Industry & Solution Categories
-        'primary_sectors': ['Environmental Technology', 'Marine Conservation', 'IoT Solutions'],
-        'solution_categories': ['Water Quality Monitoring', 'AI Detection Systems', 'Environmental Analytics', 'Pollution Tracking'],
+        # Industry & Solution Categories  
+        'primary_sectors': innovation_types_display or ['Technology'],
+        'solution_categories': innovation_types_display or ['Innovation Solutions'],
+        'innovation_types': innovation_types_display or [],
         
         # Funding Information
-        'funding_goal': '$2.5M',
-        'funding_raised': '$1.8M',
-        'funding_progress': 72,  # Percentage
-        'development_progress': 75,  # Percentage for development stage
+        'funding_goal': startup.funding_needed or '',
+        'funding_needed': startup.funding_needed or '',
+        'funding_raised': '',  # Could be added as model field
+        'funding_progress': 0,  # Could be calculated based on funding data
+        'development_progress': 75 if startup.current_stage else 50,  # Default based on stage
         
         # Problem & Solution
-        'problem_statement': 'Marine ecosystems face unprecedented threats from plastic pollution and water quality degradation, yet current monitoring systems are inadequate, expensive, and provide limited real-time data for effective conservation decision-making.',
+        'problem_statement': startup.solution_description or startup.company_description or '',
+        'innovation_description': startup.solution_description or '',
+        'solution_description': startup.solution_description or '',
+        'innovation_stage_description': f"Currently in {startup.current_stage} stage" if startup.current_stage else '',
         
         # Technology & Innovation
-        'technology_stack': ['Python', 'TensorFlow', 'Computer Vision', 'IoT Sensors', 'AWS Cloud', 'React', 'PostgreSQL', 'Docker'],
-        'innovation_description': 'Our proprietary platform combines computer vision, IoT sensors, and machine learning algorithms to provide real-time monitoring of water quality parameters and automated detection of plastic debris in marine environments with 95% accuracy.',
-        'innovation_stage_description': 'Market validation complete with proven technology deployed across 50+ sites. Ready for rapid scaling across ASEAN markets.',
-        'intellectual_property': [
-            'AI-Powered Plastic Detection Algorithm (Patent Pending)',
-            'Water Quality Sensor Network System (Patent Filed)',
-            'Real-time Environmental Data Processing (Proprietary)',
-            'Marine Pollution Tracking Database (Trademark)'
-        ],
+        'technology_stack': innovation_types_display or ['Technology Solutions'],
+        'core_technologies': innovation_types_display or [],
+        'intellectual_property': [],  # Could be added as model field
         
         # Market & Traction
-        'target_markets': [
-            {
-                'name': 'Government Environmental Agencies',
-                'description': 'National and regional environmental monitoring departments'
-            },
-            {
-                'name': 'NGOs & Research Institutions',
-                'description': 'Marine conservation organizations and academic research centers'
-            },
-            {
-                'name': 'Private Sector Partners',
-                'description': 'Coastal tourism operators and sustainable fishing industries'
-            }
-        ],
-        'customer_segments': ['Government Agencies', 'Environmental NGOs', 'Research Institutions', 'Tourism Companies', 'Fishing Industry'],
-        'customers_count': '25+',
-        'revenue_growth': '150%',
-        'annual_revenue': '$500K',
-        'market_opportunity_description': 'The global water quality monitoring market is projected to reach $4.7 billion by 2025, with the Asia-Pacific region showing the highest growth rate of 8.2% CAGR driven by increasing environmental regulations and sustainability initiatives.',
+        'target_markets': startup.market_country_interests or [],
+        'market_country_interests': startup.market_country_interests or [],
+        'customer_segments': support_areas_display or [],
+        'customers_count': '',  # Could be added as model field
+        'revenue_growth': '',  # Could be added as model field
+        'annual_revenue': '',  # Could be added as model field
+        'market_opportunity_description': startup.investment_philosophy or '',
         
         # Financing Details
-        'use_of_funds': '40% R&D expansion and product development, 35% market expansion across ASEAN, 15% team growth and talent acquisition, 10% operational scaling and infrastructure',
-        'financial_projections': 'Projecting $2.8M ARR by end of 2025 with 200% revenue growth, expanding to 150+ deployment sites across 10 ASEAN countries, achieving break-even by Q3 2025.',
-        'funding_history': [
-            {
-                'round_type': 'Seed Round',
-                'amount': '$350K',
-                'year': '2020'
-            },
-            {
-                'round_type': 'Pre-Series A',
-                'amount': '$750K', 
-                'year': '2022'
-            },
-            {
-                'round_type': 'Government Grants',
-                'amount': '$180K',
-                'year': '2023'
-            }
-        ],
+        'use_of_funds': startup.additional_info or 'Funding will be used for product development and market expansion.',
+        'financial_projections': '',  # Could be added as model field
+        'funding_history': [],  # Could be added as model field or separate model
+        'funding_round': startup.current_stage or '',
         
         # Team Information
         'founders': [
             {
-                'name': 'Dr. Marina Chen',
-                'position': 'Co-Founder & CEO',
-                'bio': 'Ph.D. in Marine Biology from NUS, 10+ years in environmental technology. Former research scientist at National University of Singapore with expertise in marine ecosystem monitoring.',
-                'photo': None  # File field
-            },
-            {
-                'name': 'Alex Liu',
-                'position': 'Co-Founder & CTO', 
-                'bio': 'M.S. Computer Science from MIT, AI/ML specialist with 8+ years experience. Former lead engineer at Google Singapore, expert in computer vision and IoT systems.',
-                'photo': None  # File field
+                'name': startup.member.user.get_full_name() or startup.member.user.username,
+                'position': 'Founder',
+                'bio': f"Founder of {startup.company_name}",
+                'photo': startup.member.profile_picture if hasattr(startup.member, 'profile_picture') else None
             }
-        ],
-        'engineering_team_size': '8',
-        'team_description': 'Multidisciplinary team combining marine science expertise with cutting-edge AI/ML engineering capabilities, backed by experienced business development and operations professionals.',
-        'core_expertise': [
-            'Marine Biology & Oceanography',
-            'Artificial Intelligence & Machine Learning',
-            'Computer Vision & Image Processing',
-            'IoT Systems & Sensor Networks',
-            'Environmental Data Analytics',
-            'Sustainable Technology Development'
-        ],
+        ] if startup.member else [],
+        'engineering_team_size': str(max(1, int(startup.team_size or '1') // 3)) if startup.team_size and startup.team_size.isdigit() else '',
+        'team_description': f"Our team at {startup.company_name} is dedicated to {', '.join(innovation_types_display[:2])}." if innovation_types_display else f"Dedicated team at {startup.company_name}.",
+        'core_expertise': innovation_types_display or ['Technology Innovation'],
+        'team_breakdown': {
+            'total': int(startup.team_size or '1') if startup.team_size and startup.team_size.isdigit() else 1,
+            'engineers': max(1, int(startup.team_size or '1') // 3) if startup.team_size and startup.team_size.isdigit() else 1,
+            'business': max(1, int(startup.team_size or '1') // 4) if startup.team_size and startup.team_size.isdigit() else 1,
+        },
+        'team_experience': f"Combined experience in {', '.join(innovation_types_display[:2])}" if innovation_types_display else 'Experienced team',
         
-        # News & Updates
+        # News & Updates - Mock data based on company info
         'recent_news': [
             {
-                'title': 'Strategic Partnership with WWF Singapore',
-                'summary': 'AquaTech Solutions announces landmark partnership with WWF Singapore to deploy AI-powered monitoring systems across 15 marine protected areas.',
-                'date': '2024-12-15',  # Use string format for template
-                'category': 'Partnership',
-                'link': '#',
-                'image': None  # File field
-            },
-            {
-                'title': 'Series A Funding Reaches 70% Milestone',
-                'summary': 'Company successfully raises $1.8M of $2.5M Series A target with participation from leading VCs including Wavemaker Partners.',
-                'date': '2024-11-28',
-                'category': 'Funding',
+                'title': f'{startup.company_name} Advances in {innovation_types_display[0] if innovation_types_display else "Innovation"}',
+                'summary': f'Company makes progress in {innovation_types_display[0].lower() if innovation_types_display else "technology development"}.',
+                'date': '2024-12-01',
+                'category': 'Development',
                 'link': '#',
                 'image': None
             },
             {
-                'title': 'Winner of ASEAN Tech Innovation Award',
-                'summary': 'AquaTech Solutions wins prestigious ASEAN Tech Innovation Award for outstanding contribution to environmental technology.',
-                'date': '2024-10-12',
-                'category': 'Award',
-                'link': '#',
-                'image': None
-            },
-            {
-                'title': 'Launch of AquaVision 3.0 Platform',
-                'summary': 'Next-generation monitoring platform features enhanced AI algorithms with 95% accuracy in plastic detection and real-time analysis.',
-                'date': '2024-09-20',
-                'category': 'Product',
+                'title': f'New Milestones at {startup.company_name}',
+                'summary': f'Team expansion and progress in {startup.current_stage} stage.' if startup.current_stage else 'Continued growth and development.',
+                'date': '2024-11-15',
+                'category': 'Company',
                 'link': '#',
                 'image': None
             }
-        ],
+        ] if startup.company_name else [],
         
         # Contact & Partnership
-        'contact_email': 'partnerships@aquatech.com',
-        'partnership_message': 'We are actively seeking strategic partnerships, investment opportunities, and collaborative ventures to accelerate our mission of marine conservation. Join us in creating technology solutions that protect our oceans for future generations.',
-        'partnership_opportunities': [
-            'Series A Investment & Funding',
-            'Strategic Technology Partnerships',
-            'Government & NGO Collaborations',
-            'Technology Licensing Opportunities',
-            'Joint Research & Development',
-            'Pilot Project Implementations'
+        'contact_email': startup.member.user.email if startup.member else '',
+        'partnership_message': startup.additional_info or f'We are seeking partnerships and investment opportunities. Contact us to learn more about {startup.company_name}.',
+        'partnership_opportunities': support_areas_display or [
+            'Strategic Partnerships',
+            'Investment Opportunities',
+            'Technology Collaboration',
+            'Market Development'
         ],
         
         # Additional template fields for compatibility
-        'short_summary': 'AI-powered water quality monitoring and plastic pollution detection system for coastal communities and marine conservation efforts.',
-        'type_tags': ['Environmental Tech', 'Monitoring Tools', 'Data Analytics'],
-        'primary_location': 'Singapore',
-        'business_model': 'B2B/B2G',
-        'headquarters': 'Singapore',
-        'deployment_sites': '50+',
-        'coverage_area': 'Across 6 ASEAN countries',
-        'founded_display': '2019',
-        'team_size_display': '15 members',
-        'industry': 'Environmental Technology',
-        'stage': 'Series A',
-        'revenue': '$500K ARR',
-        'match_score': 95,
-        'core_technologies': ['Computer Vision', 'Machine Learning', 'IoT Sensors', 'Cloud Computing', 'Data Analytics'],
-        'current_stage': 'Market Validation Complete - Scaling Phase',
-        'innovation_progress': 75,
-        'patents_pending': 3,
-        'ip_description': '3 patents pending in AI-powered detection',
-        'revenue_type': 'ARR',
-        'customer_count': '25+',
-        'growth_rate': '150%',
-        'growth_period': 'YoY',
-        'funding_needed': '$2.5M',
-        'funding_round': 'Series A',
-        'team_breakdown': {
-            'total': 15,
-            'engineers': 8,
-            'scientists': 4,
-            'business': 3
-        },
-        'team_experience': 'Combined 30+ years in marine tech and AI',
+        'short_summary': startup.solution_description or startup.company_description or '',
+        'type_tags': innovation_types_display[:3] if innovation_types_display else ['Startup'],
+        'primary_location': startup.primary_location or '',
+        'business_model': startup.organization_type or 'B2B',
+        'headquarters': startup.primary_location or '',
+        'deployment_sites': f"{len(startup.market_country_interests)} countries" if startup.market_country_interests else '',
+        'coverage_area': ', '.join(startup.market_country_interests[:3]) if startup.market_country_interests else '',
+        'founded_display': str(startup.founded_year) if startup.founded_year else '',
+        'team_size_display': f"{startup.team_size} members" if startup.team_size else '',
+        'industry': ', '.join(innovation_types_display[:2]) if innovation_types_display else 'Technology',
+        'stage': startup.current_stage or 'Development',
+        'revenue': '',  # Could be added as model field
+        'match_score': match_score,
+        'innovation_progress': 75 if startup.current_stage else 50,
+        'patents_pending': 0,  # Could be added as model field
+        'ip_description': '',  # Could be added as model field
+        'revenue_type': 'Revenue',  # Could be added as model field
+        'customer_count': '',  # Could be added as model field
+        'growth_rate': '',  # Could be added as model field
+        'growth_period': 'Annual',  # Could be added as model field
         'investment_highlights': [
             {
-                'title': 'Proven Revenue Model',
-                'description': 'Recurring SaaS revenue with 150% YoY growth'
+                'title': 'Innovation Focus',
+                'description': f'Specialized in {", ".join(innovation_types_display[:2])}' if innovation_types_display else 'Technology innovation'
             },
             {
-                'title': 'Strong IP Portfolio', 
-                'description': '3 patents pending in AI-powered detection'
+                'title': 'Market Opportunity',
+                'description': f'Operating in {len(startup.market_country_interests)} markets' if startup.market_country_interests else 'Strong market potential'
             },
             {
-                'title': 'Experienced Team',
-                'description': 'Combined 30+ years in marine tech and AI'
+                'title': 'Team Strength',
+                'description': f'{startup.team_size} team members' if startup.team_size else 'Dedicated team'
             },
             {
-                'title': 'Market Expansion Ready',
-                'description': 'Validated technology ready to scale across ASEAN'
+                'title': 'Development Stage',
+                'description': f'Currently in {startup.current_stage} stage' if startup.current_stage else 'Active development'
             }
         ],
-        'awards': [
-            'ASEAN Tech Innovation Award 2024',
-            'Singapore Environmental Excellence Award 2023',
-            'Climate Tech Startup of the Year 2023'
-        ],
-        'certifications': [
-            'ISO 14001 Environmental Management',
-            'Singapore Green Finance Certified',
-            'ASEAN Sustainability Standards Compliant'
-        ]
+        'awards': [],  # Could be added as model field
+        'certifications': [],  # Could be added as model field
     }
     
     return render(request, 'member/startup_profile.html', {'startup': startup_data})
