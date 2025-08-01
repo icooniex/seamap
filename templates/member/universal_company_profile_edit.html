@@ -130,15 +130,7 @@
                             Company Information
                         </span>
                         {% if progress %}
-                        <span class="tab-status {% if progress.tabs.company_info.status == 'complete' %}complete{% elif progress.tabs.company_info.percentage > 0 %}incomplete{% else %}empty{% endif %}">
-                            {% if progress.tabs.company_info.status == 'complete' %}
-                                <i class="bi bi-check"></i>
-                            {% elif progress.tabs.company_info.percentage > 0 %}
-                                !
-                            {% else %}
-                                <i class="bi bi-x"></i>
-                            {% endif %}
-                        </span>
+                        <span class="tab-status {% if progress.tabs.company_info.status == 'complete' %}complete{% elif progress.tabs.company_info.percentage > 0 %}incomplete{% else %}empty{% endif %}"></span>
                         {% endif %}
                     </a>
                 </li>
@@ -149,15 +141,7 @@
                             Market & Traction
                         </span>
                         {% if progress %}
-                        <span class="tab-status {% if progress.tabs.market_traction.status == 'complete' %}complete{% elif progress.tabs.market_traction.percentage > 0 %}incomplete{% else %}empty{% endif %}">
-                            {% if progress.tabs.market_traction.status == 'complete' %}
-                                <i class="bi bi-check"></i>
-                            {% elif progress.tabs.market_traction.percentage > 0 %}
-                                !
-                            {% else %}
-                                <i class="bi bi-x"></i>
-                            {% endif %}
-                        </span>
+                        <span class="tab-status {% if progress.tabs.market_traction.status == 'complete' %}complete{% elif progress.tabs.market_traction.percentage > 0 %}incomplete{% else %}empty{% endif %}"></span>
                         {% endif %}
                     </a>
                 </li>
@@ -168,15 +152,7 @@
                             Financing & Funding
                         </span>
                         {% if progress %}
-                        <span class="tab-status {% if progress.tabs.financing.status == 'complete' %}complete{% elif progress.tabs.financing.percentage > 0 %}incomplete{% else %}empty{% endif %}">
-                            {% if progress.tabs.financing.status == 'complete' %}
-                                <i class="bi bi-check"></i>
-                            {% elif progress.tabs.financing.percentage > 0 %}
-                                !
-                            {% else %}
-                                <i class="bi bi-x"></i>
-                            {% endif %}
-                        </span>
+                        <span class="tab-status {% if progress.tabs.financing.status == 'complete' %}complete{% elif progress.tabs.financing.percentage > 0 %}incomplete{% else %}empty{% endif %}"></span>
                         {% endif %}
                     </a>
                 </li>
@@ -187,19 +163,8 @@
                             Founders & Team
                         </span>
                         {% if progress %}
-                        <span class="tab-status {% if progress.tabs.team.status == 'complete' %}complete{% elif progress.tabs.team.percentage > 0 %}incomplete{% else %}empty{% endif %}">
-                            {% if progress.tabs.team.status == 'complete' %}
-                                <i class="bi bi-check"></i>
-                            {% elif progress.tabs.team.percentage > 0 %}
-                                !
-                            {% else %}
-                                <i class="bi bi-x"></i>
-                            {% endif %}
-                        </span>
+                        <span class="tab-status {% if progress.tabs.team.status == 'complete' %}complete{% elif progress.tabs.team.percentage > 0 %}incomplete{% else %}empty{% endif %}"></span>
                         {% endif %}
-                    </a>
-                </li>
-                        <i class="bi bi-people me-2"></i>Founders & Team
                     </a>
                 </li>
             </ul>

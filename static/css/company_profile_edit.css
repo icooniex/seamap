@@ -739,32 +739,24 @@
     position: absolute;
     top: 4px;
     right: 4px;
-    width: 18px;
-    height: 18px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 8px;
-    font-weight: bold;
-    border: 2px solid white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
 .tab-status.complete {
-    background: #28a745;
-    color: white;
+    display: none; /* Hide for completed tabs */
 }
 
 .tab-status.incomplete {
-    background: #ffc107;
-    color: #212529;
-    font-size: 10px;
+    background: #dc3545;
+    display: block;
 }
 
 .tab-status.empty {
     background: #dc3545;
-    color: white;
+    display: block;
 }
 
 .nav-link .tab-text {
