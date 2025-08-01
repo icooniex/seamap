@@ -56,7 +56,17 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 if RAILWAY_STATIC_URL:
+    # Ensure the URL has a scheme
+    if not RAILWAY_STATIC_URL.startswith(('http://', 'https://')):
+        RAILWAY_STATIC_URL = 'https://' + RAILWAY_STATIC_URL
     CSRF_TRUSTED_ORIGINS.append(RAILWAY_STATIC_URL)
+
+if RAILWAY_PUBLIC_DOMAIN:
+    # Ensure the domain has a scheme
+    domain_url = RAILWAY_PUBLIC_DOMAIN
+    if not domain_url.startswith(('http://', 'https://')):
+        domain_url = 'https://' + domain_url
+    CSRF_TRUSTED_ORIGINS.append(domain_url)
 
 # For development
 if DEBUG:
