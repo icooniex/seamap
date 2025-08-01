@@ -28,18 +28,42 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-d%xr13cxhs+hl0czf5^(g
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-# Railway automatically provides RAILWAY_STATIC_URL, we'll use it in ALLOWED_HOSTS
+# Get Railway URLs
 RAILWAY_STATIC_URL = os.getenv('RAILWAY_STATIC_URL')
+RAILWAY_PUBLIC_DOMAIN = os.getenv('RAILWAY_PUBLIC_DOMAIN')
+
+# Configure ALLOWED_HOSTS
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
+# Add Railway domains
 if RAILWAY_STATIC_URL:
-    ALLOWED_HOSTS.append(RAILWAY_STATIC_URL.replace('https://', '').replace('http://', ''))
+    domain = RAILWAY_STATIC_URL.replace('https://', '').replace('http://', '')
+    ALLOWED_HOSTS.append(domain)
 
-# Also allow any .railway.app domain
+if RAILWAY_PUBLIC_DOMAIN:
+    ALLOWED_HOSTS.append(RAILWAY_PUBLIC_DOMAIN)
+
+# Add common Railway patterns
 ALLOWED_HOSTS.extend([
-    '*.railway.app',
-    '.railway.app'
+    'sea-map-staging.up.railway.app',  # Your current deployment
+    '.railway.app',  # Allows any subdomain of railway.app
+    '.up.railway.app'  # Allows any subdomain of up.railway.app
 ])
+
+# CSRF trusted origins for Railway
+CSRF_TRUSTED_ORIGINS = [
+    'https://sea-map-staging.up.railway.app'
+]
+
+if RAILWAY_STATIC_URL:
+    CSRF_TRUSTED_ORIGINS.append(RAILWAY_STATIC_URL)
+
+# For development
+if DEBUG:
+    CSRF_TRUSTED_ORIGINS.extend([
+        'http://localhost:8000',
+        'http://127.0.0.1:8000'
+    ])
 
 
 # Application definition
