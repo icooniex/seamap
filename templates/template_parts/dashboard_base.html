@@ -415,6 +415,12 @@
             border-color: #3b82f6;
         }
 
+        /* Fallback avatar with initials */
+        .profile-avatar:not(img) {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
         .profile-info {
             text-align: left;
         }
@@ -697,10 +703,16 @@
                         type="button" 
                         data-bs-toggle="dropdown" 
                         aria-expanded="false">
-                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face" 
-                         alt="Profile" class="profile-avatar">
+                    {% if user.member.profile_picture %}
+                        <img src="{{ user.member.profile_picture.url }}" 
+                             alt="Profile" class="profile-avatar">
+                    {% else %}
+                        <div class="profile-avatar d-flex align-items-center justify-content-center bg-primary text-white fw-bold">
+                            {{ user.first_name|first|default:user.username|first|upper }}
+                        </div>
+                    {% endif %}
                     <div class="profile-info d-none d-md-block">
-                        <p class="profile-name mb-0">Charles Hall</p>
+                        <p class="profile-name mb-0">{{ user.get_full_name|default:user.username }}</p>
                     </div>
                     <i class="bi bi-chevron-down text-muted"></i>
                 </button>
@@ -709,11 +721,18 @@
                     <li>
                         <div class="dropdown-item-text px-3 py-2">
                             <div class="d-flex align-items-center">
-                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face" 
-                                     alt="Profile" class="rounded-circle me-2" width="32" height="32">
+                                {% if user.member.profile_picture %}
+                                    <img src="{{ user.member.profile_picture.url }}" 
+                                         alt="Profile" class="rounded-circle me-2" width="32" height="32">
+                                {% else %}
+                                    <div class="rounded-circle me-2 bg-primary text-white d-flex align-items-center justify-content-center fw-bold" 
+                                         style="width: 32px; height: 32px; font-size: 0.75rem;">
+                                        {{ user.first_name|first|default:user.username|first|upper }}
+                                    </div>
+                                {% endif %}
                                 <div>
-                                    <div class="fw-semibold">Charles Hall</div>
-                                    <small class="text-muted">charles.hall@example.com</small>
+                                    <div class="fw-semibold">{{ user.get_full_name|default:user.username }}</div>
+                                    <small class="text-muted">{{ user.email|default:"No email provided" }}</small>
                                 </div>
                             </div>
                         </div>
