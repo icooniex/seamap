@@ -1,11 +1,8 @@
 {% extends "template_parts/dashboard_base.html" %}
 {% load static %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/company_profile_edit.css' %}">
-{% endblock %}
-
 {% block content %}
+<link rel="stylesheet" href="{% static 'css/company_profile_edit.css' %}">
 <div class="container-fluid p-0">
     <!-- Display Messages -->
     {% if messages %}
