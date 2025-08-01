@@ -12,19 +12,23 @@
         <div class="col-12">
             <div class="form-group">
                 <label class="form-label">Has your company secured any external funding to date?</label>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="has_external_funding" id="funding_yes" value="true" 
-                           {% if company.has_external_funding %}checked{% endif %}>
-                    <label class="form-check-label" for="funding_yes">
-                        Yes, we have secured external funding
-                    </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="has_external_funding" id="funding_no" value="false" 
-                           {% if not company.has_external_funding %}checked{% endif %}>
-                    <label class="form-check-label" for="funding_no">
-                        No, we have not secured external funding yet
-                    </label>
+                <div class="radio-grid">
+                    <div class="radio-card">
+                        <input type="radio" name="has_external_funding" id="funding_yes" value="true" 
+                               {% if company.has_external_funding %}checked{% endif %}>
+                        <div class="radio-card-content">
+                            <div class="radio-icon"></div>
+                            <span class="radio-label">Yes, we have secured external funding</span>
+                        </div>
+                    </div>
+                    <div class="radio-card">
+                        <input type="radio" name="has_external_funding" id="funding_no" value="false" 
+                               {% if not company.has_external_funding %}checked{% endif %}>
+                        <div class="radio-card-content">
+                            <div class="radio-icon"></div>
+                            <span class="radio-label">No, we have not secured external funding yet</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

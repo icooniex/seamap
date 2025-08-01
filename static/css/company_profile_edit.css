@@ -273,6 +273,99 @@
 }
 
 /* ========================================
+   RADIO COMPONENTS - SIMILAR TO CHECKBOX
+   ======================================== */
+
+.radio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.radio-card {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+}
+
+.radio-card:hover {
+    border-color: var(--bs-primary);
+    background: rgba(44, 89, 167, 0.05);
+    transform: translateY(-2px);
+}
+
+.radio-card.selected {
+    border-color: var(--bs-primary);
+    background: rgba(44, 89, 167, 0.1);
+}
+
+.radio-card input[type="radio"] {
+    display: none;
+}
+
+.radio-card-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    z-index: 1;
+}
+
+.radio-icon {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #cbd5e0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    flex-shrink: 0;
+    background: white;
+    position: relative;
+}
+
+.radio-icon:hover {
+    border-color: var(--bs-primary);
+    background: rgba(44, 89, 167, 0.05);
+}
+
+.radio-card.selected .radio-icon {
+    background: var(--bs-primary);
+    border-color: var(--bs-primary);
+    color: white;
+}
+
+.radio-card.selected .radio-icon:hover {
+    background: #1e3a8a;
+    border-color: #1e3a8a;
+}
+
+.radio-card.selected .radio-icon::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+}
+
+.radio-label {
+    font-weight: 500;
+    color: #4a5568;
+    flex: 1;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* ========================================
    BUTTONS - COPIED FROM ONBOARDING
    ======================================== */
 

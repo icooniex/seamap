@@ -12,19 +12,23 @@
         <div class="col-12">
             <div class="form-group">
                 <label class="form-label">Is the startup led or co-led by a female founder?</label>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="is_female_led" id="female_led_yes" value="true" 
-                           {% if company.is_female_led %}checked{% endif %}>
-                    <label class="form-check-label" for="female_led_yes">
-                        Yes, led or co-led by a female founder
-                    </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="is_female_led" id="female_led_no" value="false" 
-                           {% if not company.is_female_led %}checked{% endif %}>
-                    <label class="form-check-label" for="female_led_no">
-                        No, not led by a female founder
-                    </label>
+                <div class="radio-grid">
+                    <div class="radio-card">
+                        <input type="radio" name="is_female_led" id="female_led_yes" value="true" 
+                               {% if company.is_female_led %}checked{% endif %}>
+                        <div class="radio-card-content">
+                            <div class="radio-icon"></div>
+                            <span class="radio-label">Yes, led or co-led by a female founder</span>
+                        </div>
+                    </div>
+                    <div class="radio-card">
+                        <input type="radio" name="is_female_led" id="female_led_no" value="false" 
+                               {% if not company.is_female_led %}checked{% endif %}>
+                        <div class="radio-card-content">
+                            <div class="radio-icon"></div>
+                            <span class="radio-label">No, not led by a female founder</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

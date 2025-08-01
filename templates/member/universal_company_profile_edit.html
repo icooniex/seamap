@@ -200,6 +200,58 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
+    // Radio card functionality - similar to checkbox
+    const radioCards = document.querySelectorAll('.radio-card');
+    
+    radioCards.forEach(card => {
+        const radio = card.querySelector('input[type="radio"]');
+        
+        if (radio) {
+            // Set initial state
+            if (radio.checked) {
+                card.classList.add('selected');
+            }
+            
+            // Add click handler
+            card.addEventListener('click', function(e) {
+                // Don't trigger if clicked on the actual radio
+                if (e.target === radio) return;
+                
+                // Clear all other radio cards with same name
+                const otherRadios = document.querySelectorAll(`input[name="${radio.name}"]`);
+                otherRadios.forEach(otherRadio => {
+                    const otherCard = otherRadio.closest('.radio-card');
+                    if (otherCard) {
+                        otherCard.classList.remove('selected');
+                    }
+                });
+                
+                // Select this radio
+                radio.checked = true;
+                card.classList.add('selected');
+                
+                // Trigger change event
+                radio.dispatchEvent(new Event('change'));
+            });
+            
+            // Handle radio change
+            radio.addEventListener('change', function() {
+                if (this.checked) {
+                    // Clear all other radio cards with same name
+                    const otherRadios = document.querySelectorAll(`input[name="${this.name}"]`);
+                    otherRadios.forEach(otherRadio => {
+                        const otherCard = otherRadio.closest('.radio-card');
+                        if (otherCard) {
+                            otherCard.classList.remove('selected');
+                        }
+                    });
+                    
+                    card.classList.add('selected');
+                }
+            });
+        }
+    });
+    
     // Form validation
     const form = document.getElementById('companyProfileForm');
     if (form) {
