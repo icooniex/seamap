@@ -10,7 +10,7 @@ from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
 from django.db import models
 from .models import Member, Company
-from .forms import EmailLoginForm, SignUpForm
+from .forms import EmailLoginForm, SignUpForm, CompanyForm, StartupForm, InvestorForm, CorporateForm
 import json
 import random
 from django.views import View
@@ -1963,123 +1963,108 @@ def personal_profile_edit(request):
 def company_profile_edit(request):
     """Universal company profile edit form for all company types"""
     member = get_object_or_404(Member, user=request.user)
-    company = None
+    company = Company.objects.filter(member=member).first()
     
-    try:
-        company = Company.objects.filter(member=member).order_by('id').first()
-    except Company.DoesNotExist:
-        company = None
+    # Determine company type for form selection
+    company_type = company.company_type if company else request.GET.get('type', 'startup')
     
-    # Determine company type for template rendering
-    company_type = company.company_type if company else None
-    
-    # Note: All company types now use the universal template
-    # No need to redirect startup companies to separate view
+    # Select appropriate form based on company type
+    if company_type == 'startup':
+        form_class = StartupForm
+    elif company_type == 'investor':
+        form_class = InvestorForm
+    elif company_type == 'corporate':
+        form_class = CorporateForm
+    else:
+        form_class = CompanyForm
     
     if request.method == 'POST':
-        try:
-            # Get or create company
-            if company:
-                # Update existing company
-                pass
-            else:
-                # Create new company
-                company = Company.objects.create(
-                    member=member,
-                    company_type=request.POST.get('company_type', 'corporation'),
-                    is_primary=True
-                )
+        form = form_class(request.POST, request.FILES, instance=company)
+        
+        if form.is_valid():
+            company = form.save(commit=False)
             
-            # Update basic company information (common to all types)
-            company.company_name = request.POST.get('company_name', '').strip()
-            company.company_description = request.POST.get('company_description', '').strip()
-            company.website = request.POST.get('website_url', '').strip() or None
-            company.founded_year = int(request.POST.get('founded_year')) if request.POST.get('founded_year') else None
-            company.primary_location = request.POST.get('primary_location', '').strip()
-            company.team_size = request.POST.get('team_size', '').strip()
+            # Set company member and type if creating new
+            if not company.pk:
+                company.member = member
+                company.company_type = company_type
+                company.is_primary = True
             
-            # Handle company logo upload
-            if 'company_logo' in request.FILES:
-                company.company_logo = request.FILES['company_logo']
-            
-            # Type-specific field handling
-            if company.company_type == 'startup':
-                # Startup-specific fields
-                company.problem_statement = request.POST.get('problem_statement', '').strip()
-                company.current_stage = request.POST.get('current_stage', '').strip()
-                
-                # Market & Traction tab
-                company.target_markets = request.POST.get('target_markets', '').strip()
+            # Handle checkbox fields and special form data
+            if company_type == 'startup':
+                # Handle customer segments (multiple checkbox)
                 customer_segments = request.POST.getlist('customer_segments')
                 company.customer_segments = customer_segments
-                company.active_users_count = request.POST.get('active_users_count', '').strip()
-                company.paying_customers_count = request.POST.get('paying_customers_count', '').strip()
-                company.annual_recurring_revenue = request.POST.get('annual_recurring_revenue', '').strip()
                 
-                # Financing & Funding tab
-                has_external_funding = request.POST.get('has_external_funding')
-                company.has_external_funding = has_external_funding == 'true'
-                company.funding_history = request.POST.get('funding_history', '').strip()
-                company.amount_raised = request.POST.get('amount_raised', '').strip()
-                company.funding_needed = request.POST.get('funding_needed', '').strip()
-                company.use_of_funds = request.POST.get('use_of_funds', '').strip()
-                company.financial_projections = request.POST.get('financial_projections', '').strip()
+                # Handle boolean fields
+                company.has_external_funding = request.POST.get('has_external_funding') == 'true'
+                company.is_female_led = request.POST.get('is_female_led') == 'true'
                 
-                # Founders and Team tab
-                is_female_led = request.POST.get('is_female_led')
-                company.is_female_led = is_female_led == 'true'
-                company.core_team_size = request.POST.get('core_team_size', '').strip()
-                company.team_overview = request.POST.get('team_overview', '').strip()
-                company.core_expertise = request.POST.get('core_expertise', '').strip()
-                
-            elif company.company_type == 'investor':
-                # Investor-specific fields
-                company.investor_type = request.POST.get('investor_type', '').strip()
-                company.funding_size = request.POST.get('funding_size', '').strip()
-                company.average_deal_size = request.POST.get('average_deal_size', '').strip()
-                company.investment_philosophy = request.POST.get('investment_philosophy', '').strip()
-                
+            elif company_type == 'investor':
                 # Handle multiple selections for investors
-                funding_stages = request.POST.getlist('funding_stages')
-                investment_categories = request.POST.getlist('investment_categories')
-                market_country_interests = request.POST.getlist('market_country_interests')
+                company.funding_stages = request.POST.getlist('funding_stages')
+                company.investment_categories = request.POST.getlist('investment_categories')
+                company.market_country_interests = request.POST.getlist('market_country_interests')
                 
-                company.funding_stages = funding_stages
-                company.investment_categories = investment_categories
-                company.market_country_interests = market_country_interests
-                
-            elif company.company_type == 'corporate':
-                # Corporate-specific fields
-                company.organization_type = request.POST.get('organization_type', '').strip()
-                company.funding_size = request.POST.get('funding_size', '').strip()
-                company.average_deal_size = request.POST.get('average_deal_size', '').strip()
-                company.investment_philosophy = request.POST.get('investment_philosophy', '').strip()
-                
+            elif company_type == 'corporate':
                 # Handle multiple selections for corporates
-                industry_expertise = request.POST.getlist('industry_expertise')
-                investment_categories = request.POST.getlist('investment_categories')
-                market_country_interests = request.POST.getlist('market_country_interests')
-                support_areas = request.POST.getlist('support_areas')
-                
-                company.industry_expertise = industry_expertise
-                company.investment_categories = investment_categories
-                company.market_country_interests = market_country_interests
-                company.support_areas = support_areas
-                
-            else:
-                # General company fields
-                company.organization_type = request.POST.get('organization_type', '').strip()
-                company.average_deal_size = request.POST.get('average_deal_size', '').strip()
+                company.industry_expertise = request.POST.getlist('industry_expertise')
+                company.investment_categories = request.POST.getlist('investment_categories')
+                company.market_country_interests = request.POST.getlist('market_country_interests')
+                company.support_areas = request.POST.getlist('support_areas')
             
             company.save()
-            
             messages.success(request, 'Your company profile has been updated successfully!')
             return redirect('company_profile_edit')
-            
-        except Exception as e:
-            messages.error(request, f'An error occurred while updating your profile: {str(e)}')
+        else:
+            # Form validation failed
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f'{field}: {error}')
+    else:
+        # GET request - display form with existing data
+        form = form_class(instance=company)
     
-    # Sample industry expertise choices for template
+    # Prepare choices for template
+    from .models import (
+        TEAM_SIZE_CHOICES, LOCATION_CHOICES, CURRENT_STAGE_CHOICES,
+        FUNDING_NEEDED_CHOICES, INVESTOR_TYPE_CHOICES, FUNDING_SIZE_CHOICES,
+        DEAL_SIZE_CHOICES, ORGANIZATION_TYPE_CHOICES
+    )
+    
+    # Customer segments choices for startups
+    customer_segments_choices = [
+        ('b2b', 'B2B (Business-to-Business)'),
+        ('b2c', 'B2C (Business-to-Consumer)'),
+        ('b2g', 'B2G (Business-to-Government)'),
+        ('sme', 'SMEs (Small & Medium Enterprises)'),
+        ('enterprise', 'Enterprise Clients'),
+        ('consumers', 'Individual Consumers'),
+    ]
+    
+    # Funding stages choices
+    funding_stages_choices = [
+        ('pre_seed', 'Pre-Seed'),
+        ('seed', 'Seed'),
+        ('series_a', 'Series A'),
+        ('series_b', 'Series B'),
+        ('series_c', 'Series C'),
+        ('series_d', 'Series D and Above'),
+    ]
+    
+    # Investment categories choices
+    investment_categories_choices = [
+        ('eliminate_redesign', 'Eliminate & Redesign Packaging'),
+        ('refill_reuse', 'Refill & Reuse Solutions'),
+        ('collection_sorting', 'Collection & Sorting Technologies'),
+        ('advanced_recycling', 'Advanced Recycling & Upcycling'),
+        ('bioplastics', 'Bioplastics & Compostable Materials'),
+        ('waste_management', 'Waste Management Infrastructure'),
+        ('data_monitoring', 'Data, Monitoring & Traceability'),
+        ('other', 'Other'),
+    ]
+    
+    # Industry expertise choices for corporates
     industry_expertise_choices = [
         ('technology', 'Technology'),
         ('manufacturing', 'Manufacturing'),
@@ -2093,13 +2078,36 @@ def company_profile_edit(request):
         ('real_estate', 'Real Estate'),
     ]
     
+    # Support areas choices for corporates
+    support_areas_choices = [
+        ('branding_marketing', 'Branding & Marketing'),
+        ('investment_funding', 'Investment & Funding Access'),
+        ('manufacturing_supply', 'Manufacturing & Supply Chain'),
+        ('market_expansion', 'Market Expansion & Customer Acquisition'),
+        ('product_development', 'Product Development & R&D'),
+        ('regulatory_compliance', 'Regulatory & Compliance'),
+    ]
+    
     context = {
         'member': member,
         'company': company,
+        'form': form,
+        'company_type': company_type,
+        'team_size_choices': TEAM_SIZE_CHOICES,
+        'location_choices': LOCATION_CHOICES,
+        'current_stage_choices': CURRENT_STAGE_CHOICES,
+        'funding_needed_choices': FUNDING_NEEDED_CHOICES,
+        'investor_type_choices': INVESTOR_TYPE_CHOICES,
+        'funding_size_choices': FUNDING_SIZE_CHOICES,
+        'deal_size_choices': DEAL_SIZE_CHOICES,
+        'organization_type_choices': ORGANIZATION_TYPE_CHOICES,
+        'customer_segments_choices': customer_segments_choices,
+        'funding_stages_choices': funding_stages_choices,
+        'investment_categories_choices': investment_categories_choices,
         'industry_expertise_choices': industry_expertise_choices,
+        'support_areas_choices': support_areas_choices,
     }
     
-    # Use universal template that handles all company types
     return render(request, 'member/universal_company_profile_edit.html', context)
 
 

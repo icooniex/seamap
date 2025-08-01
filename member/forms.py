@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import authenticate, get_user_model
+from .models import Company, Member
 
 User = get_user_model()
 
@@ -141,3 +142,179 @@ class SignUpForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+
+class CompanyForm(forms.ModelForm):
+    """Base form for company information"""
+    
+    class Meta:
+        model = Company
+        fields = [
+            'company_name', 'company_logo', 'website', 'founded_year',
+            'team_size', 'primary_location', 'company_description'
+        ]
+        widgets = {
+            'company_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter your company name'
+            }),
+            'website': forms.URLInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'https://www.yourcompany.com'
+            }),
+            'founded_year': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': '2020',
+                'min': '1900',
+                'max': '2025'
+            }),
+            'team_size': forms.Select(attrs={
+                'class': 'form-select'
+            }),
+            'primary_location': forms.Select(attrs={
+                'class': 'form-select'
+            }),
+            'company_description': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'Describe your company, what you do, and your mission...'
+            }),
+            'company_logo': forms.FileInput(attrs={
+                'class': 'form-control',
+                'accept': 'image/*'
+            })
+        }
+
+
+class StartupForm(CompanyForm):
+    """Form for startup-specific information"""
+    
+    class Meta(CompanyForm.Meta):
+        fields = CompanyForm.Meta.fields + [
+            'problem_statement', 'current_stage', 'target_markets',
+            'customer_segments', 'active_users_count', 'paying_customers_count',
+            'annual_recurring_revenue', 'has_external_funding', 'funding_history',
+            'amount_raised', 'funding_needed', 'use_of_funds', 
+            'financial_projections', 'is_female_led', 'core_team_size',
+            'team_overview', 'core_expertise'
+        ]
+        widgets = {
+            **CompanyForm.Meta.widgets,
+            'problem_statement': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'What problem does your startup solve?'
+            }),
+            'current_stage': forms.Select(attrs={
+                'class': 'form-select'
+            }),
+            'target_markets': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Describe your target markets...'
+            }),
+            'active_users_count': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g., 10,000'
+            }),
+            'paying_customers_count': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g., 1,500'
+            }),
+            'annual_recurring_revenue': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g., $500,000'
+            }),
+            'funding_history': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Describe your funding history...'
+            }),
+            'amount_raised': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g., $1,000,000'
+            }),
+            'funding_needed': forms.Select(attrs={
+                'class': 'form-select'
+            }),
+            'use_of_funds': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'How will you use the funding?'
+            }),
+            'financial_projections': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Describe your financial projections...'
+            }),
+            'core_team_size': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g., 5 people'
+            }),
+            'team_overview': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Describe your core team...'
+            }),
+            'core_expertise': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'What are your team\'s core competencies?'
+            })
+        }
+
+
+class InvestorForm(CompanyForm):
+    """Form for investor-specific information"""
+    
+    class Meta(CompanyForm.Meta):
+        fields = CompanyForm.Meta.fields + [
+            'investor_type', 'funding_size', 'average_deal_size',
+            'funding_stages', 'investment_categories', 'market_country_interests',
+            'investment_philosophy'
+        ]
+        widgets = {
+            **CompanyForm.Meta.widgets,
+            'investor_type': forms.Select(attrs={
+                'class': 'form-select'
+            }),
+            'funding_size': forms.Select(attrs={
+                'class': 'form-select'
+            }),
+            'average_deal_size': forms.Select(attrs={
+                'class': 'form-select'
+            }),
+            'investment_philosophy': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'Describe your investment philosophy and approach...'
+            })
+        }
+
+
+class CorporateForm(CompanyForm):
+    """Form for corporate-specific information"""
+    
+    class Meta(CompanyForm.Meta):
+        fields = CompanyForm.Meta.fields + [
+            'organization_type', 'funding_size', 'average_deal_size',
+            'industry_expertise', 'investment_categories', 'market_country_interests',
+            'support_areas', 'investment_philosophy'
+        ]
+        widgets = {
+            **CompanyForm.Meta.widgets,
+            'organization_type': forms.Select(attrs={
+                'class': 'form-select'
+            }),
+            'funding_size': forms.Select(attrs={
+                'class': 'form-select'
+            }),
+            'average_deal_size': forms.Select(attrs={
+                'class': 'form-select'
+            }),
+            'investment_philosophy': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'Describe your investment philosophy and corporate goals...'
+            })
+        }
