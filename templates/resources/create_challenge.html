@@ -1,244 +1,89 @@
-{% extends 'onboarding/onboarding_base.html' %}
-{% load static %}
+{% extends "template_parts/dashboard_base.html" %}
 
-{% block title %}Create Challenge - SEA-MAP{% endblock %}
-
-{% block extra_css %}
+{% block content %}
 <style>
-.challenge-form-container {
-    max-width: 800px;
-    margin: 0 auto;
-    background: white;
-    border-radius: 20px;
-    padding: 2.5rem;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-    border: 1px solid #e2e8f0;
+.page-header {
+    background: linear-gradient(135deg, #2c59a7 0%, #3b6cc1 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 20px rgba(44, 89, 167, 0.2);
+}
+
+.page-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
 }
 
 .form-section {
-    margin-bottom: 2.5rem;
-    padding-bottom: 2rem;
-    border-bottom: 1px solid #f1f5f9;
-}
-
-.form-section:last-child {
-    border-bottom: none;
-    margin-bottom: 1rem;
-}
-
-.section-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid #e2e8f0;
-}
-
-.section-icon {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, var(--bs-primary) 0%, #3b6cc1 100%);
+    background: #f8f9fa;
     border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    color: white;
-    box-shadow: 0 4px 10px rgba(44, 89, 167, 0.2);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border-left: 4px solid #2c59a7;
 }
 
 .section-title {
-    font-size: 1.4rem;
+    color: #2c59a7;
     font-weight: 600;
-    color: #2d3748;
-    margin: 0;
-}
-
-.form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .form-label {
-    display: flex;
-    align-items: center;
     font-weight: 600;
-    color: #4a5568;
-    margin-bottom: 0.5rem;
-    font-size: 0.95rem;
-}
-
-.form-label i {
-    margin-right: 8px;
-    color: var(--bs-primary);
-}
-
-.required-indicator {
-    color: #e53e3e;
-    margin-left: 4px;
+    color: #495057;
 }
 
 .form-control, .form-select {
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 0.75rem;
     transition: all 0.3s ease;
-    background: #fafbfc;
 }
 
 .form-control:focus, .form-select:focus {
-    border-color: var(--bs-primary);
-    box-shadow: 0 0 0 3px rgba(44, 89, 167, 0.1);
-    background: white;
-}
-
-.form-control::placeholder {
-    color: #a0aec0;
-}
-
-textarea.form-control {
-    resize: vertical;
-    min-height: 120px;
-}
-
-.category-input-group {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-}
-
-.category-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
-}
-
-.category-tag {
-    background: linear-gradient(135deg, var(--bs-primary) 0%, #3b6cc1 100%);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    animation: fadeIn 0.3s ease;
-}
-
-.category-remove {
-    background: rgba(255, 255, 255, 0.3);
-    border: none;
-    color: white;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    font-size: 0.7rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-}
-
-.category-remove:hover {
-    background: rgba(255, 255, 255, 0.5);
-    transform: scale(1.1);
-}
-
-.prize-toggle-section {
-    background: #f8fafc;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-}
-
-.form-check-input:checked {
-    background-color: var(--bs-primary);
-    border-color: var(--bs-primary);
-}
-
-.prize-details {
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #e2e8f0;
-    animation: slideDown 0.3s ease;
-}
-
-.file-upload-area {
-    border: 2px dashed #cbd5e0;
-    border-radius: 12px;
-    padding: 2rem;
-    text-align: center;
-    background: #f8fafc;
-    transition: all 0.3s ease;
-}
-
-.file-upload-area:hover {
-    border-color: var(--bs-primary);
-    background: #e6f3ff;
-}
-
-.upload-icon {
-    font-size: 2rem;
-    color: #a0aec0;
-    margin-bottom: 1rem;
-}
-
-.file-upload-area:hover .upload-icon {
-    color: var(--bs-primary);
-}
-
-.form-actions {
-    background: #f8fafc;
-    border-radius: 12px;
-    padding: 2rem;
-    text-align: center;
-    margin-top: 2rem;
-}
-
-.btn {
-    border-radius: 12px;
-    font-weight: 600;
-    padding: 0.75rem 2rem;
-    transition: all 0.3s ease;
-    font-size: 1rem;
+    border-color: #2c59a7;
+    box-shadow: 0 0 0 0.2rem rgba(44, 89, 167, 0.25);
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--bs-primary) 0%, #3b6cc1 100%);
+    background: linear-gradient(135deg, #2c59a7 0%, #3b6cc1 100%);
     border: none;
-    box-shadow: 0 4px 15px rgba(44, 89, 167, 0.3);
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(44, 89, 167, 0.4);
+    box-shadow: 0 5px 15px rgba(44, 89, 167, 0.4);
 }
 
-.btn-outline-secondary {
-    border: 2px solid #e2e8f0;
-    color: #4a5568;
+.btn-secondary {
+    border: 2px solid #6c757d;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
 }
 
-.btn-outline-secondary:hover {
-    background: #f1f5f9;
-    border-color: #cbd5e0;
-    color: #2d3748;
-}
-
-.form-text {
-    font-size: 0.85rem;
-    color: #718096;
-    margin-top: 0.25rem;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.8); }
-    to { opacity: 1; transform: scale(1); }
+.prize-section {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border: 2px solid #ffc107;
+    border-radius: 10px;
+    padding: 1.5rem;
+    animation: slideDown 0.3s ease;
 }
 
 @keyframes slideDown {
@@ -246,420 +91,347 @@ textarea.form-control {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .challenge-form-container {
-        margin: 1rem;
-        padding: 1.5rem;
-    }
-    
-    .section-header {
-        flex-direction: column;
-        text-align: center;
-        gap: 8px;
-    }
-    
-    .category-input-group {
-        flex-direction: column;
-    }
+.file-upload {
+    border: 2px dashed #ced4da;
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.file-upload:hover {
+    border-color: #2c59a7;
+    background: #f8f9fa;
+}
+
+.required {
+    color: #dc3545;
 }
 </style>
-{% endblock %}
 
-{% block header_content %}
-<div class="logo-icon">
-    <i class="bi bi-plus-circle"></i>
-</div>
-<h1 class="onboarding-title">Create Innovation Challenge</h1>
-<p class="onboarding-subtitle">Launch your next breakthrough challenge and connect with innovators worldwide</p>
-{% endblock %}
-
-{% block content %}
-<div class="container py-4">
-    <div class="challenge-form-container">
-        <form method="post" enctype="multipart/form-data" id="challengeForm">
-            {% csrf_token %}
-            
-            <!-- Basic Information Section -->
-            <div class="form-section">
-                <div class="section-header">
-                    <div class="section-icon">
-                        <i class="bi bi-info-circle"></i>
-                    </div>
-                    <h2 class="section-title">Basic Information</h2>
+<div class="container-fluid px-4 py-4">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                <div class="page-icon">
+                    <i class="fas fa-plus-circle"></i>
                 </div>
-                
-                <div class="form-group">
-                    <label for="title" class="form-label">
-                        <i class="bi bi-card-heading"></i>Challenge Title<span class="required-indicator">*</span>
-                    </label>
-                    <input type="text" class="form-control" id="title" name="title" required
-                           placeholder="Enter a compelling title for your challenge">
-                </div>
-
-                <div class="form-group">
-                    <label for="description" class="form-label">
-                        <i class="bi bi-card-text"></i>Challenge Description<span class="required-indicator">*</span>
-                    </label>
-                    <textarea class="form-control" id="description" name="description" rows="5" required
-                              placeholder="Describe your challenge, its objectives, and what you're looking for from innovators"></textarea>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="organizer_contact" class="form-label">
-                                <i class="bi bi-envelope"></i>Contact Email<span class="required-indicator">*</span>
-                            </label>
-                            <input type="email" class="form-control" id="organizer_contact" name="organizer_contact" required
-                                   placeholder="contact@organization.com">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="priority" class="form-label">
-                                <i class="bi bi-flag"></i>Priority Level
-                            </label>
-                            <select class="form-select" id="priority" name="priority">
-                                <option value="">Select priority level</option>
-                                <option value="low">Low Priority</option>
-                                <option value="medium" selected>Medium Priority</option>
-                                <option value="high">High Priority</option>
-                                <option value="urgent">Urgent</option>
-                            </select>
-                        </div>
-                    </div>
+                <div class="ms-3">
+                    <h1 class="h2 mb-1">Create Innovation Challenge</h1>
+                    <p class="mb-0 opacity-75">สร้าง challenge ใหม่เพื่อเชื่อมต่อกับนักนวัตกรรม</p>
                 </div>
             </div>
-
-            <!-- Requirements Section -->
-            <div class="form-section">
-                <div class="section-header">
-                    <div class="section-icon">
-                        <i class="bi bi-list-check"></i>
-                    </div>
-                    <h2 class="section-title">Requirements & Criteria</h2>
-                </div>
-
-                <div class="form-group">
-                    <label for="requirements_content" class="form-label">
-                        <i class="bi bi-clipboard-check"></i>Detailed Requirements<span class="required-indicator">*</span>
-                    </label>
-                    <textarea class="form-control" id="requirements_content" name="requirements_content" rows="6" required
-                              placeholder="Provide detailed requirements, evaluation criteria, submission guidelines, and any technical specifications"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">
-                        <i class="bi bi-tags"></i>Challenge Categories
-                    </label>
-                    <div class="category-input-group">
-                        <input type="text" class="form-control" id="categoryInput" 
-                               placeholder="Add categories (e.g., Marine Conservation, Clean Technology, Sustainability)">
-                        <button type="button" class="btn btn-primary" id="addCategory">
-                            <i class="bi bi-plus"></i> Add
-                        </button>
-                    </div>
-                    <div id="categoryTags" class="category-tags"></div>
-                    <input type="hidden" id="categoriesData" name="categories" value="[]">
-                    <div class="form-text">Add relevant categories to help innovators find your challenge</div>
-                </div>
-            </div>
-
-            <!-- Timeline & Location Section -->
-            <div class="form-section">
-                <div class="section-header">
-                    <div class="section-icon">
-                        <i class="bi bi-calendar-event"></i>
-                    </div>
-                    <h2 class="section-title">Timeline & Location</h2>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="application_deadline" class="form-label">
-                                <i class="bi bi-calendar-x"></i>Application Deadline
-                            </label>
-                            <input type="datetime-local" class="form-control" id="application_deadline" name="application_deadline">
+            <a href="{% url 'challenge' %}" class="btn btn-outline-light">
+                <i class="fas fa-arrow-left me-2"></i>กลับไปหน้า Challenges
+            </a>
+        </div>
+    </div>
+    
+    <!-- Main Form -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Basic Info Section -->
+                        <div class="form-section">
+                            <h5 class="section-title">
+                                <i class="fas fa-info-circle"></i>
+                                ข้อมูลพื้นฐาน
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="title" class="form-label">ชื่อ Challenge <span class="required">*</span></label>
+                                        <input type="text" class="form-control" id="title" name="title" required
+                                               placeholder="ใส่ชื่อที่น่าสนใจสำหรับ challenge">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="organizer_contact" class="form-label">อีเมล์ติดต่อ <span class="required">*</span></label>
+                                        <input type="email" class="form-control" id="organizer_contact" name="organizer_contact" required
+                                               placeholder="contact@organization.com">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="description" class="form-label">รายละเอียด Challenge <span class="required">*</span></label>
+                                <textarea class="form-control" id="description" name="description" rows="4" required
+                                          placeholder="อธิบายถึงวัตถุประสงค์ เป้าหมาย และสิ่งที่คาดหวังจากผู้เข้าร่วม"></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="requirements_content" class="form-label">ความต้องการและเกณฑ์การประเมิน <span class="required">*</span></label>
+                                <textarea class="form-control" id="requirements_content" name="requirements_content" rows="4" required
+                                          placeholder="ระบุข้อกำหนด เกณฑ์การประเมิน และแนวทางการส่งผลงาน"></textarea>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="start_date" class="form-label">
-                                <i class="bi bi-calendar-plus"></i>Challenge Start Date
-                            </label>
-                            <input type="datetime-local" class="form-control" id="start_date" name="start_date">
+                        
+                        <!-- Timeline Section -->
+                        <div class="form-section">
+                            <h5 class="section-title">
+                                <i class="fas fa-calendar-alt"></i>
+                                กำหนดเวลา
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="application_deadline" class="form-label">วันปิดรับสมัคร</label>
+                                        <input type="datetime-local" class="form-control" id="application_deadline" name="application_deadline">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="start_date" class="form-label">วันเริ่มต้น</label>
+                                        <input type="datetime-local" class="form-control" id="start_date" name="start_date">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="end_date" class="form-label">วันสิ้นสุด</label>
+                                        <input type="datetime-local" class="form-control" id="end_date" name="end_date">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="end_date" class="form-label">
-                                <i class="bi bi-calendar-check"></i>Challenge End Date
-                            </label>
-                            <input type="datetime-local" class="form-control" id="end_date" name="end_date">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="location" class="form-label">
-                                <i class="bi bi-geo-alt"></i>Location
-                            </label>
-                            <input type="text" class="form-control" id="location" name="location" 
-                                   placeholder="e.g., Singapore, Southeast Asia, Global">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="scope" class="form-label">
-                                <i class="bi bi-globe"></i>Challenge Scope
-                            </label>
-                            <select class="form-select" id="scope" name="scope">
-                                <option value="">Select challenge scope</option>
-                                <option value="local">Local</option>
-                                <option value="regional">Regional</option>
-                                <option value="national">National</option>
-                                <option value="global">Global</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Prizes & Rewards Section -->
-            <div class="form-section">
-                <div class="section-header">
-                    <div class="section-icon">
-                        <i class="bi bi-trophy"></i>
-                    </div>
-                    <h2 class="section-title">Prizes & Rewards</h2>
-                </div>
-
-                <div class="prize-toggle-section">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="has_prizes" name="has_prizes">
-                        <label class="form-check-label" for="has_prizes">
-                            <strong>This challenge offers prizes or rewards</strong>
-                        </label>
-                    </div>
-
-                    <div id="prizeDetails" class="prize-details" style="display: none;">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="main_prize_amount" class="form-label">
-                                        <i class="bi bi-currency-dollar"></i>Prize Amount
-                                    </label>
-                                    <div class="input-group">
-                                        <input type="number" class="form-control" id="main_prize_amount" name="main_prize_amount" 
-                                               placeholder="50000" step="0.01">
-                                        <select class="form-select" id="main_prize_currency" name="main_prize_currency" style="max-width: 120px;">
-                                            <option value="USD" selected>USD</option>
-                                            <option value="EUR">EUR</option>
-                                            <option value="THB">THB</option>
-                                            <option value="SGD">SGD</option>
-                                            <option value="MYR">MYR</option>
+                        
+                        <!-- Location & Details Section -->
+                        <div class="form-section">
+                            <h5 class="section-title">
+                                <i class="fas fa-map-marker-alt"></i>
+                                สถานที่และรายละเอียด
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="location" class="form-label">สถานที่</label>
+                                        <input type="text" class="form-control" id="location" name="location" 
+                                               placeholder="เช่น ประเทศไทย, เอเชียตะวันออกเฉียงใต้">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="scope" class="form-label">ขอบเขต</label>
+                                        <select class="form-select" id="scope" name="scope">
+                                            <option value="">เลือกขอบเขต</option>
+                                            <option value="local">ท้องถิ่น</option>
+                                            <option value="regional">ภูมิภาค</option>
+                                            <option value="national">ประเทศ</option>
+                                            <option value="global">ทั่วโลก</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="priority" class="form-label">ความสำคัญ</label>
+                                        <select class="form-select" id="priority" name="priority">
+                                            <option value="">เลือกความสำคัญ</option>
+                                            <option value="low">ต่ำ</option>
+                                            <option value="medium">ปานกลาง</option>
+                                            <option value="high">สูง</option>
+                                            <option value="urgent">เร่งด่วน</option>
                                         </select>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
+                            
+                            <div class="mb-3">
+                                <label for="categories" class="form-label">หมวดหมู่</label>
+                                <input type="text" class="form-control" id="categories" name="categories" 
+                                       placeholder="เช่น Marine Conservation, Clean Technology (คั่นด้วยเครื่องหมายจุลภาค)">
+                                <small class="form-text text-muted">ใส่หมวดหมู่ที่เกี่ยวข้องเพื่อช่วยให้ผู้สนใจค้นหาได้ง่าย</small>
+                            </div>
+                        </div>
+                        
+                        <!-- Prizes Section -->
+                        <div class="form-section">
+                            <h5 class="section-title">
+                                <i class="fas fa-trophy"></i>
+                                รางวัล
+                            </h5>
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="has_prizes" name="has_prizes">
+                                    <label class="form-check-label fw-bold" for="has_prizes">
+                                        <i class="fas fa-medal me-2 text-warning"></i>
+                                        Challenge นี้มีรางวัล
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div id="prize_section" class="prize-section" style="display: none;">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="main_prize_amount" class="form-label">
+                                                <i class="fas fa-dollar-sign me-2"></i>จำนวนเงินรางวัล
+                                            </label>
+                                            <input type="number" class="form-control" id="main_prize_amount" name="main_prize_amount" 
+                                                   step="0.01" placeholder="50000">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="main_prize_currency" class="form-label">สกุลเงิน</label>
+                                            <select class="form-select" id="main_prize_currency" name="main_prize_currency">
+                                                <option value="THB">🇹🇭 บาท (THB)</option>
+                                                <option value="USD">🇺🇸 ดอลลาร์ (USD)</option>
+                                                <option value="EUR">🇪🇺 ยูโร (EUR)</option>
+                                                <option value="SGD">🇸🇬 ดอลลาร์สิงคโปร์ (SGD)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
                                     <label for="prizes_content" class="form-label">
-                                        <i class="bi bi-gift"></i>Prize Description
+                                        <i class="fas fa-gift me-2"></i>รายละเอียดรางวัล
                                     </label>
                                     <textarea class="form-control" id="prizes_content" name="prizes_content" rows="3"
-                                              placeholder="Describe the prizes, benefits, mentorship opportunities, etc."></textarea>
+                                              placeholder="อธิบายรางวัล สิทธิประโยชน์ โอกาสในการพัฒนา และสิ่งที่ผู้ชนะจะได้รับ"></textarea>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Supporting Documents Section -->
-            <div class="form-section">
-                <div class="section-header">
-                    <div class="section-icon">
-                        <i class="bi bi-file-earmark-text"></i>
-                    </div>
-                    <h2 class="section-title">Supporting Documents</h2>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="challenge_brief" class="form-label">
-                                <i class="bi bi-file-pdf"></i>Challenge Brief Document
-                            </label>
-                            <div class="file-upload-area">
-                                <div class="upload-icon">
-                                    <i class="bi bi-file-earmark-arrow-up"></i>
+                        
+                        <!-- Files Section -->
+                        <div class="form-section">
+                            <h5 class="section-title">
+                                <i class="fas fa-paperclip"></i>
+                                ไฟล์แนบ
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="challenge_brief" class="form-label">
+                                            <i class="fas fa-file-pdf me-2"></i>เอกสารโครงการ
+                                        </label>
+                                        <div class="file-upload">
+                                            <input type="file" class="form-control" id="challenge_brief" name="challenge_brief" 
+                                                   accept=".pdf,.doc,.docx">
+                                            <small class="form-text text-muted mt-2">
+                                                <i class="fas fa-info-circle me-1"></i>
+                                                รองรับไฟล์ PDF, DOC, DOCX เท่านั้น • ขนาดไม่เกิน 10MB
+                                            </small>
+                                        </div>
+                                    </div>
                                 </div>
-                                <p class="mb-2"><strong>Upload Challenge Brief</strong></p>
-                                <p class="text-muted small mb-3">PDF, DOC, DOCX files only • Max 10MB</p>
-                                <input type="file" class="form-control" id="challenge_brief" name="challenge_brief" 
-                                       accept=".pdf,.doc,.docx">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="featured_image" class="form-label">
+                                            <i class="fas fa-image me-2"></i>รูปภาพประกอบ
+                                        </label>
+                                        <div class="file-upload">
+                                            <input type="file" class="form-control" id="featured_image" name="featured_image" 
+                                                   accept="image/*">
+                                            <small class="form-text text-muted mt-2">
+                                                <i class="fas fa-info-circle me-1"></i>
+                                                รองรับไฟล์ JPG, PNG เท่านั้น • ขนาดไม่เกิน 5MB
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="featured_image" class="form-label">
-                                <i class="bi bi-image"></i>Featured Image
-                            </label>
-                            <div class="file-upload-area">
-                                <div class="upload-icon">
-                                    <i class="bi bi-image"></i>
-                                </div>
-                                <p class="mb-2"><strong>Upload Banner Image</strong></p>
-                                <p class="text-muted small mb-3">JPG, PNG files • Max 5MB • Recommended: 1200x600px</p>
-                                <input type="file" class="form-control" id="featured_image" name="featured_image" 
-                                       accept="image/*">
-                            </div>
+                        
+                        <!-- Submit Section -->
+                        <div class="text-center py-4">
+                            <button type="submit" class="btn btn-primary btn-lg me-3">
+                                <i class="fas fa-rocket me-2"></i>สร้าง Challenge
+                            </button>
+                            <a href="{% url 'challenge' %}" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-times me-2"></i>ยกเลิก
+                            </a>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
-
-            <!-- Form Actions -->
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary btn-lg me-3">
-                    <i class="bi bi-check-circle me-2"></i>Create Challenge
-                </button>
-                <a href="{% url 'challenge' %}" class="btn btn-outline-secondary btn-lg">
-                    <i class="bi bi-x-circle me-2"></i>Cancel
-                </a>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Category Management System
-    let categories = [];
-    const categoryInput = document.getElementById('categoryInput');
-    const addCategoryBtn = document.getElementById('addCategory');
-    const categoryTags = document.getElementById('categoryTags');
-    const categoriesData = document.getElementById('categoriesData');
-
-    function updateCategoryDisplay() {
-        categoryTags.innerHTML = '';
-        categories.forEach((category, index) => {
-            const tag = document.createElement('div');
-            tag.className = 'category-tag';
-            tag.innerHTML = `
-                ${category}
-                <button type="button" class="category-remove" onclick="removeCategory(${index})">×</button>
-            `;
-            categoryTags.appendChild(tag);
-        });
-        categoriesData.value = JSON.stringify(categories);
-    }
-
-    function addCategory() {
-        const value = categoryInput.value.trim();
-        if (value && !categories.includes(value) && categories.length < 10) {
-            categories.push(value);
-            categoryInput.value = '';
-            updateCategoryDisplay();
-        }
-    }
-
-    window.removeCategory = function(index) {
-        categories.splice(index, 1);
-        updateCategoryDisplay();
-    };
-
-    addCategoryBtn.addEventListener('click', addCategory);
-    categoryInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            addCategory();
-        }
-    });
-
-    // Prize Toggle System
-    const hasPrizes = document.getElementById('has_prizes');
-    const prizeDetails = document.getElementById('prizeDetails');
-
-    hasPrizes.addEventListener('change', function() {
+    // Prize section toggle with animation
+    const hasPrizesCheckbox = document.getElementById('has_prizes');
+    const prizeSection = document.getElementById('prize_section');
+    
+    hasPrizesCheckbox.addEventListener('change', function() {
         if (this.checked) {
-            prizeDetails.style.display = 'block';
+            prizeSection.style.display = 'block';
         } else {
-            prizeDetails.style.display = 'none';
+            prizeSection.style.display = 'none';
         }
     });
-
-    // Form Validation System
-    const form = document.getElementById('challengeForm');
+    
+    // Form validation enhancement
+    const form = document.querySelector('form');
+    const requiredFields = form.querySelectorAll('[required]');
+    
     form.addEventListener('submit', function(e) {
-        const requiredFields = form.querySelectorAll('[required]');
         let hasErrors = false;
-        let firstErrorField = null;
-
-        // Reset previous error styles
-        requiredFields.forEach(field => {
-            field.style.borderColor = '#e2e8f0';
-        });
-
-        // Check each required field
+        
         requiredFields.forEach(field => {
             if (!field.value.trim()) {
                 hasErrors = true;
-                field.style.borderColor = '#e53e3e';
-                
-                if (!firstErrorField) {
-                    firstErrorField = field;
-                }
-                
-                // Add real-time validation removal
-                field.addEventListener('input', function() {
-                    if (this.value.trim()) {
-                        this.style.borderColor = '#e2e8f0';
-                    }
-                }, { once: true });
+                field.classList.add('is-invalid');
+                field.style.borderColor = '#dc3545';
+            } else {
+                field.classList.remove('is-invalid');
+                field.style.borderColor = '#e9ecef';
             }
         });
-
+        
         if (hasErrors) {
             e.preventDefault();
+            alert('กรุณากรอกข้อมูลที่จำเป็น (มีเครื่องหมาย *) ให้ครบถ้วน');
             
-            // Scroll to first error and show message
-            if (firstErrorField) {
-                firstErrorField.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'center' 
-                });
-                firstErrorField.focus();
+            // Scroll to first error field
+            const firstError = form.querySelector('.is-invalid');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstError.focus();
             }
-            
-            // Show user-friendly error message
-            alert('กรุณากรอกข้อมูลที่จำเป็น (*) ให้ครบถ้วน');
         }
     });
-
-    // File Upload Preview (optional enhancement)
+    
+    // File upload feedback
     const fileInputs = document.querySelectorAll('input[type="file"]');
     fileInputs.forEach(input => {
         input.addEventListener('change', function() {
             const fileName = this.files[0]?.name;
+            const container = this.closest('.file-upload');
+            
             if (fileName) {
-                const uploadArea = this.closest('.file-upload-area');
-                const icon = uploadArea.querySelector('.upload-icon i');
-                const text = uploadArea.querySelector('p:first-of-type');
+                container.style.borderColor = '#28a745';
+                container.style.backgroundColor = '#f8fff9';
                 
-                icon.className = 'bi bi-check-circle-fill';
-                text.innerHTML = `<strong>${fileName}</strong>`;
-                uploadArea.style.borderColor = 'var(--bs-success)';
-                uploadArea.style.background = '#f0f9f0';
+                // Add success feedback
+                let feedback = container.querySelector('.file-feedback');
+                if (!feedback) {
+                    feedback = document.createElement('div');
+                    feedback.className = 'file-feedback mt-2 text-success small';
+                    container.appendChild(feedback);
+                }
+                feedback.innerHTML = `<i class="fas fa-check-circle me-1"></i>ไฟล์: ${fileName}`;
+            }
+        });
+    });
+    
+    // Real-time validation for required fields
+    requiredFields.forEach(field => {
+        field.addEventListener('input', function() {
+            if (this.value.trim()) {
+                this.classList.remove('is-invalid');
+                this.style.borderColor = '#28a745';
             }
         });
     });
 });
 </script>
+
 {% endblock %}
