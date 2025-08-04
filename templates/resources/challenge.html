@@ -26,13 +26,13 @@
     <!-- Search and Filter Section -->
     <div class="search-section mb-4">
         <form method="get" class="d-flex align-items-center gap-3 mb-3">
-            <div class="search-input-group flex-grow-1">
+            <div class="search-input-group">
                 <i class="bi bi-search search-icon"></i>
                 <input type="text" name="q" class="form-control search-input" 
                        placeholder="Search challenges by title, description, or organization..." 
                        value="{{ request.GET.q }}">
             </div>
-            <select name="category" class="form-select filter-select me-2">
+            <select name="category" class="form-select filter-select">
                 <option value="">All Categories</option>
                 <option value="marine">Marine Conservation</option>
                 <option value="packaging">Sustainable Packaging</option>
@@ -350,6 +350,8 @@
 
 .search-input-group {
     position: relative;
+    flex: 2;
+    min-width: 400px;
 }
 
 .search-icon {
@@ -369,6 +371,7 @@
     font-size: 1rem;
     transition: all 0.3s ease;
     background: #f8f9fa;
+    height: 56px;
 }
 
 .search-input:focus {
@@ -378,12 +381,16 @@
 }
 
 .filter-select {
+    flex: 1;
     min-width: 200px;
+    max-width: 250px;
     padding: 1rem 1.25rem;
     border: 2px solid #e9ecef;
     border-radius: 12px;
     background: #f8f9fa;
     transition: all 0.3s ease;
+    height: 56px;
+    font-size: 1rem;
 }
 
 .filter-select:focus {
@@ -401,6 +408,13 @@
     color: white;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(44, 89, 167, 0.2);
+    height: 56px;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
 }
 
 .search-btn:hover {
