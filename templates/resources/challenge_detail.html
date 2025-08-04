@@ -876,23 +876,73 @@
 /* Responsive Design */
 @media (max-width: 768px) {
     .challenge-detail-header {
-        padding: 2rem 1.5rem;
+        padding: 1.5rem 1rem;
+        margin-bottom: 1.5rem;
     }
     
-    .challenge-title {
+    .challenge-icon {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 1rem;
+    }
+    
+    .challenge-icon i {
         font-size: 1.8rem;
     }
     
+    .challenge-title {
+        font-size: 1.5rem;
+        margin-bottom: 0.75rem;
+        line-height: 1.3;
+    }
+    
     .challenge-subtitle {
-        font-size: 1rem;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+    
+    .challenge-stats {
+        margin-top: 1.5rem;
     }
     
     .challenge-stats .row {
-        gap: 1rem;
+        gap: 0.5rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
     }
     
     .challenge-stats .col-md-3 {
         width: 100%;
+    }
+    
+    .challenge-stats .stat-item {
+        padding: 0.6rem;
+        margin-bottom: 0.5rem;
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+    
+    .challenge-stats .stat-item i {
+        font-size: 1.1rem;
+    }
+    
+    .stat-info {
+        text-align: center;
+    }
+    
+    .stat-info h4 {
+        font-size: 1.1rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .stat-info span {
+        font-size: 0.75rem;
+    }
+    
+    .challenge-detail-image {
+        height: 200px;
+        margin-top: 1rem;
     }
     
     .organizer-info {
