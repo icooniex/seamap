@@ -119,11 +119,11 @@
                 </div>
                 <div class="ms-3">
                     <h1 class="h2 mb-1">Create Innovation Challenge</h1>
-                    <p class="mb-0 opacity-75">สร้าง challenge ใหม่เพื่อเชื่อมต่อกับนักนวัตกรรม</p>
+                    <p class="mb-0 opacity-75">Create a new challenge to connect with innovators</p>
                 </div>
             </div>
             <a href="{% url 'challenge' %}" class="btn btn-outline-light">
-                <i class="fas fa-arrow-left me-2"></i>กลับไปหน้า Challenges
+                <i class="fas fa-arrow-left me-2"></i>Back to Challenges
             </a>
         </div>
     </div>
@@ -140,19 +140,19 @@
                         <div class="form-section">
                             <h5 class="section-title">
                                 <i class="fas fa-info-circle"></i>
-                                ข้อมูลพื้นฐาน
+                                Basic Information
                             </h5>
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label for="title" class="form-label">ชื่อ Challenge <span class="required">*</span></label>
+                                        <label for="title" class="form-label">Challenge Title <span class="required">*</span></label>
                                         <input type="text" class="form-control" id="title" name="title" required
-                                               placeholder="ใส่ชื่อที่น่าสนใจสำหรับ challenge">
+                                               placeholder="Enter an engaging title for your challenge">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label for="organizer_contact" class="form-label">อีเมล์ติดต่อ <span class="required">*</span></label>
+                                        <label for="organizer_contact" class="form-label">Contact Email <span class="required">*</span></label>
                                         <input type="email" class="form-control" id="organizer_contact" name="organizer_contact" required
                                                placeholder="contact@organization.com">
                                     </div>
@@ -160,15 +160,15 @@
                             </div>
                             
                             <div class="mb-3">
-                                <label for="description" class="form-label">รายละเอียด Challenge <span class="required">*</span></label>
+                                <label for="description" class="form-label">Challenge Description <span class="required">*</span></label>
                                 <textarea class="form-control" id="description" name="description" rows="4" required
-                                          placeholder="อธิบายถึงวัตถุประสงค์ เป้าหมาย และสิ่งที่คาดหวังจากผู้เข้าร่วม"></textarea>
+                                          placeholder="Describe the purpose, objectives, and expectations for participants"></textarea>
                             </div>
                             
                             <div class="mb-3">
-                                <label for="requirements_content" class="form-label">ความต้องการและเกณฑ์การประเมิน <span class="required">*</span></label>
+                                <label for="requirements_content" class="form-label">Requirements & Evaluation Criteria <span class="required">*</span></label>
                                 <textarea class="form-control" id="requirements_content" name="requirements_content" rows="4" required
-                                          placeholder="ระบุข้อกำหนด เกณฑ์การประเมิน และแนวทางการส่งผลงาน"></textarea>
+                                          placeholder="Specify requirements, evaluation criteria, and submission guidelines"></textarea>
                             </div>
                         </div>
                         
@@ -176,24 +176,24 @@
                         <div class="form-section">
                             <h5 class="section-title">
                                 <i class="fas fa-calendar-alt"></i>
-                                กำหนดเวลา
+                                Timeline
                             </h5>
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label for="application_deadline" class="form-label">วันปิดรับสมัคร</label>
+                                        <label for="application_deadline" class="form-label">Application Deadline</label>
                                         <input type="datetime-local" class="form-control" id="application_deadline" name="application_deadline">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label for="start_date" class="form-label">วันเริ่มต้น</label>
+                                        <label for="start_date" class="form-label">Start Date</label>
                                         <input type="datetime-local" class="form-control" id="start_date" name="start_date">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label for="end_date" class="form-label">วันสิ้นสุด</label>
+                                        <label for="end_date" class="form-label">End Date</label>
                                         <input type="datetime-local" class="form-control" id="end_date" name="end_date">
                                     </div>
                                 </div>
@@ -204,47 +204,47 @@
                         <div class="form-section">
                             <h5 class="section-title">
                                 <i class="fas fa-map-marker-alt"></i>
-                                สถานที่และรายละเอียด
+                                Location & Details
                             </h5>
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label for="location" class="form-label">สถานที่</label>
+                                        <label for="location" class="form-label">Location</label>
                                         <input type="text" class="form-control" id="location" name="location" 
-                                               placeholder="เช่น ประเทศไทย, เอเชียตะวันออกเฉียงใต้">
+                                               placeholder="e.g. Thailand, Southeast Asia">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label for="scope" class="form-label">ขอบเขต</label>
+                                        <label for="scope" class="form-label">Scope</label>
                                         <select class="form-select" id="scope" name="scope">
-                                            <option value="">เลือกขอบเขต</option>
-                                            <option value="local">ท้องถิ่น</option>
-                                            <option value="regional">ภูมิภาค</option>
-                                            <option value="national">ประเทศ</option>
-                                            <option value="global">ทั่วโลก</option>
+                                            <option value="">Select scope</option>
+                                            <option value="local">Local</option>
+                                            <option value="regional">Regional</option>
+                                            <option value="national">National</option>
+                                            <option value="global">Global</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label for="priority" class="form-label">ความสำคัญ</label>
+                                        <label for="priority" class="form-label">Priority</label>
                                         <select class="form-select" id="priority" name="priority">
-                                            <option value="">เลือกความสำคัญ</option>
-                                            <option value="low">ต่ำ</option>
-                                            <option value="medium">ปานกลาง</option>
-                                            <option value="high">สูง</option>
-                                            <option value="urgent">เร่งด่วน</option>
+                                            <option value="">Select priority</option>
+                                            <option value="low">Low</option>
+                                            <option value="medium">Medium</option>
+                                            <option value="high">High</option>
+                                            <option value="urgent">Urgent</option>
                                         </select>
                                     </div>
                                 </div>
                             </div>
                             
                             <div class="mb-3">
-                                <label for="categories" class="form-label">หมวดหมู่</label>
+                                <label for="categories" class="form-label">Categories</label>
                                 <input type="text" class="form-control" id="categories" name="categories" 
-                                       placeholder="เช่น Marine Conservation, Clean Technology (คั่นด้วยเครื่องหมายจุลภาค)">
-                                <small class="form-text text-muted">ใส่หมวดหมู่ที่เกี่ยวข้องเพื่อช่วยให้ผู้สนใจค้นหาได้ง่าย</small>
+                                       placeholder="e.g. Marine Conservation, Clean Technology (separated by commas)">
+                                <small class="form-text text-muted">Enter relevant categories to help interested participants find your challenge</small>
                             </div>
                         </div>
                         
@@ -252,14 +252,14 @@
                         <div class="form-section">
                             <h5 class="section-title">
                                 <i class="fas fa-trophy"></i>
-                                รางวัล
+                                Prizes
                             </h5>
                             <div class="mb-3">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="has_prizes" name="has_prizes">
                                     <label class="form-check-label fw-bold" for="has_prizes">
                                         <i class="fas fa-medal me-2 text-warning"></i>
-                                        Challenge นี้มีรางวัล
+                                        This challenge has prizes
                                     </label>
                                 </div>
                             </div>
@@ -269,7 +269,7 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="main_prize_amount" class="form-label">
-                                                <i class="fas fa-dollar-sign me-2"></i>จำนวนเงินรางวัล
+                                                <i class="fas fa-dollar-sign me-2"></i>Prize Amount
                                             </label>
                                             <input type="number" class="form-control" id="main_prize_amount" name="main_prize_amount" 
                                                    step="0.01" placeholder="50000">
@@ -277,12 +277,12 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="main_prize_currency" class="form-label">สกุลเงิน</label>
+                                            <label for="main_prize_currency" class="form-label">Currency</label>
                                             <select class="form-select" id="main_prize_currency" name="main_prize_currency">
-                                                <option value="THB">🇹🇭 บาท (THB)</option>
-                                                <option value="USD">🇺🇸 ดอลลาร์ (USD)</option>
-                                                <option value="EUR">🇪🇺 ยูโร (EUR)</option>
-                                                <option value="SGD">🇸🇬 ดอลลาร์สิงคโปร์ (SGD)</option>
+                                                <option value="THB">🇹🇭 Thai Baht (THB)</option>
+                                                <option value="USD">🇺🇸 US Dollar (USD)</option>
+                                                <option value="EUR">🇪🇺 Euro (EUR)</option>
+                                                <option value="SGD">🇸🇬 Singapore Dollar (SGD)</option>
                                             </select>
                                         </div>
                                     </div>
@@ -290,10 +290,10 @@
                                 
                                 <div class="mb-3">
                                     <label for="prizes_content" class="form-label">
-                                        <i class="fas fa-gift me-2"></i>รายละเอียดรางวัล
+                                        <i class="fas fa-gift me-2"></i>Prize Details
                                     </label>
                                     <textarea class="form-control" id="prizes_content" name="prizes_content" rows="3"
-                                              placeholder="อธิบายรางวัล สิทธิประโยชน์ โอกาสในการพัฒนา และสิ่งที่ผู้ชนะจะได้รับ"></textarea>
+                                              placeholder="Describe prizes, benefits, development opportunities, and what winners will receive"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -302,20 +302,20 @@
                         <div class="form-section">
                             <h5 class="section-title">
                                 <i class="fas fa-paperclip"></i>
-                                ไฟล์แนบ
+                                Attachments
                             </h5>
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="challenge_brief" class="form-label">
-                                            <i class="fas fa-file-pdf me-2"></i>เอกสารโครงการ
+                                            <i class="fas fa-file-pdf me-2"></i>Project Document
                                         </label>
                                         <div class="file-upload">
                                             <input type="file" class="form-control" id="challenge_brief" name="challenge_brief" 
                                                    accept=".pdf,.doc,.docx">
                                             <small class="form-text text-muted mt-2">
                                                 <i class="fas fa-info-circle me-1"></i>
-                                                รองรับไฟล์ PDF, DOC, DOCX เท่านั้น • ขนาดไม่เกิน 10MB
+                                                Supports PDF, DOC, DOCX only • Max 10MB
                                             </small>
                                         </div>
                                     </div>
@@ -323,14 +323,14 @@
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="featured_image" class="form-label">
-                                            <i class="fas fa-image me-2"></i>รูปภาพประกอบ
+                                            <i class="fas fa-image me-2"></i>Featured Image
                                         </label>
                                         <div class="file-upload">
                                             <input type="file" class="form-control" id="featured_image" name="featured_image" 
                                                    accept="image/*">
                                             <small class="form-text text-muted mt-2">
                                                 <i class="fas fa-info-circle me-1"></i>
-                                                รองรับไฟล์ JPG, PNG เท่านั้น • ขนาดไม่เกิน 5MB
+                                                Supports JPG, PNG only • Max 5MB
                                             </small>
                                         </div>
                                     </div>
@@ -341,10 +341,10 @@
                         <!-- Submit Section -->
                         <div class="text-center py-4">
                             <button type="submit" class="btn btn-primary btn-lg me-3">
-                                <i class="fas fa-rocket me-2"></i>สร้าง Challenge
+                                <i class="fas fa-rocket me-2"></i>Create Challenge
                             </button>
                             <a href="{% url 'challenge' %}" class="btn btn-secondary btn-lg">
-                                <i class="fas fa-times me-2"></i>ยกเลิก
+                                <i class="fas fa-times me-2"></i>Cancel
                             </a>
                         </div>
                     </form>
@@ -388,7 +388,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (hasErrors) {
             e.preventDefault();
-            alert('กรุณากรอกข้อมูลที่จำเป็น (มีเครื่องหมาย *) ให้ครบถ้วน');
+            alert('Please fill in all required fields (marked with *)');
             
             // Scroll to first error field
             const firstError = form.querySelector('.is-invalid');
@@ -417,7 +417,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     feedback.className = 'file-feedback mt-2 text-success small';
                     container.appendChild(feedback);
                 }
-                feedback.innerHTML = `<i class="fas fa-check-circle me-1"></i>ไฟล์: ${fileName}`;
+                feedback.innerHTML = `<i class="fas fa-check-circle me-1"></i>File: ${fileName}`;
             }
         });
     });
