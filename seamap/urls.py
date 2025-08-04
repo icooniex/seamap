@@ -31,9 +31,10 @@ urlpatterns = [
     path('dashboard/investors/', investor_matchmaking, name='investor_matchmaking'),
     path('dashboard/corporates/', corporate_matchmaking, name='corporate_matchmaking'),
 
-
     path('dashboard/problem-statement/', problem, name='problem'),
+    path('dashboard/problem-statement/<int:problem_id>/', problem_detail, name='problem_detail'),
     path('dashboard/challenge/', challenge, name='challenge'),
+    path('dashboard/challenge/<int:challenge_id>/', challenge_detail, name='challenge_detail'),
     path('dashboard/accelerator-landing/', accelerator_landing, name='accelerator_landing'),
     
     path('startup/profile/<int:startup_id>/', startup_profile, name='startup_profile'),

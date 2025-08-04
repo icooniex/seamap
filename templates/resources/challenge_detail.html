@@ -1,0 +1,631 @@
+{% extends 'template_parts/dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Challenge Details - Seamap{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Challenge Detail Header -->
+    <div class="challenge-detail-header">
+        <div class="d-flex align-items-center mb-3">
+            <a href="{% url 'challenge' %}" class="btn btn-outline-light me-3">
+                <i class="bi bi-arrow-left"></i> Back to Challenges
+            </a>
+            <div class="challenge-status-badges">
+                <span class="badge bg-success challenge-status-badge">Open</span>
+            </div>
+        </div>
+        
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <div class="challenge-icon mb-3">
+                    <i class="bi bi-trophy"></i>
+                </div>
+                <h1 class="challenge-title">Ocean Plastic Waste Reduction Innovation Challenge</h1>
+                <p class="challenge-subtitle">Develop innovative solutions to reduce ocean plastic waste and create sustainable packaging alternatives</p>
+                
+                <div class="challenge-stats mt-4">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <i class="bi bi-people"></i>
+                                <div class="stat-info">
+                                    <h4>23</h4>
+                                    <span>Applicants</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <i class="bi bi-calendar"></i>
+                                <div class="stat-info">
+                                    <h4>45</h4>
+                                    <span>Days Left</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <i class="bi bi-globe"></i>
+                                <div class="stat-info">
+                                    <h4>Global</h4>
+                                    <span>Scope</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <i class="bi bi-lightbulb"></i>
+                                <div class="stat-info">
+                                    <h4>Innovation</h4>
+                                    <span>Category</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="challenge-image-container">
+                    <img src="{% static 'images/collaborative-ecosystem.jpg' %}" alt="Ocean Plastic Challenge" class="challenge-detail-image">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Challenge Content -->
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- Challenge Description -->
+            <div class="content-section">
+                <h3><i class="bi bi-info-circle me-2"></i>Challenge Overview</h3>
+                <div class="content-card">
+                    <p>Ocean plastic pollution has become one of the most pressing environmental challenges of our time. Every year, millions of tons of plastic waste end up in our oceans, threatening marine life and ecosystems worldwide.</p>
+                    
+                    <p>We are seeking innovative solutions that can significantly reduce ocean plastic waste through:</p>
+                    <ul>
+                        <li>Revolutionary recycling technologies</li>
+                        <li>Biodegradable packaging alternatives</li>
+                        <li>Ocean cleanup mechanisms</li>
+                        <li>Consumer behavior change initiatives</li>
+                        <li>Supply chain optimization solutions</li>
+                    </ul>
+                    
+                    <p>Your solution should demonstrate scalability, sustainability, and measurable impact on reducing ocean plastic pollution.</p>
+                </div>
+            </div>
+
+            <!-- Requirements -->
+            <div class="content-section">
+                <h3><i class="bi bi-list-check me-2"></i>Requirements & Criteria</h3>
+                <div class="content-card">
+                    <div class="requirements-grid">
+                        <div class="requirement-item">
+                            <i class="bi bi-check-circle text-success"></i>
+                            <div>
+                                <h5>Innovation Level</h5>
+                                <p>Solution must demonstrate novel approach or significant improvement over existing methods</p>
+                            </div>
+                        </div>
+                        <div class="requirement-item">
+                            <i class="bi bi-check-circle text-success"></i>
+                            <div>
+                                <h5>Scalability</h5>
+                                <p>Proof of concept for scaling to global or regional implementation</p>
+                            </div>
+                        </div>
+                        <div class="requirement-item">
+                            <i class="bi bi-check-circle text-success"></i>
+                            <div>
+                                <h5>Environmental Impact</h5>
+                                <p>Measurable reduction in ocean plastic waste with sustainability assessment</p>
+                            </div>
+                        </div>
+                        <div class="requirement-item">
+                            <i class="bi bi-check-circle text-success"></i>
+                            <div>
+                                <h5>Technical Feasibility</h5>
+                                <p>Clear implementation plan with realistic timeline and resource requirements</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submission Guidelines -->
+            <div class="content-section">
+                <h3><i class="bi bi-file-earmark-text me-2"></i>Submission Guidelines</h3>
+                <div class="content-card">
+                    <div class="submission-steps">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h5>Project Proposal</h5>
+                                <p>Submit a detailed project proposal (max 10 pages) including problem analysis, solution overview, and implementation plan.</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h5>Technical Documentation</h5>
+                                <p>Provide technical specifications, prototypes, or proof-of-concept demonstrations.</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h5>Impact Assessment</h5>
+                                <p>Include environmental impact analysis and scalability projections with supporting data.</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h5>Team Information</h5>
+                                <p>Provide team member profiles, relevant experience, and project timeline.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Apply Section -->
+            <div class="sidebar-section">
+                <div class="apply-card">
+                    <h4><i class="bi bi-rocket me-2"></i>Ready to Apply?</h4>
+                    <p>Join 23 other innovators in solving ocean plastic pollution</p>
+                    <button class="btn btn-primary btn-lg w-100 apply-btn">
+                        <i class="bi bi-send me-2"></i>Apply Now
+                    </button>
+                    <div class="apply-note mt-3">
+                        <small><i class="bi bi-info-circle me-1"></i>Application deadline: September 30, 2025</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Challenge Organizer -->
+            <div class="sidebar-section">
+                <div class="organizer-card">
+                    <h5><i class="bi bi-building me-2"></i>Challenge Organizer</h5>
+                    <div class="organizer-info">
+                        <img src="{% static 'images/collaborative-ecosystem.jpg' %}" alt="GIZ Logo" class="organizer-logo">
+                        <div>
+                            <h6>GIZ Thailand</h6>
+                            <p>Deutsche Gesellschaft für Internationale Zusammenarbeit</p>
+                            <a href="#" class="btn btn-outline-primary btn-sm">View Profile</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resources -->
+            <div class="sidebar-section">
+                <div class="resources-card">
+                    <h5><i class="bi bi-download me-2"></i>Resources</h5>
+                    <div class="resource-list">
+                        <a href="#" class="resource-item">
+                            <i class="bi bi-file-pdf"></i>
+                            <span>Challenge Brief (PDF)</span>
+                            <i class="bi bi-download"></i>
+                        </a>
+                        <a href="#" class="resource-item">
+                            <i class="bi bi-file-text"></i>
+                            <span>Application Template</span>
+                            <i class="bi bi-download"></i>
+                        </a>
+                        <a href="#" class="resource-item">
+                            <i class="bi bi-graph-up"></i>
+                            <span>Impact Assessment Guide</span>
+                            <i class="bi bi-download"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Related Challenges -->
+            <div class="sidebar-section">
+                <div class="related-card">
+                    <h5><i class="bi bi-collection me-2"></i>Related Challenges</h5>
+                    <div class="related-list">
+                        <a href="#" class="related-item">
+                            <div class="related-image">
+                                <img src="{% static 'images/collaborative-ecosystem.jpg' %}" alt="">
+                            </div>
+                            <div class="related-content">
+                                <h6>Sustainable Energy Solutions</h6>
+                                <span class="badge bg-success">Open</span>
+                            </div>
+                        </a>
+                        <a href="#" class="related-item">
+                            <div class="related-image">
+                                <img src="{% static 'images/Coast001.webp' %}" alt="">
+                            </div>
+                            <div class="related-content">
+                                <h6>Smart City Innovation</h6>
+                                <span class="badge bg-primary">In Progress</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Challenge Detail Page Styling */
+.challenge-detail-header {
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    color: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(44, 89, 167, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.challenge-detail-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: pulse 4s ease-in-out infinite;
+}
+
+.challenge-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.challenge-icon i {
+    font-size: 2.5rem;
+    color: white;
+}
+
+.challenge-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.challenge-subtitle {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin-bottom: 0;
+}
+
+.challenge-stats .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 1rem;
+}
+
+.challenge-stats .stat-item i {
+    font-size: 1.5rem;
+    opacity: 0.8;
+}
+
+.stat-info h4 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+.stat-info span {
+    opacity: 0.8;
+    font-size: 0.9rem;
+}
+
+.challenge-detail-image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.challenge-image-container {
+    position: relative;
+}
+
+.content-section {
+    margin-bottom: 3rem;
+}
+
+.content-section h3 {
+    color: var(--primary-dark);
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 3px solid var(--bs-primary);
+}
+
+.content-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f0f0f0;
+}
+
+.requirements-grid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.requirement-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border-left: 4px solid #28a745;
+}
+
+.requirement-item i {
+    font-size: 1.2rem;
+    margin-top: 0.2rem;
+}
+
+.requirement-item h5 {
+    margin-bottom: 0.5rem;
+    color: var(--primary-dark);
+    font-weight: 600;
+}
+
+.requirement-item p {
+    margin: 0;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.submission-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.step-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    background: var(--bs-primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.step-content h5 {
+    margin-bottom: 0.5rem;
+    color: var(--primary-dark);
+    font-weight: 600;
+}
+
+.step-content p {
+    margin: 0;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.sidebar-section {
+    margin-bottom: 2rem;
+}
+
+.apply-card {
+    background: linear-gradient(135deg, var(--bs-primary) 0%, var(--primary-darker) 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(44, 89, 167, 0.2);
+}
+
+.apply-card h4 {
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.apply-btn {
+    background: white;
+    color: var(--bs-primary);
+    border: none;
+    border-radius: 10px;
+    padding: 1rem 2rem;
+    font-weight: 700;
+    transition: all 0.3s ease;
+}
+
+.apply-btn:hover {
+    background: #f8f9fa;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.apply-note {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.organizer-card,
+.resources-card,
+.related-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f0f0f0;
+}
+
+.organizer-card h5,
+.resources-card h5,
+.related-card h5 {
+    color: var(--primary-dark);
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.organizer-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.organizer-logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.organizer-info h6 {
+    margin-bottom: 0.25rem;
+    color: var(--primary-dark);
+    font-weight: 600;
+}
+
+.organizer-info p {
+    margin: 0;
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.resource-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.resource-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--primary-dark);
+    transition: all 0.3s ease;
+}
+
+.resource-item:hover {
+    background: #e9ecef;
+    transform: translateX(5px);
+}
+
+.resource-item i:first-child {
+    color: var(--bs-primary);
+}
+
+.resource-item i:last-child {
+    margin-left: auto;
+    opacity: 0.6;
+}
+
+.related-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.related-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+}
+
+.related-item:hover {
+    background: #e9ecef;
+    transform: translateY(-2px);
+}
+
+.related-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.related-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.related-content h6 {
+    margin-bottom: 0.25rem;
+    color: var(--primary-dark);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .challenge-detail-header {
+        padding: 2rem 1.5rem;
+    }
+    
+    .challenge-title {
+        font-size: 1.8rem;
+    }
+    
+    .challenge-subtitle {
+        font-size: 1rem;
+    }
+    
+    .challenge-stats .row {
+        gap: 1rem;
+    }
+    
+    .challenge-stats .col-md-3 {
+        width: 100%;
+    }
+    
+    .organizer-info {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+</style>
+{% endblock %}

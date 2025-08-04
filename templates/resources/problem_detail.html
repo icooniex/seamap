@@ -1,0 +1,755 @@
+{% extends 'template_parts/dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Problem Statement Details - Seamap{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Problem Detail Header -->
+    <div class="problem-detail-header">
+        <div class="d-flex align-items-center mb-3">
+            <a href="{% url 'problem' %}" class="btn btn-outline-light me-3">
+                <i class="bi bi-arrow-left"></i> Back to Problem Statements
+            </a>
+            <div class="problem-status-badges">
+                <span class="badge bg-success problem-status-badge">Open</span>
+            </div>
+        </div>
+        
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <div class="problem-icon mb-3">
+                    <i class="bi bi-lightbulb"></i>
+                </div>
+                <h1 class="problem-title">Sustainable Packaging Solutions for E-commerce</h1>
+                <p class="problem-subtitle">Help us develop eco-friendly packaging alternatives that reduce environmental impact while maintaining product protection during shipping</p>
+                
+                <div class="problem-stats mt-4">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <i class="bi bi-lightbulb"></i>
+                                <div class="stat-info">
+                                    <h4>12</h4>
+                                    <span>Solutions</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <i class="bi bi-building"></i>
+                                <div class="stat-info">
+                                    <h4>Corporate</h4>
+                                    <span>Type</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <i class="bi bi-geo-alt"></i>
+                                <div class="stat-info">
+                                    <h4>ASEAN</h4>
+                                    <span>Region</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <i class="bi bi-recycle"></i>
+                                <div class="stat-info">
+                                    <h4>Sustainability</h4>
+                                    <span>Focus</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="problem-image-container">
+                    <img src="{% static 'images/collaborative-ecosystem.jpg' %}" alt="Sustainable Packaging" class="problem-detail-image">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Problem Content -->
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- Problem Description -->
+            <div class="content-section">
+                <h3><i class="bi bi-exclamation-triangle me-2"></i>Problem Statement</h3>
+                <div class="content-card">
+                    <p>The rapid growth of e-commerce has led to an exponential increase in packaging waste, with most current solutions being non-biodegradable and contributing significantly to environmental pollution.</p>
+                    
+                    <div class="problem-details">
+                        <h5>Current Challenges:</h5>
+                        <ul>
+                            <li>Over 165 billion packages are shipped annually worldwide</li>
+                            <li>Most packaging materials are single-use and non-recyclable</li>
+                            <li>Significant carbon footprint from packaging production and disposal</li>
+                            <li>Limited sustainable alternatives that maintain product protection</li>
+                            <li>Cost considerations preventing widespread adoption of eco-friendly options</li>
+                        </ul>
+                    </div>
+
+                    <div class="impact-section mt-4">
+                        <h5>Environmental Impact:</h5>
+                        <div class="impact-grid">
+                            <div class="impact-item">
+                                <div class="impact-number">40%</div>
+                                <div class="impact-text">of packaging waste ends up in landfills</div>
+                            </div>
+                            <div class="impact-item">
+                                <div class="impact-number">12M</div>
+                                <div class="impact-text">tons of plastic packaging waste annually</div>
+                            </div>
+                            <div class="impact-item">
+                                <div class="impact-number">300</div>
+                                <div class="impact-text">years for conventional packaging to decompose</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Solution Requirements -->
+            <div class="content-section">
+                <h3><i class="bi bi-target me-2"></i>What We're Looking For</h3>
+                <div class="content-card">
+                    <div class="solution-categories">
+                        <div class="category-item">
+                            <i class="bi bi-leaf text-success"></i>
+                            <div>
+                                <h5>Biodegradable Materials</h5>
+                                <p>Innovative materials that decompose naturally within 6-12 months without harmful residues</p>
+                            </div>
+                        </div>
+                        <div class="category-item">
+                            <i class="bi bi-shield-check text-primary"></i>
+                            <div>
+                                <h5>Product Protection</h5>
+                                <p>Solutions that maintain or improve current protection standards for fragile items</p>
+                            </div>
+                        </div>
+                        <div class="category-item">
+                            <i class="bi bi-arrow-repeat text-info"></i>
+                            <div>
+                                <h5>Reusable Systems</h5>
+                                <p>Circular packaging solutions that can be returned and reused multiple times</p>
+                            </div>
+                        </div>
+                        <div class="category-item">
+                            <i class="bi bi-graph-down text-warning"></i>
+                            <div>
+                                <h5>Cost-Effective</h5>
+                                <p>Solutions that are economically viable for large-scale implementation</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Technical Specifications -->
+            <div class="content-section">
+                <h3><i class="bi bi-gear me-2"></i>Technical Requirements</h3>
+                <div class="content-card">
+                    <div class="tech-requirements">
+                        <div class="tech-category">
+                            <h5>Material Properties</h5>
+                            <ul>
+                                <li>Biodegradable within 12 months in industrial composting</li>
+                                <li>Water-resistant for shipping protection</li>
+                                <li>Temperature stable (-20°C to 60°C)</li>
+                                <li>Minimum tensile strength of 30 MPa</li>
+                            </ul>
+                        </div>
+                        <div class="tech-category">
+                            <h5>Performance Standards</h5>
+                            <ul>
+                                <li>ISTA 6-Amazon.com-SIOC certification</li>
+                                <li>Drop test compliance (1.2m height)</li>
+                                <li>Compression resistance (250 lbs)</li>
+                                <li>Moisture barrier (WVTR ≤ 1.0 g/m²/day)</li>
+                            </ul>
+                        </div>
+                        <div class="tech-category">
+                            <h5>Sustainability Metrics</h5>
+                            <ul>
+                                <li>Carbon footprint reduction ≥ 50%</li>
+                                <li>Renewable content ≥ 80%</li>
+                                <li>End-of-life biodegradability certification</li>
+                                <li>LCA assessment documentation</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Collaboration Opportunities -->
+            <div class="content-section">
+                <h3><i class="bi bi-people me-2"></i>Collaboration & Support</h3>
+                <div class="content-card">
+                    <p>We offer comprehensive support for selected solution providers:</p>
+                    
+                    <div class="support-grid">
+                        <div class="support-item">
+                            <i class="bi bi-cash-stack"></i>
+                            <h5>Funding Support</h5>
+                            <p>Development grants and pilot project funding</p>
+                        </div>
+                        <div class="support-item">
+                            <i class="bi bi-people-fill"></i>
+                            <h5>Technical Expertise</h5>
+                            <p>Access to our R&D team and testing facilities</p>
+                        </div>
+                        <div class="support-item">
+                            <i class="bi bi-graph-up-arrow"></i>
+                            <h5>Market Access</h5>
+                            <p>Partnership opportunities and distribution channels</p>
+                        </div>
+                        <div class="support-item">
+                            <i class="bi bi-award"></i>
+                            <h5>IP Protection</h5>
+                            <p>Joint patent applications and IP sharing agreements</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Submit Solution Section -->
+            <div class="sidebar-section">
+                <div class="submit-card">
+                    <h4><i class="bi bi-lightbulb me-2"></i>Have a Solution?</h4>
+                    <p>Join 12 other innovators working on this challenge</p>
+                    <button class="btn btn-success btn-lg w-100 submit-btn">
+                        <i class="bi bi-plus-circle me-2"></i>Submit Solution
+                    </button>
+                    <div class="submit-note mt-3">
+                        <small><i class="bi bi-info-circle me-1"></i>Open for submissions - No deadline</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Company Information -->
+            <div class="sidebar-section">
+                <div class="company-card">
+                    <h5><i class="bi bi-building me-2"></i>Problem Owner</h5>
+                    <div class="company-info">
+                        <img src="{% static 'images/collaborative-ecosystem.jpg' %}" alt="Company Logo" class="company-logo">
+                        <div>
+                            <h6>EcoCommerce Ltd.</h6>
+                            <p>Leading e-commerce platform in Southeast Asia</p>
+                            <div class="company-stats">
+                                <small><i class="bi bi-geo-alt me-1"></i>Bangkok, Thailand</small>
+                                <small><i class="bi bi-people me-1"></i>5,000+ employees</small>
+                            </div>
+                            <a href="#" class="btn btn-outline-success btn-sm mt-2">View Company Profile</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Metrics -->
+            <div class="sidebar-section">
+                <div class="metrics-card">
+                    <h5><i class="bi bi-bar-chart me-2"></i>Key Metrics</h5>
+                    <div class="metrics-list">
+                        <div class="metric-item">
+                            <span class="metric-label">Daily Packages</span>
+                            <span class="metric-value">50,000+</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Current Packaging Cost</span>
+                            <span class="metric-value">$2.5M/year</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Waste Reduction Target</span>
+                            <span class="metric-value">75%</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Implementation Timeline</span>
+                            <span class="metric-value">12 months</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Related Problems -->
+            <div class="sidebar-section">
+                <div class="related-card">
+                    <h5><i class="bi bi-collection me-2"></i>Related Problems</h5>
+                    <div class="related-list">
+                        <a href="#" class="related-item">
+                            <div class="related-image">
+                                <img src="{% static 'images/Coast001.webp' %}" alt="">
+                            </div>
+                            <div class="related-content">
+                                <h6>Smart Logistics Optimization</h6>
+                                <span class="badge bg-success">Open</span>
+                            </div>
+                        </a>
+                        <a href="#" class="related-item">
+                            <div class="related-image">
+                                <img src="{% static 'images/collaborative-ecosystem.jpg' %}" alt="">
+                            </div>
+                            <div class="related-content">
+                                <h6>Carbon Footprint Tracking</h6>
+                                <span class="badge bg-primary">In Review</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Problem Detail Page Styling */
+.problem-detail-header {
+    background: linear-gradient(135deg, #58946e 0%, #2d5a3d 100%);
+    color: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(88, 148, 110, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.problem-detail-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: pulse 4s ease-in-out infinite;
+}
+
+.problem-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.problem-icon i {
+    font-size: 2.5rem;
+    color: white;
+}
+
+.problem-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.problem-subtitle {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin-bottom: 0;
+}
+
+.problem-stats .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 1rem;
+}
+
+.problem-stats .stat-item i {
+    font-size: 1.5rem;
+    opacity: 0.8;
+}
+
+.stat-info h4 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+.stat-info span {
+    opacity: 0.8;
+    font-size: 0.9rem;
+}
+
+.problem-detail-image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.problem-image-container {
+    position: relative;
+}
+
+.content-section {
+    margin-bottom: 3rem;
+}
+
+.content-section h3 {
+    color: #58946e;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 3px solid #58946e;
+}
+
+.content-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f0f0f0;
+}
+
+.impact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.impact-item {
+    text-align: center;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border-left: 4px solid #58946e;
+}
+
+.impact-number {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #58946e;
+    margin-bottom: 0.5rem;
+}
+
+.impact-text {
+    color: #6c757d;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.solution-categories {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.category-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border-left: 4px solid #58946e;
+}
+
+.category-item i {
+    font-size: 1.5rem;
+    margin-top: 0.2rem;
+}
+
+.category-item h5 {
+    margin-bottom: 0.5rem;
+    color: #58946e;
+    font-weight: 600;
+}
+
+.category-item p {
+    margin: 0;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.tech-requirements {
+    display: grid;
+    gap: 2rem;
+}
+
+.tech-category h5 {
+    color: #58946e;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.tech-category ul {
+    list-style: none;
+    padding: 0;
+}
+
+.tech-category li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f0f0f0;
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.tech-category li:before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #58946e;
+    font-weight: bold;
+}
+
+.support-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.support-item {
+    text-align: center;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.support-item i {
+    font-size: 2rem;
+    color: #58946e;
+    margin-bottom: 1rem;
+}
+
+.support-item h5 {
+    color: #58946e;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.support-item p {
+    margin: 0;
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.sidebar-section {
+    margin-bottom: 2rem;
+}
+
+.submit-card {
+    background: linear-gradient(135deg, #58946e 0%, #2d5a3d 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(88, 148, 110, 0.2);
+}
+
+.submit-card h4 {
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.submit-btn {
+    background: white;
+    color: #58946e;
+    border: none;
+    border-radius: 10px;
+    padding: 1rem 2rem;
+    font-weight: 700;
+    transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+    background: #f8f9fa;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.submit-note {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.company-card,
+.metrics-card,
+.related-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f0f0f0;
+}
+
+.company-card h5,
+.metrics-card h5,
+.related-card h5 {
+    color: #58946e;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.company-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.company-logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.company-info h6 {
+    margin-bottom: 0.25rem;
+    color: #58946e;
+    font-weight: 600;
+}
+
+.company-info p {
+    margin-bottom: 0.5rem;
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.company-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.company-stats small {
+    color: #6c757d;
+    font-size: 0.75rem;
+}
+
+.metrics-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.metric-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.metric-label {
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.metric-value {
+    color: #58946e;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.related-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.related-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+}
+
+.related-item:hover {
+    background: #e9ecef;
+    transform: translateY(-2px);
+}
+
+.related-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.related-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.related-content h6 {
+    margin-bottom: 0.25rem;
+    color: #58946e;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .problem-detail-header {
+        padding: 2rem 1.5rem;
+    }
+    
+    .problem-title {
+        font-size: 1.8rem;
+    }
+    
+    .problem-subtitle {
+        font-size: 1rem;
+    }
+    
+    .problem-stats .row {
+        gap: 1rem;
+    }
+    
+    .problem-stats .col-md-3 {
+        width: 100%;
+    }
+    
+    .company-info {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .support-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .impact-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+</style>
+{% endblock %}

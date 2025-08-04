@@ -858,6 +858,24 @@ def problem(request):
 def challenge(request):
     return render(request, 'resources/challenge.html')
 
+def challenge_detail(request, challenge_id):
+    """Display detailed challenge page"""
+    # For now, return the template with static data
+    # In the future, you can fetch actual challenge data from database
+    context = {
+        'challenge_id': challenge_id,
+    }
+    return render(request, 'resources/challenge_detail.html', context)
+
+def problem_detail(request, problem_id):
+    """Display detailed problem statement page"""
+    # For now, return the template with static data
+    # In the future, you can fetch actual problem data from database
+    context = {
+        'problem_id': problem_id,
+    }
+    return render(request, 'resources/problem_detail.html', context)
+
 def accelerator_landing(request):
     return render(request, 'accelerator_landing.html')
 
