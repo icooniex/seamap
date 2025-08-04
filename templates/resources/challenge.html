@@ -2,85 +2,708 @@
 {% load static %}
 
 {% block content %}
-
-<div class="container py-4">
-  <h2 class="fw-bold mb-1">Innovation Challenges</h2>
-  <div class="mb-3 fs-5 text-muted">Discover and participate in challenges that drive marine conservation and sustainable innovation</div>
-
-  <!-- Search & Filters -->
-  <form method="get" class="d-flex align-items-center gap-3 mb-4">
-        <input type="text" name="q" class="form-control rounded-3 border-0 px-4 py-2" placeholder="Search challenges..." value="{{ request.GET.q }}">
-        <select name="category" class="form-select rounded-3 border-0 px-3 py-2" >
-            <option value="">All Categories</option>
-            <option value="marine">Marine</option>
-            <option value="packaging">Packaging</option>
-            <!-- Add more categories -->
-        </select>
-        
-        <button type="submit" class="btn btn-primary d-flex align-items-center px-4 py-2">
-            <i class="bi bi-search me-2"></i> Search
-        </button>
-        
-    </form>
-
-  <!-- Problem Statement Cards -->
-  <div class="row g-4">
-    
-    <div class="col-md-4">
-      <div class="card h-100 shadow-sm rounded-4 overflow-hidden">
-        <div class="position-relative">
-          <img src="{{ problem.image.url }}" alt="{{ problem.title }}" class="w-100" style="height:160px;object-fit:cover;">
-          <div class="position-absolute top-0 start-0 m-2 d-flex gap-2">
-            {% if problem.status == 'open' %}
-              <span class="badge bg-success">Open</span>
-            {% elif problem.status == 'in-progress' %}
-              <span class="badge bg-primary">In-progress</span>
-            {% endif %}
-            {% if problem.urgency == 'high' %}
-              <span class="badge bg-danger">High</span>
-            {% elif problem.urgency == 'medium' %}
-              <span class="badge bg-warning text-dark">Medium</span>
-            {% elif problem.urgency == 'critical' %}
-              <span class="badge bg-danger">Critical</span>
-            {% endif %}
-          </div>
-          <div class="position-absolute top-0 end-0 m-2">
-            <span class="badge bg-light text-dark"><i class="bi bi-people"></i> 12 applicants</span>
-          </div>
-        </div>
-        <div class="card-body pb-0">
-          <div class="d-flex align-items-center mb-2">
-            {% if problem.company_logo %}
-              <img src="{{ problem.company_logo.url }}" alt="{{ problem.company }}" style="width:32px;height:32px;object-fit:cover;" class="rounded-circle me-2">
-            {% else %}
-              <span class="fw-bold text-secondary me-2" style="font-size:1.2rem;">MCA</span>
-            {% endif %}
-            <div>
-              <div class="fw-semibold">Marine Conservation Alliance</div>
-              <div class="text-muted small">Corporate</div>
+<div class="container-fluid p-0">
+    <!-- Header Section -->
+    <div class="dashboard-header mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <div class="challenge-icon-container me-3">
+                    <div class="challenge-icon">
+                        <i class="bi bi-trophy"></i>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="h3 mb-1">
+                        <span class="text-primary-light">Innovation</span> 
+                        <strong class="text-white">Challenges Dashboard</strong>
+                    </h1>
+                    <p class="header-subtitle mb-0">Discover and participate in challenges that drive marine conservation and sustainable innovation</p>
+                </div>
             </div>
-          </div>
-          <h5 class="fw-bold mb-1">Ocean Plastic Innovation Challenge</h5>
-          <div class="mb-2 text-muted">Developing solutions to reduce ocean plastic pollution</div>
-          <div class="mb-3">
-              <span class="badge rounded-pill bg-light text-primary border border-primary me-1">Waste Management</span>
-              <span class="badge rounded-pill bg-light text-primary border border-primary me-1">Waste Management</span>
-          </div>
-          <div class="mb-2 text-muted small">
-            <i class="bi bi-geo-alt"></i> Singapore<br>
-            <i class="bi bi-calendar"></i> Jun 15, 2025 - Sep 15, 2025<br>
-            <i class="bi bi-calendar-check"></i> Apply by Jun 1, 2025<br>
-            <i class="bi bi-trophy"></i> $50,000 Grand Prize
-          </div>
         </div>
-        <div class="card-footer bg-white border-0 pt-0 pb-3">
-          <a href="{{ problem.url }}" class="btn btn-primary w-100 fw-bold">View Details</a>
-        </div>
-      </div>
     </div>
-    
-    
-  </div>
+
+    <!-- Search and Filter Section -->
+    <div class="search-section mb-4">
+        <form method="get" class="d-flex align-items-center gap-3 mb-3">
+            <div class="search-input-group flex-grow-1">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" name="q" class="form-control search-input" 
+                       placeholder="Search challenges by title, description, or organization..." 
+                       value="{{ request.GET.q }}">
+            </div>
+            <select name="category" class="form-select filter-select me-2">
+                <option value="">All Categories</option>
+                <option value="marine">Marine Conservation</option>
+                <option value="packaging">Sustainable Packaging</option>
+                <option value="energy">Clean Energy</option>
+                <option value="waste">Waste Management</option>
+                <option value="innovation">Innovation Tech</option>
+            </select>
+            <button type="submit" class="btn btn-primary search-btn">
+                <i class="bi bi-search me-2"></i> Search
+            </button>
+        </form>
+    </div>
+
+    <!-- Results Summary -->
+    <div class="results-summary mb-3">
+        <span class="text-muted">Showing <strong>{{ total_challenges|default:"24" }}</strong> challenge{{ total_challenges|pluralize }}</span>
+    </div>
+
+    <!-- Challenge Cards Grid -->
+    <div class="challenges-grid-container">
+        <div class="challenges-grid">
+            <!-- Sample Challenge Card 1 -->
+            <div class="challenge-grid-item">
+                <div class="card shadow-sm h-100 challenge-card">
+                    <div class="challenge-card-header">
+                        <div class="position-relative">
+                            <img src="{% static 'images/collaborative-ecosystem.jpg' %}" alt="Ocean Plastic Challenge" class="challenge-image">
+                            <div class="challenge-badges">
+                                <span class="badge bg-success challenge-status-badge">Open</span>
+                                <span class="badge bg-danger priority-badge">Critical</span>
+                            </div>
+                            <div class="challenge-meta">
+                                <span class="badge bg-light text-dark participants-badge">
+                                    <i class="bi bi-people"></i> 23 applicants
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body challenge-card-body">
+                        <!-- Organization Info -->
+                        <div class="organization-info mb-3">
+                            <div class="d-flex align-items-center">
+                                <div class="org-avatar me-2">
+                                    <span class="avatar-text">MCA</span>
+                                </div>
+                                <div class="org-details">
+                                    <div class="org-name">Marine Conservation Alliance</div>
+                                    <div class="org-type">Non-Profit Organization</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Challenge Title & Description -->
+                        <h5 class="challenge-title mb-2">Ocean Plastic Innovation Challenge</h5>
+                        <p class="challenge-description mb-3">
+                            Developing breakthrough solutions to reduce ocean plastic pollution through innovative technologies and sustainable practices.
+                        </p>
+
+                        <!-- Technology Tags -->
+                        <div class="tech-tags-challenge mb-3">
+                            <span class="tech-tag-challenge">Waste Management</span>
+                            <span class="tech-tag-challenge">Clean Tech</span>
+                            <span class="tech-tag-challenge">Marine Science</span>
+                        </div>
+
+                        <!-- Challenge Details -->
+                        <div class="challenge-details mb-3">
+                            <div class="detail-item">
+                                <i class="bi bi-geo-alt text-muted me-2"></i>
+                                <span>Global / Singapore Hub</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="bi bi-calendar text-muted me-2"></i>
+                                <span>Jun 15 - Sep 15, 2025</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="bi bi-calendar-check text-muted me-2"></i>
+                                <span>Apply by Jun 1, 2025</span>
+                            </div>
+                            <div class="detail-item prize-item">
+                                <i class="bi bi-trophy text-warning me-2"></i>
+                                <span class="prize-amount">$50,000 Grand Prize</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer challenge-card-footer">
+                        <button class="btn btn-primary w-100 challenge-btn">
+                            <i class="bi bi-rocket-takeoff me-2"></i>
+                            View Challenge Details
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sample Challenge Card 2 -->
+            <div class="challenge-grid-item">
+                <div class="card shadow-sm h-100 challenge-card">
+                    <div class="challenge-card-header">
+                        <div class="position-relative">
+                            <img src="{% static 'images/nurturing-innovations.jpg' %}" alt="Smart Aquaculture Challenge" class="challenge-image">
+                            <div class="challenge-badges">
+                                <span class="badge bg-primary challenge-status-badge">In Progress</span>
+                                <span class="badge bg-warning text-dark priority-badge">Medium</span>
+                            </div>
+                            <div class="challenge-meta">
+                                <span class="badge bg-light text-dark participants-badge">
+                                    <i class="bi bi-people"></i> 15 applicants
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body challenge-card-body">
+                        <!-- Organization Info -->
+                        <div class="organization-info mb-3">
+                            <div class="d-flex align-items-center">
+                                <div class="org-avatar me-2">
+                                    <span class="avatar-text">AF</span>
+                                </div>
+                                <div class="org-details">
+                                    <div class="org-name">AquaFuture Technologies</div>
+                                    <div class="org-type">Corporate Partner</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Challenge Title & Description -->
+                        <h5 class="challenge-title mb-2">Smart Aquaculture Innovation Challenge</h5>
+                        <p class="challenge-description mb-3">
+                            Create IoT and AI-powered solutions for sustainable aquaculture monitoring and optimization.
+                        </p>
+
+                        <!-- Technology Tags -->
+                        <div class="tech-tags-challenge mb-3">
+                            <span class="tech-tag-challenge">IoT</span>
+                            <span class="tech-tag-challenge">AI/ML</span>
+                            <span class="tech-tag-challenge">Aquaculture</span>
+                        </div>
+
+                        <!-- Challenge Details -->
+                        <div class="challenge-details mb-3">
+                            <div class="detail-item">
+                                <i class="bi bi-geo-alt text-muted me-2"></i>
+                                <span>Southeast Asia</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="bi bi-calendar text-muted me-2"></i>
+                                <span>May 1 - Aug 31, 2025</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="bi bi-calendar-check text-muted me-2"></i>
+                                <span>Apply by Apr 15, 2025</span>
+                            </div>
+                            <div class="detail-item prize-item">
+                                <i class="bi bi-trophy text-warning me-2"></i>
+                                <span class="prize-amount">$30,000 Prize Pool</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer challenge-card-footer">
+                        <button class="btn btn-primary w-100 challenge-btn">
+                            <i class="bi bi-rocket-takeoff me-2"></i>
+                            View Challenge Details
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sample Challenge Card 3 -->
+            <div class="challenge-grid-item">
+                <div class="card shadow-sm h-100 challenge-card">
+                    <div class="challenge-card-header">
+                        <div class="position-relative">
+                            <img src="{% static 'images/hero-background.jpg' %}" alt="Sustainable Packaging Challenge" class="challenge-image">
+                            <div class="challenge-badges">
+                                <span class="badge bg-success challenge-status-badge">Open</span>
+                                <span class="badge bg-info priority-badge">High</span>
+                            </div>
+                            <div class="challenge-meta">
+                                <span class="badge bg-light text-dark participants-badge">
+                                    <i class="bi bi-people"></i> 31 applicants
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body challenge-card-body">
+                        <!-- Organization Info -->
+                        <div class="organization-info mb-3">
+                            <div class="d-flex align-items-center">
+                                <div class="org-avatar me-2">
+                                    <span class="avatar-text">SP</span>
+                                </div>
+                                <div class="org-details">
+                                    <div class="org-name">Sustainable Packaging Initiative</div>
+                                    <div class="org-type">Industry Consortium</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Challenge Title & Description -->
+                        <h5 class="challenge-title mb-2">Next-Gen Sustainable Packaging Challenge</h5>
+                        <p class="challenge-description mb-3">
+                            Develop biodegradable packaging solutions that maintain product integrity while minimizing environmental impact.
+                        </p>
+
+                        <!-- Technology Tags -->
+                        <div class="tech-tags-challenge mb-3">
+                            <span class="tech-tag-challenge">Biomaterials</span>
+                            <span class="tech-tag-challenge">Sustainability</span>
+                            <span class="tech-tag-challenge">Packaging</span>
+                        </div>
+
+                        <!-- Challenge Details -->
+                        <div class="challenge-details mb-3">
+                            <div class="detail-item">
+                                <i class="bi bi-geo-alt text-muted me-2"></i>
+                                <span>Asia-Pacific Region</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="bi bi-calendar text-muted me-2"></i>
+                                <span>Jul 1 - Oct 31, 2025</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="bi bi-calendar-check text-muted me-2"></i>
+                                <span>Apply by Jun 15, 2025</span>
+                            </div>
+                            <div class="detail-item prize-item">
+                                <i class="bi bi-trophy text-warning me-2"></i>
+                                <span class="prize-amount">$75,000 Total Prizes</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer challenge-card-footer">
+                        <button class="btn btn-primary w-100 challenge-btn">
+                            <i class="bi bi-rocket-takeoff me-2"></i>
+                            View Challenge Details
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+<style>
+/* Challenge Dashboard Styling - Based on Matchmaking Theme */
+.dashboard-header {
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    color: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(44, 89, 167, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    opacity: 0.3;
+}
+
+.challenge-icon-container {
+    position: relative;
+    z-index: 2;
+}
+
+.challenge-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #ffffff15 0%, #ffffff25 100%);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.challenge-icon i {
+    font-size: 2.5rem;
+    color: white;
+    animation: trophyGlow 3s ease-in-out infinite;
+}
+
+@keyframes trophyGlow {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.9; }
+}
+
+.text-primary-light {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-weight: 500;
+}
+
+.header-subtitle {
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-size: 1.1rem;
+    font-weight: 400;
+    line-height: 1.4;
+}
+
+.search-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(44, 89, 167, 0.1);
+}
+
+.search-input-group {
+    position: relative;
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #2c59a7;
+    z-index: 10;
+    font-size: 1.1rem;
+}
+
+.search-input {
+    padding: 1rem 1.25rem 1rem 3rem;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.search-input:focus {
+    border-color: #2c59a7;
+    box-shadow: 0 0 0 3px rgba(44, 89, 167, 0.1);
+    background: white;
+}
+
+.filter-select {
+    min-width: 200px;
+    padding: 1rem 1.25rem;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+.filter-select:focus {
+    border-color: #2c59a7;
+    box-shadow: 0 0 0 3px rgba(44, 89, 167, 0.1);
+    background: white;
+}
+
+.search-btn {
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(44, 89, 167, 0.2);
+}
+
+.search-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(44, 89, 167, 0.35);
+    background: linear-gradient(135deg, #234a91 0%, #4a3f8a 100%);
+}
+
+.results-summary {
+    padding: 0 0.5rem;
+}
+
+/* Challenge Cards Grid */
+.challenges-grid-container {
+    background: transparent;
+}
+
+.challenges-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 1.5rem;
+    padding: 0;
+}
+
+.challenge-grid-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.challenge-card {
+    border: none;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background: white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.challenge-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(44, 89, 167, 0.15);
+}
+
+.challenge-card-header {
+    position: relative;
+    overflow: hidden;
+}
+
+.challenge-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.challenge-card:hover .challenge-image {
+    transform: scale(1.05);
+}
+
+.challenge-badges {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+}
+
+.challenge-status-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+}
+
+.priority-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+}
+
+.challenge-meta {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 10;
+}
+
+.participants-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.9) !important;
+}
+
+.challenge-card-body {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.organization-info {
+    margin-bottom: 1rem;
+}
+
+.org-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.avatar-text {
+    color: white;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.org-details {
+    flex-grow: 1;
+}
+
+.org-name {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 0.95rem;
+    line-height: 1.2;
+}
+
+.org-type {
+    color: #6c757d;
+    font-size: 0.8rem;
+    line-height: 1.2;
+}
+
+.challenge-title {
+    font-weight: 700;
+    color: #2c3e50;
+    font-size: 1.1rem;
+    line-height: 1.3;
+    margin-bottom: 0.75rem;
+}
+
+.challenge-description {
+    color: #6c757d;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    flex-grow: 1;
+}
+
+.tech-tags-challenge {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.tech-tag-challenge {
+    background: rgba(44, 89, 167, 0.1);
+    color: #2c59a7;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid rgba(44, 89, 167, 0.2);
+}
+
+.challenge-details {
+    margin-bottom: 1rem;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.detail-item i {
+    width: 16px;
+    flex-shrink: 0;
+}
+
+.prize-item {
+    color: #2c59a7;
+    font-weight: 600;
+}
+
+.prize-amount {
+    color: #2c59a7;
+    font-weight: 700;
+}
+
+.challenge-card-footer {
+    padding: 1rem 1.5rem;
+    background: #f8f9fa;
+    border-top: 1px solid rgba(44, 89, 167, 0.1);
+}
+
+.challenge-btn {
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(44, 89, 167, 0.2);
+}
+
+.challenge-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(44, 89, 167, 0.35);
+    background: linear-gradient(135deg, #234a91 0%, #4a3f8a 100%);
+    color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .dashboard-header {
+        padding: 2rem 1.5rem;
+    }
+    
+    .challenge-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+    }
+    
+    .challenge-icon i {
+        font-size: 2rem;
+    }
+    
+    .dashboard-header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .challenges-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .search-section form {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .filter-select {
+        min-width: auto;
+    }
+}
+
+@media (max-width: 576px) {
+    .dashboard-header {
+        padding: 1.5rem 1rem;
+    }
+    
+    .dashboard-header .d-flex {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .challenge-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+    }
+    
+    .challenge-icon i {
+        font-size: 1.5rem;
+    }
+}
+</style>
+
+<!-- JavaScript for Card Hover Effects -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const challengeCards = document.querySelectorAll('.challenge-grid-item');
+    
+    // Hover effects for cards
+    challengeCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-8px)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+});
+</script>
 
 {% endblock %}
