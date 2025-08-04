@@ -1,309 +1,105 @@
-{% extends "template_parts/dashboard_base.html" %}
+{% extends 'onboarding/onboarding_base.html' %}
 {% load static %}
 
-{% block content %}
-<div class="container-fluid p-0">
-    <!-- Header Section -->
-    <div class="create-header mb-4">
-        <div class="d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center">
-                <div class="create-icon-container me-3">
-                    <div class="create-icon">
-                        <i class="bi bi-trophy"></i>
-                    </div>
-                </div>
-                <div>
-                    <h1 class="h3 mb-1">
-                        <span class="text-primary-light">Create</span> 
-                        <strong class="text-white">Innovation Challenge</strong>
-                    </h1>
-                    <p class="header-subtitle mb-0">Submit your challenge to connect with innovative solutions</p>
-                </div>
-            </div>
-            <a href="{% url 'challenge' %}" class="btn btn-outline-light">
-                <i class="bi bi-arrow-left me-2"></i>Back to Challenges
-            </a>
-        </div>
-    </div>
+{% block title %}Create Challenge - SEA-MAP{% endblock %}
 
-    <!-- Form Section -->
-    <div class="row">
-        <div class="col-lg-8 mx-auto">
-            <div class="create-form-card">
-                <form method="post" enctype="multipart/form-data" class="challenge-form">
-                    {% csrf_token %}
-                    
-                    <!-- Basic Information -->
-                    <div class="form-section">
-                        <h4><i class="bi bi-info-circle me-2"></i>Basic Information</h4>
-                        <div class="row">
-                            <div class="col-12 mb-3">
-                                <label for="{{ form.title.id_for_label }}" class="form-label">Challenge Title *</label>
-                                {{ form.title }}
-                                {% if form.title.errors %}
-                                    <div class="text-danger">{{ form.title.errors }}</div>
-                                {% endif %}
-                            </div>
-                            <div class="col-12 mb-3">
-                                <label for="{{ form.subtitle.id_for_label }}" class="form-label">Subtitle</label>
-                                {{ form.subtitle }}
-                                {% if form.subtitle.errors %}
-                                    <div class="text-danger">{{ form.subtitle.errors }}</div>
-                                {% endif %}
-                            </div>
-                            <div class="col-12 mb-3">
-                                <label for="{{ form.description.id_for_label }}" class="form-label">Challenge Description *</label>
-                                {{ form.description }}
-                                {% if form.description.errors %}
-                                    <div class="text-danger">{{ form.description.errors }}</div>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.organizer_contact.id_for_label }}" class="form-label">Contact Email *</label>
-                                {{ form.organizer_contact }}
-                                {% if form.organizer_contact.errors %}
-                                    <div class="text-danger">{{ form.organizer_contact.errors }}</div>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.priority.id_for_label }}" class="form-label">Priority Level</label>
-                                {{ form.priority }}
-                                {% if form.priority.errors %}
-                                    <div class="text-danger">{{ form.priority.errors }}</div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Requirements & Criteria -->
-                    <div class="form-section">
-                        <h4><i class="bi bi-list-check me-2"></i>Requirements & Criteria</h4>
-                        <div class="col-12 mb-3">
-                            <label for="{{ form.requirements_content.id_for_label }}" class="form-label">Requirements Content *</label>
-                            {{ form.requirements_content }}
-                            <small class="form-text text-muted">Provide detailed requirements and criteria for submissions. You can use rich text formatting.</small>
-                            {% if form.requirements_content.errors %}
-                                <div class="text-danger">{{ form.requirements_content.errors }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="col-12 mb-3">
-                            <label class="form-label">Challenge Categories</label>
-                            <div class="category-input-group">
-                                <input type="text" class="form-control" id="category-input" placeholder="Add category tags (e.g., Marine Conservation, Clean Tech)">
-                                <button type="button" class="btn btn-outline-primary" id="add-category">Add</button>
-                            </div>
-                            <div id="category-display" class="mt-2"></div>
-                            <input type="hidden" id="categories-hidden" name="categories" value="[]">
-                        </div>
-                    </div>
-
-                    <!-- Timeline & Location -->
-                    <div class="form-section">
-                        <h4><i class="bi bi-calendar me-2"></i>Timeline & Location</h4>
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label for="{{ form.application_deadline.id_for_label }}" class="form-label">Application Deadline</label>
-                                {{ form.application_deadline }}
-                                {% if form.application_deadline.errors %}
-                                    <div class="text-danger">{{ form.application_deadline.errors }}</div>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="{{ form.start_date.id_for_label }}" class="form-label">Start Date</label>
-                                {{ form.start_date }}
-                                {% if form.start_date.errors %}
-                                    <div class="text-danger">{{ form.start_date.errors }}</div>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="{{ form.end_date.id_for_label }}" class="form-label">End Date</label>
-                                {{ form.end_date }}
-                                {% if form.end_date.errors %}
-                                    <div class="text-danger">{{ form.end_date.errors }}</div>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.location.id_for_label }}" class="form-label">Location</label>
-                                {{ form.location }}
-                                {% if form.location.errors %}
-                                    <div class="text-danger">{{ form.location.errors }}</div>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.scope.id_for_label }}" class="form-label">Scope</label>
-                                {{ form.scope }}
-                                {% if form.scope.errors %}
-                                    <div class="text-danger">{{ form.scope.errors }}</div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Prizes & Rewards -->
-                    <div class="form-section">
-                        <h4><i class="bi bi-trophy me-2"></i>Prizes & Rewards</h4>
-                        <div class="row">
-                            <div class="col-12 mb-3">
-                                <div class="form-check">
-                                    {{ form.has_prizes }}
-                                    <label class="form-check-label" for="{{ form.has_prizes.id_for_label }}">
-                                        This challenge offers prizes or rewards
-                                    </label>
-                                </div>
-                            </div>
-                            <div id="prize-details" style="display: none;">
-                                <div class="col-md-6 mb-3">
-                                    <label for="{{ form.main_prize_amount.id_for_label }}" class="form-label">Main Prize Amount</label>
-                                    <div class="input-group">
-                                        {{ form.main_prize_amount }}
-                                        {{ form.main_prize_currency }}
-                                    </div>
-                                    {% if form.main_prize_amount.errors %}
-                                        <div class="text-danger">{{ form.main_prize_amount.errors }}</div>
-                                    {% endif %}
-                                </div>
-                                <div class="col-12 mb-3">
-                                    <label for="{{ form.prizes_content.id_for_label }}" class="form-label">Prizes & Benefits Description</label>
-                                    {{ form.prizes_content }}
-                                    <small class="form-text text-muted">Detailed information about all prizes, benefits, and terms.</small>
-                                    {% if form.prizes_content.errors %}
-                                        <div class="text-danger">{{ form.prizes_content.errors }}</div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Documents -->
-                    <div class="form-section">
-                        <h4><i class="bi bi-file-earmark-text me-2"></i>Supporting Documents</h4>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.challenge_brief.id_for_label }}" class="form-label">Challenge Brief</label>
-                                {{ form.challenge_brief }}
-                                <small class="form-text text-muted">{{ form.challenge_brief.help_text }}</small>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.application_template.id_for_label }}" class="form-label">Application Template</label>
-                                {{ form.application_template }}
-                                <small class="form-text text-muted">{{ form.application_template.help_text }}</small>
-                            </div>
-                            <div class="col-12 mb-3">
-                                <label for="{{ form.additional_documents.id_for_label }}" class="form-label">Additional Documents</label>
-                                {{ form.additional_documents }}
-                                <small class="form-text text-muted">{{ form.additional_documents.help_text }}</small>
-                            </div>
-                            <div class="col-12 mb-3">
-                                <label for="{{ form.featured_image.id_for_label }}" class="form-label">Featured Image</label>
-                                {{ form.featured_image }}
-                                <small class="form-text text-muted">Upload a featured image for your challenge</small>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Submit Buttons -->
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary btn-lg">
-                            <i class="bi bi-check-circle me-2"></i>Submit Challenge
-                        </button>
-                        <a href="{% url 'challenge' %}" class="btn btn-outline-secondary btn-lg ms-3">Cancel</a>
-                        <div class="form-note mt-3">
-                            <small class="text-muted">
-                                <i class="bi bi-info-circle me-1"></i>
-                                Your challenge will be reviewed before being published on the platform.
-                            </small>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
+{% block extra_css %}
 <style>
-/* Create Challenge Form Styling */
-.create-header {
-    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
-    color: white;
-    padding: 2.5rem;
-    border-radius: 20px;
-    margin-bottom: 2rem;
-    box-shadow: 0 8px 32px rgba(44, 89, 167, 0.15);
-    position: relative;
-    overflow: hidden;
-}
-
-.create-header::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
-    opacity: 0.3;
-}
-
-.create-icon-container {
-    position: relative;
-    z-index: 2;
-}
-
-.create-icon {
-    width: 80px;
-    height: 80px;
-    background: linear-gradient(135deg, #ffffff15 0%, #ffffff25 100%);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-}
-
-.create-icon i {
-    font-size: 2.5rem;
-    color: white;
-}
-
-.text-primary-light {
-    color: rgba(255, 255, 255, 0.8) !important;
-    font-weight: 500;
-}
-
-.header-subtitle {
-    color: rgba(255, 255, 255, 0.6) !important;
-    font-size: 1.1rem;
-    font-weight: 400;
-    line-height: 1.4;
-}
-
-.create-form-card {
+.challenge-form-container {
+    max-width: 800px;
+    margin: 0 auto;
     background: white;
     border-radius: 20px;
-    padding: 3rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(44, 89, 167, 0.1);
+    padding: 2.5rem;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e2e8f0;
 }
 
 .form-section {
-    margin-bottom: 3rem;
+    margin-bottom: 2.5rem;
     padding-bottom: 2rem;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #f1f5f9;
 }
 
-.form-section:last-of-type {
+.form-section:last-child {
     border-bottom: none;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
 }
 
-.form-section h4 {
-    color: var(--primary-dark);
-    font-weight: 700;
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
     margin-bottom: 1.5rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid var(--bs-primary);
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.section-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--bs-primary) 0%, #3b6cc1 100%);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: white;
+    box-shadow: 0 4px 10px rgba(44, 89, 167, 0.2);
+}
+
+.section-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin: 0;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.form-label i {
+    margin-right: 8px;
+    color: var(--bs-primary);
+}
+
+.required-indicator {
+    color: #e53e3e;
+    margin-left: 4px;
+}
+
+.form-control, .form-select {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #fafbfc;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 3px rgba(44, 89, 167, 0.1);
+    background: white;
+}
+
+.form-control::placeholder {
+    color: #a0aec0;
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 120px;
 }
 
 .category-input-group {
@@ -312,149 +108,558 @@
     margin-bottom: 1rem;
 }
 
-.category-input-group input {
-    flex: 1;
-}
-
-#category-display {
+.category-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
+    margin-top: 0.5rem;
 }
 
 .category-tag {
-    background: rgba(44, 89, 167, 0.1);
-    color: var(--bs-primary);
-    padding: 0.25rem 0.75rem;
-    border-radius: 15px;
+    background: linear-gradient(135deg, var(--bs-primary) 0%, #3b6cc1 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
     font-size: 0.85rem;
-    font-weight: 600;
+    font-weight: 500;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    animation: fadeIn 0.3s ease;
 }
 
-.category-tag .remove-category {
-    background: none;
+.category-remove {
+    background: rgba(255, 255, 255, 0.3);
     border: none;
-    color: var(--bs-primary);
-    padding: 0;
-    font-size: 1rem;
+    color: white;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    font-size: 0.7rem;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.category-remove:hover {
+    background: rgba(255, 255, 255, 0.5);
+    transform: scale(1.1);
+}
+
+.prize-toggle-section {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.form-check-input:checked {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+
+.prize-details {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+    animation: slideDown 0.3s ease;
+}
+
+.file-upload-area {
+    border: 2px dashed #cbd5e0;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    background: #f8fafc;
+    transition: all 0.3s ease;
+}
+
+.file-upload-area:hover {
+    border-color: var(--bs-primary);
+    background: #e6f3ff;
+}
+
+.upload-icon {
+    font-size: 2rem;
+    color: #a0aec0;
+    margin-bottom: 1rem;
+}
+
+.file-upload-area:hover .upload-icon {
+    color: var(--bs-primary);
 }
 
 .form-actions {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 2rem;
     text-align: center;
-    padding-top: 2rem;
-    border-top: 2px solid #eee;
+    margin-top: 2rem;
 }
 
-.form-note {
-    text-align: center;
+.btn {
+    border-radius: 12px;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    transition: all 0.3s ease;
+    font-size: 1rem;
 }
 
-/* Prize details toggle */
-#prize-details {
-    width: 100%;
+.btn-primary {
+    background: linear-gradient(135deg, var(--bs-primary) 0%, #3b6cc1 100%);
+    border: none;
+    box-shadow: 0 4px 15px rgba(44, 89, 167, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(44, 89, 167, 0.4);
+}
+
+.btn-outline-secondary {
+    border: 2px solid #e2e8f0;
+    color: #4a5568;
+}
+
+.btn-outline-secondary:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e0;
+    color: #2d3748;
+}
+
+.form-text {
+    font-size: 0.85rem;
+    color: #718096;
+    margin-top: 0.25rem;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .create-header {
-        padding: 2rem 1.5rem;
+    .challenge-form-container {
+        margin: 1rem;
+        padding: 1.5rem;
     }
     
-    .create-icon {
-        width: 60px;
-        height: 60px;
-        border-radius: 15px;
-    }
-    
-    .create-icon i {
-        font-size: 2rem;
-    }
-    
-    .create-form-card {
-        padding: 2rem 1.5rem;
+    .section-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 8px;
     }
     
     .category-input-group {
         flex-direction: column;
     }
-    
-    .form-actions .btn {
-        width: 100%;
-        margin-bottom: 1rem;
-    }
-    
-    .form-actions .btn:last-child {
-        margin-bottom: 0;
-    }
 }
 </style>
+{% endblock %}
+
+{% block header_content %}
+<div class="logo-icon">
+    <i class="bi bi-plus-circle"></i>
+</div>
+<h1 class="onboarding-title">Create Innovation Challenge</h1>
+<p class="onboarding-subtitle">Launch your next breakthrough challenge and connect with innovators worldwide</p>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="challenge-form-container">
+        <form method="post" enctype="multipart/form-data" id="challengeForm">
+            {% csrf_token %}
+            
+            <!-- Basic Information Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="bi bi-info-circle"></i>
+                    </div>
+                    <h2 class="section-title">Basic Information</h2>
+                </div>
+                
+                <div class="form-group">
+                    <label for="title" class="form-label">
+                        <i class="bi bi-card-heading"></i>Challenge Title<span class="required-indicator">*</span>
+                    </label>
+                    <input type="text" class="form-control" id="title" name="title" required
+                           placeholder="Enter a compelling title for your challenge">
+                </div>
+
+                <div class="form-group">
+                    <label for="description" class="form-label">
+                        <i class="bi bi-card-text"></i>Challenge Description<span class="required-indicator">*</span>
+                    </label>
+                    <textarea class="form-control" id="description" name="description" rows="5" required
+                              placeholder="Describe your challenge, its objectives, and what you're looking for from innovators"></textarea>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="organizer_contact" class="form-label">
+                                <i class="bi bi-envelope"></i>Contact Email<span class="required-indicator">*</span>
+                            </label>
+                            <input type="email" class="form-control" id="organizer_contact" name="organizer_contact" required
+                                   placeholder="contact@organization.com">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="priority" class="form-label">
+                                <i class="bi bi-flag"></i>Priority Level
+                            </label>
+                            <select class="form-select" id="priority" name="priority">
+                                <option value="">Select priority level</option>
+                                <option value="low">Low Priority</option>
+                                <option value="medium" selected>Medium Priority</option>
+                                <option value="high">High Priority</option>
+                                <option value="urgent">Urgent</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Requirements Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="bi bi-list-check"></i>
+                    </div>
+                    <h2 class="section-title">Requirements & Criteria</h2>
+                </div>
+
+                <div class="form-group">
+                    <label for="requirements_content" class="form-label">
+                        <i class="bi bi-clipboard-check"></i>Detailed Requirements<span class="required-indicator">*</span>
+                    </label>
+                    <textarea class="form-control" id="requirements_content" name="requirements_content" rows="6" required
+                              placeholder="Provide detailed requirements, evaluation criteria, submission guidelines, and any technical specifications"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="bi bi-tags"></i>Challenge Categories
+                    </label>
+                    <div class="category-input-group">
+                        <input type="text" class="form-control" id="categoryInput" 
+                               placeholder="Add categories (e.g., Marine Conservation, Clean Technology, Sustainability)">
+                        <button type="button" class="btn btn-primary" id="addCategory">
+                            <i class="bi bi-plus"></i> Add
+                        </button>
+                    </div>
+                    <div id="categoryTags" class="category-tags"></div>
+                    <input type="hidden" id="categoriesData" name="categories" value="[]">
+                    <div class="form-text">Add relevant categories to help innovators find your challenge</div>
+                </div>
+            </div>
+
+            <!-- Timeline & Location Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="bi bi-calendar-event"></i>
+                    </div>
+                    <h2 class="section-title">Timeline & Location</h2>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="application_deadline" class="form-label">
+                                <i class="bi bi-calendar-x"></i>Application Deadline
+                            </label>
+                            <input type="datetime-local" class="form-control" id="application_deadline" name="application_deadline">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="start_date" class="form-label">
+                                <i class="bi bi-calendar-plus"></i>Challenge Start Date
+                            </label>
+                            <input type="datetime-local" class="form-control" id="start_date" name="start_date">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="end_date" class="form-label">
+                                <i class="bi bi-calendar-check"></i>Challenge End Date
+                            </label>
+                            <input type="datetime-local" class="form-control" id="end_date" name="end_date">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="location" class="form-label">
+                                <i class="bi bi-geo-alt"></i>Location
+                            </label>
+                            <input type="text" class="form-control" id="location" name="location" 
+                                   placeholder="e.g., Singapore, Southeast Asia, Global">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="scope" class="form-label">
+                                <i class="bi bi-globe"></i>Challenge Scope
+                            </label>
+                            <select class="form-select" id="scope" name="scope">
+                                <option value="">Select challenge scope</option>
+                                <option value="local">Local</option>
+                                <option value="regional">Regional</option>
+                                <option value="national">National</option>
+                                <option value="global">Global</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prizes & Rewards Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="bi bi-trophy"></i>
+                    </div>
+                    <h2 class="section-title">Prizes & Rewards</h2>
+                </div>
+
+                <div class="prize-toggle-section">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="has_prizes" name="has_prizes">
+                        <label class="form-check-label" for="has_prizes">
+                            <strong>This challenge offers prizes or rewards</strong>
+                        </label>
+                    </div>
+
+                    <div id="prizeDetails" class="prize-details" style="display: none;">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="main_prize_amount" class="form-label">
+                                        <i class="bi bi-currency-dollar"></i>Prize Amount
+                                    </label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="main_prize_amount" name="main_prize_amount" 
+                                               placeholder="50000" step="0.01">
+                                        <select class="form-select" id="main_prize_currency" name="main_prize_currency" style="max-width: 120px;">
+                                            <option value="USD" selected>USD</option>
+                                            <option value="EUR">EUR</option>
+                                            <option value="THB">THB</option>
+                                            <option value="SGD">SGD</option>
+                                            <option value="MYR">MYR</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="prizes_content" class="form-label">
+                                        <i class="bi bi-gift"></i>Prize Description
+                                    </label>
+                                    <textarea class="form-control" id="prizes_content" name="prizes_content" rows="3"
+                                              placeholder="Describe the prizes, benefits, mentorship opportunities, etc."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Supporting Documents Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="bi bi-file-earmark-text"></i>
+                    </div>
+                    <h2 class="section-title">Supporting Documents</h2>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="challenge_brief" class="form-label">
+                                <i class="bi bi-file-pdf"></i>Challenge Brief Document
+                            </label>
+                            <div class="file-upload-area">
+                                <div class="upload-icon">
+                                    <i class="bi bi-file-earmark-arrow-up"></i>
+                                </div>
+                                <p class="mb-2"><strong>Upload Challenge Brief</strong></p>
+                                <p class="text-muted small mb-3">PDF, DOC, DOCX files only • Max 10MB</p>
+                                <input type="file" class="form-control" id="challenge_brief" name="challenge_brief" 
+                                       accept=".pdf,.doc,.docx">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="featured_image" class="form-label">
+                                <i class="bi bi-image"></i>Featured Image
+                            </label>
+                            <div class="file-upload-area">
+                                <div class="upload-icon">
+                                    <i class="bi bi-image"></i>
+                                </div>
+                                <p class="mb-2"><strong>Upload Banner Image</strong></p>
+                                <p class="text-muted small mb-3">JPG, PNG files • Max 5MB • Recommended: 1200x600px</p>
+                                <input type="file" class="form-control" id="featured_image" name="featured_image" 
+                                       accept="image/*">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-lg me-3">
+                    <i class="bi bi-check-circle me-2"></i>Create Challenge
+                </button>
+                <a href="{% url 'challenge' %}" class="btn btn-outline-secondary btn-lg">
+                    <i class="bi bi-x-circle me-2"></i>Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Category management
-    const categoryInput = document.getElementById('category-input');
-    const addCategoryBtn = document.getElementById('add-category');
-    const categoryDisplay = document.getElementById('category-display');
-    const categoriesHidden = document.getElementById('categories-hidden');
+    // Category Management System
     let categories = [];
+    const categoryInput = document.getElementById('categoryInput');
+    const addCategoryBtn = document.getElementById('addCategory');
+    const categoryTags = document.getElementById('categoryTags');
+    const categoriesData = document.getElementById('categoriesData');
 
-    function updateCategoriesDisplay() {
-        categoryDisplay.innerHTML = '';
+    function updateCategoryDisplay() {
+        categoryTags.innerHTML = '';
         categories.forEach((category, index) => {
             const tag = document.createElement('div');
             tag.className = 'category-tag';
             tag.innerHTML = `
                 ${category}
-                <button type="button" class="remove-category" data-index="${index}">×</button>
+                <button type="button" class="category-remove" onclick="removeCategory(${index})">×</button>
             `;
-            categoryDisplay.appendChild(tag);
+            categoryTags.appendChild(tag);
         });
-        categoriesHidden.value = JSON.stringify(categories);
+        categoriesData.value = JSON.stringify(categories);
     }
 
-    addCategoryBtn.addEventListener('click', function() {
+    function addCategory() {
         const value = categoryInput.value.trim();
-        if (value && !categories.includes(value)) {
+        if (value && !categories.includes(value) && categories.length < 10) {
             categories.push(value);
             categoryInput.value = '';
-            updateCategoriesDisplay();
+            updateCategoryDisplay();
         }
-    });
+    }
 
+    window.removeCategory = function(index) {
+        categories.splice(index, 1);
+        updateCategoryDisplay();
+    };
+
+    addCategoryBtn.addEventListener('click', addCategory);
     categoryInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             e.preventDefault();
-            addCategoryBtn.click();
+            addCategory();
         }
     });
 
-    categoryDisplay.addEventListener('click', function(e) {
-        if (e.target.classList.contains('remove-category')) {
-            const index = parseInt(e.target.dataset.index);
-            categories.splice(index, 1);
-            updateCategoriesDisplay();
-        }
-    });
+    // Prize Toggle System
+    const hasPrizes = document.getElementById('has_prizes');
+    const prizeDetails = document.getElementById('prizeDetails');
 
-    // Prize details toggle
-    const hasPrizesCheckbox = document.getElementById('{{ form.has_prizes.id_for_label }}');
-    const prizeDetails = document.getElementById('prize-details');
-
-    function togglePrizeDetails() {
-        if (hasPrizesCheckbox.checked) {
+    hasPrizes.addEventListener('change', function() {
+        if (this.checked) {
             prizeDetails.style.display = 'block';
         } else {
             prizeDetails.style.display = 'none';
         }
-    }
+    });
 
-    hasPrizesCheckbox.addEventListener('change', togglePrizeDetails);
-    togglePrizeDetails(); // Initial state
+    // Form Validation System
+    const form = document.getElementById('challengeForm');
+    form.addEventListener('submit', function(e) {
+        const requiredFields = form.querySelectorAll('[required]');
+        let hasErrors = false;
+        let firstErrorField = null;
+
+        // Reset previous error styles
+        requiredFields.forEach(field => {
+            field.style.borderColor = '#e2e8f0';
+        });
+
+        // Check each required field
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                hasErrors = true;
+                field.style.borderColor = '#e53e3e';
+                
+                if (!firstErrorField) {
+                    firstErrorField = field;
+                }
+                
+                // Add real-time validation removal
+                field.addEventListener('input', function() {
+                    if (this.value.trim()) {
+                        this.style.borderColor = '#e2e8f0';
+                    }
+                }, { once: true });
+            }
+        });
+
+        if (hasErrors) {
+            e.preventDefault();
+            
+            // Scroll to first error and show message
+            if (firstErrorField) {
+                firstErrorField.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+                firstErrorField.focus();
+            }
+            
+            // Show user-friendly error message
+            alert('กรุณากรอกข้อมูลที่จำเป็น (*) ให้ครบถ้วน');
+        }
+    });
+
+    // File Upload Preview (optional enhancement)
+    const fileInputs = document.querySelectorAll('input[type="file"]');
+    fileInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            const fileName = this.files[0]?.name;
+            if (fileName) {
+                const uploadArea = this.closest('.file-upload-area');
+                const icon = uploadArea.querySelector('.upload-icon i');
+                const text = uploadArea.querySelector('p:first-of-type');
+                
+                icon.className = 'bi bi-check-circle-fill';
+                text.innerHTML = `<strong>${fileName}</strong>`;
+                uploadArea.style.borderColor = 'var(--bs-success)';
+                uploadArea.style.background = '#f0f9f0';
+            }
+        });
+    });
 });
 </script>
-
 {% endblock %}
