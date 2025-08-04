@@ -20,6 +20,15 @@
                     <p class="header-subtitle mb-0">Discover and participate in challenges that drive marine conservation and sustainable innovation</p>
                 </div>
             </div>
+            
+            <!-- Corporate Action Button -->
+            {% if user.is_authenticated %}
+                <div class="header-actions">
+                    <a href="{% url 'create_challenge' %}" class="btn btn-success btn-lg create-btn" onclick="handleCreateChallenge(event)">
+                        <i class="bi bi-plus-circle me-2"></i>Create Challenge
+                    </a>
+                </div>
+            {% endif %}
         </div>
     </div>
 
@@ -312,6 +321,29 @@
     justify-content: center;
     backdrop-filter: blur(10px);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.header-actions .create-btn {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+    text-decoration: none;
+    display: inline-block;
+    position: relative;
+    z-index: 10;
+    cursor: pointer;
+}
+
+.header-actions .create-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+    color: white;
+    text-decoration: none;
 }
 
 .challenge-icon i {
@@ -707,6 +739,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+function handleCreateChallenge(event) {
+    console.log('Create Challenge button clicked');
+    // Let the default link behavior happen
+    return true;
+}
 </script>
 
 {% endblock %}

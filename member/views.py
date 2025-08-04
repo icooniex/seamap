@@ -938,7 +938,7 @@ def create_challenge(request):
                         )
             
             messages.success(request, 'Challenge submitted successfully! It will be reviewed before publication.')
-            return redirect('challenge_detail', challenge_id=challenge.id)
+            return redirect('challenge')
     else:
         from .forms import ChallengeForm
         form = ChallengeForm()
@@ -991,7 +991,7 @@ def create_problem_statement(request):
                         )
             
             messages.success(request, 'Problem statement submitted successfully! It will be reviewed before publication.')
-            return redirect('problem_detail', problem_id=problem.id)
+            return redirect('problem')
     else:
         from .forms import ProblemStatementForm
         form = ProblemStatementForm()

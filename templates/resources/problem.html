@@ -20,6 +20,15 @@
                     <p class="header-subtitle mb-0">Discover problems that need innovative solutions from corporate partners seeking breakthrough technologies</p>
                 </div>
             </div>
+            
+            <!-- Corporate Action Button -->
+            {% if user.is_authenticated %}
+                <div class="header-actions">
+                    <a href="{% url 'create_problem_statement' %}" class="btn btn-warning btn-lg create-btn" onclick="handleCreateProblem(event)">
+                        <i class="bi bi-plus-circle me-2"></i>Submit Problem
+                    </a>
+                </div>
+            {% endif %}
         </div>
     </div>
 
@@ -354,6 +363,29 @@
     justify-content: center;
     backdrop-filter: blur(10px);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.header-actions .create-btn {
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+    text-decoration: none;
+    display: inline-block;
+    position: relative;
+    z-index: 10;
+    cursor: pointer;
+}
+
+.header-actions .create-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 193, 7, 0.4);
+    color: white;
+    text-decoration: none;
 }
 
 .problem-icon i {
@@ -739,6 +771,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+function handleCreateProblem(event) {
+    console.log('Create Problem button clicked');
+    // Let the default link behavior happen
+    return true;
+}
 </script>
 
 {% endblock %}
