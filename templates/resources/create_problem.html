@@ -1,0 +1,485 @@
+{% extends "template_parts/dashboard_base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <!-- Header Section -->
+    <div class="create-header mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <div class="create-icon-container me-3">
+                    <div class="create-icon">
+                        <i class="bi bi-lightbulb"></i>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="h3 mb-1">
+                        <span class="text-primary-light">Submit</span> 
+                        <strong class="text-white">Problem Statement</strong>
+                    </h1>
+                    <p class="header-subtitle mb-0">Share your challenge to find innovative solutions</p>
+                </div>
+            </div>
+            <a href="{% url 'problem_statement' %}" class="btn btn-outline-light">
+                <i class="bi bi-arrow-left me-2"></i>Back to Problems
+            </a>
+        </div>
+    </div>
+
+    <!-- Form Section -->
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="create-form-card">
+                <form method="post" enctype="multipart/form-data" class="problem-form">
+                    {% csrf_token %}
+                    
+                    <!-- Basic Information -->
+                    <div class="form-section">
+                        <h4><i class="bi bi-info-circle me-2"></i>Problem Overview</h4>
+                        <div class="row">
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.title.id_for_label }}" class="form-label">Problem Title *</label>
+                                {{ form.title }}
+                                {% if form.title.errors %}
+                                    <div class="text-danger">{{ form.title.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.subtitle.id_for_label }}" class="form-label">Subtitle</label>
+                                {{ form.subtitle }}
+                                {% if form.subtitle.errors %}
+                                    <div class="text-danger">{{ form.subtitle.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.description.id_for_label }}" class="form-label">Problem Description *</label>
+                                {{ form.description }}
+                                <small class="form-text text-muted">Describe the problem you're facing and why it needs to be solved.</small>
+                                {% if form.description.errors %}
+                                    <div class="text-danger">{{ form.description.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.contact_email.id_for_label }}" class="form-label">Contact Email *</label>
+                                {{ form.contact_email }}
+                                {% if form.contact_email.errors %}
+                                    <div class="text-danger">{{ form.contact_email.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.urgency_level.id_for_label }}" class="form-label">Urgency Level</label>
+                                {{ form.urgency_level }}
+                                {% if form.urgency_level.errors %}
+                                    <div class="text-danger">{{ form.urgency_level.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Problem Details -->
+                    <div class="form-section">
+                        <h4><i class="bi bi-exclamation-triangle me-2"></i>Problem Analysis</h4>
+                        <div class="row">
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.context_content.id_for_label }}" class="form-label">Context & Background *</label>
+                                {{ form.context_content }}
+                                <small class="form-text text-muted">Provide background information and context about the problem. You can use rich text formatting.</small>
+                                {% if form.context_content.errors %}
+                                    <div class="text-danger">{{ form.context_content.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.impact_content.id_for_label }}" class="form-label">Impact & Consequences</label>
+                                {{ form.impact_content }}
+                                <small class="form-text text-muted">Describe the impact this problem has and what happens if it's not solved.</small>
+                                {% if form.impact_content.errors %}
+                                    <div class="text-danger">{{ form.impact_content.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label class="form-label">Problem Categories</label>
+                                <div class="category-input-group">
+                                    <input type="text" class="form-control" id="category-input" placeholder="Add category tags (e.g., Marine Pollution, Climate Change)">
+                                    <button type="button" class="btn btn-outline-primary" id="add-category">Add</button>
+                                </div>
+                                <div id="category-display" class="mt-2"></div>
+                                <input type="hidden" id="categories-hidden" name="categories" value="[]">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Timeline & Constraints -->
+                    <div class="form-section">
+                        <h4><i class="bi bi-calendar-check me-2"></i>Timeline & Constraints</h4>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.deadline.id_for_label }}" class="form-label">Solution Deadline</label>
+                                {{ form.deadline }}
+                                <small class="form-text text-muted">When do you need a solution by?</small>
+                                {% if form.deadline.errors %}
+                                    <div class="text-danger">{{ form.deadline.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.location.id_for_label }}" class="form-label">Location/Region</label>
+                                {{ form.location }}
+                                <small class="form-text text-muted">Where is this problem occurring?</small>
+                                {% if form.location.errors %}
+                                    <div class="text-danger">{{ form.location.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.constraints_content.id_for_label }}" class="form-label">Constraints & Limitations</label>
+                                {{ form.constraints_content }}
+                                <small class="form-text text-muted">What constraints or limitations should solution providers be aware of?</small>
+                                {% if form.constraints_content.errors %}
+                                    <div class="text-danger">{{ form.constraints_content.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resources & Budget -->
+                    <div class="form-section">
+                        <h4><i class="bi bi-cash-coin me-2"></i>Resources & Budget</h4>
+                        <div class="row">
+                            <div class="col-12 mb-3">
+                                <div class="form-check">
+                                    {{ form.has_budget }}
+                                    <label class="form-check-label" for="{{ form.has_budget.id_for_label }}">
+                                        Budget is available for solutions
+                                    </label>
+                                </div>
+                            </div>
+                            <div id="budget-details" style="display: none;">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.budget_range.id_for_label }}" class="form-label">Budget Range</label>
+                                    {{ form.budget_range }}
+                                    {% if form.budget_range.errors %}
+                                        <div class="text-danger">{{ form.budget_range.errors }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.budget_currency.id_for_label }}" class="form-label">Currency</label>
+                                    {{ form.budget_currency }}
+                                    {% if form.budget_currency.errors %}
+                                        <div class="text-danger">{{ form.budget_currency.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.resources_content.id_for_label }}" class="form-label">Available Resources</label>
+                                {{ form.resources_content }}
+                                <small class="form-text text-muted">What resources, data, or support can you provide to solution providers?</small>
+                                {% if form.resources_content.errors %}
+                                    <div class="text-danger">{{ form.resources_content.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Solution Requirements -->
+                    <div class="form-section">
+                        <h4><i class="bi bi-gear me-2"></i>Solution Requirements</h4>
+                        <div class="col-12 mb-3">
+                            <label for="{{ form.solution_requirements_content.id_for_label }}" class="form-label">Solution Requirements</label>
+                            {{ form.solution_requirements_content }}
+                            <small class="form-text text-muted">What requirements or specifications should solutions meet?</small>
+                            {% if form.solution_requirements_content.errors %}
+                                <div class="text-danger">{{ form.solution_requirements_content.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="{{ form.success_criteria_content.id_for_label }}" class="form-label">Success Criteria</label>
+                            {{ form.success_criteria_content }}
+                            <small class="form-text text-muted">How will you measure if a solution is successful?</small>
+                            {% if form.success_criteria_content.errors %}
+                                <div class="text-danger">{{ form.success_criteria_content.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Supporting Documents -->
+                    <div class="form-section">
+                        <h4><i class="bi bi-file-earmark-text me-2"></i>Supporting Documents</h4>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.problem_statement_document.id_for_label }}" class="form-label">Problem Statement Document</label>
+                                {{ form.problem_statement_document }}
+                                <small class="form-text text-muted">{{ form.problem_statement_document.help_text }}</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.background_research.id_for_label }}" class="form-label">Background Research</label>
+                                {{ form.background_research }}
+                                <small class="form-text text-muted">{{ form.background_research.help_text }}</small>
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.supporting_materials.id_for_label }}" class="form-label">Supporting Materials</label>
+                                {{ form.supporting_materials }}
+                                <small class="form-text text-muted">{{ form.supporting_materials.help_text }}</small>
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.featured_image.id_for_label }}" class="form-label">Featured Image</label>
+                                {{ form.featured_image }}
+                                <small class="form-text text-muted">Upload a featured image that represents your problem</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Buttons -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-check-circle me-2"></i>Submit Problem Statement
+                        </button>
+                        <a href="{% url 'problem_statement' %}" class="btn btn-outline-secondary btn-lg ms-3">Cancel</a>
+                        <div class="form-note mt-3">
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Your problem statement will be reviewed before being published on the platform.
+                            </small>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Create Problem Statement Form Styling */
+.create-header {
+    background: linear-gradient(135deg, #a7572c 0%, #a15d4a 100%);
+    color: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(167, 87, 44, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.create-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    opacity: 0.3;
+}
+
+.create-icon-container {
+    position: relative;
+    z-index: 2;
+}
+
+.create-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #ffffff15 0%, #ffffff25 100%);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.create-icon i {
+    font-size: 2.5rem;
+    color: white;
+}
+
+.text-primary-light {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-weight: 500;
+}
+
+.header-subtitle {
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-size: 1.1rem;
+    font-weight: 400;
+    line-height: 1.4;
+}
+
+.create-form-card {
+    background: white;
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(167, 87, 44, 0.1);
+}
+
+.form-section {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #eee;
+}
+
+.form-section:last-of-type {
+    border-bottom: none;
+    margin-bottom: 2rem;
+}
+
+.form-section h4 {
+    color: #a7572c;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #a7572c;
+}
+
+.category-input-group {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.category-input-group input {
+    flex: 1;
+}
+
+#category-display {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.category-tag {
+    background: rgba(167, 87, 44, 0.1);
+    color: #a7572c;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.category-tag .remove-category {
+    background: none;
+    border: none;
+    color: #a7572c;
+    padding: 0;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.form-actions {
+    text-align: center;
+    padding-top: 2rem;
+    border-top: 2px solid #eee;
+}
+
+.form-note {
+    text-align: center;
+}
+
+/* Budget details toggle */
+#budget-details {
+    width: 100%;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .create-header {
+        padding: 2rem 1.5rem;
+    }
+    
+    .create-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+    }
+    
+    .create-icon i {
+        font-size: 2rem;
+    }
+    
+    .create-form-card {
+        padding: 2rem 1.5rem;
+    }
+    
+    .category-input-group {
+        flex-direction: column;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    
+    .form-actions .btn:last-child {
+        margin-bottom: 0;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Category management
+    const categoryInput = document.getElementById('category-input');
+    const addCategoryBtn = document.getElementById('add-category');
+    const categoryDisplay = document.getElementById('category-display');
+    const categoriesHidden = document.getElementById('categories-hidden');
+    let categories = [];
+
+    function updateCategoriesDisplay() {
+        categoryDisplay.innerHTML = '';
+        categories.forEach((category, index) => {
+            const tag = document.createElement('div');
+            tag.className = 'category-tag';
+            tag.innerHTML = `
+                ${category}
+                <button type="button" class="remove-category" data-index="${index}">×</button>
+            `;
+            categoryDisplay.appendChild(tag);
+        });
+        categoriesHidden.value = JSON.stringify(categories);
+    }
+
+    addCategoryBtn.addEventListener('click', function() {
+        const value = categoryInput.value.trim();
+        if (value && !categories.includes(value)) {
+            categories.push(value);
+            categoryInput.value = '';
+            updateCategoriesDisplay();
+        }
+    });
+
+    categoryInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            addCategoryBtn.click();
+        }
+    });
+
+    categoryDisplay.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-category')) {
+            const index = parseInt(e.target.dataset.index);
+            categories.splice(index, 1);
+            updateCategoriesDisplay();
+        }
+    });
+
+    // Budget details toggle
+    const hasBudgetCheckbox = document.getElementById('{{ form.has_budget.id_for_label }}');
+    const budgetDetails = document.getElementById('budget-details');
+
+    function toggleBudgetDetails() {
+        if (hasBudgetCheckbox.checked) {
+            budgetDetails.style.display = 'block';
+        } else {
+            budgetDetails.style.display = 'none';
+        }
+    }
+
+    hasBudgetCheckbox.addEventListener('change', toggleBudgetDetails);
+    toggleBudgetDetails(); // Initial state
+});
+</script>
+
+{% endblock %}

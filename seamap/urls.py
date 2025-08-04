@@ -33,8 +33,10 @@ urlpatterns = [
 
     path('dashboard/problem-statement/', problem, name='problem'),
     path('dashboard/problem-statement/<int:problem_id>/', problem_detail, name='problem_detail'),
+    path('dashboard/problem-statement/create/', create_problem_statement, name='create_problem_statement'),
     path('dashboard/challenge/', challenge, name='challenge'),
     path('dashboard/challenge/<int:challenge_id>/', challenge_detail, name='challenge_detail'),
+    path('dashboard/challenge/create/', create_challenge, name='create_challenge'),
     path('dashboard/accelerator-landing/', accelerator_landing, name='accelerator_landing'),
     
     path('startup/profile/<int:startup_id>/', startup_profile, name='startup_profile'),

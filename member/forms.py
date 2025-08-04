@@ -318,3 +318,232 @@ class CorporateForm(CompanyForm):
                 'placeholder': 'Describe your investment philosophy and corporate goals...'
             })
         }
+
+
+class ChallengeForm(forms.ModelForm):
+    """Form for creating and editing challenges"""
+    
+    # Additional fields for documents
+    challenge_brief = forms.FileField(
+        required=False,
+        widget=forms.FileInput(attrs={
+            'class': 'form-control',
+            'accept': '.pdf,.doc,.docx'
+        }),
+        help_text='Upload challenge brief document (PDF, DOC, DOCX)'
+    )
+    
+    application_template = forms.FileField(
+        required=False,
+        widget=forms.FileInput(attrs={
+            'class': 'form-control',
+            'accept': '.pdf,.doc,.docx'
+        }),
+        help_text='Upload application template (PDF, DOC, DOCX)'
+    )
+    
+    supporting_materials = forms.FileField(
+        required=False,
+        widget=forms.ClearableFileInput(attrs={
+            'class': 'form-control',
+            'accept': '.pdf,.doc,.docx,.jpg,.jpeg,.png'
+        }),
+        help_text='Upload supporting materials (images, PDFs, etc.)'
+    )
+
+    class Meta:
+        model = None  # Will be imported dynamically to avoid circular import
+        fields = [
+            'title', 'subtitle', 'description', 'organizer_contact',
+            'requirements_content', 'categories', 'application_deadline',
+            'start_date', 'end_date', 'has_prizes', 'main_prize_amount',
+            'main_prize_currency', 'prizes_content', 'location', 'scope',
+            'priority', 'featured_image'
+        ]
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter challenge title...'
+            }),
+            'subtitle': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Brief subtitle describing the challenge...'
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 5,
+                'placeholder': 'Detailed challenge description and overview...'
+            }),
+            'organizer_contact': forms.EmailInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'contact@organization.com'
+            }),
+            'requirements_content': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 8,
+                'placeholder': 'Detailed requirements and criteria (supports rich text formatting)...'
+            }),
+            'application_deadline': forms.DateTimeInput(attrs={
+                'class': 'form-control',
+                'type': 'datetime-local'
+            }),
+            'start_date': forms.DateTimeInput(attrs={
+                'class': 'form-control',
+                'type': 'datetime-local'
+            }),
+            'end_date': forms.DateTimeInput(attrs={
+                'class': 'form-control',
+                'type': 'datetime-local'
+            }),
+            'has_prizes': forms.CheckboxInput(attrs={
+                'class': 'form-check-input'
+            }),
+            'main_prize_amount': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': '50000',
+                'step': '0.01'
+            }),
+            'main_prize_currency': forms.Select(attrs={
+                'class': 'form-select'
+            }),
+            'prizes_content': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 6,
+                'placeholder': 'Detailed information about prizes and rewards...'
+            }),
+            'location': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Global, Singapore, Southeast Asia, etc.'
+            }),
+            'scope': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Global, Regional, Local, etc.'
+            }),
+            'priority': forms.Select(attrs={
+                'class': 'form-select'
+            }),
+            'featured_image': forms.FileInput(attrs={
+                'class': 'form-control',
+                'accept': 'image/*'
+            })
+        }
+
+    def __init__(self, *args, **kwargs):
+        # Import here to avoid circular import
+        from .models import Challenge
+        self._meta.model = Challenge
+        super().__init__(*args, **kwargs)
+
+
+class ProblemStatementForm(forms.ModelForm):
+    """Form for creating and editing problem statements"""
+    
+    # Additional fields for documents
+    technical_specifications = forms.FileField(
+        required=False,
+        widget=forms.FileInput(attrs={
+            'class': 'form-control',
+            'accept': '.pdf,.doc,.docx'
+        }),
+        help_text='Upload technical specifications document (PDF, DOC, DOCX)'
+    )
+    
+    requirements_document = forms.FileField(
+        required=False,
+        widget=forms.FileInput(attrs={
+            'class': 'form-control',
+            'accept': '.pdf,.doc,.docx'
+        }),
+        help_text='Upload detailed requirements document (PDF, DOC, DOCX)'
+    )
+    
+    additional_documents = forms.FileField(
+        required=False,
+        widget=forms.ClearableFileInput(attrs={
+            'class': 'form-control',
+            'accept': '.pdf,.doc,.docx,.jpg,.jpeg,.png'
+        }),
+        help_text='Upload additional documents (images, PDFs, etc.)'
+    )
+
+    class Meta:
+        model = None  # Will be imported dynamically to avoid circular import
+        fields = [
+            'title', 'subtitle', 'description', 'contact_person', 'contact_email',
+            'current_challenges', 'impact_categories', 'solution_requirements',
+            'technical_requirements', 'collaboration_type', 'budget_range',
+            'timeline', 'implementation_support', 'region', 'industry_focus',
+            'priority', 'featured_image'
+        ]
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter problem statement title...'
+            }),
+            'subtitle': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Brief subtitle describing the problem...'
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 5,
+                'placeholder': 'Detailed problem description...'
+            }),
+            'contact_person': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Contact person name'
+            }),
+            'contact_email': forms.EmailInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'contact@company.com'
+            }),
+            'current_challenges': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'Describe current challenges and pain points...'
+            }),
+            'solution_requirements': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 8,
+                'placeholder': 'Detailed requirements for the solution (supports rich text formatting)...'
+            }),
+            'technical_requirements': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 8,
+                'placeholder': 'Technical specifications and requirements (supports rich text formatting)...'
+            }),
+            'collaboration_type': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Partnership, Licensing, Joint Development, etc.'
+            }),
+            'budget_range': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': '$10K - $100K, Negotiable, etc.'
+            }),
+            'timeline': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': '3-6 months, 1 year, etc.'
+            }),
+            'implementation_support': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'Support offered for implementation...'
+            }),
+            'region': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Southeast Asia, Global, etc.'
+            }),
+            'priority': forms.Select(attrs={
+                'class': 'form-select'
+            }),
+            'featured_image': forms.FileInput(attrs={
+                'class': 'form-control',
+                'accept': 'image/*'
+            })
+        }
+
+    def __init__(self, *args, **kwargs):
+        # Import here to avoid circular import
+        from .models import ProblemStatement
+        self._meta.model = ProblemStatement
+        super().__init__(*args, **kwargs)

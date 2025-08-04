@@ -860,21 +860,144 @@ def challenge(request):
 
 def challenge_detail(request, challenge_id):
     """Display detailed challenge page"""
-    # For now, return the template with static data
-    # In the future, you can fetch actual challenge data from database
-    context = {
-        'challenge_id': challenge_id,
-    }
+    # Try to fetch actual challenge data from database
+    try:
+        from .models import Challenge
+        challenge = get_object_or_404(Challenge, pk=challenge_id, status='published')
+        context = {
+            'challenge': challenge,
+            'challenge_id': challenge_id,
+        }
+    except:
+        # Fallback to static data if model not ready
+        context = {
+            'challenge_id': challenge_id,
+        }
     return render(request, 'resources/challenge_detail.html', context)
 
 def problem_detail(request, problem_id):
     """Display detailed problem statement page"""
-    # For now, return the template with static data
-    # In the future, you can fetch actual problem data from database
-    context = {
-        'problem_id': problem_id,
-    }
+    # Try to fetch actual problem data from database
+    try:
+        from .models import ProblemStatement
+        problem = get_object_or_404(ProblemStatement, pk=problem_id, status='published')
+        context = {
+            'problem': problem,
+            'problem_id': problem_id,
+        }
+    except:
+        # Fallback to static data if model not ready
+        context = {
+            'problem_id': problem_id,
+        }
     return render(request, 'resources/problem_detail.html', context)
+
+
+@login_required
+def create_challenge(request):
+    """Create a new challenge (Corporate users only)"""
+    # Check if user is corporate
+    try:
+        member = request.user.member
+        if not member.companies.filter(company_type='corporate').exists():
+            messages.error(request, 'Only corporate users can create challenges.')
+            return redirect('challenge')
+    except Member.DoesNotExist:
+        messages.error(request, 'Please complete your profile first.')
+        return redirect('profile_completion')
+    
+    if request.method == 'POST':
+        from .forms import ChallengeForm
+        from .models import Challenge, ChallengeDocument
+        
+        form = ChallengeForm(request.POST, request.FILES)
+        if form.is_valid():
+            challenge = form.save(commit=False)
+            challenge.created_by = member
+            # Use the first corporate company as organizer
+            challenge.organizer = member.companies.filter(company_type='corporate').first()
+            challenge.status = 'pending'  # Set to pending for approval
+            challenge.save()
+            
+            # Handle document uploads
+            documents_to_upload = [
+                ('challenge_brief', 'brief'),
+                ('application_template', 'template'),
+                ('additional_documents', 'additional')
+            ]
+            
+            for field_name, doc_type in documents_to_upload:
+                files = request.FILES.getlist(field_name)
+                for file in files:
+                    if file:
+                        ChallengeDocument.objects.create(
+                            challenge=challenge,
+                            name=file.name,
+                            file=file,
+                            document_type=doc_type
+                        )
+            
+            messages.success(request, 'Challenge submitted successfully! It will be reviewed before publication.')
+            return redirect('challenge_detail', challenge_id=challenge.id)
+    else:
+        from .forms import ChallengeForm
+        form = ChallengeForm()
+    
+    return render(request, 'resources/create_challenge.html', {'form': form})
+
+
+@login_required
+def create_problem_statement(request):
+    """Create a new problem statement (Corporate users only)"""
+    # Check if user is corporate
+    try:
+        member = request.user.member
+        if not member.companies.filter(company_type='corporate').exists():
+            messages.error(request, 'Only corporate users can create problem statements.')
+            return redirect('problem')
+    except Member.DoesNotExist:
+        messages.error(request, 'Please complete your profile first.')
+        return redirect('profile_completion')
+    
+    if request.method == 'POST':
+        from .forms import ProblemStatementForm
+        from .models import ProblemStatement, ProblemDocument
+        
+        form = ProblemStatementForm(request.POST, request.FILES)
+        if form.is_valid():
+            problem = form.save(commit=False)
+            problem.created_by = member
+            # Use the first corporate company
+            problem.company = member.companies.filter(company_type='corporate').first()
+            problem.status = 'pending'  # Set to pending for approval
+            problem.save()
+            
+            # Handle document uploads
+            documents_to_upload = [
+                ('technical_specifications', 'specifications'),
+                ('requirements_document', 'requirements'),
+                ('additional_documents', 'additional')
+            ]
+            
+            for field_name, doc_type in documents_to_upload:
+                files = request.FILES.getlist(field_name)
+                for file in files:
+                    if file:
+                        ProblemDocument.objects.create(
+                            problem=problem,
+                            name=file.name,
+                            file=file,
+                            document_type=doc_type
+                        )
+            
+            messages.success(request, 'Problem statement submitted successfully! It will be reviewed before publication.')
+            return redirect('problem_detail', problem_id=problem.id)
+    else:
+        from .forms import ProblemStatementForm
+        form = ProblemStatementForm()
+    
+    return render(request, 'resources/create_problem.html', {'form': form})
+
 
 def accelerator_landing(request):
     return render(request, 'accelerator_landing.html')

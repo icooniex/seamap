@@ -433,3 +433,180 @@ class CompanyDocument(models.Model):
     class Meta:
         verbose_name = "Company Document"
         verbose_name_plural = "Company Documents"
+
+
+# Challenge and Problem Statement Status Choices
+STATUS_CHOICES = [
+    ('draft', 'Draft'),
+    ('pending', 'Pending Review'),
+    ('approved', 'Approved'),
+    ('rejected', 'Rejected'),
+    ('published', 'Published'),
+]
+
+PRIORITY_CHOICES = [
+    ('low', 'Low'),
+    ('medium', 'Medium'),
+    ('high', 'High'),
+    ('urgent', 'Urgent'),
+]
+
+
+class Challenge(models.Model):
+    """Innovation Challenge Model"""
+    # Basic Information
+    title = models.CharField(max_length=255)
+    subtitle = models.CharField(max_length=500, blank=True)
+    description = models.TextField(help_text="Main challenge description and overview")
+    
+    # Organization Information
+    organizer = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='challenges')
+    organizer_contact = models.EmailField()
+    
+    # Challenge Details
+    requirements_content = models.TextField(help_text="Rich text content for requirements and criteria")
+    categories = models.JSONField(default=list, blank=True, help_text="Challenge category tags")
+    
+    # Timeline & Status
+    application_deadline = models.DateTimeField(null=True, blank=True)
+    start_date = models.DateTimeField(null=True, blank=True)
+    end_date = models.DateTimeField(null=True, blank=True)
+    
+    # Prize Information
+    has_prizes = models.BooleanField(default=False)
+    main_prize_amount = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    main_prize_currency = models.CharField(max_length=3, default='USD')
+    prizes_content = models.TextField(blank=True, help_text="Rich text content for prizes and rewards")
+    
+    # Location & Scope
+    location = models.CharField(max_length=100, blank=True)
+    scope = models.CharField(max_length=100, blank=True)
+    
+    # Meta Information
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
+    priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='medium')
+    featured_image = models.ImageField(upload_to='challenges/', blank=True, null=True)
+    
+    # Statistics
+    applicant_count = models.PositiveIntegerField(default=0)
+    view_count = models.PositiveIntegerField(default=0)
+    
+    # Timestamps
+    created_by = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='created_challenges')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    published_at = models.DateTimeField(null=True, blank=True)
+    
+    def __str__(self):
+        return f"{self.title} - {self.organizer.company_name}"
+    
+    def get_status_display_color(self):
+        colors = {
+            'draft': 'secondary',
+            'pending': 'warning',
+            'approved': 'info',
+            'rejected': 'danger',
+            'published': 'success',
+        }
+        return colors.get(self.status, 'secondary')
+    
+    class Meta:
+        verbose_name = "Challenge"
+        verbose_name_plural = "Challenges"
+        ordering = ['-created_at']
+
+
+class ProblemStatement(models.Model):
+    """Corporate Problem Statement Model"""
+    # Basic Information
+    title = models.CharField(max_length=255)
+    subtitle = models.CharField(max_length=500, blank=True)
+    description = models.TextField(help_text="Main problem statement description")
+    
+    # Company Information
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='problem_statements')
+    contact_person = models.CharField(max_length=255)
+    contact_email = models.EmailField()
+    
+    # Problem Details
+    current_challenges = models.TextField(help_text="Current challenges and pain points")
+    impact_categories = models.JSONField(default=list, blank=True, help_text="Impact category tags")
+    
+    # Solution Requirements
+    solution_requirements = models.TextField(help_text="Rich text content for what they're looking for")
+    technical_requirements = models.TextField(help_text="Rich text content for technical specifications")
+    
+    # Collaboration Details
+    collaboration_type = models.CharField(max_length=100, blank=True)
+    budget_range = models.CharField(max_length=100, blank=True)
+    timeline = models.CharField(max_length=100, blank=True)
+    implementation_support = models.TextField(blank=True)
+    
+    # Location & Industry
+    region = models.CharField(max_length=100, blank=True)
+    industry_focus = models.JSONField(default=list, blank=True)
+    
+    # Meta Information
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
+    priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='medium')
+    featured_image = models.ImageField(upload_to='problems/', blank=True, null=True)
+    
+    # Statistics
+    solution_count = models.PositiveIntegerField(default=0)
+    view_count = models.PositiveIntegerField(default=0)
+    
+    # Timestamps
+    created_by = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='created_problems')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    published_at = models.DateTimeField(null=True, blank=True)
+    
+    def __str__(self):
+        return f"{self.title} - {self.company.company_name}"
+    
+    def get_status_display_color(self):
+        colors = {
+            'draft': 'secondary',
+            'pending': 'warning',
+            'approved': 'info',
+            'rejected': 'danger',
+            'published': 'success',
+        }
+        return colors.get(self.status, 'secondary')
+    
+    class Meta:
+        verbose_name = "Problem Statement"
+        verbose_name_plural = "Problem Statements"
+        ordering = ['-created_at']
+
+
+class ChallengeDocument(models.Model):
+    """Documents related to a challenge"""
+    challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE, related_name='documents')
+    name = models.CharField(max_length=255)
+    file = models.FileField(upload_to='challenge_documents/')
+    document_type = models.CharField(max_length=50, blank=True)  # e.g., 'brief', 'guidelines', 'template'
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.name} for {self.challenge.title}"
+    
+    class Meta:
+        verbose_name = "Challenge Document"
+        verbose_name_plural = "Challenge Documents"
+
+
+class ProblemDocument(models.Model):
+    """Documents related to a problem statement"""
+    problem = models.ForeignKey(ProblemStatement, on_delete=models.CASCADE, related_name='documents')
+    name = models.CharField(max_length=255)
+    file = models.FileField(upload_to='problem_documents/')
+    document_type = models.CharField(max_length=50, blank=True)  # e.g., 'specifications', 'requirements', 'examples'
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.name} for {self.problem.title}"
+    
+    class Meta:
+        verbose_name = "Problem Document"
+        verbose_name_plural = "Problem Documents"
