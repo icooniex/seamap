@@ -910,35 +910,37 @@ def create_challenge(request):
         from .forms import ChallengeForm
         from .models import Challenge, ChallengeDocument
         
-        form = ChallengeForm(request.POST, request.FILES)
+        # Process categories from checkbox list
+        categories = request.POST.getlist('categories')
+        
+        # Create a mutable copy of POST data
+        post_data = request.POST.copy()
+        post_data.setlist('categories', categories)
+        
+        form = ChallengeForm(post_data, request.FILES)
         if form.is_valid():
             challenge = form.save(commit=False)
             challenge.created_by = member
             # Use the first corporate company as organizer
             challenge.organizer = member.companies.filter(company_type='corporate').first()
             challenge.status = 'pending'  # Set to pending for approval
+            
+            # Set categories as JSON list
+            challenge.categories = categories
             challenge.save()
             
-            # Handle document uploads
-            documents_to_upload = [
-                ('challenge_brief', 'brief'),
-                ('application_template', 'template'),
-                ('additional_documents', 'additional')
-            ]
-            
-            for field_name, doc_type in documents_to_upload:
-                files = request.FILES.getlist(field_name)
-                for file in files:
-                    if file:
-                        ChallengeDocument.objects.create(
-                            challenge=challenge,
-                            name=file.name,
-                            file=file,
-                            document_type=doc_type
-                        )
+            # Handle challenge brief document
+            if 'challenge_brief' in request.FILES:
+                challenge.challenge_brief = request.FILES['challenge_brief']
+                challenge.save()
             
             messages.success(request, 'Challenge submitted successfully! It will be reviewed before publication.')
             return redirect('challenge')
+        else:
+            # If form is invalid, display errors
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
     else:
         from .forms import ChallengeForm
         form = ChallengeForm()

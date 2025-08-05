@@ -358,7 +358,7 @@ class ChallengeForm(forms.ModelForm):
             'requirements_content', 'categories', 'application_deadline',
             'start_date', 'end_date', 'has_prizes', 'main_prize_amount',
             'main_prize_currency', 'prizes_content', 'location', 'scope',
-            'priority', 'featured_image'
+            'innovation_category', 'priority', 'featured_image', 'challenge_brief'
         ]
         widgets = {
             'title': forms.TextInput(attrs={
@@ -419,12 +419,19 @@ class ChallengeForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': 'Global, Regional, Local, etc.'
             }),
+            'innovation_category': forms.Select(attrs={
+                'class': 'form-select'
+            }),
             'priority': forms.Select(attrs={
                 'class': 'form-select'
             }),
             'featured_image': forms.FileInput(attrs={
                 'class': 'form-control',
                 'accept': 'image/*'
+            }),
+            'challenge_brief': forms.FileInput(attrs={
+                'class': 'form-control',
+                'accept': '.pdf,.doc,.docx'
             })
         }
 

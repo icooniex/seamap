@@ -448,7 +448,20 @@ PRIORITY_CHOICES = [
     ('low', 'Low'),
     ('medium', 'Medium'),
     ('high', 'High'),
-    ('urgent', 'Urgent'),
+]
+
+INNOVATION_CATEGORY_CHOICES = [
+    ('', 'Select category'),
+    ('Innovation', 'Innovation'),
+    ('Technology', 'Technology'),
+    ('Sustainability', 'Sustainability'),
+    ('Social Impact', 'Social Impact'),
+    ('Digital Transformation', 'Digital Transformation'),
+    ('Healthcare', 'Healthcare'),
+    ('Education', 'Education'),
+    ('Finance', 'Finance'),
+    ('Environment', 'Environment'),
+    ('Agriculture', 'Agriculture'),
 ]
 
 
@@ -481,6 +494,15 @@ class Challenge(models.Model):
     # Location & Scope
     location = models.CharField(max_length=100, blank=True)
     scope = models.CharField(max_length=100, blank=True)
+    innovation_category = models.CharField(
+        max_length=100, 
+        choices=INNOVATION_CATEGORY_CHOICES,
+        blank=True, 
+        help_text="Innovation category for the challenge"
+    )
+    
+    # Additional Resources
+    challenge_brief = models.FileField(upload_to='challenge_briefs/', blank=True, null=True, help_text="Challenge brief document")
     
     # Meta Information
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
