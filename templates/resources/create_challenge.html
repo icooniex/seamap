@@ -190,13 +190,19 @@
 }
 
 .checkbox-card input[type="checkbox"] {
-    display: none;
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
 }
 
 .checkbox-card-content {
     display: flex;
     align-items: center;
     gap: 12px;
+    cursor: pointer;
+    width: 100%;
 }
 
 .checkbox-card-content .checkbox-visual {
@@ -210,6 +216,7 @@
     transition: all 0.3s ease;
     background: white;
     flex-shrink: 0;
+    cursor: pointer;
 }
 
 .checkbox-card.selected .checkbox-visual {
@@ -645,7 +652,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const checkboxCards = document.querySelectorAll('.checkbox-card');
     checkboxCards.forEach(card => {
         const checkbox = card.querySelector('input[type="checkbox"]');
-        const label = card.querySelector('label');
         
         // Handle checkbox change
         checkbox.addEventListener('change', function() {
@@ -656,19 +662,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        // Handle label click
-        label.addEventListener('click', function(e) {
-            e.preventDefault();
-            checkbox.checked = !checkbox.checked;
-            checkbox.dispatchEvent(new Event('change'));
-        });
-        
-        // Handle card click
+        // Handle card click (anywhere on the card)
         card.addEventListener('click', function(e) {
-            // Prevent double triggering if clicking on label
-            if (e.target.tagName.toLowerCase() !== 'label') {
+            // Prevent double triggering and allow normal behavior for the actual checkbox
+            if (e.target !== checkbox) {
+                e.preventDefault();
                 checkbox.checked = !checkbox.checked;
-                checkbox.dispatchEvent(new Event('change'));
+                // Trigger change event manually
+                const event = new Event('change', { bubbles: true });
+                checkbox.dispatchEvent(event);
             }
         });
     });
