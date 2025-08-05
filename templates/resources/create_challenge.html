@@ -266,6 +266,72 @@
     background: rgba(44, 89, 167, 0.05);
 }
 
+/* Image Preview Styling */
+.image-preview-container {
+    position: relative;
+    margin-top: 1rem;
+    display: none;
+}
+
+.image-preview {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    object-fit: cover;
+}
+
+.image-preview-overlay {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.image-preview-overlay:hover {
+    background: rgba(220, 53, 69, 0.8);
+}
+
+.file-upload.has-image {
+    padding: 1rem;
+    border-style: solid;
+    border-color: var(--bs-success);
+    background: #f0fdf4;
+}
+
+.file-upload.has-image .upload-content {
+    display: none;
+}
+
+.file-upload.has-image .image-preview-container {
+    display: block !important;
+}
+
+.file-feedback {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    display: none;
+}
+
+.file-feedback.success {
+    background: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+    display: block;
+}
+
 /* Prize Section */
 .prize-section {
     background: linear-gradient(135deg, #fff5cd 0%, #ffeaa7 100%);
@@ -516,14 +582,14 @@
                 </div>
                 
                 <div class="row g-4">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label for="location" class="form-label">Primary Location</label>
                             <input type="text" class="form-control" id="location" name="location" 
                                    placeholder="e.g. Thailand, Southeast Asia, Global">
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label for="scope" class="form-label">Scope</label>
                             <select class="form-select" id="scope" name="scope">
@@ -532,6 +598,24 @@
                                 <option value="Regional">Regional</option>
                                 <option value="National">National</option>
                                 <option value="Global">Global</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="innovation_category" class="form-label">Innovation Category</label>
+                            <select class="form-select" id="innovation_category" name="innovation_category">
+                                <option value="">Select category</option>
+                                <option value="Innovation">Innovation</option>
+                                <option value="Technology">Technology</option>
+                                <option value="Sustainability">Sustainability</option>
+                                <option value="Social Impact">Social Impact</option>
+                                <option value="Digital Transformation">Digital Transformation</option>
+                                <option value="Healthcare">Healthcare</option>
+                                <option value="Education">Education</option>
+                                <option value="Finance">Finance</option>
+                                <option value="Environment">Environment</option>
+                                <option value="Agriculture">Agriculture</option>
                             </select>
                         </div>
                     </div>
@@ -617,14 +701,24 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="featured_image" class="form-label">Featured Image</label>
-                            <div class="file-upload">
+                            <div class="file-upload" id="featured_image_upload">
                                 <input type="file" class="form-control" id="featured_image" name="featured_image" 
-                                       accept="image/*">
-                                <div class="mt-2">
+                                       accept="image/*" style="display: none;">
+                                <div class="upload-content">
                                     <i class="bi bi-image display-4 text-muted"></i>
-                                    <p class="mb-1">Challenge header image</p>
+                                    <p class="mb-1">Click to upload challenge header image</p>
                                     <small class="text-muted">JPG, PNG • Max 5MB</small>
+                                    <button type="button" class="btn btn-outline-primary mt-2" onclick="document.getElementById('featured_image').click()">
+                                        Choose Image
+                                    </button>
                                 </div>
+                                <div class="image-preview-container" id="image_preview_container">
+                                    <img class="image-preview" id="image_preview" alt="Image preview">
+                                    <button type="button" class="image-preview-overlay" onclick="removeImagePreview()">
+                                        <i class="bi bi-x"></i>
+                                    </button>
+                                </div>
+                                <div class="file-feedback" id="file_feedback"></div>
                             </div>
                         </div>
                     </div>
@@ -685,6 +779,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 prizeSection.style.display = 'block';
             } else {
                 prizeSection.style.display = 'none';
+            }
+        });
+    }
+
+    // Featured Image Preview
+    const featuredImageInput = document.getElementById('featured_image');
+    if (featuredImageInput) {
+        featuredImageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const uploadContainer = document.getElementById('featured_image_upload');
+            const imagePreview = document.getElementById('image_preview');
+            const fileFeedback = document.getElementById('file_feedback');
+            
+            if (file) {
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    uploadContainer.classList.add('has-image');
+                };
+                reader.readAsDataURL(file);
+                
+                // Show file feedback
+                fileFeedback.className = 'file-feedback success';
+                fileFeedback.innerHTML = `<i class="bi bi-check-circle me-1"></i>File: ${file.name}`;
             }
         });
     }
@@ -759,6 +878,20 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+// Remove Image Preview Function (global function for onclick)
+function removeImagePreview() {
+    const fileInput = document.getElementById('featured_image');
+    const uploadContainer = document.getElementById('featured_image_upload');
+    const imagePreview = document.getElementById('image_preview');
+    const fileFeedback = document.getElementById('file_feedback');
+    
+    fileInput.value = '';
+    imagePreview.src = '';
+    uploadContainer.classList.remove('has-image');
+    fileFeedback.className = 'file-feedback';
+    fileFeedback.innerHTML = '';
+}
 </script>
 
 {% endblock %}
