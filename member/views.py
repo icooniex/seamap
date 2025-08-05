@@ -1022,43 +1022,96 @@ def create_problem_statement(request):
         return redirect('profile_completion')
     
     if request.method == 'POST':
-        from .forms import ProblemStatementForm
-        from .models import ProblemStatement, ProblemDocument
+        from .models import ProblemStatement
         
-        form = ProblemStatementForm(request.POST, request.FILES)
-        if form.is_valid():
-            problem = form.save(commit=False)
-            problem.created_by = member
-            # Use the first corporate company
-            problem.company = member.companies.filter(company_type='corporate').first()
-            problem.status = 'pending'  # Set to pending for approval
+        try:
+            # Get basic information
+            title = request.POST.get('title', '').strip()
+            subtitle = request.POST.get('subtitle', '').strip()
+            description = request.POST.get('description', '').strip()
+            current_challenges = request.POST.get('current_challenges', '').strip()
+            contact_email = request.POST.get('contact_email', '').strip()
+            region = request.POST.get('region', '').strip()
+            
+            # Get impact categories
+            impact_categories = request.POST.getlist('impact_categories')
+            
+            # Get solution & technical requirements
+            solution_requirements = request.POST.get('solution_requirements', '').strip()
+            technical_requirements = request.POST.get('technical_requirements', '').strip()
+            
+            # Get collaboration details
+            collaboration_type = request.POST.get('collaboration_type', '').strip()
+            budget_range = request.POST.get('budget_range', '').strip()
+            timeline = request.POST.get('timeline', '').strip()
+            implementation_support = request.POST.get('implementation_support', '').strip()
+            
+            # Get support offered
+            support_offered = request.POST.getlist('support_offered')
+            
+            # Validation
+            if not title:
+                messages.error(request, 'Problem title is required.')
+                return render(request, 'resources/create_problem.html')
+            
+            if not description:
+                messages.error(request, 'Problem description is required.')
+                return render(request, 'resources/create_problem.html')
+            
+            if not current_challenges:
+                messages.error(request, 'Current challenges description is required.')
+                return render(request, 'resources/create_problem.html')
+            
+            if not contact_email:
+                messages.error(request, 'Contact email is required.')
+                return render(request, 'resources/create_problem.html')
+            
+            if not solution_requirements:
+                messages.error(request, 'Solution requirements are required.')
+                return render(request, 'resources/create_problem.html')
+            
+            if not impact_categories:
+                messages.error(request, 'Please select at least one impact category.')
+                return render(request, 'resources/create_problem.html')
+            
+            # Create problem statement
+            problem = ProblemStatement.objects.create(
+                title=title,
+                subtitle=subtitle,
+                description=description,
+                current_challenges=current_challenges,
+                contact_email=contact_email,
+                region=region,
+                impact_categories=impact_categories,
+                solution_requirements=solution_requirements,
+                technical_requirements=technical_requirements,
+                collaboration_type=collaboration_type,
+                budget_range=budget_range,
+                timeline=timeline,
+                implementation_support=implementation_support,
+                support_offered=support_offered,
+                created_by=member,
+                company=member.companies.filter(company_type='corporate').first(),
+                status='pending'
+            )
+            
+            # Handle file uploads
+            if 'technical_specifications' in request.FILES:
+                problem.technical_specifications = request.FILES['technical_specifications']
+            
+            if 'featured_image' in request.FILES:
+                problem.featured_image = request.FILES['featured_image']
+            
             problem.save()
-            
-            # Handle document uploads
-            documents_to_upload = [
-                ('technical_specifications', 'specifications'),
-                ('requirements_document', 'requirements'),
-                ('additional_documents', 'additional')
-            ]
-            
-            for field_name, doc_type in documents_to_upload:
-                files = request.FILES.getlist(field_name)
-                for file in files:
-                    if file:
-                        ProblemDocument.objects.create(
-                            problem=problem,
-                            name=file.name,
-                            file=file,
-                            document_type=doc_type
-                        )
             
             messages.success(request, 'Problem statement submitted successfully! It will be reviewed before publication.')
             return redirect('problem')
-    else:
-        from .forms import ProblemStatementForm
-        form = ProblemStatementForm()
+            
+        except Exception as e:
+            messages.error(request, f'Error creating problem statement: {str(e)}')
+            return render(request, 'resources/create_problem.html')
     
-    return render(request, 'resources/create_problem.html', {'form': form})
+    return render(request, 'resources/create_problem.html')
 
 
 def accelerator_landing(request):

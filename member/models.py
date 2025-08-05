@@ -544,7 +544,6 @@ class ProblemStatement(models.Model):
     
     # Company Information
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='problem_statements')
-    contact_person = models.CharField(max_length=255)
     contact_email = models.EmailField()
     
     # Problem Details
@@ -553,22 +552,24 @@ class ProblemStatement(models.Model):
     
     # Solution Requirements
     solution_requirements = models.TextField(help_text="Rich text content for what they're looking for")
-    technical_requirements = models.TextField(help_text="Rich text content for technical specifications")
+    technical_requirements = models.TextField(blank=True, help_text="Rich text content for technical specifications")
     
     # Collaboration Details
     collaboration_type = models.CharField(max_length=100, blank=True)
     budget_range = models.CharField(max_length=100, blank=True)
     timeline = models.CharField(max_length=100, blank=True)
     implementation_support = models.TextField(blank=True)
+    support_offered = models.JSONField(default=list, blank=True, help_text="Types of support offered to solution providers")
     
-    # Location & Industry
+    # Location
     region = models.CharField(max_length=100, blank=True)
-    industry_focus = models.JSONField(default=list, blank=True)
+    
+    # Additional Resources
+    technical_specifications = models.FileField(upload_to='problem_specifications/', blank=True, null=True, help_text="Technical specifications document")
+    featured_image = models.ImageField(upload_to='problems/', blank=True, null=True)
     
     # Meta Information
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
-    priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='medium')
-    featured_image = models.ImageField(upload_to='problems/', blank=True, null=True)
     
     # Statistics
     solution_count = models.PositiveIntegerField(default=0)

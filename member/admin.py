@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Member, Company, MemberDocument, CompanyDocument, Challenge, ChallengeDocument
+from .models import Member, Company, MemberDocument, CompanyDocument, Challenge, ChallengeDocument, ProblemStatement, ProblemDocument
 
 @admin.register(Member)
 class MemberAdmin(admin.ModelAdmin):
@@ -241,3 +241,99 @@ class ChallengeDocumentAdmin(admin.ModelAdmin):
     def get_challenge_title(self, obj):
         return obj.challenge.title
     get_challenge_title.short_description = 'Challenge'
+
+
+class ProblemDocumentInline(admin.TabularInline):
+    model = ProblemDocument
+    extra = 0
+    fields = ('name', 'document_type', 'file', 'uploaded_at')
+    readonly_fields = ('uploaded_at',)
+
+
+@admin.register(ProblemStatement)
+class ProblemStatementAdmin(admin.ModelAdmin):
+    list_display = ('title', 'get_company_name', 'get_status_display', 'region', 'get_impact_categories', 'timeline', 'budget_range', 'created_at')
+    list_filter = ('status', 'region', 'timeline', 'budget_range', 'collaboration_type', 'created_at')
+    search_fields = ('title', 'subtitle', 'description', 'company__company_name', 'created_by__user__username', 'contact_email', 'current_challenges')
+    readonly_fields = ('created_at', 'updated_at')
+    inlines = [ProblemDocumentInline]
+    date_hierarchy = 'created_at'
+    
+    def get_company_name(self, obj):
+        return obj.company.company_name if obj.company else '-'
+    get_company_name.short_description = 'Company'
+    
+    def get_status_display(self, obj):
+        return obj.get_status_display()
+    get_status_display.short_description = 'Status'
+    
+    def get_impact_categories(self, obj):
+        if obj.impact_categories:
+            return ', '.join(obj.impact_categories)
+        return '-'
+    get_impact_categories.short_description = 'Impact Categories'
+    
+    def get_support_offered(self, obj):
+        if obj.support_offered:
+            return ', '.join(obj.support_offered)
+        return '-'
+    get_support_offered.short_description = 'Support Offered'
+    
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('title', 'subtitle', 'description', 'company', 'contact_email', 'created_by')
+        }),
+        ('Problem Details', {
+            'fields': ('current_challenges', 'impact_categories', 'region', 'status')
+        }),
+        ('Solution Requirements', {
+            'fields': ('solution_requirements', 'technical_requirements'),
+            'classes': ('collapse',)
+        }),
+        ('Collaboration Details', {
+            'fields': ('collaboration_type', 'budget_range', 'timeline', 'implementation_support'),
+            'classes': ('collapse',)
+        }),
+        ('Support & Resources', {
+            'fields': ('support_offered',),
+            'classes': ('collapse',)
+        }),
+        ('Media & Documents', {
+            'fields': ('featured_image', 'technical_specifications'),
+            'classes': ('collapse',)
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    actions = ['approve_problems', 'reject_problems', 'publish_problems']
+    
+    def approve_problems(self, request, queryset):
+        updated = queryset.update(status='approved')
+        self.message_user(request, f'{updated} problem statements were approved.')
+    approve_problems.short_description = "Approve selected problem statements"
+    
+    def reject_problems(self, request, queryset):
+        updated = queryset.update(status='rejected')
+        self.message_user(request, f'{updated} problem statements were rejected.')
+    reject_problems.short_description = "Reject selected problem statements"
+    
+    def publish_problems(self, request, queryset):
+        from django.utils import timezone
+        updated = queryset.filter(status='approved').update(status='published')
+        self.message_user(request, f'{updated} approved problem statements were published.')
+    publish_problems.short_description = "Publish approved problem statements"
+
+
+@admin.register(ProblemDocument)
+class ProblemDocumentAdmin(admin.ModelAdmin):
+    list_display = ('name', 'get_problem_title', 'document_type', 'uploaded_at')
+    list_filter = ('document_type', 'uploaded_at')
+    search_fields = ('name', 'problem__title', 'problem__company__company_name')
+    readonly_fields = ('uploaded_at',)
+    
+    def get_problem_title(self, obj):
+        return obj.problem.title
+    get_problem_title.short_description = 'Problem Statement'

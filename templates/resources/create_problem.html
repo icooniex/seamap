@@ -1,285 +1,53 @@
 {% extends "template_parts/dashboard_base.html" %}
-{% load static %}
 
 {% block content %}
-<div class="container-fluid p-0">
-    <!-- Header Section -->
-    <div class="create-header mb-4">
-        <div class="d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center">
-                <div class="create-icon-container me-3">
-                    <div class="create-icon">
-                        <i class="bi bi-lightbulb"></i>
-                    </div>
-                </div>
-                <div>
-                    <h1 class="h3 mb-1">
-                        <span class="text-primary-light">Submit</span> 
-                        <strong class="text-white">Problem Statement</strong>
-                    </h1>
-                    <p class="header-subtitle mb-0">Share your challenge to find innovative solutions</p>
-                </div>
-            </div>
-            <a href="{% url 'problem' %}" class="btn btn-outline-light">
-                <i class="bi bi-arrow-left me-2"></i>Back to Problems
-            </a>
-        </div>
-    </div>
-
-    <!-- Form Section -->
-    <div class="row">
-        <div class="col-lg-8 mx-auto">
-            <div class="create-form-card">
-                <form method="post" enctype="multipart/form-data" class="problem-form">
-                    {% csrf_token %}
-                    
-                    <!-- Basic Information -->
-                    <div class="form-section">
-                        <h4><i class="bi bi-info-circle me-2"></i>Problem Overview</h4>
-                        <div class="row">
-                            <div class="col-12 mb-3">
-                                <label for="{{ form.title.id_for_label }}" class="form-label">Problem Title *</label>
-                                {{ form.title }}
-                                {% if form.title.errors %}
-                                    <div class="text-danger">{{ form.title.errors }}</div>
-                                {% endif %}
-                            </div>
-                            <div class="col-12 mb-3">
-                                <label for="{{ form.subtitle.id_for_label }}" class="form-label">Subtitle</label>
-                                {{ form.subtitle }}
-                                {% if form.subtitle.errors %}
-                                    <div class="text-danger">{{ form.subtitle.errors }}</div>
-                                {% endif %}
-                            </div>
-                            <div class="col-12 mb-3">
-                                <label for="{{ form.description.id_for_label }}" class="form-label">Problem Description *</label>
-                                {{ form.description }}
-                                <small class="form-text text-muted">Describe the problem you're facing and why it needs to be solved.</small>
-                                {% if form.description.errors %}
-                                    <div class="text-danger">{{ form.description.errors }}</div>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.contact_email.id_for_label }}" class="form-label">Contact Email *</label>
-                                {{ form.contact_email }}
-                                {% if form.contact_email.errors %}
-                                    <div class="text-danger">{{ form.contact_email.errors }}</div>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.urgency_level.id_for_label }}" class="form-label">Urgency Level</label>
-                                {{ form.urgency_level }}
-                                {% if form.urgency_level.errors %}
-                                    <div class="text-danger">{{ form.urgency_level.errors }}</div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Problem Details -->
-                    <div class="form-section">
-                        <h4><i class="bi bi-exclamation-triangle me-2"></i>Problem Analysis</h4>
-                        <div class="row">
-                            <div class="col-12 mb-3">
-                                <label for="{{ form.context_content.id_for_label }}" class="form-label">Context & Background *</label>
-                                {{ form.context_content }}
-                                <small class="form-text text-muted">Provide background information and context about the problem. You can use rich text formatting.</small>
-                                {% if form.context_content.errors %}
-                                    <div class="text-danger">{{ form.context_content.errors }}</div>
-                                {% endif %}
-                            </div>
-                            <div class="col-12 mb-3">
-                                <label for="{{ form.impact_content.id_for_label }}" class="form-label">Impact & Consequences</label>
-                                {{ form.impact_content }}
-                                <small class="form-text text-muted">Describe the impact this problem has and what happens if it's not solved.</small>
-                                {% if form.impact_content.errors %}
-                                    <div class="text-danger">{{ form.impact_content.errors }}</div>
-                                {% endif %}
-                            </div>
-                            <div class="col-12 mb-3">
-                                <label class="form-label">Problem Categories</label>
-                                <div class="category-input-group">
-                                    <input type="text" class="form-control" id="category-input" placeholder="Add category tags (e.g., Marine Pollution, Climate Change)">
-                                    <button type="button" class="btn btn-outline-primary" id="add-category">Add</button>
-                                </div>
-                                <div id="category-display" class="mt-2"></div>
-                                <input type="hidden" id="categories-hidden" name="categories" value="[]">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Timeline & Constraints -->
-                    <div class="form-section">
-                        <h4><i class="bi bi-calendar-check me-2"></i>Timeline & Constraints</h4>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.deadline.id_for_label }}" class="form-label">Solution Deadline</label>
-                                {{ form.deadline }}
-                                <small class="form-text text-muted">When do you need a solution by?</small>
-                                {% if form.deadline.errors %}
-                                    <div class="text-danger">{{ form.deadline.errors }}</div>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.location.id_for_label }}" class="form-label">Location/Region</label>
-                                {{ form.location }}
-                                <small class="form-text text-muted">Where is this problem occurring?</small>
-                                {% if form.location.errors %}
-                                    <div class="text-danger">{{ form.location.errors }}</div>
-                                {% endif %}
-                            </div>
-                            <div class="col-12 mb-3">
-                                <label for="{{ form.constraints_content.id_for_label }}" class="form-label">Constraints & Limitations</label>
-                                {{ form.constraints_content }}
-                                <small class="form-text text-muted">What constraints or limitations should solution providers be aware of?</small>
-                                {% if form.constraints_content.errors %}
-                                    <div class="text-danger">{{ form.constraints_content.errors }}</div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Resources & Budget -->
-                    <div class="form-section">
-                        <h4><i class="bi bi-cash-coin me-2"></i>Resources & Budget</h4>
-                        <div class="row">
-                            <div class="col-12 mb-3">
-                                <div class="form-check">
-                                    {{ form.has_budget }}
-                                    <label class="form-check-label" for="{{ form.has_budget.id_for_label }}">
-                                        Budget is available for solutions
-                                    </label>
-                                </div>
-                            </div>
-                            <div id="budget-details" style="display: none;">
-                                <div class="col-md-6 mb-3">
-                                    <label for="{{ form.budget_range.id_for_label }}" class="form-label">Budget Range</label>
-                                    {{ form.budget_range }}
-                                    {% if form.budget_range.errors %}
-                                        <div class="text-danger">{{ form.budget_range.errors }}</div>
-                                    {% endif %}
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="{{ form.budget_currency.id_for_label }}" class="form-label">Currency</label>
-                                    {{ form.budget_currency }}
-                                    {% if form.budget_currency.errors %}
-                                        <div class="text-danger">{{ form.budget_currency.errors }}</div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-12 mb-3">
-                                <label for="{{ form.resources_content.id_for_label }}" class="form-label">Available Resources</label>
-                                {{ form.resources_content }}
-                                <small class="form-text text-muted">What resources, data, or support can you provide to solution providers?</small>
-                                {% if form.resources_content.errors %}
-                                    <div class="text-danger">{{ form.resources_content.errors }}</div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Solution Requirements -->
-                    <div class="form-section">
-                        <h4><i class="bi bi-gear me-2"></i>Solution Requirements</h4>
-                        <div class="col-12 mb-3">
-                            <label for="{{ form.solution_requirements_content.id_for_label }}" class="form-label">Solution Requirements</label>
-                            {{ form.solution_requirements_content }}
-                            <small class="form-text text-muted">What requirements or specifications should solutions meet?</small>
-                            {% if form.solution_requirements_content.errors %}
-                                <div class="text-danger">{{ form.solution_requirements_content.errors }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="col-12 mb-3">
-                            <label for="{{ form.success_criteria_content.id_for_label }}" class="form-label">Success Criteria</label>
-                            {{ form.success_criteria_content }}
-                            <small class="form-text text-muted">How will you measure if a solution is successful?</small>
-                            {% if form.success_criteria_content.errors %}
-                                <div class="text-danger">{{ form.success_criteria_content.errors }}</div>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <!-- Supporting Documents -->
-                    <div class="form-section">
-                        <h4><i class="bi bi-file-earmark-text me-2"></i>Supporting Documents</h4>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.problem_statement_document.id_for_label }}" class="form-label">Problem Statement Document</label>
-                                {{ form.problem_statement_document }}
-                                <small class="form-text text-muted">{{ form.problem_statement_document.help_text }}</small>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.background_research.id_for_label }}" class="form-label">Background Research</label>
-                                {{ form.background_research }}
-                                <small class="form-text text-muted">{{ form.background_research.help_text }}</small>
-                            </div>
-                            <div class="col-12 mb-3">
-                                <label for="{{ form.supporting_materials.id_for_label }}" class="form-label">Supporting Materials</label>
-                                {{ form.supporting_materials }}
-                                <small class="form-text text-muted">{{ form.supporting_materials.help_text }}</small>
-                            </div>
-                            <div class="col-12 mb-3">
-                                <label for="{{ form.featured_image.id_for_label }}" class="form-label">Featured Image</label>
-                                {{ form.featured_image }}
-                                <small class="form-text text-muted">Upload a featured image that represents your problem</small>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Submit Buttons -->
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary btn-lg">
-                            <i class="bi bi-check-circle me-2"></i>Submit Problem Statement
-                        </button>
-                        <a href="{% url 'problem' %}" class="btn btn-outline-secondary btn-lg ms-3">Cancel</a>
-                        <div class="form-note mt-3">
-                            <small class="text-muted">
-                                <i class="bi bi-info-circle me-1"></i>
-                                Your problem statement will be reviewed before being published on the platform.
-                            </small>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
 <style>
-/* Create Problem Statement Form Styling */
-.create-header {
-    background: linear-gradient(135deg, #a7572c 0%, #a15d4a 100%);
-    color: white;
-    padding: 2.5rem;
+/* Company Profile Edit Form Styles - Copied from challenge form */
+:root {
+    --primary-dark: #3a4553;
+    --primary-darker: #2c59a7;
+    --text-light: #9ca3af;
+    --text-white: #ffffff;
+    --border-color: #e5e7eb;
+    --bs-primary: #2c59a7;
+    --bs-primary-rgb: 44, 89, 167;
+    --bs-success: #58946e;
+    --bs-info: #639ac0;
+    --bs-warning: #EBCA38;
+    --bs-danger: #C73834;
+}
+
+/* Header Styling */
+.company-edit-header {
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    padding: 2rem;
     border-radius: 20px;
     margin-bottom: 2rem;
-    box-shadow: 0 8px 32px rgba(167, 87, 44, 0.15);
     position: relative;
     overflow: hidden;
 }
 
-.create-header::before {
+.company-edit-header::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="1" fill="white" opacity="0.1"/><circle cx="10" cy="50" r="1" fill="white" opacity="0.1"/><circle cx="90" cy="30" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
     opacity: 0.3;
 }
 
-.create-icon-container {
+.company-icon-container {
     position: relative;
     z-index: 2;
 }
 
-.create-icon {
-    width: 80px;
-    height: 80px;
-    background: linear-gradient(135deg, #ffffff15 0%, #ffffff25 100%);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    border-radius: 20px;
+.company-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -287,14 +55,17 @@
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
-.create-icon i {
+.company-icon i {
     font-size: 2.5rem;
     color: white;
 }
 
-.text-primary-light {
-    color: rgba(255, 255, 255, 0.8) !important;
-    font-weight: 500;
+.company-edit-header h1 {
+    color: white;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 2;
 }
 
 .header-subtitle {
@@ -302,184 +73,834 @@
     font-size: 1.1rem;
     font-weight: 400;
     line-height: 1.4;
+    position: relative;
+    z-index: 2;
 }
 
-.create-form-card {
+/* Form Container */
+.company-form-container {
     background: white;
     border-radius: 20px;
-    padding: 3rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(167, 87, 44, 0.1);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 }
 
+.company-form {
+    padding: 0;
+}
+
+/* Form Sections */
 .form-section {
-    margin-bottom: 3rem;
-    padding-bottom: 2rem;
-    border-bottom: 1px solid #eee;
+    padding: 2rem;
+    border-bottom: 1px solid #f1f3f4;
 }
 
-.form-section:last-of-type {
+.form-section:last-child {
     border-bottom: none;
+}
+
+.section-header {
     margin-bottom: 2rem;
 }
 
-.form-section h4 {
-    color: #a7572c;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid #a7572c;
-}
-
-.category-input-group {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-}
-
-.category-input-group input {
-    flex: 1;
-}
-
-#category-display {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.category-tag {
-    background: rgba(167, 87, 44, 0.1);
-    color: #a7572c;
-    padding: 0.25rem 0.75rem;
-    border-radius: 15px;
-    font-size: 0.85rem;
+.section-title {
+    color: #2c3e50;
     font-weight: 600;
+    margin-bottom: 0.5rem;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
 }
 
-.category-tag .remove-category {
-    background: none;
-    border: none;
-    color: #a7572c;
-    padding: 0;
+.section-title i {
+    margin-right: 0.5rem;
+    color: #2c59a7;
+}
+
+.section-subtitle {
+    color: #6c757d;
+    font-size: 0.95rem;
+    margin-bottom: 0;
+}
+
+/* Form Elements */
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.form-control, .form-select {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px 16px;
     font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.2rem rgba(44, 89, 167, 0.15);
+    outline: none;
+}
+
+.form-control.is-invalid {
+    border-color: var(--bs-danger);
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+/* Checkbox Components */
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.checkbox-card {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
     cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
 }
 
-.form-actions {
-    text-align: center;
-    padding-top: 2rem;
-    border-top: 2px solid #eee;
+.checkbox-card:hover {
+    border-color: var(--bs-primary);
+    background: rgba(44, 89, 167, 0.05);
+    transform: translateY(-2px);
 }
 
-.form-note {
-    text-align: center;
+.checkbox-card.selected {
+    border-color: var(--bs-primary);
+    background: rgba(44, 89, 167, 0.1);
 }
 
-/* Budget details toggle */
-#budget-details {
+.checkbox-card input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+}
+
+.checkbox-card-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
     width: 100%;
 }
 
-/* Responsive Design */
+.checkbox-card-content .checkbox-visual {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #cbd5e0;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    background: white;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.checkbox-card.selected .checkbox-visual {
+    background: var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+
+.checkbox-card.selected .checkbox-visual::after {
+    content: '✓';
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.checkbox-card-content .icon {
+    font-size: 1.5rem;
+}
+
+.checkbox-card-content .text {
+    flex: 1;
+}
+
+.checkbox-card-content .label {
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 2px;
+}
+
+.checkbox-card-content .description {
+    font-size: 0.85rem;
+    color: #718096;
+    line-height: 1.3;
+}
+
+/* File Upload Styling */
+.file-upload {
+    border: 2px dashed #e2e8f0;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    background: #f7fafc;
+}
+
+.file-upload:hover {
+    border-color: var(--bs-primary);
+    background: rgba(44, 89, 167, 0.05);
+}
+
+/* Image Preview Styling */
+.image-preview-container {
+    position: relative;
+    margin-top: 1rem;
+    display: none;
+}
+
+.image-preview {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    object-fit: cover;
+}
+
+.image-preview-overlay {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.image-preview-overlay:hover {
+    background: rgba(220, 53, 69, 0.8);
+}
+
+.file-upload.has-image {
+    padding: 1rem;
+    border-style: solid;
+    border-color: var(--bs-success);
+    background: #f0fdf4;
+}
+
+.file-upload.has-image .upload-content {
+    display: none;
+}
+
+.file-upload.has-image .image-preview-container {
+    display: block !important;
+}
+
+.file-feedback {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    display: none;
+}
+
+.file-feedback.success {
+    background: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+    display: block;
+}
+
+/* Collaboration Section */
+.collaboration-section {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border: 2px solid #22c55e;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-top: 1rem;
+}
+
+/* Buttons */
+.btn-primary {
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(44, 89, 167, 0.3);
+}
+
+.btn-outline-secondary {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-weight: 600;
+    color: #4a5568;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-secondary:hover {
+    border-color: #a0aec0;
+    background: #f7fafc;
+    color: #2d3748;
+}
+
+.btn-outline-light {
+    border: 2px solid rgba(255,255,255,0.3);
+    color: white;
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-light:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.5);
+    color: white;
+}
+
+/* Required field styling */
+.required {
+    color: var(--bs-danger);
+}
+
+/* Mobile responsive */
 @media (max-width: 768px) {
-    .create-header {
-        padding: 2rem 1.5rem;
+    .checkbox-grid {
+        grid-template-columns: 1fr;
     }
     
-    .create-icon {
-        width: 60px;
-        height: 60px;
-        border-radius: 15px;
+    .form-section {
+        padding: 1.5rem;
     }
     
-    .create-icon i {
-        font-size: 2rem;
-    }
-    
-    .create-form-card {
-        padding: 2rem 1.5rem;
-    }
-    
-    .category-input-group {
-        flex-direction: column;
-    }
-    
-    .form-actions .btn {
-        width: 100%;
-        margin-bottom: 1rem;
-    }
-    
-    .form-actions .btn:last-child {
-        margin-bottom: 0;
+    .company-edit-header {
+        padding: 1.5rem;
     }
 }
 </style>
 
+<div class="container-fluid p-0">
+    <!-- Header Section -->
+    <div class="company-edit-header mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <div class="company-icon-container me-3">
+                    <div class="company-icon">
+                        <i class="bi bi-exclamation-triangle"></i>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="h3 mb-1">Create Problem Statement</h1>
+                    <p class="header-subtitle mb-0">Share your challenge to find innovative solutions from our community</p>
+                </div>
+            </div>
+            <div>
+                <a href="{% url 'problem' %}" class="btn btn-outline-light">
+                    <i class="bi bi-arrow-left me-2"></i>Back to Problems
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Problem Form -->
+    <div class="company-form-container">
+        <form method="post" enctype="multipart/form-data" class="company-form" id="problemForm">
+            {% csrf_token %}
+            
+            <!-- Basic Information Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <h4 class="section-title">
+                        <i class="bi bi-info-circle"></i>
+                        Basic Information
+                    </h4>
+                    <p class="section-subtitle">Core details about your problem statement</p>
+                </div>
+                
+                <div class="row g-4">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="title" class="form-label">Problem Title <span class="required">*</span></label>
+                            <input type="text" class="form-control" id="title" name="title" required
+                                   placeholder="e.g. Sustainable Packaging Solutions for E-commerce">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="subtitle" class="form-label">Problem Subtitle</label>
+                            <input type="text" class="form-control" id="subtitle" name="subtitle"
+                                   placeholder="Brief description that appears below the title">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="description" class="form-label">Problem Description <span class="required">*</span></label>
+                            <textarea class="form-control" id="description" name="description" rows="6" required
+                                      placeholder="Describe the problem you're facing, its context, and why it needs to be solved. This will appear in the 'Problem Statement' section."></textarea>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="current_challenges" class="form-label">Current Challenges & Pain Points <span class="required">*</span></label>
+                            <textarea class="form-control" id="current_challenges" name="current_challenges" rows="6" required
+                                      placeholder="Describe the specific challenges and pain points you're experiencing. What have you tried? What barriers exist?"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="contact_email" class="form-label">Contact Email <span class="required">*</span></label>
+                            <input type="email" class="form-control" id="contact_email" name="contact_email" required
+                                   placeholder="contact@organization.com">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="region" class="form-label">Region/Location</label>
+                            <input type="text" class="form-control" id="region" name="region"
+                                   placeholder="e.g. Southeast Asia, Global, Thailand">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Problem Categories Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <h4 class="section-title">
+                        <i class="bi bi-tags"></i>
+                        Impact Categories
+                    </h4>
+                    <p class="section-subtitle">Select categories that best describe the impact areas of your problem</p>
+                </div>
+                
+                <div class="checkbox-grid">
+                    <div class="checkbox-card">
+                        <input type="checkbox" id="environmental" name="impact_categories" value="environmental">
+                        <label for="environmental" class="checkbox-card-content">
+                            <div class="checkbox-visual"></div>
+                            <div class="icon">🌱</div>
+                            <div class="text">
+                                <div class="label">Environmental</div>
+                                <div class="description">Environmental impact and sustainability challenges</div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" id="sustainability" name="impact_categories" value="sustainability">
+                        <label for="sustainability" class="checkbox-card-content">
+                            <div class="checkbox-visual"></div>
+                            <div class="icon">♻️</div>
+                            <div class="text">
+                                <div class="label">Sustainability</div>
+                                <div class="description">Sustainable development and eco-friendly solutions</div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" id="waste_management" name="impact_categories" value="waste-management">
+                        <label for="waste_management" class="checkbox-card-content">
+                            <div class="checkbox-visual"></div>
+                            <div class="icon">🗑️</div>
+                            <div class="text">
+                                <div class="label">Waste Management</div>
+                                <div class="description">Waste reduction and management solutions</div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" id="cost_reduction" name="impact_categories" value="cost-reduction">
+                        <label for="cost_reduction" class="checkbox-card-content">
+                            <div class="checkbox-visual"></div>
+                            <div class="icon">💰</div>
+                            <div class="text">
+                                <div class="label">Cost Reduction</div>
+                                <div class="description">Cost optimization and efficiency improvements</div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" id="supply_chain" name="impact_categories" value="supply-chain">
+                        <label for="supply_chain" class="checkbox-card-content">
+                            <div class="checkbox-visual"></div>
+                            <div class="icon">🚚</div>
+                            <div class="text">
+                                <div class="label">Supply Chain</div>
+                                <div class="description">Supply chain optimization and logistics</div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" id="customer_experience" name="impact_categories" value="customer-experience">
+                        <label for="customer_experience" class="checkbox-card-content">
+                            <div class="checkbox-visual"></div>
+                            <div class="icon">👥</div>
+                            <div class="text">
+                                <div class="label">Customer Experience</div>
+                                <div class="description">Customer satisfaction and experience improvements</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Solution Requirements Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <h4 class="section-title">
+                        <i class="bi bi-gear"></i>
+                        Solution Requirements
+                    </h4>
+                    <p class="section-subtitle">Specify what you're looking for in a solution</p>
+                </div>
+                
+                <div class="row g-4">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="solution_requirements" class="form-label">Solution Requirements <span class="required">*</span></label>
+                            <textarea class="form-control" id="solution_requirements" name="solution_requirements" rows="6" required
+                                      placeholder="Describe what you're looking for in a solution. Include functional requirements, constraints, and success criteria."></textarea>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="technical_requirements" class="form-label">Technical Requirements</label>
+                            <textarea class="form-control" id="technical_requirements" name="technical_requirements" rows="6"
+                                      placeholder="Specify technical specifications, standards, compatibility requirements, and any technical constraints."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Collaboration & Support Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <h4 class="section-title">
+                        <i class="bi bi-people"></i>
+                        Collaboration Details
+                    </h4>
+                    <p class="section-subtitle">How you plan to work with solution providers</p>
+                </div>
+                
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="collaboration_type" class="form-label">Collaboration Type</label>
+                            <select class="form-select" id="collaboration_type" name="collaboration_type">
+                                <option value="">Select collaboration type</option>
+                                <option value="Partnership">Partnership</option>
+                                <option value="Licensing">Licensing</option>
+                                <option value="Joint Development">Joint Development</option>
+                                <option value="Procurement">Procurement</option>
+                                <option value="Investment">Investment</option>
+                                <option value="Pilot Program">Pilot Program</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="budget_range" class="form-label">Budget Range</label>
+                            <input type="text" class="form-control" id="budget_range" name="budget_range" 
+                                   placeholder="e.g., $10,000 - $100,000">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="timeline" class="form-label">Implementation Timeline</label>
+                            <input type="text" class="form-control" id="timeline" name="timeline" 
+                                   placeholder="e.g., 6-12 months">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="implementation_support" class="form-label">Implementation Support</label>
+                            <textarea class="form-control" id="implementation_support" name="implementation_support" rows="4"
+                                      placeholder="Describe the support you can provide for solution implementation (resources, expertise, facilities, etc.)"></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="collaboration-section">
+                    <h5><i class="bi bi-gift me-2"></i>What We Offer</h5>
+                    <p>Check all support types you can provide to solution providers:</p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="funding_support" name="support_offered" value="funding">
+                                <label class="form-check-label" for="funding_support">
+                                    💰 Funding Support
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="technical_expertise" name="support_offered" value="technical">
+                                <label class="form-check-label" for="technical_expertise">
+                                    🔧 Technical Expertise
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="market_access" name="support_offered" value="market">
+                                <label class="form-check-label" for="market_access">
+                                    📈 Market Access
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="testing_facilities" name="support_offered" value="testing">
+                                <label class="form-check-label" for="testing_facilities">
+                                    🧪 Testing Facilities
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="pilot_programs" name="support_offered" value="pilot">
+                                <label class="form-check-label" for="pilot_programs">
+                                    🚀 Pilot Programs
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="ip_protection" name="support_offered" value="ip">
+                                <label class="form-check-label" for="ip_protection">
+                                    🛡️ IP Protection Support
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Resources & Documents Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <h4 class="section-title">
+                        <i class="bi bi-paperclip"></i>
+                        Resources & Documents
+                    </h4>
+                    <p class="section-subtitle">Upload supporting documents and images for your problem statement</p>
+                </div>
+                
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="technical_specifications" class="form-label">Technical Specifications</label>
+                            <div class="file-upload">
+                                <input type="file" class="form-control" id="technical_specifications" name="technical_specifications" 
+                                       accept=".pdf,.doc,.docx">
+                                <div class="mt-2">
+                                    <i class="bi bi-file-earmark-pdf display-4 text-muted"></i>
+                                    <p class="mb-1">Upload technical specifications</p>
+                                    <small class="text-muted">PDF, DOC, DOCX • Max 10MB</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="featured_image" class="form-label">Featured Image</label>
+                            <div class="file-upload" id="featured_image_upload">
+                                <input type="file" class="form-control" id="featured_image" name="featured_image" 
+                                       accept="image/*" style="display: none;">
+                                <div class="upload-content">
+                                    <i class="bi bi-image display-4 text-muted"></i>
+                                    <p class="mb-1">Click to upload problem header image</p>
+                                    <small class="text-muted">JPG, PNG • Max 5MB</small>
+                                    <button type="button" class="btn btn-outline-primary mt-2" onclick="document.getElementById('featured_image').click()">
+                                        Choose Image
+                                    </button>
+                                </div>
+                                <div class="image-preview-container" id="image_preview_container">
+                                    <img class="image-preview" id="image_preview" alt="Image preview">
+                                    <button type="button" class="image-preview-overlay" onclick="removeImagePreview()">
+                                        <i class="bi bi-x"></i>
+                                    </button>
+                                </div>
+                                <div class="file-feedback" id="file_feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Submit Section -->
+            <div class="form-section">
+                <div class="d-flex justify-content-end gap-3">
+                    <a href="{% url 'problem' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle me-2"></i>Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-2"></i>Submit Problem Statement
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Category management
-    const categoryInput = document.getElementById('category-input');
-    const addCategoryBtn = document.getElementById('add-category');
-    const categoryDisplay = document.getElementById('category-display');
-    const categoriesHidden = document.getElementById('categories-hidden');
-    let categories = [];
-
-    function updateCategoriesDisplay() {
-        categoryDisplay.innerHTML = '';
-        categories.forEach((category, index) => {
-            const tag = document.createElement('div');
-            tag.className = 'category-tag';
-            tag.innerHTML = `
-                ${category}
-                <button type="button" class="remove-category" data-index="${index}">×</button>
-            `;
-            categoryDisplay.appendChild(tag);
+    // Checkbox card functionality
+    const checkboxCards = document.querySelectorAll('.checkbox-card');
+    checkboxCards.forEach(card => {
+        const checkbox = card.querySelector('input[type="checkbox"]');
+        
+        // Handle checkbox change
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                card.classList.add('selected');
+            } else {
+                card.classList.remove('selected');
+            }
         });
-        categoriesHidden.value = JSON.stringify(categories);
-    }
-
-    addCategoryBtn.addEventListener('click', function() {
-        const value = categoryInput.value.trim();
-        if (value && !categories.includes(value)) {
-            categories.push(value);
-            categoryInput.value = '';
-            updateCategoriesDisplay();
-        }
+        
+        // Handle card click (anywhere on the card)
+        card.addEventListener('click', function(e) {
+            // Prevent double triggering and allow normal behavior for the actual checkbox
+            if (e.target !== checkbox) {
+                e.preventDefault();
+                checkbox.checked = !checkbox.checked;
+                // Trigger change event manually
+                const event = new Event('change', { bubbles: true });
+                checkbox.dispatchEvent(event);
+            }
+        });
     });
 
-    categoryInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
+    // Featured Image Preview
+    const featuredImageInput = document.getElementById('featured_image');
+    if (featuredImageInput) {
+        featuredImageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const uploadContainer = document.getElementById('featured_image_upload');
+            const imagePreview = document.getElementById('image_preview');
+            const fileFeedback = document.getElementById('file_feedback');
+            
+            if (file) {
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    uploadContainer.classList.add('has-image');
+                };
+                reader.readAsDataURL(file);
+                
+                // Show file feedback
+                fileFeedback.className = 'file-feedback success';
+                fileFeedback.innerHTML = `<i class="bi bi-check-circle me-1"></i>File: ${file.name}`;
+            }
+        });
+    }
+    
+    // Form validation
+    const form = document.querySelector('form');
+    const requiredFields = form.querySelectorAll('[required]');
+    
+    form.addEventListener('submit', function(e) {
+        let hasErrors = false;
+        
+        // Validate required text fields
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                hasErrors = true;
+                field.classList.add('is-invalid');
+                field.style.borderColor = 'var(--bs-danger)';
+            } else {
+                field.classList.remove('is-invalid');
+                field.style.borderColor = '#e2e8f0';
+            }
+        });
+        
+        // Check if at least one impact category is selected
+        const categoryCheckboxes = form.querySelectorAll('input[name="impact_categories"]:checked');
+        if (categoryCheckboxes.length === 0) {
+            hasErrors = true;
+            alert('Please select at least one impact category.');
+        }
+        
+        if (hasErrors) {
             e.preventDefault();
-            addCategoryBtn.click();
+            const firstError = form.querySelector('.is-invalid');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstError.focus();
+            }
         }
     });
-
-    categoryDisplay.addEventListener('click', function(e) {
-        if (e.target.classList.contains('remove-category')) {
-            const index = parseInt(e.target.dataset.index);
-            categories.splice(index, 1);
-            updateCategoriesDisplay();
-        }
+    
+    // File upload feedback
+    const fileInputs = document.querySelectorAll('input[type="file"]');
+    fileInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            const fileName = this.files[0]?.name;
+            const container = this.closest('.file-upload');
+            
+            if (fileName) {
+                container.style.borderColor = 'var(--bs-success)';
+                container.style.backgroundColor = '#f0fdf4';
+                
+                let feedback = container.querySelector('.file-feedback');
+                if (!feedback) {
+                    feedback = document.createElement('div');
+                    feedback.className = 'file-feedback mt-2 text-success small';
+                    container.appendChild(feedback);
+                }
+                feedback.innerHTML = `<i class="bi bi-check-circle me-1"></i>File: ${fileName}`;
+            }
+        });
     });
-
-    // Budget details toggle
-    const hasBudgetCheckbox = document.getElementById('{{ form.has_budget.id_for_label }}');
-    const budgetDetails = document.getElementById('budget-details');
-
-    function toggleBudgetDetails() {
-        if (hasBudgetCheckbox.checked) {
-            budgetDetails.style.display = 'block';
-        } else {
-            budgetDetails.style.display = 'none';
-        }
-    }
-
-    hasBudgetCheckbox.addEventListener('change', toggleBudgetDetails);
-    toggleBudgetDetails(); // Initial state
+    
+    // Real-time validation for required fields
+    requiredFields.forEach(field => {
+        field.addEventListener('input', function() {
+            if (this.value.trim()) {
+                this.classList.remove('is-invalid');
+                this.style.borderColor = 'var(--bs-success)';
+            } else {
+                this.style.borderColor = '#e2e8f0';
+            }
+        });
+    });
 });
+
+// Remove Image Preview Function (global function for onclick)
+function removeImagePreview() {
+    const fileInput = document.getElementById('featured_image');
+    const uploadContainer = document.getElementById('featured_image_upload');
+    const imagePreview = document.getElementById('image_preview');
+    const fileFeedback = document.getElementById('file_feedback');
+    
+    fileInput.value = '';
+    imagePreview.src = '';
+    uploadContainer.classList.remove('has-image');
+    fileFeedback.className = 'file-feedback';
+    fileFeedback.innerHTML = '';
+}
 </script>
 
 {% endblock %}
