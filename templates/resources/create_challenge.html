@@ -199,6 +199,31 @@
     gap: 12px;
 }
 
+.checkbox-card-content .checkbox-visual {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #cbd5e0;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    background: white;
+    flex-shrink: 0;
+}
+
+.checkbox-card.selected .checkbox-visual {
+    background: var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+
+.checkbox-card.selected .checkbox-visual::after {
+    content: '✓';
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
 .checkbox-card-content .icon {
     font-size: 1.5rem;
 }
@@ -349,128 +374,65 @@
                 </div>
                 
                 <div class="row g-4">
-                    <div class="col-md-8">
+                    <div class="col-12">
                         <div class="form-group">
                             <label for="title" class="form-label">Challenge Title <span class="required">*</span></label>
                             <input type="text" class="form-control" id="title" name="title" required
-                                   placeholder="Enter an engaging title for your challenge">
+                                   placeholder="e.g. Ocean Plastic Waste Reduction Innovation Challenge">
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="subtitle" class="form-label">Challenge Subtitle</label>
+                            <input type="text" class="form-control" id="subtitle" name="subtitle"
+                                   placeholder="Brief description that appears below the title">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="description" class="form-label">Challenge Overview <span class="required">*</span></label>
+                            <textarea class="form-control" id="description" name="description" rows="6" required
+                                      placeholder="Describe the challenge, its purpose, what you're looking for, and the expected impact. This will appear in the 'Challenge Overview' section."></textarea>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="requirements_content" class="form-label">Requirements & Evaluation Criteria <span class="required">*</span></label>
+                            <textarea class="form-control" id="requirements_content" name="requirements_content" rows="6" required
+                                      placeholder="Specify detailed requirements, submission guidelines, and evaluation criteria. This will appear in the 'Requirements & Criteria' section."></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label for="organizer_contact" class="form-label">Contact Email <span class="required">*</span></label>
                             <input type="email" class="form-control" id="organizer_contact" name="organizer_contact" required
                                    placeholder="contact@organization.com">
                         </div>
                     </div>
-                    <div class="col-12">
-                        <div class="form-group">
-                            <label for="description" class="form-label">Challenge Description <span class="required">*</span></label>
-                            <textarea class="form-control" id="description" name="description" rows="4" required
-                                      placeholder="Describe the purpose, objectives, and expectations for participants"></textarea>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="form-group">
-                            <label for="requirements_content" class="form-label">Requirements & Evaluation Criteria <span class="required">*</span></label>
-                            <textarea class="form-control" id="requirements_content" name="requirements_content" rows="4" required
-                                      placeholder="Specify requirements, evaluation criteria, and submission guidelines"></textarea>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Timeline Section -->
-            <div class="form-section">
-                <div class="section-header">
-                    <h4 class="section-title">
-                        <i class="bi bi-calendar-alt"></i>
-                        Timeline
-                    </h4>
-                    <p class="section-subtitle">Set important dates for your challenge</p>
-                </div>
-                
-                <div class="row g-4">
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label for="application_deadline" class="form-label">Application Deadline</label>
                             <input type="datetime-local" class="form-control" id="application_deadline" name="application_deadline">
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="start_date" class="form-label">Start Date</label>
-                            <input type="datetime-local" class="form-control" id="start_date" name="start_date">
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="end_date" class="form-label">End Date</label>
-                            <input type="datetime-local" class="form-control" id="end_date" name="end_date">
-                        </div>
-                    </div>
                 </div>
             </div>
             
-            <!-- Location & Organization Section -->
+            <!-- Challenge Categories Section -->
             <div class="form-section">
                 <div class="section-header">
                     <h4 class="section-title">
-                        <i class="bi bi-geo-alt"></i>
-                        Location & Organization
+                        <i class="bi bi-tags"></i>
+                        Challenge Categories
                     </h4>
-                    <p class="section-subtitle">Where your challenge operates and organizational details</p>
-                </div>
-                
-                <div class="row g-4">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="location" class="form-label">Primary Location</label>
-                            <input type="text" class="form-control" id="location" name="location" 
-                                   placeholder="e.g. Thailand, Southeast Asia">
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="scope" class="form-label">Scope</label>
-                            <select class="form-select" id="scope" name="scope">
-                                <option value="">Select scope</option>
-                                <option value="local">Local</option>
-                                <option value="regional">Regional</option>
-                                <option value="national">National</option>
-                                <option value="global">Global</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="priority" class="form-label">Priority</label>
-                            <select class="form-select" id="priority" name="priority">
-                                <option value="">Select priority</option>
-                                <option value="low">Low</option>
-                                <option value="medium">Medium</option>
-                                <option value="high">High</option>
-                                <option value="urgent">Urgent</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Innovation Areas Section -->
-            <div class="form-section">
-                <div class="section-header">
-                    <h4 class="section-title">
-                        <i class="bi bi-lightbulb"></i>
-                        Innovation Areas
-                    </h4>
-                    <p class="section-subtitle">Select the innovation areas and technologies relevant to your challenge</p>
+                    <p class="section-subtitle">Select categories that best describe your challenge (these will appear as tags on the detail page)</p>
                 </div>
                 
                 <div class="checkbox-grid">
                     <div class="checkbox-card">
-                        <input type="checkbox" id="clean_tech" name="categories" value="clean_technology">
+                        <input type="checkbox" id="clean_tech" name="categories" value="clean-technology">
                         <label for="clean_tech" class="checkbox-card-content">
+                            <div class="checkbox-visual"></div>
                             <div class="icon">🌱</div>
                             <div class="text">
                                 <div class="label">Clean Technology</div>
@@ -479,8 +441,9 @@
                         </label>
                     </div>
                     <div class="checkbox-card">
-                        <input type="checkbox" id="marine_conservation" name="categories" value="marine_conservation">
+                        <input type="checkbox" id="marine_conservation" name="categories" value="marine-conservation">
                         <label for="marine_conservation" class="checkbox-card-content">
+                            <div class="checkbox-visual"></div>
                             <div class="icon">🌊</div>
                             <div class="text">
                                 <div class="label">Marine Conservation</div>
@@ -489,8 +452,31 @@
                         </label>
                     </div>
                     <div class="checkbox-card">
-                        <input type="checkbox" id="ai_ml" name="categories" value="ai_machine_learning">
+                        <input type="checkbox" id="sustainability" name="categories" value="sustainability">
+                        <label for="sustainability" class="checkbox-card-content">
+                            <div class="checkbox-visual"></div>
+                            <div class="icon">♻️</div>
+                            <div class="text">
+                                <div class="label">Sustainability</div>
+                                <div class="description">Sustainable development and eco-friendly solutions</div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" id="innovation" name="categories" value="innovation">
+                        <label for="innovation" class="checkbox-card-content">
+                            <div class="checkbox-visual"></div>
+                            <div class="icon">💡</div>
+                            <div class="text">
+                                <div class="label">Innovation</div>
+                                <div class="description">Breakthrough technologies and novel approaches</div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" id="ai_ml" name="categories" value="ai-machine-learning">
                         <label for="ai_ml" class="checkbox-card-content">
+                            <div class="checkbox-visual"></div>
                             <div class="icon">🤖</div>
                             <div class="text">
                                 <div class="label">AI & Machine Learning</div>
@@ -499,158 +485,47 @@
                         </label>
                     </div>
                     <div class="checkbox-card">
-                        <input type="checkbox" id="fintech" name="categories" value="fintech">
-                        <label for="fintech" class="checkbox-card-content">
-                            <div class="icon">💳</div>
+                        <input type="checkbox" id="circular_economy" name="categories" value="circular-economy">
+                        <label for="circular_economy" class="checkbox-card-content">
+                            <div class="checkbox-visual"></div>
+                            <div class="icon">�</div>
                             <div class="text">
-                                <div class="label">FinTech</div>
-                                <div class="description">Financial technology and digital payments</div>
-                            </div>
-                        </label>
-                    </div>
-                    <div class="checkbox-card">
-                        <input type="checkbox" id="healthtech" name="categories" value="healthtech">
-                        <label for="healthtech" class="checkbox-card-content">
-                            <div class="icon">🏥</div>
-                            <div class="text">
-                                <div class="label">HealthTech</div>
-                                <div class="description">Healthcare technology and medical innovations</div>
-                            </div>
-                        </label>
-                    </div>
-                    <div class="checkbox-card">
-                        <input type="checkbox" id="agritech" name="categories" value="agritech">
-                        <label for="agritech" class="checkbox-card-content">
-                            <div class="icon">🌾</div>
-                            <div class="text">
-                                <div class="label">AgriTech</div>
-                                <div class="description">Agricultural technology and farming solutions</div>
+                                <div class="label">Circular Economy</div>
+                                <div class="description">Waste reduction and resource optimization</div>
                             </div>
                         </label>
                     </div>
                 </div>
             </div>
             
-            <!-- Target Countries Section -->
+            <!-- Location & Scope Section -->
             <div class="form-section">
                 <div class="section-header">
                     <h4 class="section-title">
-                        <i class="bi bi-globe"></i>
-                        Target Countries
+                        <i class="bi bi-geo-alt"></i>
+                        Location & Scope
                     </h4>
-                    <p class="section-subtitle">Select countries where participants can apply from</p>
+                    <p class="section-subtitle">Challenge location and scope information</p>
                 </div>
                 
-                <div class="checkbox-grid">
-                    <div class="checkbox-card">
-                        <input type="checkbox" id="singapore" name="target_countries" value="singapore">
-                        <label for="singapore" class="checkbox-card-content">
-                            <div class="icon">🇸🇬</div>
-                            <div class="text">
-                                <div class="label">Singapore</div>
-                            </div>
-                        </label>
-                    </div>
-                    <div class="checkbox-card">
-                        <input type="checkbox" id="indonesia" name="target_countries" value="indonesia">
-                        <label for="indonesia" class="checkbox-card-content">
-                            <div class="icon">🇮🇩</div>
-                            <div class="text">
-                                <div class="label">Indonesia</div>
-                            </div>
-                        </label>
-                    </div>
-                    <div class="checkbox-card">
-                        <input type="checkbox" id="thailand" name="target_countries" value="thailand">
-                        <label for="thailand" class="checkbox-card-content">
-                            <div class="icon">🇹🇭</div>
-                            <div class="text">
-                                <div class="label">Thailand</div>
-                            </div>
-                        </label>
-                    </div>
-                    <div class="checkbox-card">
-                        <input type="checkbox" id="malaysia" name="target_countries" value="malaysia">
-                        <label for="malaysia" class="checkbox-card-content">
-                            <div class="icon">🇲🇾</div>
-                            <div class="text">
-                                <div class="label">Malaysia</div>
-                            </div>
-                        </label>
-                    </div>
-                    <div class="checkbox-card">
-                        <input type="checkbox" id="philippines" name="target_countries" value="philippines">
-                        <label for="philippines" class="checkbox-card-content">
-                            <div class="icon">🇵🇭</div>
-                            <div class="text">
-                                <div class="label">Philippines</div>
-                            </div>
-                        </label>
-                    </div>
-                    <div class="checkbox-card">
-                        <input type="checkbox" id="vietnam" name="target_countries" value="vietnam">
-                        <label for="vietnam" class="checkbox-card-content">
-                            <div class="icon">🇻🇳</div>
-                            <div class="text">
-                                <div class="label">Vietnam</div>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Support & Goals Section -->
-            <div class="form-section">
-                <div class="section-header">
-                    <h4 class="section-title">
-                        <i class="bi bi-handshake"></i>
-                        Support & Goals
-                    </h4>
-                    <p class="section-subtitle">How you plan to collaborate with participants</p>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Collaboration Methods <span class="required">*</span></label>
-                    <div class="checkbox-grid">
-                        <div class="checkbox-card">
-                            <input type="checkbox" id="co_development" name="collaboration_methods" value="co_development">
-                            <label for="co_development" class="checkbox-card-content">
-                                <div class="icon">🔧</div>
-                                <div class="text">
-                                    <div class="label">Co-Development</div>
-                                    <div class="description">Joint development partnerships</div>
-                                </div>
-                            </label>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="location" class="form-label">Primary Location</label>
+                            <input type="text" class="form-control" id="location" name="location" 
+                                   placeholder="e.g. Thailand, Southeast Asia, Global">
                         </div>
-                        <div class="checkbox-card">
-                            <input type="checkbox" id="financial_support" name="collaboration_methods" value="financial_support">
-                            <label for="financial_support" class="checkbox-card-content">
-                                <div class="icon">💰</div>
-                                <div class="text">
-                                    <div class="label">Financial Support</div>
-                                    <div class="description">Funding and investment opportunities</div>
-                                </div>
-                            </label>
-                        </div>
-                        <div class="checkbox-card">
-                            <input type="checkbox" id="mentorship" name="collaboration_methods" value="mentorship">
-                            <label for="mentorship" class="checkbox-card-content">
-                                <div class="icon">🎯</div>
-                                <div class="text">
-                                    <div class="label">Mentorship</div>
-                                    <div class="description">Guidance and expertise sharing</div>
-                                </div>
-                            </label>
-                        </div>
-                        <div class="checkbox-card">
-                            <input type="checkbox" id="pilot_programs" name="collaboration_methods" value="pilot_programs">
-                            <label for="pilot_programs" class="checkbox-card-content">
-                                <div class="icon">🚀</div>
-                                <div class="text">
-                                    <div class="label">Pilot Programs</div>
-                                    <div class="description">Testing and validation opportunities</div>
-                                </div>
-                            </label>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="scope" class="form-label">Scope</label>
+                            <select class="form-select" id="scope" name="scope">
+                                <option value="">Select scope</option>
+                                <option value="Local">Local</option>
+                                <option value="Regional">Regional</option>
+                                <option value="National">National</option>
+                                <option value="Global">Global</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -680,7 +555,7 @@
                     <div class="row g-4">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="main_prize_amount" class="form-label">Prize Amount</label>
+                                <label for="main_prize_amount" class="form-label">Main Prize Amount</label>
                                 <input type="number" class="form-control" id="main_prize_amount" name="main_prize_amount" 
                                        step="0.01" placeholder="50000">
                             </div>
@@ -689,8 +564,8 @@
                             <div class="form-group">
                                 <label for="main_prize_currency" class="form-label">Currency</label>
                                 <select class="form-select" id="main_prize_currency" name="main_prize_currency">
-                                    <option value="THB">🇹🇭 Thai Baht (THB)</option>
-                                    <option value="USD">🇺🇸 US Dollar (USD)</option>
+                                    <option value="USD">�� US Dollar (USD)</option>
+                                    <option value="THB">�� Thai Baht (THB)</option>
                                     <option value="EUR">🇪🇺 Euro (EUR)</option>
                                     <option value="SGD">🇸🇬 Singapore Dollar (SGD)</option>
                                 </select>
@@ -698,21 +573,21 @@
                         </div>
                         <div class="col-12">
                             <div class="form-group">
-                                <label for="prizes_content" class="form-label">Prize Details</label>
-                                <textarea class="form-control" id="prizes_content" name="prizes_content" rows="3"
-                                          placeholder="Describe prizes, benefits, development opportunities, and what winners will receive"></textarea>
+                                <label for="prizes_content" class="form-label">Prize Details & Additional Benefits</label>
+                                <textarea class="form-control" id="prizes_content" name="prizes_content" rows="4"
+                                          placeholder="Describe all prizes, benefits, mentorship programs, incubation support, networking opportunities, and what winners will receive. This content will appear in the 'Prizes & Rewards' section."></textarea>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Attachments Section -->
+            <!-- Resources & Documents Section -->
             <div class="form-section">
                 <div class="section-header">
                     <h4 class="section-title">
                         <i class="bi bi-paperclip"></i>
-                        Attachments
+                        Resources & Documents
                     </h4>
                     <p class="section-subtitle">Upload supporting documents and images for your challenge</p>
                 </div>
@@ -720,14 +595,14 @@
                 <div class="row g-4">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="challenge_brief" class="form-label">Project Document</label>
+                            <label for="challenge_brief" class="form-label">Challenge Brief Document</label>
                             <div class="file-upload">
                                 <input type="file" class="form-control" id="challenge_brief" name="challenge_brief" 
                                        accept=".pdf,.doc,.docx">
                                 <div class="mt-2">
-                                    <i class="bi bi-cloud-upload display-4 text-muted"></i>
-                                    <p class="mb-1">Choose file or drag and drop</p>
-                                    <small class="text-muted">Supports PDF, DOC, DOCX only • Max 10MB</small>
+                                    <i class="bi bi-file-earmark-pdf display-4 text-muted"></i>
+                                    <p class="mb-1">Upload detailed challenge brief</p>
+                                    <small class="text-muted">PDF, DOC, DOCX • Max 10MB</small>
                                 </div>
                             </div>
                         </div>
@@ -740,8 +615,8 @@
                                        accept="image/*">
                                 <div class="mt-2">
                                     <i class="bi bi-image display-4 text-muted"></i>
-                                    <p class="mb-1">Choose image or drag and drop</p>
-                                    <small class="text-muted">Supports JPG, PNG only • Max 5MB</small>
+                                    <p class="mb-1">Challenge header image</p>
+                                    <small class="text-muted">JPG, PNG • Max 5MB</small>
                                 </div>
                             </div>
                         </div>
@@ -790,7 +665,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Handle card click
         card.addEventListener('click', function(e) {
-            if (e.target !== checkbox && e.target !== label) {
+            // Prevent double triggering if clicking on label
+            if (e.target.tagName.toLowerCase() !== 'label') {
                 checkbox.checked = !checkbox.checked;
                 checkbox.dispatchEvent(new Event('change'));
             }
@@ -801,13 +677,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const hasPrizesCheckbox = document.getElementById('has_prizes');
     const prizeSection = document.getElementById('prize_section');
     
-    hasPrizesCheckbox.addEventListener('change', function() {
-        if (this.checked) {
-            prizeSection.style.display = 'block';
-        } else {
-            prizeSection.style.display = 'none';
-        }
-    });
+    if (hasPrizesCheckbox && prizeSection) {
+        hasPrizesCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                prizeSection.style.display = 'block';
+            } else {
+                prizeSection.style.display = 'none';
+            }
+        });
+    }
     
     // Form validation
     const form = document.querySelector('form');
@@ -832,14 +710,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const categoryCheckboxes = form.querySelectorAll('input[name="categories"]:checked');
         if (categoryCheckboxes.length === 0) {
             hasErrors = true;
-            alert('Please select at least one innovation area.');
-        }
-        
-        // Check if at least one collaboration method is selected
-        const collaborationCheckboxes = form.querySelectorAll('input[name="collaboration_methods"]:checked');
-        if (collaborationCheckboxes.length === 0) {
-            hasErrors = true;
-            alert('Please select at least one collaboration method.');
+            alert('Please select at least one challenge category.');
         }
         
         if (hasErrors) {
