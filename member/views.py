@@ -882,14 +882,38 @@ def challenge_detail(request, challenge_id):
     try:
         from .models import Challenge
         challenge = get_object_or_404(Challenge, pk=challenge_id, status='published')
+        
+        # Get related challenges (same categories or same organizer, excluding current)
+        related_challenges = Challenge.objects.filter(
+            status='published'
+        ).exclude(pk=challenge_id)
+        
+        # Try to find challenges with similar categories
+        if challenge.categories:
+            # If current challenge has categories, find others with similar categories
+            related_challenges = related_challenges.filter(
+                categories__overlap=challenge.categories
+            )[:3]
+        else:
+            # If no categories, get recent challenges from same organizer or random
+            related_challenges = related_challenges.filter(
+                organizer=challenge.organizer
+            )[:3]
+            if not related_challenges.exists():
+                related_challenges = Challenge.objects.filter(
+                    status='published'
+                ).exclude(pk=challenge_id).order_by('-created_at')[:3]
+        
         context = {
             'challenge': challenge,
             'challenge_id': challenge_id,
+            'related_challenges': related_challenges,
         }
     except:
         # Fallback to static data if model not ready
         context = {
             'challenge_id': challenge_id,
+            'related_challenges': [],
         }
     return render(request, 'resources/challenge_detail.html', context)
 
@@ -899,14 +923,38 @@ def problem_detail(request, problem_id):
     try:
         from .models import ProblemStatement
         problem = get_object_or_404(ProblemStatement, pk=problem_id, status='published')
+        
+        # Get related problems (same categories or same company, excluding current)
+        related_problems = ProblemStatement.objects.filter(
+            status='published'
+        ).exclude(pk=problem_id)
+        
+        # Try to find problems with similar categories
+        if problem.impact_categories:
+            # If current problem has categories, find others with similar categories
+            related_problems = related_problems.filter(
+                impact_categories__overlap=problem.impact_categories
+            )[:3]
+        else:
+            # If no categories, get recent problems from same company or random
+            related_problems = related_problems.filter(
+                company=problem.company
+            )[:3]
+            if not related_problems.exists():
+                related_problems = ProblemStatement.objects.filter(
+                    status='published'
+                ).exclude(pk=problem_id).order_by('-created_at')[:3]
+        
         context = {
             'problem': problem,
             'problem_id': problem_id,
+            'related_problems': related_problems,
         }
     except:
         # Fallback to static data if model not ready
         context = {
             'problem_id': problem_id,
+            'related_problems': [],
         }
     return render(request, 'resources/problem_detail.html', context)
 

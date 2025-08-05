@@ -145,8 +145,8 @@
                     </div>
                 </div>
             </div>
-            {% endfor %}
-            <div style="display:none" class="challenge-grid-item">
+            {% empty %}
+            <div class="challenge-grid-item">
                 <div class="card shadow-sm h-100 challenge-card">
                     <div class="challenge-card-header">
                         <div class="position-relative">
@@ -218,7 +218,7 @@
             </div>
 
             <!-- Sample Challenge Card 3 -->
-            <div style="display:none" class="challenge-grid-item">
+            <div class="challenge-grid-item">
                 <div class="card shadow-sm h-100 challenge-card">
                     <div class="challenge-card-header">
                         <div class="position-relative">
@@ -288,6 +288,7 @@
                     </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
     </div>
 </div>

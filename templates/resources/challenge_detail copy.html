@@ -12,9 +12,7 @@
                 <i class="bi bi-arrow-left"></i> Back to Challenges
             </a>
             <div class="challenge-status-badges">
-                <span class="badge bg-{{ challenge.get_status_display_color|default:'success' }} challenge-status-badge">
-                    {{ challenge.get_status_display|default:'Open' }}
-                </span>
+                <span class="badge bg-success challenge-status-badge">Open</span>
             </div>
         </div>
         
@@ -23,8 +21,8 @@
                 <div class="challenge-icon mb-3">
                     <i class="bi bi-trophy"></i>
                 </div>
-                <h1 class="challenge-title">{{ challenge.title|default:'Ocean Plastic Waste Reduction Innovation Challenge' }}</h1>
-                <p class="challenge-subtitle">{{ challenge.subtitle|default:'Develop innovative solutions to reduce ocean plastic waste and create sustainable packaging alternatives' }}</p>
+                <h1 class="challenge-title">Ocean Plastic Waste Reduction Innovation Challenge</h1>
+                <p class="challenge-subtitle">Develop innovative solutions to reduce ocean plastic waste and create sustainable packaging alternatives</p>
                 
                 <div class="challenge-stats mt-4">
                     <div class="row">
@@ -32,7 +30,7 @@
                             <div class="stat-item">
                                 <i class="bi bi-people"></i>
                                 <div class="stat-info">
-                                    <h4>{{ challenge.applicant_count|default:'23' }}</h4>
+                                    <h4>23</h4>
                                     <span>Applicants</span>
                                 </div>
                             </div>
@@ -41,8 +39,8 @@
                             <div class="stat-item">
                                 <i class="bi bi-calendar"></i>
                                 <div class="stat-info">
-                                    <h4>{{ challenge.view_count|default:'45' }}</h4>
-                                    <span>Views</span>
+                                    <h4>45</h4>
+                                    <span>Days Left</span>
                                 </div>
                             </div>
                         </div>
@@ -50,8 +48,8 @@
                             <div class="stat-item">
                                 <i class="bi bi-globe"></i>
                                 <div class="stat-info">
-                                    <h4>{{ challenge.location|default:'Global' }}</h4>
-                                    <span>Location</span>
+                                    <h4>Global</h4>
+                                    <span>Scope</span>
                                 </div>
                             </div>
                         </div>
@@ -59,7 +57,7 @@
                             <div class="stat-item">
                                 <i class="bi bi-lightbulb"></i>
                                 <div class="stat-info">
-                                    <h4>{{ challenge.innovation_category|default:'Innovation' }}</h4>
+                                    <h4>Innovation</h4>
                                     <span>Category</span>
                                 </div>
                             </div>
@@ -69,11 +67,7 @@
             </div>
             <div class="col-lg-4">
                 <div class="challenge-image-container">
-                    {% if challenge.featured_image %}
-                        <img src="{{ challenge.featured_image.url }}" alt="{{ challenge.title }}" class="challenge-detail-image">
-                    {% else %}
-                        <img src="{% static 'images/collaborative-ecosystem.jpg' %}" alt="{{ challenge.title|default:'Ocean Plastic Challenge' }}" class="challenge-detail-image">
-                    {% endif %}
+                    <img src="{% static 'images/collaborative-ecosystem.jpg' %}" alt="Ocean Plastic Challenge" class="challenge-detail-image">
                 </div>
             </div>
         </div>
@@ -87,19 +81,30 @@
             <div class="content-section">
                 <h3><i class="bi bi-info-circle me-2"></i>Challenge Overview</h3>
                 <div class="content-card">
-                    <p>{{ challenge.description|default:'Ocean plastic pollution has become one of the most pressing environmental challenges of our time. Every year, millions of tons of plastic waste end up in our oceans, threatening marine life and ecosystems worldwide.' }}</p>
+                    <p>Ocean plastic pollution has become one of the most pressing environmental challenges of our time. Every year, millions of tons of plastic waste end up in our oceans, threatening marine life and ecosystems worldwide.</p>
+                    
+                    <p>We are seeking innovative solutions that can significantly reduce ocean plastic waste through:</p>
+                    <ul>
+                        <li>Revolutionary recycling technologies</li>
+                        <li>Biodegradable packaging alternatives</li>
+                        <li>Ocean cleanup mechanisms</li>
+                        <li>Consumer behavior change initiatives</li>
+                        <li>Supply chain optimization solutions</li>
+                    </ul>
+                    
+                    <p>Your solution should demonstrate scalability, sustainability, and measurable impact on reducing ocean plastic pollution.</p>
                     
                     <div class="challenge-categories-section mt-4">
                         <h5>Challenge Categories:</h5>
                         <div class="challenge-category-tags">
-                            {% for category in challenge.categories %}
-                                <span class="category-tag">{{ category|title }}</span>
-                            {% empty %}
-                                <span class="category-tag marine-conservation">Marine Conservation</span>
-                                <span class="category-tag clean-technology">Clean Technology</span>
-                                <span class="category-tag sustainability">Sustainability</span>
-                                <span class="category-tag innovation">Innovation</span>
-                            {% endfor %}
+                            <span class="category-tag marine-conservation">Marine Conservation</span>
+                            <span class="category-tag clean-technology">Clean Technology</span>
+                            <span class="category-tag sustainability">Sustainability</span>
+                            <span class="category-tag innovation">Innovation</span>
+                            <span class="category-tag recycling">Recycling & Waste</span>
+                            <span class="category-tag ocean-health">Ocean Health</span>
+                            <span class="category-tag environmental-impact">Environmental Impact</span>
+                            <span class="category-tag circular-economy">Circular Economy</span>
                         </div>
                     </div>
                 </div>
@@ -110,9 +115,33 @@
                 <h3><i class="bi bi-list-check me-2"></i>Requirements & Criteria</h3>
                 <div class="content-card">
                     <div class="requirements-content">
-                        {{ challenge.requirements_content|default:'<h4>Innovation Requirements</h4><p>Your solution must demonstrate <strong>novel approach</strong> or significant improvement over existing methods. We are looking for breakthrough technologies that can make a measurable impact.</p>'|safe }}
-                    </div>
-                    <div class="evaluation-criteria mt-4">
+                        <!-- Mock Rich Text Content from Backend Editor -->
+                        <h4>Innovation Requirements</h4>
+                        <p>Your solution must demonstrate <strong>novel approach</strong> or significant improvement over existing methods. We are looking for breakthrough technologies that can make a measurable impact on ocean plastic pollution.</p>
+                        
+                        <h4>Technical Criteria</h4>
+                        <ul>
+                            <li><strong>Scalability:</strong> Proof of concept for scaling to global or regional implementation</li>
+                            <li><strong>Environmental Impact:</strong> Measurable reduction in ocean plastic waste with sustainability assessment</li>
+                            <li><strong>Technical Feasibility:</strong> Clear implementation plan with realistic timeline and resource requirements</li>
+                            <li><strong>Cost Effectiveness:</strong> Economic viability and potential for commercial adoption</li>
+                        </ul>
+                        
+                        <h4>Submission Requirements</h4>
+                        <p>All submissions must include the following components:</p>
+                        <ol>
+                            <li>Detailed project proposal (max 20 pages)</li>
+                            <li>Technical specifications and methodology</li>
+                            <li>Environmental impact assessment</li>
+                            <li>Implementation timeline and milestones</li>
+                            <li>Budget breakdown and funding requirements</li>
+                        </ol>
+                        
+                        <blockquote>
+                            <strong>Important Note:</strong> Late submissions will not be accepted. Please ensure all materials are submitted before the deadline.
+                        </blockquote>
+                        
+                        <h4>Evaluation Criteria</h4>
                         <p>Projects will be evaluated based on:</p>
                         <ul>
                             <li>Innovation and creativity (30%)</li>
@@ -141,12 +170,8 @@
                             </div>
                             <div class="prize-details">
                                 <h4>Grand Prize</h4>
-                                {% if challenge.main_prize_amount %}
-                                    <div class="prize-amount">{{ challenge.main_prize_currency|default:'USD' }} {{ challenge.main_prize_amount|floatformat:0 }}</div>
-                                {% else %}
-                                    <div class="prize-amount">Amount TBD</div>
-                                {% endif %}
-                                <p>Winner receives {{ challenge.main_prize_amount|default:'prize' }} plus additional benefits</p>
+                                <div class="prize-amount">$50,000</div>
+                                <p>Winner receives cash prize plus mentorship program access</p>
                             </div>
                         </div>
 
@@ -174,15 +199,10 @@
                         </div>
 
                         <div class="additional-benefits">
-                            <h5><i class="bi bi-gift me-2"></i>Prizes & Benefits</h5>
+                            <h5><i class="bi bi-gift me-2"></i>Additional Benefits</h5>
                             <div class="benefits-content">
-                                {% if challenge.prizes_content %}
-                                    {{ challenge.prizes_content|safe }}
-                                {% else %}
-                                    <p>Beyond the monetary prizes, winners and participants will receive valuable non-financial benefits designed to accelerate their innovation journey.</p>
-                                {% endif %}
-                            </div>
-                            <div class="benefits-list">
+                                <!-- Mock Rich Text Content for Benefits -->
+                                <p>Beyond the monetary prizes, winners and participants will receive valuable non-financial benefits designed to accelerate their innovation journey:</p>
                                 
                                 <h6>Mentorship & Guidance</h6>
                                 <ul>
@@ -244,16 +264,12 @@
             <div class="sidebar-section">
                 <div class="apply-card">
                     <h4><i class="bi bi-rocket me-2"></i>Ready to Apply?</h4>
-                    <p>Join {{ challenge.applicant_count|default:0 }} other innovators in {{ challenge.title|lower }}</p>
+                    <p>Join 23 other innovators in solving ocean plastic pollution</p>
                     <button class="btn btn-primary btn-lg w-100 apply-btn">
                         <i class="bi bi-send me-2"></i>Apply Now
                     </button>
                     <div class="apply-note mt-3">
-                        {% if challenge.application_deadline %}
-                            <small><i class="bi bi-info-circle me-1"></i>Application deadline: {{ challenge.application_deadline|date:"F j, Y" }}</small>
-                        {% else %}
-                            <small><i class="bi bi-info-circle me-1"></i>Application deadline: TBD</small>
-                        {% endif %}
+                        <small><i class="bi bi-info-circle me-1"></i>Application deadline: September 30, 2025</small>
                     </div>
                 </div>
             </div>
@@ -263,14 +279,10 @@
                 <div class="organizer-card">
                     <h5><i class="bi bi-building me-2"></i>Challenge Organizer</h5>
                     <div class="organizer-info">
-                        {% if challenge.organizer.company_logo %}
-                            <img src="{{ challenge.organizer.company_logo.url }}" alt="{{ challenge.organizer.company_name|default:'Organizer' }} Logo" class="organizer-logo">
-                        {% else %}
-                            <img src="{% static 'images/collaborative-ecosystem.jpg' %}" alt="{{ challenge.organizer.company_name|default:'Organizer' }} Logo" class="organizer-logo">
-                        {% endif %}
+                        <img src="{% static 'images/collaborative-ecosystem.jpg' %}" alt="GIZ Logo" class="organizer-logo">
                         <div>
-                            <h6>{{ challenge.organizer.company_name|default:'Organization Name' }}</h6>
-                            <p>{{ challenge.organizer.company_description|default:'Organization Description'|truncatewords:15 }}</p>
+                            <h6>GIZ Thailand</h6>
+                            <p>Deutsche Gesellschaft für Internationale Zusammenarbeit</p>
                             <a href="#" class="btn btn-outline-primary btn-sm">View Profile</a>
                         </div>
                     </div>
@@ -282,31 +294,21 @@
                 <div class="resources-card">
                     <h5><i class="bi bi-download me-2"></i>Resources</h5>
                     <div class="resource-list">
-                        {% if challenge.challenge_brief %}
-                        <a href="{{ challenge.challenge_brief.url }}" class="resource-item" download>
+                        <a href="#" class="resource-item">
                             <i class="bi bi-file-pdf"></i>
                             <span>Challenge Brief (PDF)</span>
                             <i class="bi bi-download"></i>
                         </a>
-                        {% endif %}
-                        {% for document in challenge.documents.all %}
-                        <a href="{{ document.file.url }}" class="resource-item" download>
-                            {% if document.document_type == 'brief' %}
-                                <i class="bi bi-file-pdf"></i>
-                            {% elif document.document_type == 'template' %}
-                                <i class="bi bi-file-text"></i>
-                            {% elif document.document_type == 'guidelines' %}
-                                <i class="bi bi-graph-up"></i>
-                            {% else %}
-                                <i class="bi bi-file-earmark"></i>
-                            {% endif %}
-                            <span>{{ document.name }}</span>
+                        <a href="#" class="resource-item">
+                            <i class="bi bi-file-text"></i>
+                            <span>Application Template</span>
                             <i class="bi bi-download"></i>
                         </a>
-                        {% endfor %}
-                        {% if not challenge.challenge_brief and not challenge.documents.all %}
-                        <p class="text-muted small">No resources available for download</p>
-                        {% endif %}
+                        <a href="#" class="resource-item">
+                            <i class="bi bi-graph-up"></i>
+                            <span>Impact Assessment Guide</span>
+                            <i class="bi bi-download"></i>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -316,23 +318,24 @@
                 <div class="related-card">
                     <h5><i class="bi bi-collection me-2"></i>Related Challenges</h5>
                     <div class="related-list">
-                        {% for related_challenge in related_challenges %}
-                        <a href="{% url 'challenge_detail' related_challenge.pk %}" class="related-item">
+                        <a href="#" class="related-item">
                             <div class="related-image">
-                                {% if related_challenge.featured_image %}
-                                    <img src="{{ related_challenge.featured_image.url }}" alt="{{ related_challenge.title }}">
-                                {% else %}
-                                    <img src="{% static 'images/collaborative-ecosystem.jpg' %}" alt="{{ related_challenge.title }}">
-                                {% endif %}
+                                <img src="{% static 'images/collaborative-ecosystem.jpg' %}" alt="">
                             </div>
                             <div class="related-content">
-                                <h6>{{ related_challenge.title|truncatewords:5 }}</h6>
-                                <span class="badge bg-{{ related_challenge.get_status_display_color }}">{{ related_challenge.get_status_display }}</span>
+                                <h6>Sustainable Energy Solutions</h6>
+                                <span class="badge bg-success">Open</span>
                             </div>
                         </a>
-                        {% empty %}
-                        <p class="text-muted small">No related challenges found</p>
-                        {% endfor %}
+                        <a href="#" class="related-item">
+                            <div class="related-image">
+                                <img src="{% static 'images/Coast001.webp' %}" alt="">
+                            </div>
+                            <div class="related-content">
+                                <h6>Smart City Innovation</h6>
+                                <span class="badge bg-primary">In Progress</span>
+                            </div>
+                        </a>
                     </div>
                 </div>
             </div>

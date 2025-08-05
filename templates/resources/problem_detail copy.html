@@ -12,7 +12,7 @@
                 <i class="bi bi-arrow-left"></i> Back to Problem Statements
             </a>
             <div class="problem-status-badges">
-                <span class="badge bg-{{ problem.get_status_display_color|default:'success' }} problem-status-badge">{{ problem.get_status_display|default:'Open' }}</span>
+                <span class="badge bg-success problem-status-badge">Open</span>
             </div>
         </div>
         
@@ -21,8 +21,8 @@
                 <div class="problem-icon mb-3">
                     <i class="bi bi-lightbulb"></i>
                 </div>
-                <h1 class="problem-title">{{ problem.title|default:'Problem Statement Title' }}</h1>
-                <p class="problem-subtitle">{{ problem.subtitle|default:'Problem statement description will appear here' }}</p>
+                <h1 class="problem-title">Sustainable Packaging Solutions for E-commerce</h1>
+                <p class="problem-subtitle">Help us develop eco-friendly packaging alternatives that reduce environmental impact while maintaining product protection during shipping</p>
                 
                 <div class="problem-stats mt-4">
                     <div class="row">
@@ -30,7 +30,7 @@
                             <div class="stat-item">
                                 <i class="bi bi-lightbulb"></i>
                                 <div class="stat-info">
-                                    <h4>{{ problem.solution_count|default:0 }}</h4>
+                                    <h4>12</h4>
                                     <span>Solutions</span>
                                 </div>
                             </div>
@@ -39,7 +39,7 @@
                             <div class="stat-item">
                                 <i class="bi bi-building"></i>
                                 <div class="stat-info">
-                                    <h4>{{ problem.created_by.companies.first.get_company_type_display|default:'Corporate' }}</h4>
+                                    <h4>Corporate</h4>
                                     <span>Type</span>
                                 </div>
                             </div>
@@ -48,7 +48,7 @@
                             <div class="stat-item">
                                 <i class="bi bi-geo-alt"></i>
                                 <div class="stat-info">
-                                    <h4>{{ problem.location|default:'ASEAN' }}</h4>
+                                    <h4>ASEAN</h4>
                                     <span>Region</span>
                                 </div>
                             </div>
@@ -57,7 +57,7 @@
                             <div class="stat-item">
                                 <i class="bi bi-recycle"></i>
                                 <div class="stat-info">
-                                    <h4>{{ problem.innovation_category|default:'Innovation' }}</h4>
+                                    <h4>Sustainability</h4>
                                     <span>Focus</span>
                                 </div>
                             </div>
@@ -67,11 +67,7 @@
             </div>
             <div class="col-lg-4">
                 <div class="problem-image-container">
-                    {% if problem.featured_image %}
-                        <img src="{{ problem.featured_image.url }}" alt="{{ problem.title }}" class="problem-detail-image">
-                    {% else %}
-                        <img src="{% static 'images/collaborative-ecosystem.jpg' %}" alt="{{ problem.title|default:'Problem Statement' }}" class="problem-detail-image">
-                    {% endif %}
+                    <img src="{% static 'images/collaborative-ecosystem.jpg' %}" alt="Sustainable Packaging" class="problem-detail-image">
                 </div>
             </div>
         </div>
@@ -85,30 +81,32 @@
             <div class="content-section">
                 <h3><i class="bi bi-exclamation-triangle me-2"></i>Problem Statement</h3>
                 <div class="content-card">
-                    {% if problem.description %}
-                        {{ problem.description|safe }}
-                    {% else %}
-                        <p>The problem statement description will be displayed here once content is available.</p>
-                    {% endif %}
+                    <p>The rapid growth of e-commerce has led to an exponential increase in packaging waste, with most current solutions being non-biodegradable and contributing significantly to environmental pollution.</p>
                     
-                    {% if problem.categories %}
+                    <div class="problem-details">
+                        <h5>Current Challenges:</h5>
+                        <ul>
+                            <li>Over 165 billion packages are shipped annually worldwide</li>
+                            <li>Most packaging materials are single-use and non-recyclable</li>
+                            <li>Significant carbon footprint from packaging production and disposal</li>
+                            <li>Limited sustainable alternatives that maintain product protection</li>
+                            <li>Cost considerations preventing widespread adoption of eco-friendly options</li>
+                        </ul>
+                    </div>
+
                     <div class="impact-section mt-4">
-                        <h5>Categories:</h5>
+                        <h5>Impact Categories:</h5>
                         <div class="impact-tags">
-                            {% for category in problem.categories %}
-                                <span class="impact-tag">{{ category }}</span>
-                            {% empty %}
-                                <span class="impact-tag sustainability">Sustainability</span>
-                                <span class="impact-tag waste-management">Waste Management</span>
-                                <span class="impact-tag circular-economy">Circular Economy</span>
-                                <span class="impact-tag cost-reduction">Cost Reduction</span>
-                                <span class="impact-tag innovation">Innovation</span>
-                                <span class="impact-tag supply-chain">Supply Chain</span>
-                                <span class="impact-tag customer-experience">Customer Experience</span>
-                            {% endfor %}
+                            <span class="impact-tag environmental">Environmental</span>
+                            <span class="impact-tag sustainability">Sustainability</span>
+                            <span class="impact-tag waste-management">Waste Management</span>
+                            <span class="impact-tag circular-economy">Circular Economy</span>
+                            <span class="impact-tag cost-reduction">Cost Reduction</span>
+                            <span class="impact-tag innovation">Innovation</span>
+                            <span class="impact-tag supply-chain">Supply Chain</span>
+                            <span class="impact-tag customer-experience">Customer Experience</span>
                         </div>
                     </div>
-                    {% endif %}
                 </div>
             </div>
 
@@ -117,13 +115,45 @@
                 <h3><i class="bi bi-target me-2"></i>What We're Looking For</h3>
                 <div class="content-card">
                     <div class="solution-content">
-                        {% if problem.solution_requirements %}
-                            {{ problem.solution_requirements|safe }}
-                        {% else %}
-                            <p>We are seeking innovative and practical solutions that can address our challenges while meeting our goals.</p>
-                        {% endif %}
-                    </div>
+                        <!-- Mock Rich Text Content for Solutions -->
+                        <p>We are seeking <strong>innovative and practical solutions</strong> that can address our packaging challenges while meeting our sustainability goals. Our ideal partners will provide solutions that demonstrate both environmental responsibility and commercial viability.</p>
                         
+                        <h4>Priority Solution Areas</h4>
+                        
+                        <h5>🌱 Biodegradable Materials</h5>
+                        <p>We need innovative materials that decompose naturally within <strong>6-12 months</strong> without harmful residues. The materials should be sourced from renewable resources and have minimal environmental impact during production.</p>
+                        <ul>
+                            <li>Plant-based polymers and bio-plastics</li>
+                            <li>Mushroom-based packaging materials</li>
+                            <li>Seaweed and algae-derived solutions</li>
+                            <li>Agricultural waste-based materials</li>
+                        </ul>
+                        
+                        <h5>🛡️ Product Protection Standards</h5>
+                        <p>Solutions must maintain or improve current protection standards for fragile items during shipping and handling. We cannot compromise on product safety and customer satisfaction.</p>
+                        <ul>
+                            <li>Shock absorption capabilities</li>
+                            <li>Moisture and temperature resistance</li>
+                            <li>Structural integrity during transport</li>
+                            <li>Compatibility with automated packaging systems</li>
+                        </ul>
+                        
+                        <h5>♻️ Circular Economy Solutions</h5>
+                        <p>We are particularly interested in <strong>reusable packaging systems</strong> that can be returned and reused multiple times, creating a circular economy model.</p>
+                        <ul>
+                            <li>Return logistics and collection systems</li>
+                            <li>Durable materials for multiple use cycles</li>
+                            <li>Easy cleaning and sanitization processes</li>
+                            <li>Customer incentive programs for returns</li>
+                        </ul>
+                        
+                        <h5>💰 Economic Viability</h5>
+                        <p>Solutions must be <strong>cost-effective for large-scale implementation</strong>. We need proposals that demonstrate clear ROI and scalability potential.</p>
+                        
+                        <blockquote>
+                            <strong>Important:</strong> All proposed solutions should include detailed cost analysis, implementation timeline, and scalability assessment.
+                        </blockquote>
+                    </div>
                 </div>
             </div>
 
@@ -132,15 +162,65 @@
                 <h3><i class="bi bi-gear me-2"></i>Technical Requirements</h3>
                 <div class="content-card">
                     <div class="technical-content">
-                        {% if problem.technical_requirements %}
-                            {{ problem.technical_requirements|safe }}
-                        {% else %}
-                            <p>Technical requirements and specifications will be provided to qualified solution providers.</p>
-                        {% endif %}
+                        <!-- Mock Rich Text Content for Technical Requirements -->
+                        <p>All proposed solutions must meet our <strong>comprehensive technical specifications</strong> to ensure compatibility with our existing operations and quality standards.</p>
                         
-                        {% if problem.technical_specifications %}
-                        <p>For detailed technical specifications and testing protocols, please refer to our <a href="{{ problem.technical_specifications.url }}" target="_blank">Technical Requirements Document</a> available for download.</p>
-                        {% endif %}
+                        <h4>Material Properties & Performance</h4>
+                        
+                        <h5>Physical Characteristics</h5>
+                        <ul>
+                            <li><strong>Biodegradability:</strong> Complete decomposition within 12 months in industrial composting facilities</li>
+                            <li><strong>Water Resistance:</strong> Minimum 24-hour protection against moisture and humidity</li>
+                            <li><strong>Temperature Stability:</strong> Functional performance range from -20°C to 60°C</li>
+                            <li><strong>Tensile Strength:</strong> Minimum 30 MPa to withstand handling and transport stress</li>
+                            <li><strong>Flexibility:</strong> Adaptable to various product shapes and sizes</li>
+                        </ul>
+                        
+                        <h5>Industry Compliance Standards</h5>
+                        <p>All materials and solutions must comply with relevant industry standards and certifications:</p>
+                        <ul>
+                            <li><strong>ISTA 6-Amazon.com-SIOC certification</strong> for e-commerce packaging</li>
+                            <li><strong>Drop test compliance</strong> from 1.2m height without damage</li>
+                            <li><strong>Compression resistance</strong> up to 250 lbs stacking weight</li>
+                            <li><strong>Moisture barrier performance</strong> with WVTR ≤ 1.0 g/m²/day</li>
+                            <li><strong>Food contact safety</strong> for food and beverage products (where applicable)</li>
+                        </ul>
+                        
+                        <h5>Sustainability Metrics</h5>
+                        <p>Environmental performance indicators that solutions must achieve:</p>
+                        <ul>
+                            <li><strong>Carbon Footprint Reduction:</strong> Minimum 50% reduction compared to current packaging</li>
+                            <li><strong>Renewable Content:</strong> At least 80% of materials from renewable sources</li>
+                            <li><strong>End-of-Life Certification:</strong> Verified biodegradability or compostability certification</li>
+                            <li><strong>Life Cycle Assessment:</strong> Complete LCA documentation showing environmental benefits</li>
+                            <li><strong>Toxicity Testing:</strong> No harmful chemicals released during decomposition</li>
+                        </ul>
+                        
+                        <h4>Manufacturing & Implementation Requirements</h4>
+                        
+                        <h5>Production Scalability</h5>
+                        <p>Solutions must demonstrate ability to scale to our operational requirements:</p>
+                        <ul>
+                            <li>Production capacity for <strong>50,000+ packages daily</strong></li>
+                            <li>Consistent quality control and standardization</li>
+                            <li>Integration with existing packaging automation systems</li>
+                            <li>Supply chain reliability and backup suppliers</li>
+                        </ul>
+                        
+                        <h5>Quality Assurance</h5>
+                        <p>Comprehensive testing and validation requirements include:</p>
+                        <ul>
+                            <li>Batch testing protocols and quality metrics</li>
+                            <li>Long-term storage stability assessments</li>
+                            <li>Performance validation under various shipping conditions</li>
+                            <li>Customer handling and unboxing experience testing</li>
+                        </ul>
+                        
+                        <blockquote>
+                            <strong>Testing Phase:</strong> Selected solutions will undergo a 3-month pilot testing program with real shipments before full implementation.
+                        </blockquote>
+                        
+                        <p>For detailed technical specifications and testing protocols, please refer to our <a href="#">Technical Requirements Document</a> available in the resources section.</p>
                     </div>
                 </div>
             </div>
@@ -149,22 +229,30 @@
             <div class="content-section">
                 <h3><i class="bi bi-people me-2"></i>Collaboration & Support</h3>
                 <div class="content-card">
-                    {% if problem.implementation_support %}
-                        {{ problem.implementation_support|safe }}
-                    {% else %}
-                        <p>We offer comprehensive support for selected solution providers.</p>
-                    {% endif %}
+                    <p>We offer comprehensive support for selected solution providers:</p>
                     
-                    {% if problem.support_offered %}
                     <div class="support-grid">
-                        {% for support in problem.support_offered %}
                         <div class="support-item">
-                            <i class="bi bi-check-circle"></i>
-                            <h5>{{ support }}</h5>
+                            <i class="bi bi-cash-stack"></i>
+                            <h5>Funding Support</h5>
+                            <p>Development grants and pilot project funding</p>
                         </div>
-                        {% endfor %}
+                        <div class="support-item">
+                            <i class="bi bi-people-fill"></i>
+                            <h5>Technical Expertise</h5>
+                            <p>Access to our R&D team and testing facilities</p>
+                        </div>
+                        <div class="support-item">
+                            <i class="bi bi-graph-up-arrow"></i>
+                            <h5>Market Access</h5>
+                            <p>Partnership opportunities and distribution channels</p>
+                        </div>
+                        <div class="support-item">
+                            <i class="bi bi-award"></i>
+                            <h5>IP Protection</h5>
+                            <p>Joint patent applications and IP sharing agreements</p>
+                        </div>
                     </div>
-                    {% endif %}
                 </div>
             </div>
         </div>
@@ -175,7 +263,7 @@
             <div class="sidebar-section">
                 <div class="submit-card">
                     <h4><i class="bi bi-lightbulb me-2"></i>Have a Solution?</h4>
-                    <p>Join {{ problem.solution_count|default:0 }} other innovators working on this challenge</p>
+                    <p>Join 12 other innovators working on this challenge</p>
                     <button class="btn btn-success btn-lg w-100 submit-btn">
                         <i class="bi bi-plus-circle me-2"></i>Submit Solution
                     </button>
@@ -190,21 +278,13 @@
                 <div class="company-card">
                     <h5><i class="bi bi-building me-2"></i>Problem Owner</h5>
                     <div class="company-info">
-                        {% if problem.company.company_logo %}
-                            <img src="{{ problem.company.company_logo.url }}" alt="{{ problem.company.company_name }} Logo" class="company-logo">
-                        {% else %}
-                            <img src="{% static 'images/collaborative-ecosystem.jpg' %}" alt="{{ problem.company.company_name|default:'Company' }} Logo" class="company-logo">
-                        {% endif %}
+                        <img src="{% static 'images/collaborative-ecosystem.jpg' %}" alt="Company Logo" class="company-logo">
                         <div>
-                            <h6>{{ problem.company.company_name|default:'Company Name' }}</h6>
-                            <p>{{ problem.company.company_description|default:'Company description'|truncatewords:12 }}</p>
+                            <h6>EcoCommerce Ltd.</h6>
+                            <p>Leading e-commerce platform in Southeast Asia</p>
                             <div class="company-stats">
-                                {% if problem.company.primary_location %}
-                                    <small><i class="bi bi-geo-alt me-1"></i>{{ problem.company.primary_location }}</small>
-                                {% endif %}
-                                {% if problem.company.team_size %}
-                                    <small><i class="bi bi-people me-1"></i>{{ problem.company.get_team_size_display }}</small>
-                                {% endif %}
+                                <small><i class="bi bi-geo-alt me-1"></i>Bangkok, Thailand</small>
+                                <small><i class="bi bi-people me-1"></i>5,000+ employees</small>
                             </div>
                             <a href="#" class="btn btn-outline-success btn-sm mt-2">View Company Profile</a>
                         </div>
@@ -217,23 +297,24 @@
                 <div class="related-card">
                     <h5><i class="bi bi-collection me-2"></i>Related Problems</h5>
                     <div class="related-list">
-                        {% for related_problem in related_problems %}
-                        <a href="{% url 'problem_detail' related_problem.pk %}" class="related-item">
+                        <a href="#" class="related-item">
                             <div class="related-image">
-                                {% if related_problem.featured_image %}
-                                    <img src="{{ related_problem.featured_image.url }}" alt="{{ related_problem.title }}">
-                                {% else %}
-                                    <img src="{% static 'images/collaborative-ecosystem.jpg' %}" alt="{{ related_problem.title }}">
-                                {% endif %}
+                                <img src="{% static 'images/Coast001.webp' %}" alt="">
                             </div>
                             <div class="related-content">
-                                <h6>{{ related_problem.title|truncatewords:4 }}</h6>
-                                <span class="badge bg-{{ related_problem.get_status_display_color }}">{{ related_problem.get_status_display }}</span>
+                                <h6>Smart Logistics Optimization</h6>
+                                <span class="badge bg-success">Open</span>
                             </div>
                         </a>
-                        {% empty %}
-                        <p class="text-muted small">No related problems found</p>
-                        {% endfor %}
+                        <a href="#" class="related-item">
+                            <div class="related-image">
+                                <img src="{% static 'images/collaborative-ecosystem.jpg' %}" alt="">
+                            </div>
+                            <div class="related-content">
+                                <h6>Carbon Footprint Tracking</h6>
+                                <span class="badge bg-primary">In Review</span>
+                            </div>
+                        </a>
                     </div>
                 </div>
             </div>

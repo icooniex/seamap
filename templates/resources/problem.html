@@ -134,8 +134,8 @@
                     </div>
                 </div>
             </div>
-            {% endfor %}
-            <div style="display:none" class="problem-grid-item">
+            {% empty %}
+            <div class="problem-grid-item">
                 <div class="card shadow-sm h-100 problem-card">
                     <div class="problem-card-header">
                         <div class="position-relative">
@@ -199,7 +199,7 @@
             </div>
 
             <!-- Sample Problem Statement Card 3 -->
-            <div style="display:none" class="problem-grid-item">
+            <div class="problem-grid-item">
                 <div class="card shadow-sm h-100 problem-card">
                     <div class="problem-card-header">
                         <div class="position-relative">
@@ -263,7 +263,7 @@
             </div>
 
             <!-- Sample Problem Statement Card 4 -->
-            <div style="display:none" class="problem-grid-item">
+            <div class="problem-grid-item">
                 <div class="card shadow-sm h-100 problem-card">
                     <div class="problem-card-header">
                         <div class="position-relative">
@@ -325,6 +325,7 @@
                     </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
     </div>
 </div>
