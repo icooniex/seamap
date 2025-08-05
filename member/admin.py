@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Member, Company, MemberDocument, CompanyDocument
+from .models import Member, Company, MemberDocument, CompanyDocument, Challenge, ChallengeDocument
 
 @admin.register(Member)
 class MemberAdmin(admin.ModelAdmin):
@@ -141,3 +141,107 @@ class CompanyDocumentAdmin(admin.ModelAdmin):
     list_display = ('name', 'company', 'document_type', 'uploaded_at')
     list_filter = ('document_type', 'uploaded_at')
     search_fields = ('name', 'company__company_name', 'company__member__user__username')
+
+
+class ChallengeDocumentInline(admin.TabularInline):
+    model = ChallengeDocument
+    extra = 0
+    fields = ('name', 'document_type', 'file', 'uploaded_at')
+    readonly_fields = ('uploaded_at',)
+
+
+@admin.register(Challenge)
+class ChallengeAdmin(admin.ModelAdmin):
+    list_display = ('title', 'get_organizer_name', 'get_status_display', 'get_priority_display', 'innovation_category', 'has_prizes', 'main_prize_amount', 'application_deadline', 'created_at')
+    list_filter = ('status', 'priority', 'innovation_category', 'has_prizes', 'scope', 'main_prize_currency', 'created_at')
+    search_fields = ('title', 'subtitle', 'description', 'organizer__company_name', 'created_by__user__username', 'organizer_contact', 'location')
+    readonly_fields = ('created_at', 'updated_at', 'applicant_count', 'view_count', 'published_at')
+    inlines = [ChallengeDocumentInline]
+    date_hierarchy = 'created_at'
+    
+    def get_organizer_name(self, obj):
+        return obj.organizer.company_name if obj.organizer else '-'
+    get_organizer_name.short_description = 'Organizer'
+    
+    def get_status_display(self, obj):
+        return obj.get_status_display()
+    get_status_display.short_description = 'Status'
+    
+    def get_priority_display(self, obj):
+        return obj.get_priority_display()
+    get_priority_display.short_description = 'Priority'
+    
+    def get_categories_display(self, obj):
+        if obj.categories:
+            return ', '.join(obj.categories)
+        return '-'
+    get_categories_display.short_description = 'Categories'
+    
+    def get_prize_display(self, obj):
+        if obj.has_prizes and obj.main_prize_amount:
+            return f"{obj.main_prize_amount} {obj.main_prize_currency}"
+        return 'No prizes' if not obj.has_prizes else 'Prizes available'
+    get_prize_display.short_description = 'Prize'
+    
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('title', 'subtitle', 'description', 'organizer', 'organizer_contact', 'created_by')
+        }),
+        ('Challenge Details', {
+            'fields': ('requirements_content', 'categories', 'innovation_category', 'status', 'priority')
+        }),
+        ('Timeline', {
+            'fields': ('application_deadline', 'start_date', 'end_date', 'published_at'),
+            'classes': ('collapse',)
+        }),
+        ('Location & Scope', {
+            'fields': ('location', 'scope'),
+            'classes': ('collapse',)
+        }),
+        ('Prizes & Rewards', {
+            'fields': ('has_prizes', 'main_prize_amount', 'main_prize_currency', 'prizes_content'),
+            'classes': ('collapse',)
+        }),
+        ('Media & Documents', {
+            'fields': ('featured_image', 'challenge_brief'),
+            'classes': ('collapse',)
+        }),
+        ('Statistics', {
+            'fields': ('applicant_count', 'view_count'),
+            'classes': ('collapse',)
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    actions = ['approve_challenges', 'reject_challenges', 'publish_challenges']
+    
+    def approve_challenges(self, request, queryset):
+        updated = queryset.update(status='approved')
+        self.message_user(request, f'{updated} challenges were approved.')
+    approve_challenges.short_description = "Approve selected challenges"
+    
+    def reject_challenges(self, request, queryset):
+        updated = queryset.update(status='rejected')
+        self.message_user(request, f'{updated} challenges were rejected.')
+    reject_challenges.short_description = "Reject selected challenges"
+    
+    def publish_challenges(self, request, queryset):
+        from django.utils import timezone
+        updated = queryset.filter(status='approved').update(status='published', published_at=timezone.now())
+        self.message_user(request, f'{updated} approved challenges were published.')
+    publish_challenges.short_description = "Publish approved challenges"
+
+
+@admin.register(ChallengeDocument)
+class ChallengeDocumentAdmin(admin.ModelAdmin):
+    list_display = ('name', 'get_challenge_title', 'document_type', 'uploaded_at')
+    list_filter = ('document_type', 'uploaded_at')
+    search_fields = ('name', 'challenge__title', 'challenge__organizer__company_name')
+    readonly_fields = ('uploaded_at',)
+    
+    def get_challenge_title(self, obj):
+        return obj.challenge.title
+    get_challenge_title.short_description = 'Challenge'
