@@ -152,8 +152,8 @@ class ChallengeDocumentInline(admin.TabularInline):
 
 @admin.register(Challenge)
 class ChallengeAdmin(admin.ModelAdmin):
-    list_display = ('title', 'get_organizer_name', 'get_status_display', 'get_priority_display', 'innovation_category', 'has_prizes', 'main_prize_amount', 'application_deadline', 'created_at')
-    list_filter = ('status', 'priority', 'innovation_category', 'has_prizes', 'scope', 'main_prize_currency', 'created_at')
+    list_display = ('title', 'get_organizer_name', 'get_status_display', 'innovation_category', 'has_prizes', 'main_prize_amount', 'application_deadline', 'created_at')
+    list_filter = ('status', 'innovation_category', 'has_prizes', 'scope', 'main_prize_currency', 'created_at')
     search_fields = ('title', 'subtitle', 'description', 'organizer__company_name', 'created_by__user__username', 'organizer_contact', 'location')
     readonly_fields = ('created_at', 'updated_at', 'applicant_count', 'view_count', 'published_at')
     inlines = [ChallengeDocumentInline]
@@ -166,10 +166,6 @@ class ChallengeAdmin(admin.ModelAdmin):
     def get_status_display(self, obj):
         return obj.get_status_display()
     get_status_display.short_description = 'Status'
-    
-    def get_priority_display(self, obj):
-        return obj.get_priority_display()
-    get_priority_display.short_description = 'Priority'
     
     def get_categories_display(self, obj):
         if obj.categories:
@@ -188,10 +184,10 @@ class ChallengeAdmin(admin.ModelAdmin):
             'fields': ('title', 'subtitle', 'description', 'organizer', 'organizer_contact', 'created_by')
         }),
         ('Challenge Details', {
-            'fields': ('requirements_content', 'categories', 'innovation_category', 'status', 'priority')
+            'fields': ('requirements_content', 'categories', 'innovation_category', 'status')
         }),
         ('Timeline', {
-            'fields': ('application_deadline', 'start_date', 'end_date', 'published_at'),
+            'fields': ('application_deadline', 'published_at'),
             'classes': ('collapse',)
         }),
         ('Location & Scope', {

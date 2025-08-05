@@ -907,45 +907,105 @@ def create_challenge(request):
         return redirect('profile_completion')
     
     if request.method == 'POST':
-        from .forms import ChallengeForm
-        from .models import Challenge, ChallengeDocument
+        from .models import Challenge
+        from django.utils.dateparse import parse_datetime
         
-        # Process categories from checkbox list
-        categories = request.POST.getlist('categories')
-        
-        # Create a mutable copy of POST data
-        post_data = request.POST.copy()
-        post_data.setlist('categories', categories)
-        
-        form = ChallengeForm(post_data, request.FILES)
-        if form.is_valid():
-            challenge = form.save(commit=False)
-            challenge.created_by = member
-            # Use the first corporate company as organizer
-            challenge.organizer = member.companies.filter(company_type='corporate').first()
-            challenge.status = 'pending'  # Set to pending for approval
+        try:
+            # Get basic information
+            title = request.POST.get('title', '').strip()
+            subtitle = request.POST.get('subtitle', '').strip()
+            description = request.POST.get('description', '').strip()
+            requirements_content = request.POST.get('requirements_content', '').strip()
+            organizer_contact = request.POST.get('organizer_contact', '').strip()
             
-            # Set categories as JSON list
-            challenge.categories = categories
-            challenge.save()
+            # Get timeline
+            application_deadline = request.POST.get('application_deadline')
+            if application_deadline:
+                application_deadline = parse_datetime(application_deadline)
+            else:
+                application_deadline = None
             
-            # Handle challenge brief document
+            # Get categories
+            categories = request.POST.getlist('categories')
+            
+            # Get location & scope
+            location = request.POST.get('location', '').strip()
+            scope = request.POST.get('scope', '').strip()
+            innovation_category = request.POST.get('innovation_category', '').strip()
+            
+            # Get prize information
+            has_prizes = request.POST.get('has_prizes') == 'on'
+            main_prize_amount = None
+            main_prize_currency = 'USD'
+            prizes_content = ''
+            
+            if has_prizes:
+                try:
+                    main_prize_amount = float(request.POST.get('main_prize_amount', 0))
+                except (ValueError, TypeError):
+                    main_prize_amount = None
+                main_prize_currency = request.POST.get('main_prize_currency', 'USD')
+                prizes_content = request.POST.get('prizes_content', '').strip()
+            
+            # Validation
+            if not title:
+                messages.error(request, 'Challenge title is required.')
+                return render(request, 'resources/create_challenge.html')
+            
+            if not description:
+                messages.error(request, 'Challenge description is required.')
+                return render(request, 'resources/create_challenge.html')
+            
+            if not requirements_content:
+                messages.error(request, 'Requirements content is required.')
+                return render(request, 'resources/create_challenge.html')
+            
+            if not organizer_contact:
+                messages.error(request, 'Contact email is required.')
+                return render(request, 'resources/create_challenge.html')
+            
+            if not categories:
+                messages.error(request, 'Please select at least one category.')
+                return render(request, 'resources/create_challenge.html')
+            
+            # Create challenge
+            challenge = Challenge.objects.create(
+                title=title,
+                subtitle=subtitle,
+                description=description,
+                requirements_content=requirements_content,
+                organizer_contact=organizer_contact,
+                application_deadline=application_deadline,
+                categories=categories,
+                location=location,
+                scope=scope,
+                innovation_category=innovation_category,
+                has_prizes=has_prizes,
+                main_prize_amount=main_prize_amount,
+                main_prize_currency=main_prize_currency,
+                prizes_content=prizes_content,
+                created_by=member,
+                organizer=member.companies.filter(company_type='corporate').first(),
+                status='pending'
+            )
+            
+            # Handle file uploads
             if 'challenge_brief' in request.FILES:
                 challenge.challenge_brief = request.FILES['challenge_brief']
-                challenge.save()
+            
+            if 'featured_image' in request.FILES:
+                challenge.featured_image = request.FILES['featured_image']
+            
+            challenge.save()
             
             messages.success(request, 'Challenge submitted successfully! It will be reviewed before publication.')
             return redirect('challenge')
-        else:
-            # If form is invalid, display errors
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f"{field}: {error}")
-    else:
-        from .forms import ChallengeForm
-        form = ChallengeForm()
+            
+        except Exception as e:
+            messages.error(request, f'Error creating challenge: {str(e)}')
+            return render(request, 'resources/create_challenge.html')
     
-    return render(request, 'resources/create_challenge.html', {'form': form})
+    return render(request, 'resources/create_challenge.html')
 
 
 @login_required

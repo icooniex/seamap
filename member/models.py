@@ -482,8 +482,6 @@ class Challenge(models.Model):
     
     # Timeline & Status
     application_deadline = models.DateTimeField(null=True, blank=True)
-    start_date = models.DateTimeField(null=True, blank=True)
-    end_date = models.DateTimeField(null=True, blank=True)
     
     # Prize Information
     has_prizes = models.BooleanField(default=False)
@@ -503,11 +501,10 @@ class Challenge(models.Model):
     
     # Additional Resources
     challenge_brief = models.FileField(upload_to='challenge_briefs/', blank=True, null=True, help_text="Challenge brief document")
+    featured_image = models.ImageField(upload_to='challenges/', blank=True, null=True)
     
     # Meta Information
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
-    priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='medium')
-    featured_image = models.ImageField(upload_to='challenges/', blank=True, null=True)
     
     # Statistics
     applicant_count = models.PositiveIntegerField(default=0)
