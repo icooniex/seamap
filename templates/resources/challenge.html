@@ -63,18 +63,23 @@
     <!-- Challenge Cards Grid -->
     <div class="challenges-grid-container">
         <div class="challenges-grid">
-            <!-- Sample Challenge Card 1 -->
+            {% for challenge in challenges %}
+            <!-- Challenge Card -->
             <div class="challenge-grid-item">
                 <div class="card shadow-sm h-100 challenge-card">
                     <div class="challenge-card-header">
                         <div class="position-relative">
-                            <img src="{% static 'images/collaborative-ecosystem.jpg' %}" alt="Ocean Plastic Challenge" class="challenge-image">
+                            {% if challenge.featured_image %}
+                                <img src="{{ challenge.featured_image.url }}" alt="{{ challenge.title }}" class="challenge-image">
+                            {% else %}
+                                <img src="{% static 'images/collaborative-ecosystem.jpg' %}" alt="{{ challenge.title }}" class="challenge-image">
+                            {% endif %}
                             <div class="challenge-badges">
                                 <span class="badge bg-success challenge-status-badge">Open</span>
                             </div>
                             <div class="challenge-meta">
                                 <span class="badge bg-light text-dark participants-badge">
-                                    <i class="bi bi-people"></i> 23 applicants
+                                    <i class="bi bi-people"></i> {{ challenge.applicant_count }} applicant{{ challenge.applicant_count|pluralize }}
                                 </span>
                             </div>
                         </div>
@@ -84,59 +89,64 @@
                         <div class="organization-info mb-3">
                             <div class="d-flex align-items-center">
                                 <div class="org-avatar me-2">
-                                    <span class="avatar-text">MCA</span>
+                                    <span class="avatar-text">{{ challenge.organizer.company_name|slice:":2"|upper }}</span>
                                 </div>
                                 <div class="org-details">
-                                    <div class="org-name">Marine Conservation Alliance</div>
-                                    <div class="org-type">Non-Profit Organization</div>
+                                    <div class="org-name">{{ challenge.organizer.company_name }}</div>
+                                    <div class="org-type">{{ challenge.organizer.organization_type|default:"Organization" }}</div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Challenge Title & Description -->
-                        <h5 class="challenge-title mb-2">Ocean Plastic Innovation Challenge</h5>
+                        <h5 class="challenge-title mb-2">{{ challenge.title }}</h5>
                         <p class="challenge-description mb-3">
-                            Developing breakthrough solutions to reduce ocean plastic pollution through innovative technologies and sustainable practices.
+                            {{ challenge.description|truncatewords:25 }}
                         </p>
 
                         <!-- Technology Tags -->
                         <div class="tech-tags-challenge mb-3">
-                            <span class="tech-tag-challenge">Waste Management</span>
-                            <span class="tech-tag-challenge">Clean Tech</span>
-                            <span class="tech-tag-challenge">Marine Science</span>
+                            {% for category in challenge.categories %}
+                                <span class="tech-tag-challenge">{{ category|title }}</span>
+                            {% endfor %}
                         </div>
 
                         <!-- Challenge Details -->
                         <div class="challenge-details mb-3">
+                            {% if challenge.location %}
                             <div class="detail-item">
                                 <i class="bi bi-geo-alt text-muted me-2"></i>
-                                <span>Global / Singapore Hub</span>
+                                <span>{{ challenge.location }}</span>
                             </div>
+                            {% endif %}
+                            {% if challenge.application_deadline %}
                             <div class="detail-item">
                                 <i class="bi bi-calendar text-muted me-2"></i>
-                                <span>Jun 15 - Sep 15, 2025</span>
+                                <span>Deadline: {{ challenge.application_deadline|date:"M d, Y" }}</span>
                             </div>
+                            {% endif %}
                             <div class="detail-item">
                                 <i class="bi bi-calendar-check text-muted me-2"></i>
-                                <span>Apply by Jun 1, 2025</span>
+                                <span>Posted: {{ challenge.created_at|date:"M d, Y" }}</span>
                             </div>
+                            {% if challenge.has_prizes and challenge.main_prize_amount %}
                             <div class="detail-item prize-item">
                                 <i class="bi bi-trophy text-warning me-2"></i>
-                                <span class="prize-amount">$50,000 Grand Prize</span>
+                                <span class="prize-amount">${{ challenge.main_prize_amount|floatformat:0 }} Prize</span>
                             </div>
+                            {% endif %}
                         </div>
                     </div>
                     <div class="card-footer challenge-card-footer">
-                        <a href="{% url 'challenge_detail' 1 %}" class="btn btn-primary w-100 challenge-btn">
+                        <a href="{% url 'challenge_detail' challenge.id %}" class="btn btn-primary w-100 challenge-btn">
                             <i class="bi bi-rocket-takeoff me-2"></i>
                             View Challenge Details
                         </a>
                     </div>
                 </div>
             </div>
-
-            <!-- Sample Challenge Card 2 -->
-            <div class="challenge-grid-item">
+            {% endfor %}
+            <div style="display:none" class="challenge-grid-item">
                 <div class="card shadow-sm h-100 challenge-card">
                     <div class="challenge-card-header">
                         <div class="position-relative">
@@ -208,7 +218,7 @@
             </div>
 
             <!-- Sample Challenge Card 3 -->
-            <div class="challenge-grid-item">
+            <div style="display:none" class="challenge-grid-item">
                 <div class="card shadow-sm h-100 challenge-card">
                     <div class="challenge-card-header">
                         <div class="position-relative">

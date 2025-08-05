@@ -853,10 +853,28 @@ def corporate_matchmaking(request):
 
 
 def problem(request):
-    return render(request, 'resources/problem.html')
+    from .models import ProblemStatement
+    try:
+        problems = ProblemStatement.objects.filter(status='published').order_by('-created_at')
+        context = {
+            'problems': problems,
+            'total_problems': problems.count(),
+        }
+    except:
+        context = {'problems': [], 'total_problems': 0}
+    return render(request, 'resources/problem.html', context)
 
 def challenge(request):
-    return render(request, 'resources/challenge.html')
+    from .models import Challenge
+    try:
+        challenges = Challenge.objects.filter(status='published').order_by('-created_at')
+        context = {
+            'challenges': challenges,
+            'total_challenges': challenges.count(),
+        }
+    except:
+        context = {'challenges': [], 'total_challenges': 0}
+    return render(request, 'resources/challenge.html', context)
 
 def challenge_detail(request, challenge_id):
     """Display detailed challenge page"""
