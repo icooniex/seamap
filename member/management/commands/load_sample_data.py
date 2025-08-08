@@ -1,8 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 from member.models import Member, Company
-import json
-import os
 
 
 class Command(BaseCommand):
@@ -18,62 +16,134 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write(self.style.SUCCESS('Loading sample company data...'))
 
-        # Path to the backup file
-        backup_file = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'sample_companies_backup.json')
-        
-        if not os.path.exists(backup_file):
-            self.stdout.write(self.style.ERROR(f'Backup file not found: {backup_file}'))
-            return
-
         # Check if data already exists
-        if Company.objects.count() > 5 and not options['force']:
+        company_count = Company.objects.count()
+        if company_count > 0 and not options['force']:
             self.stdout.write(self.style.WARNING(
-                'Companies already exist in database. Use --force to override.'
+                f'Companies already exist in database ({company_count} found). Use --force to override.'
             ))
             return
 
         try:
-            with open(backup_file, 'r') as f:
-                data = json.load(f)
-
-            # First, create users for members
-            user_data = {}
-            for item in data:
-                if item['model'] == 'member.member':
-                    member_id = item['pk']
-                    user_id = item['fields']['user']
-                    
-                    # Create user if doesn't exist
-                    if user_id not in user_data:
-                        # Extract user info from our script data
-                        username = self._get_username_for_member(member_id)
-                        if username:
-                            user, created = User.objects.get_or_create(
-                                id=user_id,
-                                defaults={
-                                    'username': username,
-                                    'email': f'{username}@example.com',
-                                    'first_name': 'Sample',
-                                    'last_name': 'User',
-                                }
-                            )
-                            user_data[user_id] = user
-                            if created:
-                                self.stdout.write(f'Created user: {username}')
-
-            # Load the JSON data
-            from django.core.management import call_command
-            from io import StringIO
+            # Create sample startup
+            self.stdout.write('Creating startup...')
+            user1, created = User.objects.get_or_create(
+                username='ecopack_demo',
+                defaults={
+                    'email': 'demo@ecopack.com',
+                    'first_name': 'Demo',
+                    'last_name': 'Founder',
+                }
+            )
             
-            # Save to temp file and load
-            temp_file = '/tmp/sample_data.json'
-            with open(temp_file, 'w') as f:
-                json.dump(data, f)
+            member1, created = Member.objects.get_or_create(
+                user=user1,
+                defaults={
+                    'job_position': 'CEO',
+                    'short_bio': 'Demo startup founder',
+                    'consent_info': True,
+                    'consent_marketplace': True,
+                    'profile_completed': True,
+                    'onboarding_completed': True,
+                }
+            )
             
-            call_command('loaddata', temp_file)
+            Company.objects.get_or_create(
+                member=member1,
+                company_name='EcoPack Demo',
+                defaults={
+                    'company_type': 'startup',
+                    'website': 'https://ecopack-demo.com',
+                    'founded_year': 2022,
+                    'team_size': '6-10',
+                    'primary_location': 'Thailand',
+                    'company_description': 'Demo eco-friendly packaging startup',
+                    'innovation_types': ['plastic_alternatives'],
+                    'current_stage': 'early',
+                    'funding_needed': '500k_1m',
+                }
+            )
             
-            # Clean up
-            os.remove(temp_file)
+            # Create sample investor
+            self.stdout.write('Creating investor...')
+            user2, created = User.objects.get_or_create(
+                username='investor_demo',
+                defaults={
+                    'email': 'demo@investor.com',
+                    'first_name': 'Demo',
+                    'last_name': 'Investor',
+                }
+            )
+            
+            member2, created = Member.objects.get_or_create(
+                user=user2,
+                defaults={
+                    'job_position': 'Managing Partner',
+                    'short_bio': 'Demo investor',
+                    'consent_info': True,
+                    'consent_marketplace': True,
+                    'profile_completed': True,
+                    'onboarding_completed': True,
+                }
+            )
+            
+            Company.objects.get_or_create(
+                member=member2,
+                company_name='Demo Ventures',
+                defaults={
+                    'company_type': 'investor',
+                    'website': 'https://demo-ventures.com',
+                    'founded_year': 2020,
+                    'team_size': '11-25',
+                    'primary_location': 'Singapore',
+                    'company_description': 'Demo venture capital fund',
+                    'investor_type': 'vc',
+                    'funding_size': '100m_200m',
+                    'average_deal_size': '1m_5m',
+                    'funding_stages': ['seed', 'series_a'],
+                    'investment_categories': ['eliminate_redesign', 'advanced_recycling'],
+                    'market_country_interests': ['Singapore', 'Thailand'],
+                }
+            )
+            
+            # Create sample corporate
+            self.stdout.write('Creating corporate...')
+            user3, created = User.objects.get_or_create(
+                username='corporate_demo',
+                defaults={
+                    'email': 'demo@corporate.com',
+                    'first_name': 'Demo',
+                    'last_name': 'Corporate',
+                }
+            )
+            
+            member3, created = Member.objects.get_or_create(
+                user=user3,
+                defaults={
+                    'job_position': 'Innovation Director',
+                    'short_bio': 'Demo corporate representative',
+                    'consent_info': True,
+                    'consent_marketplace': True,
+                    'profile_completed': True,
+                    'onboarding_completed': True,
+                }
+            )
+            
+            Company.objects.get_or_create(
+                member=member3,
+                company_name='Demo Corporation',
+                defaults={
+                    'company_type': 'corporate',
+                    'website': 'https://demo-corp.com',
+                    'founded_year': 2000,
+                    'team_size': '100+',
+                    'primary_location': 'Singapore',
+                    'company_description': 'Demo multinational corporation',
+                    'organization_type': 'multinational_corporation',
+                    'industry_expertise': ['manufacturing', 'sustainability'],
+                    'support_areas': ['investment_funding', 'manufacturing_supply'],
+                }
+            )
             
             self.stdout.write(self.style.SUCCESS(
                 f'Successfully loaded sample data!\n'
@@ -85,11 +155,5 @@ class Command(BaseCommand):
 
         except Exception as e:
             self.stdout.write(self.style.ERROR(f'Error loading data: {str(e)}'))
-
-    def _get_username_for_member(self, member_id):
-        """Get username based on member ID - simplified mapping"""
-        username_map = {
-            # This would need to be updated based on actual member IDs
-            # For now, we'll use a simple pattern
-        }
-        return username_map.get(member_id, f'user_{member_id}')
+            import traceback
+            traceback.print_exc()
