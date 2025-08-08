@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from .upload_handlers import profile_picture_upload_to, company_logo_upload_to
 
 USER_TYPE_CHOICES = [
     ('startup', 'Startup'),
@@ -96,7 +97,7 @@ class Member(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     
     # User Profile Information
-    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
+    profile_picture = models.ImageField(upload_to=profile_picture_upload_to, blank=True, null=True)
     job_position = models.CharField(max_length=255, blank=True)
     short_bio = models.TextField(max_length=500, blank=True)
     phone_number = models.CharField(max_length=20, blank=True)
@@ -119,15 +120,20 @@ class Member(models.Model):
         """Get profile picture URL with fallback to default image"""
         if self.profile_picture and hasattr(self.profile_picture, 'url'):
             try:
-                # Check if file exists in development
-                import os
+                # Import settings here to avoid circular imports
                 from django.conf import settings
-                if settings.DEBUG:
+                
+                # For R2 storage, always return the URL (cloud storage handles existence)
+                if getattr(settings, 'USE_CLOUDFLARE_R2', False):
+                    return self.profile_picture.url
+                elif settings.DEBUG:
+                    # Local development - check file existence
+                    import os
                     file_path = os.path.join(settings.MEDIA_ROOT, str(self.profile_picture))
                     if os.path.exists(file_path):
                         return self.profile_picture.url
                 else:
-                    # In production, assume file exists or will be handled by web server
+                    # Production with local storage
                     return self.profile_picture.url
             except:
                 pass
@@ -150,7 +156,7 @@ class Company(models.Model):
     
     # Basic Company Information (Step 1)
     company_name = models.CharField(max_length=255)
-    company_logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
+    company_logo = models.ImageField(upload_to=company_logo_upload_to, blank=True, null=True)
     website = models.URLField(blank=True, null=True)
     founded_year = models.IntegerField(blank=True, null=True)
     team_size = models.CharField(max_length=10, choices=TEAM_SIZE_CHOICES, blank=True)
@@ -218,15 +224,20 @@ class Company(models.Model):
         """Get company logo URL with fallback to default image"""
         if self.company_logo and hasattr(self.company_logo, 'url'):
             try:
-                # Check if file exists in development
-                import os
+                # Import settings here to avoid circular imports
                 from django.conf import settings
-                if settings.DEBUG:
+                
+                # For R2 storage, always return the URL (cloud storage handles existence)
+                if getattr(settings, 'USE_CLOUDFLARE_R2', False):
+                    return self.company_logo.url
+                elif settings.DEBUG:
+                    # Local development - check file existence
+                    import os
                     file_path = os.path.join(settings.MEDIA_ROOT, str(self.company_logo))
                     if os.path.exists(file_path):
                         return self.company_logo.url
                 else:
-                    # In production, assume file exists or will be handled by web server
+                    # Production with local storage
                     return self.company_logo.url
             except:
                 pass

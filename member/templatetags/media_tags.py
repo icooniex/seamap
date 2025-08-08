@@ -12,11 +12,16 @@ def profile_picture_url(member):
     
     if member.profile_picture and hasattr(member.profile_picture, 'url'):
         try:
-            if settings.DEBUG:
+            # For R2 storage, always return the URL (cloud storage handles existence)
+            if getattr(settings, 'USE_CLOUDFLARE_R2', False):
+                return member.profile_picture.url
+            elif settings.DEBUG:
+                # Local development - check file existence
                 file_path = os.path.join(settings.MEDIA_ROOT, str(member.profile_picture))
                 if os.path.exists(file_path):
                     return member.profile_picture.url
             else:
+                # Production with local storage
                 return member.profile_picture.url
         except:
             pass
@@ -31,11 +36,16 @@ def company_logo_url(company):
     
     if company.company_logo and hasattr(company.company_logo, 'url'):
         try:
-            if settings.DEBUG:
+            # For R2 storage, always return the URL (cloud storage handles existence)
+            if getattr(settings, 'USE_CLOUDFLARE_R2', False):
+                return company.company_logo.url
+            elif settings.DEBUG:
+                # Local development - check file existence
                 file_path = os.path.join(settings.MEDIA_ROOT, str(company.company_logo))
                 if os.path.exists(file_path):
                     return company.company_logo.url
             else:
+                # Production with local storage
                 return company.company_logo.url
         except:
             pass

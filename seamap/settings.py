@@ -220,9 +220,37 @@ import os
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+# Cloudflare R2 Storage Settings
+# Automatically enable R2 for Railway, disable for local development
+IS_RAILWAY = 'RAILWAY_ENVIRONMENT' in os.environ
+USE_CLOUDFLARE_R2 = IS_RAILWAY and os.getenv('USE_CLOUDFLARE_R2', 'True').lower() == 'true'
+
+if USE_CLOUDFLARE_R2:
+    # Cloudflare R2 Configuration for Railway production
+    CLOUDFLARE_R2_ACCESS_KEY_ID = os.getenv('CLOUDFLARE_R2_ACCESS_KEY_ID')
+    CLOUDFLARE_R2_SECRET_ACCESS_KEY = os.getenv('CLOUDFLARE_R2_SECRET_ACCESS_KEY')
+    CLOUDFLARE_R2_BUCKET_NAME = os.getenv('CLOUDFLARE_R2_BUCKET_NAME')
+    CLOUDFLARE_R2_ENDPOINT_URL = os.getenv('CLOUDFLARE_R2_ENDPOINT_URL')
+    CLOUDFLARE_R2_CUSTOM_DOMAIN = os.getenv('CLOUDFLARE_R2_CUSTOM_DOMAIN')
+    
+    # Use custom storage backends
+    DEFAULT_FILE_STORAGE = 'seamap.storage_backends.PublicMediaStorage'
+    
+    # Add storages app to INSTALLED_APPS for R2
+    INSTALLED_APPS.append('storages')
+    
+    # Media URL will use custom domain if available
+    if CLOUDFLARE_R2_CUSTOM_DOMAIN:
+        MEDIA_URL = f'https://{CLOUDFLARE_R2_CUSTOM_DOMAIN}/media/'
+    else:
+        MEDIA_URL = f'{CLOUDFLARE_R2_ENDPOINT_URL}/{CLOUDFLARE_R2_BUCKET_NAME}/media/'
+else:
+    # Local development settings - use filesystem storage
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+
 # Railway specific settings
-if 'RAILWAY_ENVIRONMENT' in os.environ:
-    # On Railway, create media directory if it doesn't exist
+if IS_RAILWAY:
+    # On Railway, create media directory if it doesn't exist (for fallback)
     os.makedirs(MEDIA_ROOT, exist_ok=True)
 
 # Maximum file upload size (25MB)
