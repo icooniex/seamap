@@ -1,5 +1,6 @@
 {% extends 'template_parts/dashboard_base.html' %}
 {% load static %}
+{% load media_tags %}
 
 {% block title %}Problem Statement Details - Seamap{% endblock %}
 
@@ -191,7 +192,7 @@
                     <h5><i class="bi bi-building me-2"></i>Problem Owner</h5>
                     <div class="company-info">
                         {% if problem.company.company_logo %}
-                            <img src="{{ problem.company.company_logo.url }}" alt="{{ problem.company.company_name }} Logo" class="company-logo">
+                            <img src="{% company_logo_url problem.company %}" alt="{{ problem.company.company_name }} Logo" class="company-logo">
                         {% else %}
                             <img src="{% static 'images/collaborative-ecosystem.jpg' %}" alt="{{ problem.company.company_name|default:'Company' }} Logo" class="company-logo">
                         {% endif %}

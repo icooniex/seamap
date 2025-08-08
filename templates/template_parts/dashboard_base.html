@@ -1,4 +1,5 @@
 {% load static %}
+{% load media_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -704,7 +705,7 @@
                         data-bs-toggle="dropdown" 
                         aria-expanded="false">
                     {% if user.member.profile_picture %}
-                        <img src="{{ user.member.profile_picture.url }}" 
+                        <img src="{% profile_picture_url user.member %}" 
                              alt="Profile" class="profile-avatar">
                     {% else %}
                         <div class="profile-avatar d-flex align-items-center justify-content-center bg-primary text-white fw-bold">
@@ -722,7 +723,7 @@
                         <div class="dropdown-item-text px-3 py-2">
                             <div class="d-flex align-items-center">
                                 {% if user.member.profile_picture %}
-                                    <img src="{{ user.member.profile_picture.url }}" 
+                                    <img src="{% profile_picture_url user.member %}" 
                                          alt="Profile" class="rounded-circle me-2" width="32" height="32">
                                 {% else %}
                                     <div class="rounded-circle me-2 bg-primary text-white d-flex align-items-center justify-content-center fw-bold" 

@@ -12,7 +12,7 @@
     <div class="logo-section">
         <div class="current-logo">
             {% if company.company_logo %}
-                <img src="{{ company.company_logo.url }}" alt="Company Logo" class="logo-img">
+                <img src="{% company_logo_url company %}" alt="Company Logo" class="logo-img">
             {% else %}
                 <div class="logo-placeholder">
                     <i class="bi bi-building"></i>

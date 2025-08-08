@@ -1,5 +1,6 @@
 {% extends "template_parts/dashboard_base.html" %}
 {% load static %}
+{% load media_tags %}
 
 {% block content %}
 <div class="container-fluid p-0">
@@ -130,7 +131,7 @@
                             <div class="d-flex align-items-center">
                                 <div class="company-avatar-sm me-3">
                                     {% if investor.company_logo %}
-                                        <img src="{{ investor.company_logo.url }}" alt="{{ investor.company_name }}" class="avatar-img-sm" style="width: 40px; height: 40px; object-fit: cover; border-radius: 8px;">
+                                        <img src="{% company_logo_url investor %}" alt="{{ investor.company_name }}" class="avatar-img-sm" style="width: 40px; height: 40px; object-fit: cover; border-radius: 8px;">
                                     {% else %}
                                         <div class="avatar-placeholder-sm">
                                             {{ investor.company_name|slice:":2"|upper }}
@@ -248,7 +249,7 @@
                                 <!-- Company Logo/Avatar -->
                                 <div class="company-avatar-grid">
                                     {% if investor.company_logo %}
-                                        <img src="{{ investor.company_logo.url }}" alt="{{ investor.company_name }}" class="avatar-img-grid">
+                                        <img src="{% company_logo_url investor %}" alt="{{ investor.company_name }}" class="avatar-img-grid">
                                     {% else %}
                                         <div class="avatar-placeholder-grid">
                                             {{ investor.company_name|slice:":2"|upper }}

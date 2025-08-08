@@ -1,5 +1,6 @@
 {% extends "template_parts/dashboard_base.html" %}
 {% load static %}
+{% load media_tags %}
 
 {% block content %}
 <div class="container-fluid p-0">
@@ -57,7 +58,7 @@
                 <div class="profile-picture-section">
                     <div class="current-picture">
                         {% if user.member.profile_picture %}
-                            <img src="{{ user.member.profile_picture.url }}" alt="Profile Picture" class="profile-img">
+                            <img src="{% profile_picture_url user.member %}" alt="Profile Picture" class="profile-img">
                         {% else %}
                             <div class="profile-placeholder">
                                 <i class="bi bi-person-circle"></i>
