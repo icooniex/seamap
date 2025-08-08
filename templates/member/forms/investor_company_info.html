@@ -159,24 +159,22 @@
                     <option value="">Select fund size</option>
                     <option value="under_1m" {% if company.funding_size == 'under_1m' %}selected{% endif %}>Under $1M</option>
                     <option value="1m_50m" {% if company.funding_size == '1m_50m' %}selected{% endif %}>$1M - $50M</option>
-                    <option value="50m_250m" {% if company.funding_size == '50m_250m' %}selected{% endif %}>$50M - $250M</option>
-                    <option value="250m_1b" {% if company.funding_size == '250m_1b' %}selected{% endif %}>$250M - $1B</option>
-                    <option value="over_1b" {% if company.funding_size == 'over_1b' %}selected{% endif %}>Over $1B</option>
-                    <option value="undisclosed" {% if company.funding_size == 'undisclosed' %}selected{% endif %}>Undisclosed</option>
+                    <option value="100m_200m" {% if company.funding_size == '100m_200m' %}selected{% endif %}>$100M - $200M</option>
+                    <option value="200m_500m" {% if company.funding_size == '200m_500m' %}selected{% endif %}>$200M - $500M</option>
+                    <option value="over_500m" {% if company.funding_size == 'over_500m' %}selected{% endif %}>Over $500M</option>
                 </select>
             </div>
         </div>
         <div class="col-md-6">
             <div class="form-group">
                 <label for="average_deal_size" class="form-label">Average Deal Size *</label>
-                <select class="form-select" id="average_deal_size" name="average_deal_size" required>
-                    <option value="">Select deal size</option>
-                    <option value="under_50k" {% if company.average_deal_size == 'under_50k' %}selected{% endif %}>Under $50K</option>
-                    <option value="50k_250k" {% if company.average_deal_size == '50k_250k' %}selected{% endif %}>$50K - $250K</option>
-                    <option value="250k_1m" {% if company.average_deal_size == '250k_1m' %}selected{% endif %}>$250K - $1M</option>
-                    <option value="1m_5m" {% if company.average_deal_size == '1m_5m' %}selected{% endif %}>$1M - $5M</option>
-                    <option value="5m_25m" {% if company.average_deal_size == '5m_25m' %}selected{% endif %}>$5M - $25M</option>
-                    <option value="over_25m" {% if company.average_deal_size == 'over_25m' %}selected{% endif %}>Over $25M</option>
+                                <select class="form-select" id="average_deal_size" name="average_deal_size" required>
+                    <option value="">Select average deal size</option>
+                    <option value="under_1m" {% if company.average_deal_size == 'under_1m' %}selected{% endif %}>Under $1M</option>
+                    <option value="1m_50m" {% if company.average_deal_size == '1m_50m' %}selected{% endif %}>$1M - $50M</option>
+                    <option value="100m_200m" {% if company.average_deal_size == '100m_200m' %}selected{% endif %}>$100M - $200M</option>
+                    <option value="200m_500m" {% if company.average_deal_size == '200m_500m' %}selected{% endif %}>$200M - $500M</option>
+                    <option value="over_500m" {% if company.average_deal_size == 'over_500m' %}selected{% endif %}>Over $500M</option>
                 </select>
             </div>
         </div>

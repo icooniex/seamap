@@ -2042,7 +2042,45 @@ def company_profile_edit(request):
     if request.method == 'POST':
         form = form_class(request.POST, request.FILES, instance=company)
         
-        if form.is_valid():
+        # Handle JSON field validation separately for corporate forms
+        if company_type == 'corporate':
+            # Remove JSON fields from form validation to handle them manually
+            temp_post = request.POST.copy()
+            json_fields = ['industry_expertise', 'investment_categories', 'market_country_interests', 'support_areas']
+            for field in json_fields:
+                if field in temp_post:
+                    del temp_post[field]
+            
+            # Create a modified form without JSON fields
+            form_without_json = form_class(temp_post, request.FILES, instance=company)
+            form_without_json.fields = {k: v for k, v in form.fields.items() if k not in json_fields}
+            
+            # Use the modified form for validation
+            if form_without_json.is_valid():
+                company = form_without_json.save(commit=False)
+                
+                # Set company member and type if creating new
+                if not company.pk:
+                    company.member = member
+                    company.company_type = company_type
+                    company.is_primary = True
+                
+                # Handle JSON fields manually for corporates
+                company.industry_expertise = request.POST.getlist('industry_expertise') or []
+                company.investment_categories = request.POST.getlist('investment_categories') or []
+                company.market_country_interests = request.POST.getlist('market_country_interests') or []
+                company.support_areas = request.POST.getlist('support_areas') or []
+                
+                company.save()
+                messages.success(request, 'Your company profile has been updated successfully!')
+                return redirect('company_profile_edit')
+            else:
+                # Form validation failed
+                for field, errors in form_without_json.errors.items():
+                    for error in errors:
+                        messages.error(request, f'{field}: {error}')
+        
+        elif form.is_valid():
             company = form.save(commit=False)
             
             # Set company member and type if creating new
@@ -2054,7 +2092,7 @@ def company_profile_edit(request):
             # Handle checkbox fields and special form data
             if company_type == 'startup':
                 # Handle customer segments (multiple checkbox)
-                customer_segments = request.POST.getlist('customer_segments')
+                customer_segments = request.POST.getlist('customer_segments') or []
                 company.customer_segments = customer_segments
                 
                 # Handle boolean fields
@@ -2063,16 +2101,9 @@ def company_profile_edit(request):
                 
             elif company_type == 'investor':
                 # Handle multiple selections for investors
-                company.funding_stages = request.POST.getlist('funding_stages')
-                company.investment_categories = request.POST.getlist('investment_categories')
-                company.market_country_interests = request.POST.getlist('market_country_interests')
-                
-            elif company_type == 'corporate':
-                # Handle multiple selections for corporates
-                company.industry_expertise = request.POST.getlist('industry_expertise')
-                company.investment_categories = request.POST.getlist('investment_categories')
-                company.market_country_interests = request.POST.getlist('market_country_interests')
-                company.support_areas = request.POST.getlist('support_areas')
+                company.funding_stages = request.POST.getlist('funding_stages') or []
+                company.investment_categories = request.POST.getlist('investment_categories') or []
+                company.market_country_interests = request.POST.getlist('market_country_interests') or []
             
             company.save()
             messages.success(request, 'Your company profile has been updated successfully!')
