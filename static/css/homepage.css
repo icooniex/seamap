@@ -47,7 +47,7 @@ body {
 .navbar-brand {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     font-weight: 700;
     font-size: 1.5rem;
     color: var(--text-dark) !important;
@@ -981,15 +981,13 @@ body {
 .footer-brand .footer-logo {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 2px;
     margin-bottom: 20px;
 }
 
 .footer-logo-img {
-    width: 80px;
-    height: 80px;
+    height: 100px;
     border-radius: 50%;
-    background: white;
     padding: 10px;
 }
 
@@ -1079,7 +1077,7 @@ body {
 }
 
 .partner-logo img {
-    max-height: 50px;
+    max-height: 80px;
     width: auto;
 }
 
@@ -1088,8 +1086,8 @@ body {
 }
 
 .asean-logo {
-    max-width: 60px;
-    max-height: 60px;
+    max-width: 80px;
+    max-height: 80px;
 }
 
 /* ========================================

@@ -82,7 +82,7 @@
             <div class="container">
                 <a class="navbar-brand" href="{% url 'homepage' %}">
                     <div class="navbar-logo">
-                        <img src="{% static 'images/logo.webp' %}" alt="SEA-MaP Logo" style="width:50px;">
+                        <img src="{% static 'images/logo-notext.png' %}" alt="SEA-MaP Logo" style="width:65px;">
                     </div>
                     <div>
                         <div class="navbar-title">SEA-MaP</div>
@@ -361,8 +361,8 @@ regional policies on plastic circularity.
                 
                 <div class="cta-buttons">
                     {% if not user.is_authenticated %}
-                        <a href="{% url 'signup' %}" class="btn btn-primary">Start as Startup 🚀</a>
-                        <a href="{% url 'signup' %}" class="btn btn-outline-primary">Start as Investor 💰</a>
+                        <a href="{% url 'signup' %}" class="btn btn-primary">Start as Startup</a>
+                        <a href="{% url 'signup' %}" class="btn btn-outline-primary">Start as Investor</a>
                     {% else %}
                         <a href="{% url 'dashboard' %}" class="btn btn-primary">Explore Dashboard</a>
                     {% endif %}
@@ -558,7 +558,7 @@ regional policies on plastic circularity.
                 </p>
                 <div class="join-platform-buttons">
                     {% if not user.is_authenticated %}
-                        <a href="{% url 'signup' %}" class="btn-join-primary">Create Account 🚀</a>
+                        <a href="{% url 'signup' %}" class="btn-join-primary">Create Account</a>
                         <a href="#about" class="btn-join-secondary">Learn More</a>
                     {% else %}
                         <a href="{% url 'dashboard' %}" class="btn-join-primary">Go to Dashboard</a>
@@ -576,7 +576,7 @@ regional policies on plastic circularity.
                 <!-- Left Section - Logo and Description -->
                 <div class="footer-section footer-brand">
                     <div class="footer-logo">
-                        <img src="{% static 'images/logo.webp' %}" alt="SEA-MaP Logo" class="footer-logo-img">
+                        <img src="{% static 'images/logo-notext-white.png' %}" alt="SEA-MaP Logo" class="footer-logo-img">
                         <div class="footer-brand-text">
                             <h3>SEA-MaP</h3>
                             <p class="footer-tagline">Regional Platform for Innovation and Investments</p>
