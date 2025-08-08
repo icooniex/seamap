@@ -18,11 +18,17 @@ class Command(BaseCommand):
 
         # Check if data already exists
         company_count = Company.objects.count()
-        if company_count > 0 and not options['force']:
+        demo_companies = Company.objects.filter(company_name__icontains='demo').count()
+        
+        if demo_companies >= 3 and not options['force']:
             self.stdout.write(self.style.WARNING(
-                f'Companies already exist in database ({company_count} found). Use --force to override.'
+                f'Demo companies already exist in database ({demo_companies} found). Use --force to override.'
             ))
             return
+        elif company_count > 0 and not options['force']:
+            self.stdout.write(self.style.WARNING(
+                f'Some companies exist ({company_count} found), but no demo companies. Creating demo companies...'
+            ))
 
         try:
             # Create sample startup
