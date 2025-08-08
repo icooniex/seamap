@@ -115,6 +115,26 @@ class Member(models.Model):
     def __str__(self):
         return f"{self.user.get_full_name() or self.user.username}"
 
+    def get_profile_picture_url(self):
+        """Get profile picture URL with fallback to default image"""
+        if self.profile_picture and hasattr(self.profile_picture, 'url'):
+            try:
+                # Check if file exists in development
+                import os
+                from django.conf import settings
+                if settings.DEBUG:
+                    file_path = os.path.join(settings.MEDIA_ROOT, str(self.profile_picture))
+                    if os.path.exists(file_path):
+                        return self.profile_picture.url
+                else:
+                    # In production, assume file exists or will be handled by web server
+                    return self.profile_picture.url
+            except:
+                pass
+        
+        # Return default profile picture
+        return '/static/images/default-profile.png'
+
     class Meta:
         verbose_name = "Member Profile"
         verbose_name_plural = "Member Profiles"
@@ -193,6 +213,31 @@ class Company(models.Model):
 
     def __str__(self):
         return f"{self.company_name} ({self.get_company_type_display()}) - by {self.member.user.get_full_name() or self.member.user.username}"
+
+    def get_company_logo_url(self):
+        """Get company logo URL with fallback to default image"""
+        if self.company_logo and hasattr(self.company_logo, 'url'):
+            try:
+                # Check if file exists in development
+                import os
+                from django.conf import settings
+                if settings.DEBUG:
+                    file_path = os.path.join(settings.MEDIA_ROOT, str(self.company_logo))
+                    if os.path.exists(file_path):
+                        return self.company_logo.url
+                else:
+                    # In production, assume file exists or will be handled by web server
+                    return self.company_logo.url
+            except:
+                pass
+        
+        # Return default logo based on company type
+        default_logos = {
+            'startup': '/static/images/default-startup-logo.png',
+            'investor': '/static/images/default-investor-logo.png', 
+            'corporate': '/static/images/default-corporate-logo.png',
+        }
+        return default_logos.get(self.company_type, '/static/images/default-company-logo.png')
 
     def get_startup_profile_progress(self):
         """Calculate startup profile completion progress"""

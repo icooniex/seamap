@@ -220,11 +220,16 @@ import os
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+# Railway specific settings
+if 'RAILWAY_ENVIRONMENT' in os.environ:
+    # On Railway, create media directory if it doesn't exist
+    os.makedirs(MEDIA_ROOT, exist_ok=True)
+
 # Maximum file upload size (25MB)
 FILE_UPLOAD_MAX_MEMORY_SIZE = 25 * 1024 * 1024
 DATA_UPLOAD_MAX_MEMORY_SIZE = 25 * 1024 * 1024
 
 # Allowed file extensions
 ALLOWED_UPLOAD_EXTENSIONS = [
-    '.pdf', '.doc', '.docx', '.ppt', '.pptx'
+    '.pdf', '.doc', '.docx', '.ppt', '.pptx', '.jpg', '.jpeg', '.png', '.gif'
 ]
