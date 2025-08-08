@@ -13,7 +13,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
-from decouple import config
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,10 +26,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY', default='django-insecure-d%xr13cxhs+hl0czf5^(g6fo-dt-p$!&ti1j5d(8g=sd&nf0-1')
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-d%xr13cxhs+hl0czf5^(g6fo-dt-p$!&ti1j5d(8g=sd&nf0-1')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
 # Get Railway URLs
 RAILWAY_STATIC_URL = os.getenv('RAILWAY_STATIC_URL')
@@ -134,14 +137,16 @@ WSGI_APPLICATION = 'seamap.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# Use Railway's DATABASE_URL if available, otherwise SQLite
+# Use Railway's DATABASE_URL if available, otherwise PostgreSQL for local development
 DATABASE_URL = os.getenv('DATABASE_URL')
 
 if DATABASE_URL:
+    # Production database (Railway or other hosting)
     DATABASES = {
         'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600, conn_health_checks=True)
     }
 else:
+    # Local development database (SQLite for now, PostgreSQL later)
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
