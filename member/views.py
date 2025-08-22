@@ -1959,10 +1959,59 @@ def account_settings(request):
     if company and company.company_type == 'startup':
         progress_data = company.get_startup_profile_progress()
     
+    # Get document statistics
+    documents = member.documents.all()
+    total_documents = documents.count()
+    total_size = sum(doc.file.size for doc in documents if doc.file)
+    
+    # Calculate storage usage (100MB limit)
+    storage_limit = 100 * 1024 * 1024  # 100MB in bytes
+    storage_used_mb = total_size / (1024 * 1024)  # Convert to MB
+    storage_remaining_mb = 100 - storage_used_mb
+    storage_percentage = (total_size / storage_limit) * 100
+    
+    # For now, assume all documents are verified (you can add a status field later)
+    verified_documents = total_documents  # This can be updated when you add verification status
+    pending_documents = 0  # This can be updated when you add verification status
+    
+    document_stats = {
+        'total_documents': total_documents,
+        'total_size_bytes': total_size,
+        'storage_used_mb': round(storage_used_mb, 1),
+        'storage_remaining_mb': round(storage_remaining_mb, 1),
+        'storage_limit_mb': 100,
+        'storage_percentage': round(storage_percentage, 1),
+        'verified_documents': verified_documents,
+        'pending_documents': pending_documents,
+    }
+    
+    # Calculate verification progress
+    verification_steps = {
+        'profile_complete': bool(member.user.first_name and member.user.last_name and member.job_position),
+        'email_verified': True,  # Assuming email is verified since user is logged in
+        'documents_uploaded': total_documents > 0,
+        'documents_verified': pending_documents == 0 and total_documents > 0,
+    }
+    
+    completed_steps = sum(verification_steps.values())
+    total_verification_steps = len(verification_steps)
+    verification_percentage = (completed_steps / total_verification_steps) * 100
+    remaining_steps = total_verification_steps - completed_steps
+    
+    verification_progress = {
+        'percentage': round(verification_percentage),
+        'remaining_steps': remaining_steps,
+        'completed_steps': completed_steps,
+        'total_steps': total_verification_steps,
+        'steps': verification_steps,
+    }
+    
     context = {
         'member': member,
         'company': company,
         'progress': progress_data,
+        'document_stats': document_stats,
+        'verification_progress': verification_progress,
     }
     return render(request, 'member/account_settings.html', context)
 

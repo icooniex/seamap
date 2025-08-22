@@ -160,19 +160,31 @@
                             <div class="setting-meta-expanded">
                                 <div class="meta-item">
                                     <i class="bi bi-files text-primary"></i>
-                                    <span class="badge-mini bg-primary">6 documents uploaded</span>
+                                    <span class="badge-mini bg-primary">{{ document_stats.total_documents }} document{{ document_stats.total_documents|pluralize }} uploaded</span>
                                 </div>
                                 <div class="meta-item">
                                     <i class="bi bi-hdd text-info"></i>
-                                    <span>12.5 MB of 100 MB used</span>
+                                    <span>{{ document_stats.storage_used_mb }} MB of {{ document_stats.storage_limit_mb }} MB used</span>
+                                </div>
+                                <div class="meta-item progress-item">
+                                    <i class="bi bi-hdd-stack text-info"></i>
+                                    <div class="progress-container">
+                                        <div class="progress-info">
+                                            <span class="progress-text"><strong>{{ document_stats.storage_percentage }}% Storage Used</strong></span>
+                                            <span class="progress-steps">{{ document_stats.storage_remaining_mb }} MB remaining</span>
+                                        </div>
+                                        <div class="progress-bar-custom">
+                                            <div class="progress-bar-fill {% if document_stats.storage_percentage > 80 %}bg-danger{% elif document_stats.storage_percentage > 60 %}bg-warning{% else %}bg-info{% endif %}" style="width: {{ document_stats.storage_percentage }}%"></div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="meta-item">
                                     <i class="bi bi-shield-check text-success"></i>
-                                    <span>4 documents verified</span>
+                                    <span>{{ document_stats.verified_documents }} document{{ document_stats.verified_documents|pluralize }} verified</span>
                                 </div>
                                 <div class="meta-item">
                                     <i class="bi bi-clock text-warning"></i>
-                                    <span>2 documents pending review</span>
+                                    <span>{{ document_stats.pending_documents }} document{{ document_stats.pending_documents|pluralize }} pending review</span>
                                 </div>
                             </div>
                         </div>
@@ -202,7 +214,11 @@
                             <div class="setting-meta-expanded">
                                 <div class="meta-item">
                                     <i class="bi bi-check-circle text-success"></i>
-                                    <span class="badge-mini bg-success">Profile Verified</span>
+                                    {% if verification_progress.steps.profile_complete %}
+                                        <span class="badge-mini bg-success">Profile Verified</span>
+                                    {% else %}
+                                        <span class="badge-mini bg-warning">Profile Incomplete</span>
+                                    {% endif %}
                                 </div>
                                 <div class="meta-item">
                                     <i class="bi bi-check-circle text-success"></i>
@@ -210,17 +226,21 @@
                                 </div>
                                 <div class="meta-item">
                                     <i class="bi bi-clock text-warning"></i>
-                                    <span class="badge-mini bg-warning">Documents Pending</span>
+                                    {% if document_stats.pending_documents > 0 %}
+                                        <span class="badge-mini bg-warning">{{ document_stats.pending_documents }} Document{{ document_stats.pending_documents|pluralize }} Pending</span>
+                                    {% else %}
+                                        <span class="badge-mini bg-success">Documents Verified</span>
+                                    {% endif %}
                                 </div>
                                 <div class="meta-item progress-item">
                                     <i class="bi bi-graph-up text-info"></i>
                                     <div class="progress-container">
                                         <div class="progress-info">
-                                            <span class="progress-text"><strong>75% Complete</strong></span>
-                                            <span class="progress-steps">3 steps remaining</span>
+                                            <span class="progress-text"><strong>{{ verification_progress.percentage }}% Complete</strong></span>
+                                            <span class="progress-steps">{{ verification_progress.remaining_steps }} step{{ verification_progress.remaining_steps|pluralize }} remaining</span>
                                         </div>
                                         <div class="progress-bar-custom">
-                                            <div class="progress-bar-fill" style="width: 75%"></div>
+                                            <div class="progress-bar-fill" style="width: {{ verification_progress.percentage }}%"></div>
                                         </div>
                                     </div>
                                 </div>
