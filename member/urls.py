@@ -34,6 +34,11 @@ urlpatterns = [
     path('account-settings/documents/', views.document_management, name='document_management'),
     path('account-settings/verification/', views.verification_center, name='verification_center'),
     
+    # Document Management APIs
+    path('api/documents/upload/', views.upload_document, name='upload_document'),
+    path('api/documents/<int:doc_id>/delete/', views.delete_document, name='delete_document'),
+    path('api/documents/<int:doc_id>/view/', views.view_document, name='view_document'),
+    
     # Legal Pages
     path('disclaimer/', views.disclaimer, name='disclaimer'),
     path('privacy-policy/', views.privacy_policy, name='privacy_policy'),

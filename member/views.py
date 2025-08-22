@@ -9,7 +9,7 @@ from django.contrib import messages
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
 from django.db import models
-from .models import Member, Company, INVESTOR_TYPE_CHOICES, FUNDING_SIZE_CHOICES, DEAL_SIZE_CHOICES
+from .models import Member, Company, MemberDocument, CompanyDocument, INVESTOR_TYPE_CHOICES, FUNDING_SIZE_CHOICES, DEAL_SIZE_CHOICES
 from .forms import EmailLoginForm, SignUpForm, CompanyForm, StartupForm, InvestorForm, CorporateForm
 import json
 import random
@@ -2293,10 +2293,180 @@ def startup_company_profile_edit(request):
 def document_management(request):
     """Document management page"""
     member = get_object_or_404(Member, user=request.user)
+    
+    # Get all member documents
+    member_documents = member.documents.all().order_by('-uploaded_at')
+    
+    # Get company documents for all user's companies
+    company_documents = []
+    for company in member.companies.all():
+        company_documents.extend(company.documents.all())
+    
+    # Combine all documents
+    all_documents = list(member_documents) + list(company_documents)
+    all_documents.sort(key=lambda x: x.uploaded_at, reverse=True)
+    
     context = {
         'member': member,
+        'documents': all_documents,
+        'member_documents': member_documents,
+        'company_documents': company_documents,
     }
     return render(request, 'member/document_management.html', context)
+
+
+@login_required
+def upload_document(request):
+    """Handle document upload via AJAX"""
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Method not allowed'})
+    
+    try:
+        member = get_object_or_404(Member, user=request.user)
+        
+        if 'files' not in request.FILES:
+            return JsonResponse({'success': False, 'error': 'No files provided'})
+        
+        uploaded_files = []
+        
+        for file in request.FILES.getlist('files'):
+            # Validate file size (10MB max)
+            if file.size > 10 * 1024 * 1024:
+                return JsonResponse({
+                    'success': False, 
+                    'error': f'File {file.name} is too large. Maximum size is 10MB.'
+                })
+            
+            # Validate file type
+            allowed_extensions = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png']
+            file_extension = os.path.splitext(file.name)[1].lower()
+            if file_extension not in allowed_extensions:
+                return JsonResponse({
+                    'success': False,
+                    'error': f'File type {file_extension} is not allowed.'
+                })
+            
+            # Create document record
+            document = MemberDocument.objects.create(
+                member=member,
+                name=file.name,
+                file=file
+            )
+            
+            uploaded_files.append({
+                'id': document.id,
+                'name': document.name,
+                'size': document.file.size,
+                'uploaded_at': document.uploaded_at.strftime('%b %d, %Y'),
+                'url': document.file.url if document.file else None
+            })
+        
+        return JsonResponse({
+            'success': True,
+            'files': uploaded_files,
+            'message': f'{len(uploaded_files)} file(s) uploaded successfully!'
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': f'Upload failed: {str(e)}'
+        })
+
+
+@login_required 
+def delete_document(request, doc_id):
+    """Delete a document"""
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Method not allowed'})
+    
+    try:
+        member = get_object_or_404(Member, user=request.user)
+        
+        # Try to find in member documents first
+        try:
+            document = MemberDocument.objects.get(id=doc_id, member=member)
+            document_name = document.name
+            
+            # Delete file from storage
+            if document.file:
+                document.file.delete(save=False)
+            
+            # Delete database record
+            document.delete()
+            
+        except MemberDocument.DoesNotExist:
+            # Try company documents
+            company_doc = None
+            for company in member.companies.all():
+                try:
+                    company_doc = CompanyDocument.objects.get(id=doc_id, company=company)
+                    break
+                except CompanyDocument.DoesNotExist:
+                    continue
+            
+            if not company_doc:
+                return JsonResponse({'success': False, 'error': 'Document not found'})
+            
+            document_name = company_doc.name
+            
+            # Delete file from storage
+            if company_doc.file:
+                company_doc.file.delete(save=False)
+            
+            # Delete database record
+            company_doc.delete()
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Document "{document_name}" deleted successfully!'
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': f'Delete failed: {str(e)}'
+        })
+
+
+@login_required
+def view_document(request, doc_id):
+    """View/download a document"""
+    try:
+        member = get_object_or_404(Member, user=request.user)
+        
+        # Try to find in member documents first
+        document = None
+        try:
+            document = MemberDocument.objects.get(id=doc_id, member=member)
+        except MemberDocument.DoesNotExist:
+            # Try company documents
+            for company in member.companies.all():
+                try:
+                    document = CompanyDocument.objects.get(id=doc_id, company=company)
+                    break
+                except CompanyDocument.DoesNotExist:
+                    continue
+        
+        if not document or not document.file:
+            return JsonResponse({'success': False, 'error': 'Document not found'})
+        
+        # Return file response
+        from django.http import FileResponse
+        import mimetypes
+        
+        response = FileResponse(
+            document.file.open('rb'),
+            content_type=mimetypes.guess_type(document.file.name)[0]
+        )
+        response['Content-Disposition'] = f'inline; filename="{document.name}"'
+        return response
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': f'View failed: {str(e)}'
+        })
 
 
 @login_required
