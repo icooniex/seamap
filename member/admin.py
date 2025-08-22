@@ -132,9 +132,29 @@ class CompanyAdmin(admin.ModelAdmin):
 
 @admin.register(MemberDocument)
 class MemberDocumentAdmin(admin.ModelAdmin):
-    list_display = ('name', 'member', 'uploaded_at')
-    list_filter = ('uploaded_at',)
+    list_display = ('name', 'member', 'status', 'uploaded_at', 'reviewed_at')
+    list_filter = ('status', 'uploaded_at', 'reviewed_at')
     search_fields = ('name', 'member__user__username', 'member__user__email')
+    readonly_fields = ('uploaded_at',)
+    
+    fieldsets = (
+        ('Document Information', {
+            'fields': ('member', 'name', 'file')
+        }),
+        ('Review Status', {
+            'fields': ('status', 'reviewer_notes', 'reviewed_at')
+        }),
+        ('Timestamps', {
+            'fields': ('uploaded_at',),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def save_model(self, request, obj, form, change):
+        if change and 'status' in form.changed_data:
+            from django.utils import timezone
+            obj.reviewed_at = timezone.now()
+        super().save_model(request, obj, form, change)
 
 @admin.register(CompanyDocument)
 class CompanyDocumentAdmin(admin.ModelAdmin):

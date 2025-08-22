@@ -180,12 +180,18 @@
                                 </div>
                                 <div class="meta-item">
                                     <i class="bi bi-shield-check text-success"></i>
-                                    <span>{{ document_stats.verified_documents }} document{{ document_stats.verified_documents|pluralize }} verified</span>
+                                    <span>{{ document_stats.approved_documents }} document{{ document_stats.approved_documents|pluralize }} approved</span>
                                 </div>
                                 <div class="meta-item">
                                     <i class="bi bi-clock text-warning"></i>
                                     <span>{{ document_stats.pending_documents }} document{{ document_stats.pending_documents|pluralize }} pending review</span>
                                 </div>
+                                {% if document_stats.rejected_documents > 0 %}
+                                <div class="meta-item">
+                                    <i class="bi bi-x-circle text-danger"></i>
+                                    <span>{{ document_stats.rejected_documents }} document{{ document_stats.rejected_documents|pluralize }} rejected</span>
+                                </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

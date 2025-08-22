@@ -1970,9 +1970,10 @@ def account_settings(request):
     storage_remaining_mb = 100 - storage_used_mb
     storage_percentage = (total_size / storage_limit) * 100
     
-    # For now, assume all documents are verified (you can add a status field later)
-    verified_documents = total_documents  # This can be updated when you add verification status
-    pending_documents = 0  # This can be updated when you add verification status
+    # Calculate document status counts
+    approved_documents = documents.filter(status='approved').count()
+    pending_documents = documents.filter(status='pending').count()
+    rejected_documents = documents.filter(status='rejected').count()
     
     document_stats = {
         'total_documents': total_documents,
@@ -1981,8 +1982,9 @@ def account_settings(request):
         'storage_remaining_mb': round(storage_remaining_mb, 1),
         'storage_limit_mb': 100,
         'storage_percentage': round(storage_percentage, 1),
-        'verified_documents': verified_documents,
+        'approved_documents': approved_documents,
         'pending_documents': pending_documents,
+        'rejected_documents': rejected_documents,
     }
     
     # Calculate verification progress

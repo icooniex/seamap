@@ -464,11 +464,20 @@ class Company(models.Model):
         unique_together = ['member', 'company_name']  # Prevent duplicate company names per member
 
 
+DOCUMENT_STATUS_CHOICES = [
+    ('pending', 'Pending Review'),
+    ('approved', 'Approved'),
+    ('rejected', 'Rejected'),
+]
+
 class MemberDocument(models.Model):
     member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='documents')
     name = models.CharField(max_length=255)
     file = models.FileField(upload_to='documents/')
+    status = models.CharField(max_length=20, choices=DOCUMENT_STATUS_CHOICES, default='pending')
     uploaded_at = models.DateTimeField(auto_now_add=True)
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    reviewer_notes = models.TextField(blank=True, help_text="Notes from reviewer")
     # e.g. pitch deck, company profile, etc.
 
     def __str__(self):

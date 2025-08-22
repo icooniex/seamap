@@ -99,9 +99,17 @@
                                 • {{ document.uploaded_at|date:"M d, Y" }}
                             </p>
                         </div>
-                        <div class="document-status verified">
-                            <i class="bi bi-check-circle-fill text-success"></i>
-                            <span class="status-text text-success">Uploaded</span>
+                        <div class="document-status {% if document.status == 'approved' %}approved{% elif document.status == 'pending' %}pending{% else %}rejected{% endif %}">
+                            {% if document.status == 'approved' %}
+                                <i class="bi bi-check-circle-fill text-success"></i>
+                                <span class="status-text text-success">Approved</span>
+                            {% elif document.status == 'pending' %}
+                                <i class="bi bi-clock-fill text-warning"></i>
+                                <span class="status-text text-warning">Pending</span>
+                            {% else %}
+                                <i class="bi bi-x-circle-fill text-danger"></i>
+                                <span class="status-text text-danger">Rejected</span>
+                            {% endif %}
                         </div>
                         <div class="document-actions">
                             <button class="btn btn-sm btn-outline-primary me-2" onclick="viewDocument({{ document.id }})">
@@ -1034,9 +1042,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     <h6 class="document-name">${file.name}</h6>
                     <p class="document-meta">${fileType} • ${sizeFormatted} • ${uploadDate}</p>
                 </div>
-                <div class="document-status verified">
-                    <i class="bi bi-check-circle-fill text-success"></i>
-                    <span class="status-text text-success">Uploaded</span>
+                <div class="document-status pending">
+                    <i class="bi bi-clock-fill text-warning"></i>
+                    <span class="status-text text-warning">Pending</span>
                 </div>
                 <div class="document-actions">
                     <button class="btn btn-sm btn-outline-primary me-2" onclick="viewDocument(${file.id})">
