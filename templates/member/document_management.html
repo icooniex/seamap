@@ -64,33 +64,32 @@
             </div>
         </div>
 
-        <!-- Document Categories -->
-        <div class="col-lg-4">
-            <div class="document-category-card">
-                <div class="category-header">
-                    <div class="category-icon corporate">
-                        <i class="bi bi-building"></i>
-                    </div>
-                    <div>
-                        <h5 class="category-title">Corporate Documents</h5>
-                        <p class="category-count">3 documents</p>
-                    </div>
+        <!-- All Documents List -->
+        <div class="col-12">
+            <div class="document-list-card">
+                <div class="list-header">
+                    <h4 class="list-title">
+                        <i class="bi bi-files me-2"></i>
+                        All Documents
+                    </h4>
                 </div>
                 
-                <div class="document-list">
-                    <div class="document-item">
+                <div class="simple-document-list">
+                    <!-- Business Registration -->
+                    <div class="document-row">
                         <div class="document-icon">
-                            <i class="bi bi-file-earmark-pdf"></i>
+                            <i class="bi bi-file-earmark-pdf text-danger"></i>
                         </div>
                         <div class="document-info">
                             <h6 class="document-name">Business Registration</h6>
                             <p class="document-meta">PDF • 2.3 MB • Jan 15, 2024</p>
                         </div>
                         <div class="document-status verified">
-                            <i class="bi bi-check-circle-fill"></i>
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            <span class="status-text text-success">Verified</span>
                         </div>
                         <div class="document-actions">
-                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewDocumentModal">
+                            <button class="btn btn-sm btn-outline-primary me-2">
                                 <i class="bi bi-eye"></i>
                             </button>
                             <button class="btn btn-sm btn-outline-danger">
@@ -98,20 +97,22 @@
                             </button>
                         </div>
                     </div>
-                    
-                    <div class="document-item">
+
+                    <!-- Tax Registration -->
+                    <div class="document-row">
                         <div class="document-icon">
-                            <i class="bi bi-file-earmark-pdf"></i>
+                            <i class="bi bi-file-earmark-pdf text-danger"></i>
                         </div>
                         <div class="document-info">
                             <h6 class="document-name">Tax Registration</h6>
                             <p class="document-meta">PDF • 1.8 MB • Jan 10, 2024</p>
                         </div>
                         <div class="document-status pending">
-                            <i class="bi bi-clock"></i>
+                            <i class="bi bi-clock text-warning"></i>
+                            <span class="status-text text-warning">Pending</span>
                         </div>
                         <div class="document-actions">
-                            <button class="btn btn-sm btn-outline-primary">
+                            <button class="btn btn-sm btn-outline-primary me-2">
                                 <i class="bi bi-eye"></i>
                             </button>
                             <button class="btn btn-sm btn-outline-danger">
@@ -119,20 +120,22 @@
                             </button>
                         </div>
                     </div>
-                    
-                    <div class="document-item">
+
+                    <!-- MOA & AOA -->
+                    <div class="document-row">
                         <div class="document-icon">
-                            <i class="bi bi-file-earmark-pdf"></i>
+                            <i class="bi bi-file-earmark-pdf text-danger"></i>
                         </div>
                         <div class="document-info">
                             <h6 class="document-name">MOA & AOA</h6>
                             <p class="document-meta">PDF • 3.1 MB • Dec 28, 2023</p>
                         </div>
                         <div class="document-status verified">
-                            <i class="bi bi-check-circle-fill"></i>
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            <span class="status-text text-success">Verified</span>
                         </div>
                         <div class="document-actions">
-                            <button class="btn btn-sm btn-outline-primary">
+                            <button class="btn btn-sm btn-outline-primary me-2">
                                 <i class="bi bi-eye"></i>
                             </button>
                             <button class="btn btn-sm btn-outline-danger">
@@ -140,42 +143,22 @@
                             </button>
                         </div>
                     </div>
-                </div>
-                
-                <div class="category-footer">
-                    <button class="btn btn-outline-primary btn-sm w-100">
-                        <i class="bi bi-plus-circle me-2"></i>Add Corporate Document
-                    </button>
-                </div>
-            </div>
-        </div>
 
-        <div class="col-lg-4">
-            <div class="document-category-card">
-                <div class="category-header">
-                    <div class="category-icon financial">
-                        <i class="bi bi-graph-up"></i>
-                    </div>
-                    <div>
-                        <h5 class="category-title">Financial Documents</h5>
-                        <p class="category-count">2 documents</p>
-                    </div>
-                </div>
-                
-                <div class="document-list">
-                    <div class="document-item">
+                    <!-- Financial Statements -->
+                    <div class="document-row">
                         <div class="document-icon">
-                            <i class="bi bi-file-earmark-excel"></i>
+                            <i class="bi bi-file-earmark-excel text-success"></i>
                         </div>
                         <div class="document-info">
-                            <h6 class="document-name">Financial Statements 2023</h6>
+                            <h6 class="document-name">Financial Statements</h6>
                             <p class="document-meta">XLSX • 1.2 MB • Jan 5, 2024</p>
                         </div>
                         <div class="document-status verified">
-                            <i class="bi bi-check-circle-fill"></i>
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            <span class="status-text text-success">Verified</span>
                         </div>
                         <div class="document-actions">
-                            <button class="btn btn-sm btn-outline-primary">
+                            <button class="btn btn-sm btn-outline-primary me-2">
                                 <i class="bi bi-eye"></i>
                             </button>
                             <button class="btn btn-sm btn-outline-danger">
@@ -183,20 +166,22 @@
                             </button>
                         </div>
                     </div>
-                    
-                    <div class="document-item">
+
+                    <!-- Bank Statements -->
+                    <div class="document-row">
                         <div class="document-icon">
-                            <i class="bi bi-file-earmark-pdf"></i>
+                            <i class="bi bi-file-earmark-pdf text-danger"></i>
                         </div>
                         <div class="document-info">
                             <h6 class="document-name">Bank Statements</h6>
                             <p class="document-meta">PDF • 2.7 MB • Dec 20, 2023</p>
                         </div>
                         <div class="document-status rejected">
-                            <i class="bi bi-x-circle-fill"></i>
+                            <i class="bi bi-x-circle-fill text-danger"></i>
+                            <span class="status-text text-danger">Rejected</span>
                         </div>
                         <div class="document-actions">
-                            <button class="btn btn-sm btn-outline-primary">
+                            <button class="btn btn-sm btn-outline-primary me-2">
                                 <i class="bi bi-eye"></i>
                             </button>
                             <button class="btn btn-sm btn-outline-danger">
@@ -204,42 +189,22 @@
                             </button>
                         </div>
                     </div>
-                </div>
-                
-                <div class="category-footer">
-                    <button class="btn btn-outline-primary btn-sm w-100">
-                        <i class="bi bi-plus-circle me-2"></i>Add Financial Document
-                    </button>
-                </div>
-            </div>
-        </div>
 
-        <div class="col-lg-4">
-            <div class="document-category-card">
-                <div class="category-header">
-                    <div class="category-icon compliance">
-                        <i class="bi bi-shield-check"></i>
-                    </div>
-                    <div>
-                        <h5 class="category-title">Compliance & Legal</h5>
-                        <p class="category-count">1 document</p>
-                    </div>
-                </div>
-                
-                <div class="document-list">
-                    <div class="document-item">
+                    <!-- Privacy Policy -->
+                    <div class="document-row">
                         <div class="document-icon">
-                            <i class="bi bi-file-earmark-text"></i>
+                            <i class="bi bi-file-earmark-text text-primary"></i>
                         </div>
                         <div class="document-info">
                             <h6 class="document-name">Privacy Policy</h6>
                             <p class="document-meta">DOCX • 890 KB • Jan 8, 2024</p>
                         </div>
                         <div class="document-status pending">
-                            <i class="bi bi-clock"></i>
+                            <i class="bi bi-clock text-warning"></i>
+                            <span class="status-text text-warning">Pending</span>
                         </div>
                         <div class="document-actions">
-                            <button class="btn btn-sm btn-outline-primary">
+                            <button class="btn btn-sm btn-outline-primary me-2">
                                 <i class="bi bi-eye"></i>
                             </button>
                             <button class="btn btn-sm btn-outline-danger">
@@ -247,12 +212,6 @@
                             </button>
                         </div>
                     </div>
-                </div>
-                
-                <div class="category-footer">
-                    <button class="btn btn-outline-primary btn-sm w-100">
-                        <i class="bi bi-plus-circle me-2"></i>Add Compliance Document
-                    </button>
                 </div>
             </div>
         </div>
@@ -351,6 +310,118 @@
 .documents-icon i {
     font-size: 2.5rem;
     color: white;
+}
+
+/* Simple Document List Styles */
+.document-list-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.list-header {
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f8f9fa;
+}
+
+.list-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0;
+}
+
+.simple-document-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.document-row {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.document-row:hover {
+    background: #f1f3f4;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.document-row .document-icon {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: 10px;
+    margin-right: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.document-row .document-icon i {
+    font-size: 1.5rem;
+}
+
+.document-row .document-info {
+    flex: 1;
+    margin-right: 1rem;
+}
+
+.document-row .document-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.25rem;
+}
+
+.document-row .document-meta {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+.document-row .document-status {
+    margin-right: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.document-row .document-status i {
+    font-size: 1.25rem;
+}
+
+.document-row .document-status .status-text {
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.document-row .document-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.document-row .document-actions .btn {
+    padding: 0.5rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Upload Section */
