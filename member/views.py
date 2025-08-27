@@ -1987,25 +1987,92 @@ def account_settings(request):
         'rejected_documents': rejected_documents,
     }
     
-    # Calculate verification progress
-    verification_steps = {
-        'profile_complete': bool(member.user.first_name and member.user.last_name and member.job_position),
+    # Calculate detailed verification progress
+    
+    # Personal Profile Verification
+    personal_verification = {
         'email_verified': True,  # Assuming email is verified since user is logged in
-        'documents_uploaded': total_documents > 0,
-        'documents_verified': pending_documents == 0 and total_documents > 0,
+        'linkedin_verified': bool(member.linkedin_url),  # Has LinkedIn profile
+        'profile_complete': bool(
+            member.user.first_name and 
+            member.user.last_name and 
+            member.job_position and 
+            member.short_bio and 
+            member.phone_number
+        ),
     }
     
-    completed_steps = sum(verification_steps.values())
-    total_verification_steps = len(verification_steps)
-    verification_percentage = (completed_steps / total_verification_steps) * 100
-    remaining_steps = total_verification_steps - completed_steps
+    # Company Profile Verification
+    company_verification = {
+        'company_exists': bool(company),
+        'company_info_complete': False,
+        'documents_uploaded': total_documents > 0,
+        'documents_verified': approved_documents > 0 and pending_documents == 0,
+    }
     
-    verification_progress = {
-        'percentage': round(verification_percentage),
-        'remaining_steps': remaining_steps,
-        'completed_steps': completed_steps,
-        'total_steps': total_verification_steps,
-        'steps': verification_steps,
+    # Check company info completeness based on company type
+    if company:
+        if company.company_type == 'startup':
+            company_verification['company_info_complete'] = bool(
+                company.company_name and
+                company.company_description and
+                company.solution_description and
+                company.current_stage and
+                company.team_size and
+                company.primary_location and
+                company.funding_needed
+            )
+        elif company.company_type == 'investor':
+            company_verification['company_info_complete'] = bool(
+                company.company_name and
+                company.investment_philosophy and
+                company.investor_type and
+                company.primary_location and
+                company.average_deal_size
+            )
+        elif company.company_type == 'corporate':
+            company_verification['company_info_complete'] = bool(
+                company.company_name and
+                company.company_description and
+                company.organization_type and
+                company.primary_location and
+                company.team_size
+            )
+    
+    # Calculate overall progress
+    personal_completed = sum(personal_verification.values())
+    personal_total = len(personal_verification)
+    personal_percentage = (personal_completed / personal_total) * 100 if personal_total > 0 else 0
+    
+    company_completed = sum(company_verification.values())
+    company_total = len(company_verification)
+    company_percentage = (company_completed / company_total) * 100 if company_total > 0 else 0
+    
+    # Overall verification
+    total_completed = personal_completed + company_completed
+    total_steps = personal_total + company_total
+    overall_percentage = (total_completed / total_steps) * 100 if total_steps > 0 else 0
+    remaining_steps = total_steps - total_completed
+    
+    verification_data = {
+        'overall': {
+            'percentage': round(overall_percentage),
+            'completed_steps': total_completed,
+            'total_steps': total_steps,
+            'remaining_steps': remaining_steps,
+        },
+        'personal': {
+            'percentage': round(personal_percentage),
+            'completed_steps': personal_completed,
+            'total_steps': personal_total,
+            'checks': personal_verification,
+        },
+        'company': {
+            'percentage': round(company_percentage),
+            'completed_steps': company_completed,
+            'total_steps': company_total,
+            'checks': company_verification,
+        }
     }
     
     context = {
@@ -2013,7 +2080,7 @@ def account_settings(request):
         'company': company,
         'progress': progress_data,
         'document_stats': document_stats,
-        'verification_progress': verification_progress,
+        'verification_data': verification_data,
     }
     return render(request, 'member/account_settings.html', context)
 
@@ -2524,8 +2591,129 @@ def view_document(request, doc_id):
 def verification_center(request):
     """Verification center page"""
     member = get_object_or_404(Member, user=request.user)
+    company = Company.objects.filter(member=member).first()
+    
+    # Get document statistics
+    documents = member.documents.all()
+    total_documents = documents.count()
+    total_size = sum(doc.file.size for doc in documents if doc.file)
+    
+    # Calculate storage usage (100MB limit)
+    storage_limit = 100 * 1024 * 1024  # 100MB in bytes
+    storage_used_mb = total_size / (1024 * 1024)  # Convert to MB
+    storage_remaining_mb = 100 - storage_used_mb
+    storage_percentage = (total_size / storage_limit) * 100
+    
+    # Calculate document status counts
+    approved_documents = documents.filter(status='approved').count()
+    pending_documents = documents.filter(status='pending').count()
+    rejected_documents = documents.filter(status='rejected').count()
+    
+    document_stats = {
+        'total_documents': total_documents,
+        'total_size_bytes': total_size,
+        'storage_used_mb': round(storage_used_mb, 1),
+        'storage_remaining_mb': round(storage_remaining_mb, 1),
+        'storage_limit_mb': 100,
+        'storage_percentage': round(storage_percentage, 1),
+        'approved_documents': approved_documents,
+        'pending_documents': pending_documents,
+        'rejected_documents': rejected_documents,
+    }
+    
+    # Calculate detailed verification progress
+    
+    # Personal Profile Verification
+    personal_verification = {
+        'email_verified': True,  # Assuming email is verified since user is logged in
+        'linkedin_verified': bool(member.linkedin_url),  # Has LinkedIn profile
+        'profile_complete': bool(
+            member.user.first_name and 
+            member.user.last_name and 
+            member.job_position and 
+            member.short_bio and 
+            member.phone_number
+        ),
+    }
+    
+    # Company Profile Verification
+    company_verification = {
+        'company_exists': bool(company),
+        'company_info_complete': False,
+        'documents_uploaded': total_documents > 0,
+        'documents_verified': approved_documents > 0 and pending_documents == 0,
+    }
+    
+    # Check company info completeness based on company type
+    if company:
+        if company.company_type == 'startup':
+            company_verification['company_info_complete'] = bool(
+                company.company_name and
+                company.company_description and
+                company.solution_description and
+                company.current_stage and
+                company.team_size and
+                company.primary_location and
+                company.funding_needed
+            )
+        elif company.company_type == 'investor':
+            company_verification['company_info_complete'] = bool(
+                company.company_name and
+                company.investment_philosophy and
+                company.investor_type and
+                company.primary_location and
+                company.average_deal_size
+            )
+        elif company.company_type == 'corporate':
+            company_verification['company_info_complete'] = bool(
+                company.company_name and
+                company.company_description and
+                company.organization_type and
+                company.primary_location and
+                company.team_size
+            )
+    
+    # Calculate overall progress
+    personal_completed = sum(personal_verification.values())
+    personal_total = len(personal_verification)
+    personal_percentage = (personal_completed / personal_total) * 100 if personal_total > 0 else 0
+    
+    company_completed = sum(company_verification.values())
+    company_total = len(company_verification)
+    company_percentage = (company_completed / company_total) * 100 if company_total > 0 else 0
+    
+    # Overall verification
+    total_completed = personal_completed + company_completed
+    total_steps = personal_total + company_total
+    overall_percentage = (total_completed / total_steps) * 100 if total_steps > 0 else 0
+    remaining_steps = total_steps - total_completed
+    
+    verification_data = {
+        'overall': {
+            'percentage': round(overall_percentage),
+            'completed_steps': total_completed,
+            'total_steps': total_steps,
+            'remaining_steps': remaining_steps,
+        },
+        'personal': {
+            'percentage': round(personal_percentage),
+            'completed_steps': personal_completed,
+            'total_steps': personal_total,
+            'checks': personal_verification,
+        },
+        'company': {
+            'percentage': round(company_percentage),
+            'completed_steps': company_completed,
+            'total_steps': company_total,
+            'checks': company_verification,
+        }
+    }
+    
     context = {
         'member': member,
+        'company': company,
+        'document_stats': document_stats,
+        'verification_data': verification_data,
     }
     return render(request, 'member/verification_center.html', context)
 

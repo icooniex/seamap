@@ -220,8 +220,8 @@
                             <div class="setting-meta-expanded">
                                 <div class="meta-item">
                                     <i class="bi bi-check-circle text-success"></i>
-                                    {% if verification_progress.steps.profile_complete %}
-                                        <span class="badge-mini bg-success">Profile Verified</span>
+                                    {% if verification_data.personal.checks.profile_complete %}
+                                        <span class="badge-mini bg-success">Profile Complete</span>
                                     {% else %}
                                         <span class="badge-mini bg-warning">Profile Incomplete</span>
                                     {% endif %}
@@ -242,11 +242,11 @@
                                     <i class="bi bi-graph-up text-info"></i>
                                     <div class="progress-container">
                                         <div class="progress-info">
-                                            <span class="progress-text"><strong>{{ verification_progress.percentage }}% Complete</strong></span>
-                                            <span class="progress-steps">{{ verification_progress.remaining_steps }} step{{ verification_progress.remaining_steps|pluralize }} remaining</span>
+                                            <span class="progress-text"><strong>{{ verification_data.overall.percentage }}% Complete</strong></span>
+                                            <span class="progress-steps">{{ verification_data.overall.remaining_steps }} step{{ verification_data.overall.remaining_steps|pluralize }} remaining</span>
                                         </div>
                                         <div class="progress-bar-custom">
-                                            <div class="progress-bar-fill" style="width: {{ verification_progress.percentage }}%"></div>
+                                            <div class="progress-bar-fill" style="width: {{ verification_data.overall.percentage }}%"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -254,10 +254,10 @@
                         </div>
                     </div>
                     <div class="setting-action-expanded">
-                        <button class="setting-btn-primary" onclick="alert('Coming Soon!')">
+                        <a href="{% url 'verification_center' %}" class="setting-btn-primary">
                             <i class="bi bi-shield-check"></i>
-                            View Status
-                        </button>
+                            View Details
+                        </a>
                         <div class="action-meta">Complete verification</div>
                     </div>
                 </div>
