@@ -3,82 +3,29 @@
 
 {% block content %}
 <div class="container-fluid py-4">
-    <!-- Header Section -->
+    <!-- Clean Header -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card border-0 text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                            <div class="me-3" style="background: rgba(255,255,255,0.2); padding: 12px; border-radius: 12px;">
-                                <i class="fas fa-shield-check" style="font-size: 24px;"></i>
-                            </div>
-                            <div>
-                                <h4 class="mb-1">Verification Center</h4>
-                                <p class="mb-0" style="opacity: 0.8;">Track your account and document verification status</p>
-                            </div>
-                        </div>
-                        <div>
-                            <a href="{% url 'account_settings' %}" class="btn btn-outline-light">
-                                <i class="fas fa-arrow-left me-2"></i>Back to Settings
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Progress Overview -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card border-0">
+            <div class="card border-0 bg-gradient-primary text-white">
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h5 class="mb-1">Overall Progress</h5>
-                            <p class="mb-0 text-muted">Complete your verification to unlock all features</p>
+                            <h4 class="mb-1">Account Verification</h4>
+                            <p class="mb-0 opacity-8">Complete your verification to unlock all features</p>
                         </div>
                         <div class="text-end">
-                            <h2 class="mb-0 fw-bold text-primary">{{ verification_data.overall.percentage }}%</h2>
-                            <small class="text-muted">Complete</small>
+                            <h2 class="mb-0 fw-bold">{{ verification_data.overall.percentage }}%</h2>
+                            <small class="opacity-8">Complete</small>
                         </div>
                     </div>
-                    <div class="progress mt-3" style="height: 8px; background: #f1f3f4;">
-                        <div class="progress-bar" style="width: {{ verification_data.overall.percentage }}%; background: linear-gradient(90deg, #667eea, #764ba2);"></div>
+                    <div class="progress bg-white bg-opacity-20 mt-3" style="height: 8px;">
+                        <div class="progress-bar bg-white" style="width: {{ verification_data.overall.percentage }}%"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Simple Stats -->
-    <div class="row g-3 mb-4">
-        <div class="col-md-4">
-            <div class="card border-0 h-100">
-                <div class="card-body text-center p-3">
-                    <div class="h4 text-success mb-1">{{ verification_data.overall.completed_steps }}</div>
-                    <small class="text-muted">Completed</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card border-0 h-100">
-                <div class="card-body text-center p-3">
-                    <div class="h4 text-warning mb-1">{{ verification_data.overall.remaining_steps }}</div>
-                    <small class="text-muted">Remaining</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card border-0 h-100">
-                <div class="card-body text-center p-3">
-                    <div class="h4 text-info mb-1">{{ verification_data.overall.total_steps }}</div>
-                    <small class="text-muted">Total Steps</small>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Verification Steps -->
     <div class="row">
@@ -87,7 +34,7 @@
             <div class="card border-0 h-100">
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center mb-3">
-                        <div class="p-2 rounded me-3" style="background: rgba(13, 110, 253, 0.1);">
+                        <div class="bg-primary bg-opacity-10 p-2 rounded me-3">
                             <i class="fas fa-user text-primary"></i>
                         </div>
                         <div class="flex-grow-1">
@@ -98,93 +45,57 @@
 
                     <div class="verification-list">
                         <!-- Email Verification -->
-                        <div class="verification-item d-flex align-items-center py-3">
+                        <div class="d-flex align-items-center py-2">
                             <div class="me-3">
                                 {% if verification_data.personal.checks.email_verified %}
-                                    <div class="status-icon completed">
-                                        <i class="fas fa-check"></i>
-                                    </div>
+                                    <i class="fas fa-check-circle text-success"></i>
                                 {% else %}
-                                    <div class="status-icon pending">
-                                        <i class="fas fa-envelope"></i>
-                                    </div>
+                                    <i class="far fa-circle text-muted"></i>
                                 {% endif %}
                             </div>
                             <div class="flex-grow-1">
-                                <div class="item-title">Email Verification</div>
-                                <div class="item-subtitle">Confirm your email address</div>
+                                <div class="fw-medium">Email Verification</div>
+                                <small class="text-muted">Confirm your email address</small>
                             </div>
-                            <div class="item-action">
-                                {% if verification_data.personal.checks.email_verified %}
-                                    <span class="status-badge verified">
-                                        <i class="fas fa-check-circle me-1"></i>Verified
-                                    </span>
-                                {% else %}
-                                    <span class="status-badge pending">
-                                        <i class="fas fa-clock me-1"></i>Pending
-                                    </span>
-                                {% endif %}
-                            </div>
+                            {% if not verification_data.personal.checks.email_verified %}
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            {% endif %}
                         </div>
 
                         <!-- Profile Information -->
-                        <div class="verification-item d-flex align-items-center py-3">
+                        <div class="d-flex align-items-center py-2">
                             <div class="me-3">
                                 {% if verification_data.personal.checks.profile_complete %}
-                                    <div class="status-icon completed">
-                                        <i class="fas fa-check"></i>
-                                    </div>
+                                    <i class="fas fa-check-circle text-success"></i>
                                 {% else %}
-                                    <div class="status-icon pending">
-                                        <i class="fas fa-user-edit"></i>
-                                    </div>
+                                    <i class="far fa-circle text-muted"></i>
                                 {% endif %}
                             </div>
                             <div class="flex-grow-1">
-                                <div class="item-title">Profile Information</div>
-                                <div class="item-subtitle">Complete your personal details</div>
+                                <div class="fw-medium">Profile Information</div>
+                                <small class="text-muted">Complete your personal details</small>
                             </div>
-                            <div class="item-action">
-                                {% if verification_data.personal.checks.profile_complete %}
-                                    <span class="status-badge verified">
-                                        <i class="fas fa-check-circle me-1"></i>Complete
-                                    </span>
-                                {% else %}
-                                    <a href="{% url 'personal_profile_edit' %}" class="action-btn">
-                                        <i class="fas fa-edit me-1"></i>Complete Profile
-                                    </a>
-                                {% endif %}
-                            </div>
+                            {% if not verification_data.personal.checks.profile_complete %}
+                                <a href="{% url 'member:edit_profile' %}" class="btn btn-sm btn-outline-primary">Complete</a>
+                            {% endif %}
                         </div>
 
                         <!-- LinkedIn Profile -->
-                        <div class="verification-item d-flex align-items-center py-3">
+                        <div class="d-flex align-items-center py-2">
                             <div class="me-3">
                                 {% if verification_data.personal.checks.linkedin_verified %}
-                                    <div class="status-icon completed">
-                                        <i class="fas fa-check"></i>
-                                    </div>
+                                    <i class="fas fa-check-circle text-success"></i>
                                 {% else %}
-                                    <div class="status-icon optional">
-                                        <i class="fab fa-linkedin"></i>
-                                    </div>
+                                    <i class="far fa-circle text-muted"></i>
                                 {% endif %}
                             </div>
                             <div class="flex-grow-1">
-                                <div class="item-title">LinkedIn Profile</div>
-                                <div class="item-subtitle">Connect your LinkedIn account</div>
+                                <div class="fw-medium">LinkedIn Profile</div>
+                                <small class="text-muted">Connect your LinkedIn</small>
                             </div>
-                            <div class="item-action">
-                                {% if verification_data.personal.checks.linkedin_verified %}
-                                    <span class="status-badge verified">
-                                        <i class="fas fa-check-circle me-1"></i>Connected
-                                    </span>
-                                {% else %}
-                                    <a href="#" class="action-btn optional">
-                                        <i class="fab fa-linkedin me-1"></i>Connect LinkedIn
-                                    </a>
-                                {% endif %}
-                            </div>
+                            {% if not verification_data.personal.checks.linkedin_verified %}
+                                <a href="#" class="btn btn-sm btn-outline-primary">Connect</a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -196,7 +107,7 @@
             <div class="card border-0 h-100">
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center mb-3">
-                        <div class="p-2 rounded me-3" style="background: rgba(13, 202, 240, 0.1);">
+                        <div class="bg-info bg-opacity-10 p-2 rounded me-3">
                             <i class="fas fa-building text-info"></i>
                         </div>
                         <div class="flex-grow-1">
@@ -207,141 +118,87 @@
 
                     <div class="verification-list">
                         <!-- Company Creation -->
-                        <div class="verification-item d-flex align-items-center py-3">
+                        <div class="d-flex align-items-center py-2">
                             <div class="me-3">
                                 {% if verification_data.company.checks.company_exists %}
-                                    <div class="status-icon completed">
-                                        <i class="fas fa-check"></i>
-                                    </div>
+                                    <i class="fas fa-check-circle text-success"></i>
                                 {% else %}
-                                    <div class="status-icon pending">
-                                        <i class="fas fa-building"></i>
-                                    </div>
+                                    <i class="far fa-circle text-muted"></i>
                                 {% endif %}
                             </div>
                             <div class="flex-grow-1">
-                                <div class="item-title">Company Profile</div>
-                                <div class="item-subtitle">Create your company profile</div>
+                                <div class="fw-medium">Company Profile</div>
+                                <small class="text-muted">Create your company</small>
                             </div>
-                            <div class="item-action">
-                                {% if verification_data.company.checks.company_exists %}
-                                    <span class="status-badge verified">
-                                        <i class="fas fa-check-circle me-1"></i>Created
-                                    </span>
-                                {% else %}
-                                    <a href="{% url 'company_profile_edit' %}" class="action-btn">
-                                        <i class="fas fa-plus me-1"></i>Create Company
-                                    </a>
-                                {% endif %}
-                            </div>
+                            {% if not verification_data.company.checks.company_exists %}
+                                <a href="{% url 'member:add_company' %}" class="btn btn-sm btn-outline-primary">Create</a>
+                            {% endif %}
                         </div>
 
                         <!-- Company Information -->
-                        <div class="verification-item d-flex align-items-center py-3 {% if not verification_data.company.checks.company_exists %}disabled{% endif %}">
+                        <div class="d-flex align-items-center py-2">
                             <div class="me-3">
                                 {% if verification_data.company.checks.company_info_complete %}
-                                    <div class="status-icon completed">
-                                        <i class="fas fa-check"></i>
-                                    </div>
+                                    <i class="fas fa-check-circle text-success"></i>
                                 {% elif verification_data.company.checks.company_exists %}
-                                    <div class="status-icon pending">
-                                        <i class="fas fa-info-circle"></i>
-                                    </div>
+                                    <i class="far fa-circle text-muted"></i>
                                 {% else %}
-                                    <div class="status-icon disabled">
-                                        <i class="fas fa-info-circle"></i>
-                                    </div>
+                                    <i class="far fa-circle text-muted opacity-50"></i>
                                 {% endif %}
                             </div>
                             <div class="flex-grow-1">
-                                <div class="item-title {% if not verification_data.company.checks.company_exists %}text-muted{% endif %}">Company Details</div>
-                                <div class="item-subtitle">Complete company information</div>
+                                <div class="fw-medium {% if not verification_data.company.checks.company_exists %}text-muted{% endif %}">Company Details</div>
+                                <small class="text-muted">Complete company information</small>
                             </div>
-                            <div class="item-action">
-                                {% if verification_data.company.checks.company_info_complete %}
-                                    <span class="status-badge verified">
-                                        <i class="fas fa-check-circle me-1"></i>Complete
-                                    </span>
-                                {% elif verification_data.company.checks.company_exists %}
-                                    <a href="{% url 'company_profile_edit' %}" class="action-btn">
-                                        <i class="fas fa-edit me-1"></i>Complete Info
-                                    </a>
-                                {% else %}
-                                    <span class="status-badge disabled">Create profile first</span>
-                                {% endif %}
-                            </div>
+                            {% if verification_data.company.checks.company_exists and not verification_data.company.checks.company_info_complete %}
+                                <a href="{% url 'member:edit_company' company.id %}" class="btn btn-sm btn-outline-primary">Complete</a>
+                            {% elif not verification_data.company.checks.company_exists %}
+                                <small class="text-muted">Create profile first</small>
+                            {% endif %}
                         </div>
 
                         <!-- Document Upload -->
-                        <div class="verification-item d-flex align-items-center py-3 {% if not verification_data.company.checks.company_exists %}disabled{% endif %}">
+                        <div class="d-flex align-items-center py-2">
                             <div class="me-3">
                                 {% if verification_data.company.checks.documents_uploaded %}
-                                    <div class="status-icon completed">
-                                        <i class="fas fa-check"></i>
-                                    </div>
+                                    <i class="fas fa-check-circle text-success"></i>
                                 {% elif verification_data.company.checks.company_exists %}
-                                    <div class="status-icon pending">
-                                        <i class="fas fa-upload"></i>
-                                    </div>
+                                    <i class="far fa-circle text-muted"></i>
                                 {% else %}
-                                    <div class="status-icon disabled">
-                                        <i class="fas fa-upload"></i>
-                                    </div>
+                                    <i class="far fa-circle text-muted opacity-50"></i>
                                 {% endif %}
                             </div>
                             <div class="flex-grow-1">
-                                <div class="item-title {% if not verification_data.company.checks.company_exists %}text-muted{% endif %}">Upload Documents</div>
-                                <div class="item-subtitle">Business registration & required documents</div>
+                                <div class="fw-medium {% if not verification_data.company.checks.company_exists %}text-muted{% endif %}">Upload Documents</div>
+                                <small class="text-muted">Business registration & more</small>
                             </div>
-                            <div class="item-action">
-                                {% if verification_data.company.checks.documents_uploaded %}
-                                    <span class="status-badge verified">
-                                        <i class="fas fa-check-circle me-1"></i>Uploaded
-                                    </span>
-                                {% elif verification_data.company.checks.company_exists %}
-                                    <a href="{% url 'document_management' %}" class="action-btn">
-                                        <i class="fas fa-upload me-1"></i>Upload Documents
-                                    </a>
-                                {% else %}
-                                    <span class="status-badge disabled">Create profile first</span>
-                                {% endif %}
-                            </div>
+                            {% if verification_data.company.checks.company_exists and not verification_data.company.checks.documents_uploaded %}
+                                <a href="{% url 'member:document_management' %}" class="btn btn-sm btn-outline-primary">Upload</a>
+                            {% elif not verification_data.company.checks.company_exists %}
+                                <small class="text-muted">Create profile first</small>
+                            {% endif %}
                         </div>
 
                         <!-- Document Verification -->
-                        <div class="verification-item d-flex align-items-center py-3 {% if not verification_data.company.checks.documents_uploaded %}disabled{% endif %}">
+                        <div class="d-flex align-items-center py-2">
                             <div class="me-3">
                                 {% if verification_data.company.checks.documents_verified %}
-                                    <div class="status-icon completed">
-                                        <i class="fas fa-check"></i>
-                                    </div>
+                                    <i class="fas fa-check-circle text-success"></i>
                                 {% elif verification_data.company.checks.documents_uploaded %}
-                                    <div class="status-icon reviewing">
-                                        <i class="fas fa-clock"></i>
-                                    </div>
+                                    <i class="fas fa-clock text-warning"></i>
                                 {% else %}
-                                    <div class="status-icon disabled">
-                                        <i class="fas fa-clipboard-check"></i>
-                                    </div>
+                                    <i class="far fa-circle text-muted opacity-50"></i>
                                 {% endif %}
                             </div>
                             <div class="flex-grow-1">
-                                <div class="item-title {% if not verification_data.company.checks.documents_uploaded %}text-muted{% endif %}">Document Review</div>
-                                <div class="item-subtitle">Admin verification in progress</div>
+                                <div class="fw-medium {% if not verification_data.company.checks.documents_uploaded %}text-muted{% endif %}">Document Review</div>
+                                <small class="text-muted">Admin verification pending</small>
                             </div>
-                            <div class="item-action">
-                                {% if verification_data.company.checks.documents_verified %}
-                                    <span class="status-badge verified">
-                                        <i class="fas fa-check-circle me-1"></i>Verified
-                                    </span>
-                                {% elif verification_data.company.checks.documents_uploaded %}
-                                    <span class="status-badge reviewing">
-                                        <i class="fas fa-clock me-1"></i>{{ document_stats.pending_documents }} pending
-                                    </span>
-                                {% else %}
-                                    <span class="status-badge disabled">Upload documents first</span>
-                                {% endif %}
-                            </div>
+                            {% if verification_data.company.checks.documents_uploaded and not verification_data.company.checks.documents_verified %}
+                                <span class="badge bg-warning text-dark">{{ document_stats.pending_documents }} pending</span>
+                            {% elif not verification_data.company.checks.documents_uploaded %}
+                                <small class="text-muted">Upload first</small>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -351,179 +208,29 @@
 </div>
 
 <style>
-/* Verification Item Styles */
-.verification-item {
-    border-bottom: 1px solid #f1f3f4;
-    transition: all 0.2s ease;
-    border-radius: 8px;
-    margin-bottom: 8px;
-    padding: 16px 12px !important;
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-.verification-item:last-child {
+.verification-list .d-flex {
+    border-bottom: 1px solid #f8f9fa;
+    transition: background-color 0.2s ease;
+}
+
+.verification-list .d-flex:last-child {
     border-bottom: none;
-    margin-bottom: 0;
 }
 
-.verification-item:hover {
+.verification-list .d-flex:hover {
     background-color: #f8f9fa;
-    transform: translateX(4px);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-radius: 6px;
+    margin: 0 -8px;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
 }
 
-.verification-item.disabled {
-    opacity: 0.6;
-}
-
-.verification-item.disabled:hover {
-    background-color: transparent;
-    transform: none;
-    box-shadow: none;
-}
-
-/* Status Icons */
-.status-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    font-weight: bold;
-}
-
-.status-icon.completed {
-    background: linear-gradient(135deg, #10b981, #059669);
-    color: white;
-    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
-}
-
-.status-icon.pending {
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-    color: white;
-    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
-}
-
-.status-icon.reviewing {
-    background: linear-gradient(135deg, #f59e0b, #d97706);
-    color: white;
-    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
-}
-
-.status-icon.optional {
-    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-    color: white;
-    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
-}
-
-.status-icon.disabled {
-    background: #f1f3f4;
-    color: #9ca3af;
-    box-shadow: none;
-}
-
-/* Item Content */
-.item-title {
-    font-weight: 600;
-    font-size: 15px;
-    color: #1f2937;
-    margin-bottom: 2px;
-}
-
-.item-subtitle {
-    font-size: 13px;
-    color: #6b7280;
-    margin: 0;
-}
-
-/* Status Badges */
-.status-badge {
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    white-space: nowrap;
-}
-
-.status-badge.verified {
-    background: #dcfce7;
-    color: #166534;
-    border: 1px solid #bbf7d0;
-}
-
-.status-badge.pending {
-    background: #fef3c7;
-    color: #92400e;
-    border: 1px solid #fde68a;
-}
-
-.status-badge.reviewing {
-    background: #fed7aa;
-    color: #9a3412;
-    border: 1px solid #fdba74;
-}
-
-.status-badge.disabled {
-    background: #f3f4f6;
-    color: #6b7280;
-    border: 1px solid #e5e7eb;
-}
-
-/* Action Buttons */
-.action-btn {
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 600;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    transition: all 0.2s ease;
-    border: 1px solid;
-}
-
-.action-btn:not(.optional) {
-    background: #3b82f6;
-    color: white;
-    border-color: #3b82f6;
-}
-
-.action-btn:not(.optional):hover {
-    background: #2563eb;
-    border-color: #2563eb;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-    text-decoration: none;
-    color: white;
-}
-
-.action-btn.optional {
-    background: #8b5cf6;
-    color: white;
-    border-color: #8b5cf6;
-}
-
-.action-btn.optional:hover {
-    background: #7c3aed;
-    border-color: #7c3aed;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
-    text-decoration: none;
-    color: white;
-}
-
-/* Card Improvements */
-.card {
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    border: none;
-}
-
-.card:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    transition: box-shadow 0.2s ease;
+.fw-medium {
+    font-weight: 500;
 }
 </style>
 {% endblock %}
