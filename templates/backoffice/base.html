@@ -411,10 +411,25 @@
                     </a>
                 </div>
                 <div class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="{% url 'backoffice_documents' %}" class="nav-link {% if 'backoffice_documents' in request.resolver_match.url_name %}active{% endif %}">
                         <i class="bi bi-file-earmark-check"></i>
-                        <span>Document Verification</span>
-                        <span class="badge bg-warning">Soon</span>
+                        <span>Document Management</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Documents</div>
+                <div class="nav-item">
+                    <a href="{% url 'backoffice_member_documents' %}" class="nav-link {% if request.resolver_match.url_name == 'backoffice_member_documents' %}active{% endif %}">
+                        <i class="bi bi-file-person"></i>
+                        <span>Member Documents</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="{% url 'backoffice_company_documents' %}" class="nav-link {% if request.resolver_match.url_name == 'backoffice_company_documents' %}active{% endif %}">
+                        <i class="bi bi-file-earmark-text"></i>
+                        <span>Company Documents</span>
                     </a>
                 </div>
             </div>

@@ -1,0 +1,239 @@
+{% extends 'backoffice/base.html' %}
+
+{% block title %}Company Documents - Back Office{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="page-title">Company Documents</h1>
+        <p class="page-subtitle">Review and manage company uploaded documents</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'backoffice_documents' %}" class="btn btn-admin-outline">
+            <i class="bi bi-arrow-left"></i> Back to Documents
+        </a>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="admin-card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Search</label>
+                <input type="text" class="form-control" name="search" value="{{ search_query }}" 
+                       placeholder="Search documents, company names...">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Status</label>
+                <select class="form-select" name="status">
+                    <option value="">All Statuses</option>
+                    {% for value, display in status_choices %}
+                        <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>
+                            {{ display }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Document Type</label>
+                <select class="form-select" name="type">
+                    <option value="">All Types</option>
+                    {% for doc_type in document_types %}
+                        <option value="{{ doc_type }}" {% if type_filter == doc_type %}selected{% endif %}>
+                            {{ doc_type|title }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-admin me-2">
+                    <i class="bi bi-search"></i> Filter
+                </button>
+                <a href="{% url 'backoffice_company_documents' %}" class="btn btn-admin-outline">
+                    <i class="bi bi-x"></i>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Documents List -->
+<div class="admin-card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">
+            Company Documents 
+            <span class="badge bg-secondary">{{ page_obj.paginator.count }} total</span>
+        </h5>
+    </div>
+    <div class="card-body p-0">
+        {% if page_obj %}
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Document</th>
+                            <th>Company</th>
+                            <th>Type</th>
+                            <th>Size</th>
+                            <th>Status</th>
+                            <th>Uploaded</th>
+                            <th>Reviewed</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for document in page_obj %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-file-earmark-{{ document.get_file_extension|lower }}-fill text-primary me-2"></i>
+                                        <div>
+                                            <strong>{{ document.name }}</strong>
+                                            <br>
+                                            <small class="text-muted">{{ document.get_file_extension }} file</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <strong>{{ document.company.company_name }}</strong>
+                                        <br>
+                                        <small class="text-muted">{{ document.company.get_company_type_display }}</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if document.document_type %}
+                                        <span class="badge bg-info">{{ document.document_type|title }}</span>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <small>{{ document.get_file_size_mb }} MB</small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-{{ document.get_status_color }}">
+                                        {{ document.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <small class="text-muted">{{ document.uploaded_at|date:"M d, Y H:i" }}</small>
+                                </td>
+                                <td>
+                                    {% if document.reviewed_at %}
+                                        <small class="text-muted">
+                                            {{ document.reviewed_at|date:"M d, Y" }}
+                                            <br>
+                                            by {{ document.reviewed_by.get_full_name|default:document.reviewed_by.username }}
+                                        </small>
+                                    {% else %}
+                                        <span class="text-muted">Not reviewed</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{% url 'backoffice_company_document_detail' document.id %}" 
+                                           class="btn btn-admin-outline" title="View Details">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{{ document.file.url }}" target="_blank" 
+                                           class="btn btn-admin-outline" title="Download">
+                                            <i class="bi bi-download"></i>
+                                        </a>
+                                        {% if document.status == 'pending' %}
+                                            <button type="button" class="btn btn-success btn-sm" 
+                                                    onclick="quickReview({{ document.id }}, 'approved')" title="Quick Approve">
+                                                <i class="bi bi-check"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-danger btn-sm" 
+                                                    onclick="quickReview({{ document.id }}, 'rejected')" title="Quick Reject">
+                                                <i class="bi bi-x"></i>
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            {% if page_obj.has_other_pages %}
+                <div class="card-footer">
+                    <nav aria-label="Documents pagination">
+                        <ul class="pagination pagination-sm justify-content-center mb-0">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if status_filter %}status={{ status_filter }}&{% endif %}{% if type_filter %}type={{ type_filter }}&{% endif %}page={{ page_obj.previous_page_number }}">Previous</a>
+                                </li>
+                            {% endif %}
+
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if status_filter %}status={{ status_filter }}&{% endif %}{% if type_filter %}type={{ type_filter }}&{% endif %}page={{ num }}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if status_filter %}status={{ status_filter }}&{% endif %}{% if type_filter %}type={{ type_filter }}&{% endif %}page={{ page_obj.next_page_number }}">Next</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-file-earmark text-muted" style="font-size: 3rem;"></i>
+                <h5 class="mt-3 text-muted">No documents found</h5>
+                <p class="text-muted">No company documents match your current filters.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function quickReview(docId, status) {
+        const statusText = status === 'approved' ? 'approve' : 'reject';
+        
+        if (!confirm(`Are you sure you want to ${statusText} this document?`)) {
+            return;
+        }
+        
+        fetch(`/backoffice/documents/company/${docId}/review/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            },
+            body: JSON.stringify({
+                status: status,
+                notes: `Quick ${statusText} from company documents list`
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            alert('An error occurred. Please try again.');
+        });
+    }
+</script>
+{% endblock %}

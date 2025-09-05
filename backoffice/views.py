@@ -546,3 +546,230 @@ def update_company_verification(request, company_id):
         messages.error(request, 'Invalid action.')
     
     return redirect('backoffice_company_verification')
+
+
+# Document Management Views
+@user_passes_test(is_admin_user, login_url='/backoffice/login/')
+def document_management(request):
+    """
+    Document management dashboard
+    """
+    # Get document statistics
+    member_docs = MemberDocument.objects.all()
+    company_docs = CompanyDocument.objects.all()
+    
+    member_doc_stats = {
+        'total': member_docs.count(),
+        'pending': member_docs.filter(status='pending').count(),
+        'approved': member_docs.filter(status='approved').count(),
+        'rejected': member_docs.filter(status='rejected').count(),
+        'under_review': member_docs.filter(status='under_review').count(),
+    }
+    
+    company_doc_stats = {
+        'total': company_docs.count(),
+        'pending': company_docs.filter(status='pending').count(),
+        'approved': company_docs.filter(status='approved').count(),
+        'rejected': company_docs.filter(status='rejected').count(),
+        'under_review': company_docs.filter(status='under_review').count(),
+    }
+    
+    # Recent documents (last 10)
+    recent_member_docs = member_docs.select_related('member__user').order_by('-uploaded_at')[:10]
+    recent_company_docs = company_docs.select_related('company').order_by('-uploaded_at')[:10]
+    
+    context = {
+        'member_doc_stats': member_doc_stats,
+        'company_doc_stats': company_doc_stats,
+        'recent_member_docs': recent_member_docs,
+        'recent_company_docs': recent_company_docs,
+    }
+    
+    return render(request, 'backoffice/document_management.html', context)
+
+
+@user_passes_test(is_admin_user, login_url='/backoffice/login/')
+def member_documents(request):
+    """
+    Member documents management
+    """
+    search_query = request.GET.get('search', '')
+    status_filter = request.GET.get('status', '')
+    type_filter = request.GET.get('type', '')
+    
+    # Base queryset
+    documents = MemberDocument.objects.select_related('member__user', 'reviewed_by')
+    
+    # Apply filters
+    if search_query:
+        documents = documents.filter(
+            Q(name__icontains=search_query) |
+            Q(member__user__first_name__icontains=search_query) |
+            Q(member__user__last_name__icontains=search_query) |
+            Q(member__user__email__icontains=search_query) |
+            Q(document_type__icontains=search_query)
+        )
+    
+    if status_filter:
+        documents = documents.filter(status=status_filter)
+        
+    if type_filter:
+        documents = documents.filter(document_type=type_filter)
+    
+    # Get document types for filter dropdown
+    document_types = MemberDocument.objects.exclude(
+        document_type=''
+    ).values_list('document_type', flat=True).distinct()
+    
+    # Pagination
+    paginator = Paginator(documents, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'page_obj': page_obj,
+        'search_query': search_query,
+        'status_filter': status_filter,
+        'type_filter': type_filter,
+        'document_types': document_types,
+        'status_choices': MemberDocument._meta.get_field('status').choices,
+    }
+    
+    return render(request, 'backoffice/member_documents.html', context)
+
+
+@user_passes_test(is_admin_user, login_url='/backoffice/login/')
+def company_documents(request):
+    """
+    Company documents management
+    """
+    search_query = request.GET.get('search', '')
+    status_filter = request.GET.get('status', '')
+    type_filter = request.GET.get('type', '')
+    
+    # Base queryset
+    documents = CompanyDocument.objects.select_related('company', 'reviewed_by')
+    
+    # Apply filters
+    if search_query:
+        documents = documents.filter(
+            Q(name__icontains=search_query) |
+            Q(company__company_name__icontains=search_query) |
+            Q(company__member__user__email__icontains=search_query) |
+            Q(document_type__icontains=search_query)
+        )
+    
+    if status_filter:
+        documents = documents.filter(status=status_filter)
+        
+    if type_filter:
+        documents = documents.filter(document_type=type_filter)
+    
+    # Get document types for filter dropdown
+    document_types = CompanyDocument.objects.exclude(
+        document_type=''
+    ).values_list('document_type', flat=True).distinct()
+    
+    # Pagination
+    paginator = Paginator(documents, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'page_obj': page_obj,
+        'search_query': search_query,
+        'status_filter': status_filter,
+        'type_filter': type_filter,
+        'document_types': document_types,
+        'status_choices': CompanyDocument._meta.get_field('status').choices,
+    }
+    
+    return render(request, 'backoffice/company_documents.html', context)
+
+
+@user_passes_test(is_admin_user, login_url='/backoffice/login/')
+def member_document_detail(request, doc_id):
+    """
+    Member document detail view
+    """
+    document = get_object_or_404(MemberDocument, id=doc_id)
+    
+    context = {
+        'document': document,
+    }
+    
+    return render(request, 'backoffice/member_document_detail.html', context)
+
+
+@user_passes_test(is_admin_user, login_url='/backoffice/login/')
+def company_document_detail(request, doc_id):
+    """
+    Company document detail view
+    """
+    document = get_object_or_404(CompanyDocument, id=doc_id)
+    
+    context = {
+        'document': document,
+    }
+    
+    return render(request, 'backoffice/company_document_detail.html', context)
+
+
+@require_http_methods(["POST"])
+@user_passes_test(is_admin_user, login_url='/backoffice/login/')
+def review_member_document(request, doc_id):
+    """
+    Review member document (AJAX)
+    """
+    try:
+        data = json.loads(request.body)
+        status = data.get('status')
+        notes = data.get('notes', '')
+        
+        if status not in ['pending', 'approved', 'rejected', 'under_review']:
+            return JsonResponse({'success': False, 'message': 'Invalid status'})
+        
+        document = get_object_or_404(MemberDocument, id=doc_id)
+        document.status = status
+        document.reviewed_at = timezone.now()
+        document.reviewed_by = request.user
+        document.review_notes = notes
+        document.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Document {status} successfully'
+        })
+        
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})
+
+
+@require_http_methods(["POST"])
+@user_passes_test(is_admin_user, login_url='/backoffice/login/')
+def review_company_document(request, doc_id):
+    """
+    Review company document (AJAX)
+    """
+    try:
+        data = json.loads(request.body)
+        status = data.get('status')
+        notes = data.get('notes', '')
+        
+        if status not in ['pending', 'approved', 'rejected', 'under_review']:
+            return JsonResponse({'success': False, 'message': 'Invalid status'})
+        
+        document = get_object_or_404(CompanyDocument, id=doc_id)
+        document.status = status
+        document.reviewed_at = timezone.now()
+        document.reviewed_by = request.user
+        document.review_notes = notes
+        document.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Document {status} successfully'
+        })
+        
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})

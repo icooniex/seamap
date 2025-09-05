@@ -1,0 +1,201 @@
+{% extends 'backoffice/base.html' %}
+
+{% block title %}Document Management - Back Office{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <h1 class="page-title">Document Management</h1>
+    <p class="page-subtitle">Manage and review uploaded documents</p>
+</div>
+
+<!-- Document Statistics -->
+<div class="row g-4 mb-4">
+    <!-- Member Documents Stats -->
+    <div class="col-lg-6">
+        <div class="admin-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Member Documents</h5>
+                <a href="{% url 'backoffice_member_documents' %}" class="btn btn-admin-outline btn-sm">
+                    <i class="bi bi-eye"></i> View All
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-3">
+                        <div class="stat-card">
+                            <div class="stat-value">{{ member_doc_stats.total }}</div>
+                            <div class="stat-label">Total</div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="stat-card">
+                            <div class="stat-value text-warning">{{ member_doc_stats.pending }}</div>
+                            <div class="stat-label">Pending</div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="stat-card">
+                            <div class="stat-value text-success">{{ member_doc_stats.approved }}</div>
+                            <div class="stat-label">Approved</div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="stat-card">
+                            <div class="stat-value text-danger">{{ member_doc_stats.rejected }}</div>
+                            <div class="stat-label">Rejected</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Company Documents Stats -->
+    <div class="col-lg-6">
+        <div class="admin-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Company Documents</h5>
+                <a href="{% url 'backoffice_company_documents' %}" class="btn btn-admin-outline btn-sm">
+                    <i class="bi bi-eye"></i> View All
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-3">
+                        <div class="stat-card">
+                            <div class="stat-value">{{ company_doc_stats.total }}</div>
+                            <div class="stat-label">Total</div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="stat-card">
+                            <div class="stat-value text-warning">{{ company_doc_stats.pending }}</div>
+                            <div class="stat-label">Pending</div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="stat-card">
+                            <div class="stat-value text-success">{{ company_doc_stats.approved }}</div>
+                            <div class="stat-label">Approved</div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="stat-card">
+                            <div class="stat-value text-danger">{{ company_doc_stats.rejected }}</div>
+                            <div class="stat-label">Rejected</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Documents -->
+<div class="row g-4">
+    <!-- Recent Member Documents -->
+    <div class="col-lg-6">
+        <div class="admin-card">
+            <div class="card-header">
+                <h5 class="mb-0">Recent Member Documents</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_member_docs %}
+                    <div class="list-group list-group-flush">
+                        {% for doc in recent_member_docs %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ doc.name }}</strong>
+                                    <br>
+                                    <small class="text-muted">
+                                        by {{ doc.member.user.get_full_name|default:doc.member.user.username }}
+                                        • {{ doc.uploaded_at|date:"M d, Y H:i" }}
+                                    </small>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-{{ doc.get_status_color }}">{{ doc.get_status_display }}</span>
+                                    <a href="{% url 'backoffice_member_document_detail' doc.id %}" class="btn btn-sm btn-admin-outline">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center">No member documents found</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Company Documents -->
+    <div class="col-lg-6">
+        <div class="admin-card">
+            <div class="card-header">
+                <h5 class="mb-0">Recent Company Documents</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_company_docs %}
+                    <div class="list-group list-group-flush">
+                        {% for doc in recent_company_docs %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ doc.name }}</strong>
+                                    <br>
+                                    <small class="text-muted">
+                                        by {{ doc.company.company_name }}
+                                        • {{ doc.uploaded_at|date:"M d, Y H:i" }}
+                                    </small>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-{{ doc.get_status_color }}">{{ doc.get_status_display }}</span>
+                                    <a href="{% url 'backoffice_company_document_detail' doc.id %}" class="btn btn-sm btn-admin-outline">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center">No company documents found</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stat-card {
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .list-group-item {
+        border-left: none;
+        border-right: none;
+    }
+
+    .list-group-item:first-child {
+        border-top: none;
+    }
+
+    .list-group-item:last-child {
+        border-bottom: none;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,321 @@
+{% extends 'backoffice/base.html' %}
+
+{% block title %}{{ document.name }} - Company Document Detail{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center">
+        <a href="{% url 'backoffice_company_documents' %}" class="btn btn-admin-outline me-3">
+            <i class="bi bi-arrow-left"></i> Back to Company Documents
+        </a>
+        <div>
+            <h1 class="page-title">{{ document.name }}</h1>
+            <p class="page-subtitle">Company Document • Uploaded {{ document.uploaded_at|date:"F d, Y H:i" }}</p>
+        </div>
+    </div>
+    <div class="page-actions">
+        <span class="badge bg-{{ document.get_status_color }} fs-6 me-2">{{ document.get_status_display }}</span>
+        <a href="{{ document.file.url }}" target="_blank" class="btn btn-admin-outline">
+            <i class="bi bi-download"></i> Download
+        </a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Document Information -->
+    <div class="col-lg-8">
+        <div class="admin-card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Document Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <div class="info-label">Document Name</div>
+                            <div class="info-value">{{ document.name }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <div class="info-label">Document Type</div>
+                            <div class="info-value">
+                                {% if document.document_type %}
+                                    <span class="badge bg-info">{{ document.document_type|title }}</span>
+                                {% else %}
+                                    <span class="text-muted">Not specified</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <div class="info-label">File Size</div>
+                            <div class="info-value">{{ document.get_file_size_mb }} MB</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <div class="info-label">File Type</div>
+                            <div class="info-value">
+                                <span class="badge bg-secondary">{{ document.get_file_extension }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <div class="info-label">Upload Date</div>
+                            <div class="info-value">{{ document.uploaded_at|date:"F d, Y H:i" }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <div class="info-label">Status</div>
+                            <div class="info-value">
+                                <span class="badge bg-{{ document.get_status_color }}">{{ document.get_status_display }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Company Information -->
+        <div class="admin-card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Company Owner</h5>
+                <a href="{% url 'backoffice_company_detail' document.company.id %}" class="btn btn-admin-outline btn-sm">
+                    <i class="bi bi-eye"></i> View Company
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="company-logo me-3">
+                        {% if document.company.company_logo %}
+                            <img src="{{ document.company.company_logo.url }}" alt="{{ document.company.company_name }}" class="rounded">
+                        {% else %}
+                            <div class="logo-placeholder rounded d-flex align-items-center justify-content-center">
+                                <i class="bi bi-building-fill"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <h5 class="mb-1">{{ document.company.company_name }}</h5>
+                        <p class="text-muted mb-1">{{ document.company.get_company_type_display }}</p>
+                        {% if document.company.primary_location %}
+                            <p class="text-muted mb-0">
+                                <i class="bi bi-geo-alt"></i> {{ document.company.primary_location }}
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Document Preview/Content -->
+        <div class="admin-card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Document Preview</h5>
+            </div>
+            <div class="card-body">
+                {% if document.get_file_extension in 'JPG,JPEG,PNG,GIF' %}
+                    <div class="text-center">
+                        <img src="{{ document.file.url }}" alt="{{ document.name }}" class="img-fluid" style="max-height: 400px;">
+                    </div>
+                {% elif document.get_file_extension == 'PDF' %}
+                    <div class="text-center">
+                        <i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size: 4rem;"></i>
+                        <p class="mt-2">PDF Document</p>
+                        <a href="{{ document.file.url }}" target="_blank" class="btn btn-admin">
+                            <i class="bi bi-eye"></i> View PDF
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="text-center">
+                        <i class="bi bi-file-earmark-text-fill text-primary" style="font-size: 4rem;"></i>
+                        <p class="mt-2">{{ document.get_file_extension }} Document</p>
+                        <a href="{{ document.file.url }}" target="_blank" class="btn btn-admin">
+                            <i class="bi bi-download"></i> Download File
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Review Panel -->
+    <div class="col-lg-4">
+        <div class="admin-card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Review Status</h5>
+            </div>
+            <div class="card-body">
+                {% if document.reviewed_at %}
+                    <div class="review-info">
+                        <div class="mb-3">
+                            <div class="info-label">Reviewed On</div>
+                            <div class="info-value">{{ document.reviewed_at|date:"F d, Y H:i" }}</div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="info-label">Reviewed By</div>
+                            <div class="info-value">{{ document.reviewed_by.get_full_name|default:document.reviewed_by.username }}</div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="info-label">Current Status</div>
+                            <div class="info-value">
+                                <span class="badge bg-{{ document.get_status_color }}">{{ document.get_status_display }}</span>
+                            </div>
+                        </div>
+                        {% if document.review_notes %}
+                            <div class="mb-3">
+                                <div class="info-label">Review Notes</div>
+                                <div class="bg-light p-3 rounded mt-2">
+                                    {{ document.review_notes|linebreaks }}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">This document has not been reviewed yet.</p>
+                {% endif %}
+
+                <!-- Review Actions -->
+                <div class="review-actions mt-4">
+                    <h6>Update Review Status</h6>
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-success" onclick="openReviewModal('approved')">
+                            <i class="bi bi-check-circle"></i> Approve
+                        </button>
+                        <button type="button" class="btn btn-info" onclick="openReviewModal('under_review')">
+                            <i class="bi bi-eye-fill"></i> Mark Under Review
+                        </button>
+                        <button type="button" class="btn btn-danger" onclick="openReviewModal('rejected')">
+                            <i class="bi bi-x-circle"></i> Reject
+                        </button>
+                        <button type="button" class="btn btn-warning" onclick="openReviewModal('pending')">
+                            <i class="bi bi-clock"></i> Mark Pending
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Review Modal -->
+<div class="modal fade" id="reviewModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Document Review</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="reviewForm">
+                    <input type="hidden" id="reviewStatus">
+                    <div class="mb-3">
+                        <label for="reviewNotes" class="form-label">Review Notes</label>
+                        <textarea class="form-control" id="reviewNotes" rows="4" placeholder="Add notes about your review decision..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-admin" onclick="submitReview()">Update Status</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .info-item {
+        margin-bottom: 1.5rem;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: #6c757d;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .info-value {
+        font-weight: 500;
+    }
+
+    .company-logo {
+        width: 64px;
+        height: 64px;
+    }
+
+    .company-logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .logo-placeholder {
+        width: 100%;
+        height: 100%;
+        background: var(--bs-gray-200);
+        color: var(--bs-gray-500);
+        font-size: 1.5rem;
+    }
+
+    .review-info {
+        border: 1px solid #e9ecef;
+        border-radius: 0.375rem;
+        padding: 1rem;
+        background: #f8f9fa;
+    }
+
+    .review-actions h6 {
+        color: #495057;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function openReviewModal(status) {
+        document.getElementById('reviewStatus').value = status;
+        document.getElementById('reviewNotes').value = '';
+        
+        const modal = new bootstrap.Modal(document.getElementById('reviewModal'));
+        modal.show();
+    }
+    
+    function submitReview() {
+        const status = document.getElementById('reviewStatus').value;
+        const notes = document.getElementById('reviewNotes').value;
+        
+        fetch(`/backoffice/documents/company/{{ document.id }}/review/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            },
+            body: JSON.stringify({
+                status: status,
+                notes: notes
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            alert('An error occurred. Please try again.');
+        });
+    }
+</script>
+{% endblock %}

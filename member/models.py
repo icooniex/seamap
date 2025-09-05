@@ -10,6 +10,14 @@ VERIFICATION_STATUS_CHOICES = [
     ('under_review', 'Under Review'),
 ]
 
+# Document Verification Status Choices
+DOCUMENT_STATUS_CHOICES = [
+    ('pending', 'Pending Review'),
+    ('approved', 'Approved'),
+    ('rejected', 'Rejected'),
+    ('under_review', 'Under Review'),
+]
+
 USER_TYPE_CHOICES = [
     ('startup', 'Startup'),
     ('investor', 'Investor'),
@@ -562,10 +570,43 @@ class MemberDocument(models.Model):
     name = models.CharField(max_length=255)
     file = models.FileField(upload_to='documents/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
-    # e.g. pitch deck, company profile, etc.
+    
+    # Document verification fields
+    status = models.CharField(max_length=20, choices=DOCUMENT_STATUS_CHOICES, default='pending')
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    reviewed_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='reviewed_member_documents')
+    review_notes = models.TextField(blank=True)
+    document_type = models.CharField(max_length=50, blank=True)  # e.g., 'id_card', 'passport', 'cv'
 
     def __str__(self):
         return f"{self.name} for {self.member.user.username}"
+    
+    def get_status_color(self):
+        """Return Bootstrap color class for status"""
+        colors = {
+            'pending': 'warning',
+            'approved': 'success', 
+            'rejected': 'danger',
+            'under_review': 'info'
+        }
+        return colors.get(self.status, 'secondary')
+        
+    def get_file_size_mb(self):
+        """Return file size in MB"""
+        if self.file and hasattr(self.file, 'size'):
+            return round(self.file.size / (1024 * 1024), 2)
+        return 0
+        
+    def get_file_extension(self):
+        """Return file extension"""
+        if self.file:
+            return self.file.name.split('.')[-1].upper()
+        return ''
+
+    class Meta:
+        verbose_name = "Member Document"
+        verbose_name_plural = "Member Documents"
+        ordering = ['-uploaded_at']
 
 
 class CompanyDocument(models.Model):
@@ -575,13 +616,42 @@ class CompanyDocument(models.Model):
     file = models.FileField(upload_to='company_documents/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
     document_type = models.CharField(max_length=50, blank=True)  # e.g., 'pitch_deck', 'business_plan'
+    
+    # Document verification fields
+    status = models.CharField(max_length=20, choices=DOCUMENT_STATUS_CHOICES, default='pending')
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    reviewed_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='reviewed_company_documents')
+    review_notes = models.TextField(blank=True)
 
     def __str__(self):
         return f"{self.name} for {self.company.company_name}"
+        
+    def get_status_color(self):
+        """Return Bootstrap color class for status"""
+        colors = {
+            'pending': 'warning',
+            'approved': 'success', 
+            'rejected': 'danger',
+            'under_review': 'info'
+        }
+        return colors.get(self.status, 'secondary')
+        
+    def get_file_size_mb(self):
+        """Return file size in MB"""
+        if self.file and hasattr(self.file, 'size'):
+            return round(self.file.size / (1024 * 1024), 2)
+        return 0
+        
+    def get_file_extension(self):
+        """Return file extension"""
+        if self.file:
+            return self.file.name.split('.')[-1].upper()
+        return ''
 
     class Meta:
         verbose_name = "Company Document"
         verbose_name_plural = "Company Documents"
+        ordering = ['-uploaded_at']
 
 
 # Challenge and Problem Statement Status Choices
