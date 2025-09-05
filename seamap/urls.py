@@ -24,8 +24,14 @@ from member.media_utils import serve_media_with_fallback
 urlpatterns = [
     path('admin/', admin.site.urls),
     
+    # Back office URLs
+    path('backoffice/', include('backoffice.urls')),
+    
     # Include member app URLs
     path('', include('member.urls')),
+    
+    # Back office URLs
+    path('backoffice/', include('backoffice.urls')),
 
     # Match making dashboard
     path('dashboard/startups/', startup_matchmaking, name='startup_matchmaking'),

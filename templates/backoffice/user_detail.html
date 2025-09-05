@@ -1,0 +1,416 @@
+{% extends 'backoffice/base.html' %}
+
+{% block title %}{{ member.user.get_full_name|default:member.user.username }} - User Detail{% endblock %}
+
+{% block content %}
+<!-- User Header -->
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center">
+        <a href="{% url 'backoffice_users' %}" class="btn btn-admin-outline me-3">
+            <i class="bi bi-arrow-left"></i> Back to Users
+        </a>
+        <div>
+            <h1 class="page-title">{{ member.user.get_full_name|default:member.user.username }}</h1>
+            <p class="page-subtitle">Member ID: {{ member.id }} • Joined {{ member.created_at|date:"F d, Y" }}</p>
+        </div>
+    </div>
+    <div class="page-actions">
+        {% if member.user.is_active %}
+            <span class="badge bg-success">Active</span>
+        {% else %}
+            <span class="badge bg-danger">Inactive</span>
+        {% endif %}
+        {% if member.user.is_staff %}
+            <span class="badge bg-warning">Staff</span>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Personal Information -->
+    <div class="col-lg-8">
+        <div class="admin-card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Personal Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-3 text-center">
+                        <div class="avatar-large mb-3">
+                            {% if member.profile_picture %}
+                                <img src="{{ member.profile_picture.url }}" alt="Profile Picture" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+                            {% else %}
+                                <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center" style="width: 120px; height: 120px;">
+                                    <i class="bi bi-person text-white" style="font-size: 3rem;"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <button class="btn btn-sm btn-admin-outline" disabled>
+                            <i class="bi bi-camera"></i> Change Photo
+                        </button>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label text-muted">First Name</label>
+                                <div class="form-control-plaintext">{{ member.user.first_name|default:"Not provided" }}</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-muted">Last Name</label>
+                                <div class="form-control-plaintext">{{ member.user.last_name|default:"Not provided" }}</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-muted">Email</label>
+                                <div class="form-control-plaintext">
+                                    {{ member.user.email }}
+                                    {% if member.user.email %}
+                                        <i class="bi bi-check-circle text-success ms-2" title="Email verified"></i>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-muted">Phone Number</label>
+                                <div class="form-control-plaintext">{{ member.phone_number|default:"Not provided" }}</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-muted">Job Position</label>
+                                <div class="form-control-plaintext">{{ member.job_position|default:"Not provided" }}</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-muted">LinkedIn Profile</label>
+                                <div class="form-control-plaintext">
+                                    {% if member.linkedin_url %}
+                                        <a href="{{ member.linkedin_url }}" target="_blank" class="text-decoration-none">
+                                            <i class="bi bi-linkedin"></i> View Profile
+                                        </a>
+                                    {% else %}
+                                        Not provided
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                {% if member.short_bio %}
+                    <div class="mt-4">
+                        <label class="form-label text-muted">Bio</label>
+                        <div class="form-control-plaintext">{{ member.short_bio }}</div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Associated Companies -->
+        <div class="admin-card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Associated Companies</h5>
+            </div>
+            <div class="card-body">
+                {% if companies %}
+                    <div class="row g-3">
+                        {% for company in companies %}
+                            <div class="col-12">
+                                <div class="d-flex align-items-center justify-content-between p-3 border rounded">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar me-3">
+                                            {% if company.company_logo %}
+                                                <img src="{{ company.company_logo.url }}" alt="Company Logo" class="rounded" style="width: 48px; height: 48px; object-fit: cover;">
+                                            {% else %}
+                                                <div class="rounded bg-primary d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                                    <i class="bi bi-building text-white"></i>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            <div class="fw-medium">
+                                                {{ company.company_name|default:"Unnamed Company" }}
+                                                {% if company.is_primary %}
+                                                    <span class="badge bg-success ms-1">Primary</span>
+                                                {% endif %}
+                                            </div>
+                                            <small class="text-muted">{{ company.get_company_type_display }} • {{ company.primary_location|default:"Location not specified" }}</small>
+                                        </div>
+                                    </div>
+                                    <a href="{% url 'backoffice_company_detail' company.id %}" class="btn btn-sm btn-admin-outline">
+                                        <i class="bi bi-eye"></i> View
+                                    </a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-building text-muted fs-1 mb-3"></i>
+                        <p class="text-muted">No companies associated with this user</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Documents -->
+        <div class="admin-card">
+            <div class="card-header">
+                <h5 class="mb-0">Documents ({{ documents.count }})</h5>
+            </div>
+            <div class="card-body">
+                {% if documents %}
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Document</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>Uploaded</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for doc in documents %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-file-earmark-text me-2 text-muted"></i>
+                                            <div>
+                                                <div class="fw-medium">{{ doc.file.name|default:"Untitled Document" }}</div>
+                                                {% if doc.description %}
+                                                    <small class="text-muted">{{ doc.description|truncatewords:8 }}</small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark">{{ doc.get_document_type_display }}</span>
+                                    </td>
+                                    <td>
+                                        {% if doc.status == 'approved' %}
+                                            <span class="status-badge status-verified">
+                                                <i class="bi bi-check-circle me-1"></i>Approved
+                                            </span>
+                                        {% elif doc.status == 'pending' %}
+                                            <span class="status-badge status-pending">
+                                                <i class="bi bi-clock me-1"></i>Pending
+                                            </span>
+                                        {% elif doc.status == 'rejected' %}
+                                            <span class="status-badge status-rejected">
+                                                <i class="bi bi-x-circle me-1"></i>Rejected
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">{{ doc.uploaded_at|date:"M d, Y H:i" }}</small>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-sm btn-admin-outline" title="View Document">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-admin-outline" title="Download">
+                                                <i class="bi bi-download"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-file-earmark text-muted fs-1 mb-3"></i>
+                        <p class="text-muted">No documents uploaded</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Summary & Actions -->
+    <div class="col-lg-4">
+        <!-- Profile Completeness -->
+        <div class="admin-card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Profile Completeness</h5>
+            </div>
+            <div class="card-body">
+                {% with total_fields=6 completed_fields=0 %}
+                    {% if member.user.first_name %}{% with completed_fields=completed_fields|add:1 %}{% endwith %}{% endif %}
+                    {% if member.user.last_name %}{% with completed_fields=completed_fields|add:1 %}{% endwith %}{% endif %}
+                    {% if member.user.email %}{% with completed_fields=completed_fields|add:1 %}{% endwith %}{% endif %}
+                    {% if member.phone_number %}{% with completed_fields=completed_fields|add:1 %}{% endwith %}{% endif %}
+                    {% if member.job_position %}{% with completed_fields=completed_fields|add:1 %}{% endwith %}{% endif %}
+                    {% if member.short_bio %}{% with completed_fields=completed_fields|add:1 %}{% endwith %}{% endif %}
+                    
+                    <div class="d-flex justify-content-center mb-3">
+                        <div class="progress-circle" style="--progress: {{ completion_percentage }}%;">
+                            <div class="progress-text">{{ completed_fields }}/{{ total_fields }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="checklist">
+                        <div class="checklist-item {% if member.user.first_name %}completed{% endif %}">
+                            <i class="bi bi-{% if member.user.first_name %}check-circle-fill text-success{% else %}circle text-muted{% endif %}"></i>
+                            First Name
+                        </div>
+                        <div class="checklist-item {% if member.user.last_name %}completed{% endif %}">
+                            <i class="bi bi-{% if member.user.last_name %}check-circle-fill text-success{% else %}circle text-muted{% endif %}"></i>
+                            Last Name
+                        </div>
+                        <div class="checklist-item {% if member.user.email %}completed{% endif %}">
+                            <i class="bi bi-{% if member.user.email %}check-circle-fill text-success{% else %}circle text-muted{% endif %}"></i>
+                            Email Address
+                        </div>
+                        <div class="checklist-item {% if member.phone_number %}completed{% endif %}">
+                            <i class="bi bi-{% if member.phone_number %}check-circle-fill text-success{% else %}circle text-muted{% endif %}"></i>
+                            Phone Number
+                        </div>
+                        <div class="checklist-item {% if member.job_position %}completed{% endif %}">
+                            <i class="bi bi-{% if member.job_position %}check-circle-fill text-success{% else %}circle text-muted{% endif %}"></i>
+                            Job Position
+                        </div>
+                        <div class="checklist-item {% if member.short_bio %}completed{% endif %}">
+                            <i class="bi bi-{% if member.short_bio %}check-circle-fill text-success{% else %}circle text-muted{% endif %}"></i>
+                            Bio/Description
+                        </div>
+                    </div>
+                {% endwith %}
+            </div>
+        </div>
+
+        <!-- Account Status -->
+        <div class="admin-card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Account Status</h5>
+            </div>
+            <div class="card-body">
+                <div class="status-list">
+                    <div class="status-item">
+                        <span>Account Status</span>
+                        {% if member.user.is_active %}
+                            <span class="status-badge status-verified">Active</span>
+                        {% else %}
+                            <span class="status-badge status-rejected">Inactive</span>
+                        {% endif %}
+                    </div>
+                    <div class="status-item">
+                        <span>Email Verification</span>
+                        <span class="status-badge status-verified">Verified</span>
+                    </div>
+                    <div class="status-item">
+                        <span>Last Login</span>
+                        <small class="text-muted">{{ member.user.last_login|date:"M d, Y H:i"|default:"Never" }}</small>
+                    </div>
+                    <div class="status-item">
+                        <span>Date Joined</span>
+                        <small class="text-muted">{{ member.user.date_joined|date:"M d, Y H:i" }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Actions -->
+        <div class="admin-card">
+            <div class="card-header">
+                <h5 class="mb-0">Admin Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-admin-outline" disabled>
+                        <i class="bi bi-pencil me-2"></i>Edit Profile
+                    </button>
+                    <button class="btn btn-admin-outline" disabled>
+                        <i class="bi bi-envelope me-2"></i>Send Message
+                    </button>
+                    {% if member.user.is_active %}
+                        <button class="btn btn-outline-warning" disabled>
+                            <i class="bi bi-pause me-2"></i>Suspend Account
+                        </button>
+                    {% else %}
+                        <button class="btn btn-outline-success" disabled>
+                            <i class="bi bi-play me-2"></i>Activate Account
+                        </button>
+                    {% endif %}
+                    <hr>
+                    <button class="btn btn-outline-danger" disabled>
+                        <i class="bi bi-trash me-2"></i>Delete Account
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .progress-circle {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: conic-gradient(var(--primary-color) calc(var(--progress) * 1%), #e9ecef 0deg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .progress-circle::before {
+        content: '';
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: white;
+        position: absolute;
+    }
+
+    .progress-text {
+        position: relative;
+        z-index: 1;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--primary-color);
+    }
+
+    .checklist {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .checklist-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    .checklist-item.completed {
+        color: #198754;
+    }
+
+    .status-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .status-item {
+        display: flex;
+        justify-content: between;
+        align-items: center;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #f1f3f4;
+    }
+
+    .status-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .avatar-large img,
+    .avatar-large div {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+</style>
+{% endblock %}

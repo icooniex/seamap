@@ -1,0 +1,205 @@
+{% extends 'backoffice/base.html' %}
+
+{% block title %}User Management - Back Office{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="page-title">User Management</h1>
+        <p class="page-subtitle">Manage member profiles and verification status</p>
+    </div>
+    <div class="page-actions">
+        <span class="badge bg-info">{{ total_count }} Total Users</span>
+    </div>
+</div>
+
+<!-- Search and Filter Section -->
+<div class="admin-card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label">Search Users</label>
+                <input type="text" class="form-control" name="search" placeholder="Name, email, phone, or position..." value="{{ search_query }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Verification Status</label>
+                <select class="form-select" name="status">
+                    <option value="">All Users</option>
+                    <option value="verified" {% if status_filter == 'verified' %}selected{% endif %}>Verified</option>
+                    <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending Verification</option>
+                    <option value="incomplete" {% if status_filter == 'incomplete' %}selected{% endif %}>Incomplete Profile</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-admin-primary me-2">
+                    <i class="bi bi-search me-1"></i>Search
+                </button>
+                <a href="{% url 'backoffice_users' %}" class="btn btn-admin-outline">
+                    <i class="bi bi-arrow-clockwise me-1"></i>Reset
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Users Table -->
+<div class="admin-card">
+    {% if page_obj.object_list %}
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Member</th>
+                        <th>Contact</th>
+                        <th>Profile Status</th>
+                        <th>Documents</th>
+                        <th>Joined</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for member in page_obj.object_list %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar me-3">
+                                    {% if member.profile_picture %}
+                                        <img src="{{ member.profile_picture.url }}" alt="Avatar" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                                    {% else %}
+                                        <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                            <i class="bi bi-person text-white"></i>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <div class="fw-medium">
+                                        {{ member.user.get_full_name|default:member.user.username }}
+                                        {% if member.user.is_staff %}
+                                            <span class="badge bg-warning ms-1">Staff</span>
+                                        {% endif %}
+                                    </div>
+                                    {% if member.job_position %}
+                                        <small class="text-muted">{{ member.job_position }}</small>
+                                    {% else %}
+                                        <small class="text-muted">Position not specified</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div>{{ member.user.email }}</div>
+                            {% if member.phone_number %}
+                                <small class="text-muted">{{ member.phone_number }}</small>
+                            {% else %}
+                                <small class="text-muted">No phone</small>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if member.user.first_name and member.user.last_name and member.phone_number and member.job_position %}
+                                <span class="status-badge status-verified">
+                                    <i class="bi bi-check-circle me-1"></i>Complete
+                                </span>
+                            {% else %}
+                                <span class="status-badge status-incomplete">
+                                    <i class="bi bi-exclamation-circle me-1"></i>Incomplete
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if member.doc_count > 0 %}
+                                <div class="small">
+                                    {{ member.doc_count }} document{{ member.doc_count|pluralize }}
+                                    {% if member.pending_docs > 0 %}
+                                        <div class="status-badge status-pending">{{ member.pending_docs }} pending</div>
+                                    {% elif member.approved_docs > 0 %}
+                                        <div class="status-badge status-verified">{{ member.approved_docs }} approved</div>
+                                    {% endif %}
+                                </div>
+                            {% else %}
+                                <span class="text-muted small">No documents</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <small class="text-muted">{{ member.created_at|date:"M d, Y" }}</small>
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a href="{% url 'backoffice_user_detail' member.id %}" class="btn btn-sm btn-admin-outline" title="View Details">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-admin-outline" title="Send Message" disabled>
+                                    <i class="bi bi-envelope"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+            <div class="card-footer">
+                <nav aria-label="User pagination">
+                    <ul class="pagination justify-content-center mb-0">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">First</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">Previous</a>
+                            </li>
+                        {% endif %}
+
+                        <li class="page-item active">
+                            <span class="page-link">
+                                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                            </span>
+                        </li>
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">Next</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">Last</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        {% endif %}
+
+    {% else %}
+        <div class="card-body text-center py-5">
+            <i class="bi bi-people text-muted" style="font-size: 4rem;"></i>
+            <h4 class="mt-3 mb-2">No Users Found</h4>
+            {% if search_query or status_filter %}
+                <p class="text-muted mb-3">No users match your current filters.</p>
+                <a href="{% url 'backoffice_users' %}" class="btn btn-admin-outline">
+                    <i class="bi bi-arrow-clockwise me-1"></i>Clear Filters
+                </a>
+            {% else %}
+                <p class="text-muted">No users have registered yet.</p>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Auto-submit search form on enter
+    document.querySelector('input[name="search"]').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            this.form.submit();
+        }
+    });
+
+    // Auto-submit when status filter changes
+    document.querySelector('select[name="status"]').addEventListener('change', function() {
+        this.form.submit();
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,255 @@
+{% extends 'backoffice/base.html' %}
+
+{% block title %}Company Management - Back Office{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="page-title">Company Management</h1>
+        <p class="page-subtitle">Manage company profiles and verification status</p>
+    </div>
+    <div class="page-actions">
+        <span class="badge bg-info">{{ total_count }} Total Companies</span>
+    </div>
+</div>
+
+<!-- Search and Filter Section -->
+<div class="admin-card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label">Search Companies</label>
+                <input type="text" class="form-control" name="search" placeholder="Company name, owner, location..." value="{{ search_query }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Company Type</label>
+                <select class="form-select" name="type">
+                    <option value="">All Types</option>
+                    {% for company_type in company_types %}
+                        {% if company_type %}
+                            <option value="{{ company_type }}" {% if type_filter == company_type %}selected{% endif %}>
+                                {{ company_type|capfirst }}
+                            </option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Profile Status</label>
+                <select class="form-select" name="status">
+                    <option value="">All Companies</option>
+                    <option value="incomplete" {% if status_filter == 'incomplete' %}selected{% endif %}>Incomplete Profile</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-admin-primary me-2">
+                    <i class="bi bi-search me-1"></i>Search
+                </button>
+                <a href="{% url 'backoffice_companies' %}" class="btn btn-admin-outline">
+                    <i class="bi bi-arrow-clockwise me-1"></i>Reset
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Companies Table -->
+<div class="admin-card">
+    {% if page_obj.object_list %}
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Company</th>
+                        <th>Type</th>
+                        <th>Owner</th>
+                        <th>Location</th>
+                        <th>Profile Status</th>
+                        <th>Documents</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for company in page_obj.object_list %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar me-3">
+                                    {% if company.company_logo %}
+                                        <img src="{{ company.company_logo.url }}" alt="Logo" class="rounded" style="width: 40px; height: 40px; object-fit: cover;">
+                                    {% else %}
+                                        <div class="rounded bg-primary d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                            <i class="bi bi-building text-white"></i>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <div class="fw-medium">
+                                        {{ company.company_name|default:"Unnamed Company" }}
+                                        {% if company.is_primary %}
+                                            <span class="badge bg-success ms-1">Primary</span>
+                                        {% endif %}
+                                    </div>
+                                    {% if company.company_description %}
+                                        <small class="text-muted">{{ company.company_description|truncatewords:8 }}</small>
+                                    {% else %}
+                                        <small class="text-muted">No description</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark">{{ company.get_company_type_display }}</span>
+                        </td>
+                        <td>
+                            <div>{{ company.member.user.get_full_name|default:company.member.user.username }}</div>
+                            <small class="text-muted">{{ company.member.user.email }}</small>
+                        </td>
+                        <td>
+                            {% if company.primary_location %}
+                                <small>{{ company.primary_location }}</small>
+                            {% else %}
+                                <small class="text-muted">Not specified</small>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if company.company_name and company.company_description %}
+                                {% if company.company_type == 'startup' %}
+                                    {% if company.solution_description and company.current_stage and company.team_size and company.funding_needed %}
+                                        <span class="status-badge status-verified">
+                                            <i class="bi bi-check-circle me-1"></i>Complete
+                                        </span>
+                                    {% else %}
+                                        <span class="status-badge status-incomplete">
+                                            <i class="bi bi-exclamation-circle me-1"></i>Incomplete
+                                        </span>
+                                    {% endif %}
+                                {% elif company.company_type == 'investor' %}
+                                    {% if company.investment_philosophy and company.investor_type and company.average_deal_size %}
+                                        <span class="status-badge status-verified">
+                                            <i class="bi bi-check-circle me-1"></i>Complete
+                                        </span>
+                                    {% else %}
+                                        <span class="status-badge status-incomplete">
+                                            <i class="bi bi-exclamation-circle me-1"></i>Incomplete
+                                        </span>
+                                    {% endif %}
+                                {% elif company.company_type == 'corporate' %}
+                                    {% if company.organization_type and company.team_size %}
+                                        <span class="status-badge status-verified">
+                                            <i class="bi bi-check-circle me-1"></i>Complete
+                                        </span>
+                                    {% else %}
+                                        <span class="status-badge status-incomplete">
+                                            <i class="bi bi-exclamation-circle me-1"></i>Incomplete
+                                        </span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="status-badge status-incomplete">
+                                        <i class="bi bi-exclamation-circle me-1"></i>Incomplete
+                                    </span>
+                                {% endif %}
+                            {% else %}
+                                <span class="status-badge status-incomplete">
+                                    <i class="bi bi-exclamation-circle me-1"></i>Incomplete
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if company.doc_count > 0 %}
+                                <div class="small">
+                                    {{ company.doc_count }} document{{ company.doc_count|pluralize }}
+                                </div>
+                            {% else %}
+                                <span class="text-muted small">No documents</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <small class="text-muted">{{ company.created_at|date:"M d, Y" }}</small>
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a href="{% url 'backoffice_company_detail' company.id %}" class="btn btn-sm btn-admin-outline" title="View Details">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-admin-outline" title="Edit Company" disabled>
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+            <div class="card-footer">
+                <nav aria-label="Company pagination">
+                    <ul class="pagination justify-content-center mb-0">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if type_filter %}&type={{ type_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">First</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if type_filter %}&type={{ type_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">Previous</a>
+                            </li>
+                        {% endif %}
+
+                        <li class="page-item active">
+                            <span class="page-link">
+                                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                            </span>
+                        </li>
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if type_filter %}&type={{ type_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">Next</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if type_filter %}&type={{ type_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">Last</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        {% endif %}
+
+    {% else %}
+        <div class="card-body text-center py-5">
+            <i class="bi bi-building text-muted" style="font-size: 4rem;"></i>
+            <h4 class="mt-3 mb-2">No Companies Found</h4>
+            {% if search_query or type_filter or status_filter %}
+                <p class="text-muted mb-3">No companies match your current filters.</p>
+                <a href="{% url 'backoffice_companies' %}" class="btn btn-admin-outline">
+                    <i class="bi bi-arrow-clockwise me-1"></i>Clear Filters
+                </a>
+            {% else %}
+                <p class="text-muted">No companies have been registered yet.</p>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Auto-submit search form on enter
+    document.querySelector('input[name="search"]').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            this.form.submit();
+        }
+    });
+
+    // Auto-submit when filters change
+    document.querySelector('select[name="type"]').addEventListener('change', function() {
+        this.form.submit();
+    });
+    
+    document.querySelector('select[name="status"]').addEventListener('change', function() {
+        this.form.submit();
+    });
+</script>
+{% endblock %}

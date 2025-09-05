@@ -1,0 +1,480 @@
+{% extends 'backoffice/base.html' %}
+
+{% block title %}{{ company.company_name|default:"Unnamed Company" }} - Company Detail{% endblock %}
+
+{% block content %}
+<!-- Company Header -->
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center">
+        <a href="{% url 'backoffice_companies' %}" class="btn btn-admin-outline me-3">
+            <i class="bi bi-arrow-left"></i> Back to Companies
+        </a>
+        <div>
+            <h1 class="page-title">{{ company.company_name|default:"Unnamed Company" }}</h1>
+            <p class="page-subtitle">Company ID: {{ company.id }} • Created {{ company.created_at|date:"F d, Y" }}</p>
+        </div>
+    </div>
+    <div class="page-actions">
+        <span class="badge bg-info">{{ company.get_company_type_display }}</span>
+        {% if company.is_primary %}
+            <span class="badge bg-success">Primary</span>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Company Information -->
+    <div class="col-lg-8">
+        <div class="admin-card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Company Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-3 text-center">
+                        <div class="company-logo mb-3">
+                            {% if company.company_logo %}
+                                <img src="{{ company.company_logo.url }}" alt="Company Logo" class="rounded" style="width: 120px; height: 120px; object-fit: cover;">
+                            {% else %}
+                                <div class="rounded bg-primary d-flex align-items-center justify-content-center" style="width: 120px; height: 120px;">
+                                    <i class="bi bi-building text-white" style="font-size: 3rem;"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <button class="btn btn-sm btn-admin-outline" disabled>
+                            <i class="bi bi-camera"></i> Change Logo
+                        </button>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label text-muted">Company Name</label>
+                                <div class="form-control-plaintext">{{ company.company_name|default:"Not provided" }}</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-muted">Company Type</label>
+                                <div class="form-control-plaintext">
+                                    <span class="badge bg-light text-dark">{{ company.get_company_type_display }}</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-muted">Primary Location</label>
+                                <div class="form-control-plaintext">{{ company.primary_location|default:"Not provided" }}</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-muted">Team Size</label>
+                                <div class="form-control-plaintext">{{ company.team_size|default:"Not provided" }}</div>
+                            </div>
+                            {% if company.website_url %}
+                                <div class="col-md-6">
+                                    <label class="form-label text-muted">Website</label>
+                                    <div class="form-control-plaintext">
+                                        <a href="{{ company.website_url }}" target="_blank" class="text-decoration-none">
+                                            <i class="bi bi-globe"></i> {{ company.website_url }}
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                {% if company.company_description %}
+                    <div class="mt-4">
+                        <label class="form-label text-muted">Company Description</label>
+                        <div class="form-control-plaintext">{{ company.company_description }}</div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Company-Type Specific Information -->
+        {% if company.company_type == 'startup' %}
+            <div class="admin-card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Startup Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label text-muted">Current Stage</label>
+                            <div class="form-control-plaintext">{{ company.current_stage|default:"Not specified" }}</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted">Funding Needed</label>
+                            <div class="form-control-plaintext">{{ company.funding_needed|default:"Not specified" }}</div>
+                        </div>
+                        {% if company.solution_description %}
+                            <div class="col-12">
+                                <label class="form-label text-muted">Solution Description</label>
+                                <div class="form-control-plaintext">{{ company.solution_description }}</div>
+                            </div>
+                        {% endif %}
+                        {% if company.target_market %}
+                            <div class="col-12">
+                                <label class="form-label text-muted">Target Market</label>
+                                <div class="form-control-plaintext">{{ company.target_market }}</div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% elif company.company_type == 'investor' %}
+            <div class="admin-card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Investor Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label text-muted">Investor Type</label>
+                            <div class="form-control-plaintext">{{ company.investor_type|default:"Not specified" }}</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted">Average Deal Size</label>
+                            <div class="form-control-plaintext">{{ company.average_deal_size|default:"Not specified" }}</div>
+                        </div>
+                        {% if company.investment_philosophy %}
+                            <div class="col-12">
+                                <label class="form-label text-muted">Investment Philosophy</label>
+                                <div class="form-control-plaintext">{{ company.investment_philosophy }}</div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% elif company.company_type == 'corporate' %}
+            <div class="admin-card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Corporate Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label text-muted">Organization Type</label>
+                            <div class="form-control-plaintext">{{ company.organization_type|default:"Not specified" }}</div>
+                        </div>
+                        {% if company.sustainability_goals %}
+                            <div class="col-12">
+                                <label class="form-label text-muted">Sustainability Goals</label>
+                                <div class="form-control-plaintext">{{ company.sustainability_goals }}</div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Owner Information -->
+        <div class="admin-card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Company Owner</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <div class="avatar me-3">
+                            {% if company.member.profile_picture %}
+                                <img src="{{ company.member.profile_picture.url }}" alt="Owner Avatar" class="rounded-circle" style="width: 48px; height: 48px; object-fit: cover;">
+                            {% else %}
+                                <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                    <i class="bi bi-person text-white"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <div class="fw-medium">{{ company.member.user.get_full_name|default:company.member.user.username }}</div>
+                            <small class="text-muted">{{ company.member.user.email }}</small>
+                            {% if company.member.job_position %}
+                                <br><small class="text-muted">{{ company.member.job_position }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <a href="{% url 'backoffice_user_detail' company.member.id %}" class="btn btn-sm btn-admin-outline">
+                        <i class="bi bi-eye"></i> View Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documents -->
+        <div class="admin-card">
+            <div class="card-header">
+                <h5 class="mb-0">Documents ({{ documents.count }})</h5>
+            </div>
+            <div class="card-body">
+                {% if documents %}
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Document</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>Uploaded</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for doc in documents %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-file-earmark-text me-2 text-muted"></i>
+                                            <div>
+                                                <div class="fw-medium">{{ doc.file.name|default:"Untitled Document" }}</div>
+                                                {% if doc.description %}
+                                                    <small class="text-muted">{{ doc.description|truncatewords:8 }}</small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark">{{ doc.get_document_type_display }}</span>
+                                    </td>
+                                    <td>
+                                        {% if doc.status == 'approved' %}
+                                            <span class="status-badge status-verified">
+                                                <i class="bi bi-check-circle me-1"></i>Approved
+                                            </span>
+                                        {% elif doc.status == 'pending' %}
+                                            <span class="status-badge status-pending">
+                                                <i class="bi bi-clock me-1"></i>Pending
+                                            </span>
+                                        {% elif doc.status == 'rejected' %}
+                                            <span class="status-badge status-rejected">
+                                                <i class="bi bi-x-circle me-1"></i>Rejected
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">{{ doc.uploaded_at|date:"M d, Y H:i" }}</small>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-sm btn-admin-outline" title="View Document">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-admin-outline" title="Download">
+                                                <i class="bi bi-download"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-file-earmark text-muted fs-1 mb-3"></i>
+                        <p class="text-muted">No documents uploaded</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Company Summary & Actions -->
+    <div class="col-lg-4">
+        <!-- Company Stats -->
+        <div class="admin-card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Company Stats</h5>
+            </div>
+            <div class="card-body">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">{{ documents.count }}</div>
+                        <div class="stat-label">Documents</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">0</div>
+                        <div class="stat-label">Approved</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">0</div>
+                        <div class="stat-label">Pending</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">0</div>
+                        <div class="stat-label">Connections</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Completeness -->
+        <div class="admin-card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Profile Completeness</h5>
+            </div>
+            <div class="card-body">
+                {% if company.company_type == 'startup' %}
+                    {% with total_fields=8 completed_fields=0 %}
+                        {% if company.company_name %}{% with completed_fields=completed_fields|add:1 %}{% endwith %}{% endif %}
+                        {% if company.company_description %}{% with completed_fields=completed_fields|add:1 %}{% endwith %}{% endif %}
+                        {% if company.solution_description %}{% with completed_fields=completed_fields|add:1 %}{% endwith %}{% endif %}
+                        {% if company.current_stage %}{% with completed_fields=completed_fields|add:1 %}{% endwith %}{% endif %}
+                        {% if company.team_size %}{% with completed_fields=completed_fields|add:1 %}{% endwith %}{% endif %}
+                        {% if company.primary_location %}{% with completed_fields=completed_fields|add:1 %}{% endwith %}{% endif %}
+                        {% if company.funding_needed %}{% with completed_fields=completed_fields|add:1 %}{% endwith %}{% endif %}
+                        {% if company.company_logo %}{% with completed_fields=completed_fields|add:1 %}{% endwith %}{% endif %}
+                        
+                        <div class="d-flex justify-content-center mb-3">
+                            <div class="progress-circle" style="--progress: {{ completion_percentage }}%;">
+                                <div class="progress-text">{{ completed_fields }}/{{ total_fields }}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="checklist">
+                            <div class="checklist-item {% if company.company_name %}completed{% endif %}">
+                                <i class="bi bi-{% if company.company_name %}check-circle-fill text-success{% else %}circle text-muted{% endif %}"></i>
+                                Company Name
+                            </div>
+                            <div class="checklist-item {% if company.company_description %}completed{% endif %}">
+                                <i class="bi bi-{% if company.company_description %}check-circle-fill text-success{% else %}circle text-muted{% endif %}"></i>
+                                Description
+                            </div>
+                            <div class="checklist-item {% if company.solution_description %}completed{% endif %}">
+                                <i class="bi bi-{% if company.solution_description %}check-circle-fill text-success{% else %}circle text-muted{% endif %}"></i>
+                                Solution Description
+                            </div>
+                            <div class="checklist-item {% if company.current_stage %}completed{% endif %}">
+                                <i class="bi bi-{% if company.current_stage %}check-circle-fill text-success{% else %}circle text-muted{% endif %}"></i>
+                                Current Stage
+                            </div>
+                            <div class="checklist-item {% if company.team_size %}completed{% endif %}">
+                                <i class="bi bi-{% if company.team_size %}check-circle-fill text-success{% else %}circle text-muted{% endif %}"></i>
+                                Team Size
+                            </div>
+                            <div class="checklist-item {% if company.primary_location %}completed{% endif %}">
+                                <i class="bi bi-{% if company.primary_location %}check-circle-fill text-success{% else %}circle text-muted{% endif %}"></i>
+                                Location
+                            </div>
+                            <div class="checklist-item {% if company.funding_needed %}completed{% endif %}">
+                                <i class="bi bi-{% if company.funding_needed %}check-circle-fill text-success{% else %}circle text-muted{% endif %}"></i>
+                                Funding Needed
+                            </div>
+                            <div class="checklist-item {% if company.company_logo %}completed{% endif %}">
+                                <i class="bi bi-{% if company.company_logo %}check-circle-fill text-success{% else %}circle text-muted{% endif %}"></i>
+                                Company Logo
+                            </div>
+                        </div>
+                    {% endwith %}
+                {% else %}
+                    <div class="text-center py-3">
+                        <i class="bi bi-info-circle text-muted"></i>
+                        <p class="text-muted small mb-0">Profile completeness tracking coming soon for {{ company.get_company_type_display }} companies.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Admin Actions -->
+        <div class="admin-card">
+            <div class="card-header">
+                <h5 class="mb-0">Admin Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-admin-outline" disabled>
+                        <i class="bi bi-pencil me-2"></i>Edit Company
+                    </button>
+                    <button class="btn btn-admin-outline" disabled>
+                        <i class="bi bi-shield-check me-2"></i>Verify Company
+                    </button>
+                    <button class="btn btn-admin-outline" disabled>
+                        <i class="bi bi-envelope me-2"></i>Contact Owner
+                    </button>
+                    <hr>
+                    <button class="btn btn-outline-danger" disabled>
+                        <i class="bi bi-trash me-2"></i>Delete Company
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .progress-circle {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: conic-gradient(var(--primary-color) calc(var(--progress) * 1%), #e9ecef 0deg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .progress-circle::before {
+        content: '';
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: white;
+        position: absolute;
+    }
+
+    .progress-text {
+        position: relative;
+        z-index: 1;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--primary-color);
+    }
+
+    .checklist {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .checklist-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    .checklist-item.completed {
+        color: #198754;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .company-logo img,
+    .company-logo div {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+</style>
+{% endblock %}

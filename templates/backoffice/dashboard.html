@@ -1,0 +1,224 @@
+{% extends 'backoffice/base.html' %}
+
+{% block title %}Dashboard - Back Office{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-subtitle">Platform overview and key metrics</p>
+    </div>
+    <div class="page-actions">
+        <span class="badge bg-success">System Online</span>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="admin-card">
+            <div class="card-body text-center">
+                <div class="d-flex align-items-center justify-content-center mb-3">
+                    <div class="rounded-circle bg-primary bg-opacity-10 p-3">
+                        <i class="bi bi-people text-primary fs-4"></i>
+                    </div>
+                </div>
+                <h3 class="h2 fw-bold mb-1">{{ stats.total_members|default:0 }}</h3>
+                <p class="text-muted mb-0">Total Members</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="admin-card">
+            <div class="card-body text-center">
+                <div class="d-flex align-items-center justify-content-center mb-3">
+                    <div class="rounded-circle bg-success bg-opacity-10 p-3">
+                        <i class="bi bi-building text-success fs-4"></i>
+                    </div>
+                </div>
+                <h3 class="h2 fw-bold mb-1">{{ stats.total_companies|default:0 }}</h3>
+                <p class="text-muted mb-0">Companies</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="admin-card">
+            <div class="card-body text-center">
+                <div class="d-flex align-items-center justify-content-center mb-3">
+                    <div class="rounded-circle bg-warning bg-opacity-10 p-3">
+                        <i class="bi bi-clock text-warning fs-4"></i>
+                    </div>
+                </div>
+                <h3 class="h2 fw-bold mb-1">{{ stats.pending_verifications|default:0 }}</h3>
+                <p class="text-muted mb-0">Pending Verifications</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="admin-card">
+            <div class="card-body text-center">
+                <div class="d-flex align-items-center justify-content-center mb-3">
+                    <div class="rounded-circle bg-info bg-opacity-10 p-3">
+                        <i class="bi bi-graph-up text-info fs-4"></i>
+                    </div>
+                </div>
+                <h3 class="h2 fw-bold mb-1">{{ stats.recent_signups|default:0 }}</h3>
+                <p class="text-muted mb-0">New This Week</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="admin-card">
+            <div class="card-header">
+                <h5 class="mb-0">Recent Members</h5>
+            </div>
+            <div class="card-body p-0">
+                {% if recent_members %}
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Joined</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for member in recent_members %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar me-3">
+                                                {% if member.profile_picture %}
+                                                    <img src="{{ member.profile_picture.url }}" alt="Avatar" class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover;">
+                                                {% else %}
+                                                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                                        <i class="bi bi-person text-white"></i>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <div>
+                                                <div class="fw-medium">{{ member.user.get_full_name|default:member.user.username }}</div>
+                                                {% if member.job_position %}
+                                                    <small class="text-muted">{{ member.job_position }}</small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ member.user.email }}</td>
+                                    <td>
+                                        <small class="text-muted">{{ member.created_at|date:"M d, Y" }}</small>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-people text-muted fs-1 mb-3"></i>
+                        <p class="text-muted">No recent members</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="admin-card">
+            <div class="card-header">
+                <h5 class="mb-0">Recent Companies</h5>
+            </div>
+            <div class="card-body p-0">
+                {% if recent_companies %}
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Company</th>
+                                    <th>Type</th>
+                                    <th>Created</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for company in recent_companies %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar me-3">
+                                                {% if company.company_logo %}
+                                                    <img src="{{ company.company_logo.url }}" alt="Logo" class="rounded" style="width: 32px; height: 32px; object-fit: cover;">
+                                                {% else %}
+                                                    <div class="rounded bg-primary d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                                        <i class="bi bi-building text-white"></i>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <div>
+                                                <div class="fw-medium">{{ company.company_name|default:"Unnamed Company" }}</div>
+                                                <small class="text-muted">by {{ company.member.user.get_full_name|default:company.member.user.username }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark">{{ company.get_company_type_display }}</span>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">{{ company.created_at|date:"M d, Y" }}</small>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-building text-muted fs-1 mb-3"></i>
+                        <p class="text-muted">No recent companies</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row g-4 mt-2">
+    <div class="col-12">
+        <div class="admin-card">
+            <div class="card-header">
+                <h5 class="mb-0">Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <a href="{% url 'backoffice_users' %}" class="btn btn-admin-outline w-100 py-3">
+                            <i class="bi bi-people fs-5 mb-2"></i><br>
+                            Manage Users
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="{% url 'backoffice_companies' %}" class="btn btn-admin-outline w-100 py-3">
+                            <i class="bi bi-building fs-5 mb-2"></i><br>
+                            Manage Companies
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="/admin/" target="_blank" class="btn btn-admin-outline w-100 py-3">
+                            <i class="bi bi-gear fs-5 mb-2"></i><br>
+                            Django Admin
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
