@@ -2,6 +2,14 @@ from django.db import models
 from django.contrib.auth.models import User
 from .upload_handlers import profile_picture_upload_to, company_logo_upload_to
 
+# Verification Status Choices
+VERIFICATION_STATUS_CHOICES = [
+    ('pending', 'Pending Review'),
+    ('approved', 'Approved'),
+    ('rejected', 'Rejected'),
+    ('under_review', 'Under Review'),
+]
+
 USER_TYPE_CHOICES = [
     ('startup', 'Startup'),
     ('investor', 'Investor'),
@@ -110,11 +118,54 @@ class Member(models.Model):
     # Registration tracking
     profile_completed = models.BooleanField(default=False)
     onboarding_completed = models.BooleanField(default=False)
+    
+    # Verification fields
+    verification_status = models.CharField(
+        max_length=20, 
+        choices=VERIFICATION_STATUS_CHOICES, 
+        default='pending',
+        help_text="Profile verification status by admin"
+    )
+    verified_at = models.DateTimeField(blank=True, null=True, help_text="When the profile was verified")
+    verified_by = models.ForeignKey(
+        'auth.User', 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True,
+        related_name='verified_members',
+        help_text="Admin user who verified this profile"
+    )
+    verification_notes = models.TextField(
+        blank=True, 
+        help_text="Admin notes about verification"
+    )
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.user.get_full_name() or self.user.username}"
+
+    def get_verification_status_color(self):
+        """Get Bootstrap color class for verification status"""
+        colors = {
+            'pending': 'warning',
+            'approved': 'success',
+            'rejected': 'danger',
+            'under_review': 'info',
+        }
+        return colors.get(self.verification_status, 'secondary')
+
+    def can_be_verified(self):
+        """Check if profile has enough information to be verified"""
+        required_fields = [
+            self.user.first_name,
+            self.user.last_name,
+            self.user.email,
+            self.job_position,
+            self.short_bio,
+        ]
+        return all(field for field in required_fields)
 
     def get_profile_picture_url(self):
         """Get profile picture URL with fallback to default image"""
@@ -214,11 +265,53 @@ class Company(models.Model):
     # Company Status
     is_primary = models.BooleanField(default=True)  # User's main company
     is_active = models.BooleanField(default=True)
+    
+    # Verification fields
+    verification_status = models.CharField(
+        max_length=20, 
+        choices=VERIFICATION_STATUS_CHOICES, 
+        default='pending',
+        help_text="Company verification status by admin"
+    )
+    verified_at = models.DateTimeField(blank=True, null=True, help_text="When the company was verified")
+    verified_by = models.ForeignKey(
+        'auth.User', 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True,
+        related_name='verified_companies',
+        help_text="Admin user who verified this company"
+    )
+    verification_notes = models.TextField(
+        blank=True, 
+        help_text="Admin notes about verification"
+    )
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.company_name} ({self.get_company_type_display()}) - by {self.member.user.get_full_name() or self.member.user.username}"
+
+    def get_verification_status_color(self):
+        """Get Bootstrap color class for verification status"""
+        colors = {
+            'pending': 'warning',
+            'approved': 'success',
+            'rejected': 'danger',
+            'under_review': 'info',
+        }
+        return colors.get(self.verification_status, 'secondary')
+
+    def can_be_verified(self):
+        """Check if company has enough information to be verified"""
+        required_fields = [
+            self.company_name,
+            self.company_description,
+            self.primary_location,
+            self.company_type,
+        ]
+        return all(field for field in required_fields)
 
     def get_company_logo_url(self):
         """Get company logo URL with fallback to default image"""
@@ -464,20 +557,11 @@ class Company(models.Model):
         unique_together = ['member', 'company_name']  # Prevent duplicate company names per member
 
 
-DOCUMENT_STATUS_CHOICES = [
-    ('pending', 'Pending Review'),
-    ('approved', 'Approved'),
-    ('rejected', 'Rejected'),
-]
-
 class MemberDocument(models.Model):
     member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='documents')
     name = models.CharField(max_length=255)
     file = models.FileField(upload_to='documents/')
-    status = models.CharField(max_length=20, choices=DOCUMENT_STATUS_CHOICES, default='pending')
     uploaded_at = models.DateTimeField(auto_now_add=True)
-    reviewed_at = models.DateTimeField(null=True, blank=True)
-    reviewer_notes = models.TextField(blank=True, help_text="Notes from reviewer")
     # e.g. pitch deck, company profile, etc.
 
     def __str__(self):

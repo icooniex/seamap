@@ -3,8 +3,8 @@ from .models import Member, Company, MemberDocument, CompanyDocument, Challenge,
 
 @admin.register(Member)
 class MemberAdmin(admin.ModelAdmin):
-    list_display = ('user', 'get_full_name', 'job_position', 'profile_completed', 'onboarding_completed', 'created_at')
-    list_filter = ('profile_completed', 'onboarding_completed', 'created_at')
+    list_display = ('user', 'get_full_name', 'job_position', 'verification_status', 'profile_completed', 'onboarding_completed', 'created_at')
+    list_filter = ('verification_status', 'profile_completed', 'onboarding_completed', 'created_at')
     search_fields = ('user__username', 'user__email', 'user__first_name', 'user__last_name', 'job_position', 'short_bio')
     readonly_fields = ('created_at', 'updated_at')
     
@@ -25,6 +25,9 @@ class MemberAdmin(admin.ModelAdmin):
         ('Status', {
             'fields': ('profile_completed', 'onboarding_completed')
         }),
+        ('Verification', {
+            'fields': ('verification_status', 'verified_at', 'verified_by', 'verification_notes')
+        }),
         ('Timestamps', {
             'fields': ('created_at', 'updated_at'),
             'classes': ('collapse',)
@@ -39,8 +42,8 @@ class CompanyDocumentInline(admin.TabularInline):
 
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
-    list_display = ('company_name', 'get_member_name', 'get_company_type', 'get_organization_type', 'primary_location', 'current_stage', 'investor_type', 'is_primary', 'is_active', 'created_at')
-    list_filter = ('company_type', 'organization_type', 'primary_location', 'current_stage', 'investor_type', 'is_primary', 'is_active', 'team_size', 'created_at')
+    list_display = ('company_name', 'get_member_name', 'get_company_type', 'verification_status', 'get_organization_type', 'primary_location', 'current_stage', 'is_primary', 'is_active', 'created_at')
+    list_filter = ('company_type', 'verification_status', 'organization_type', 'primary_location', 'current_stage', 'investor_type', 'is_primary', 'is_active', 'team_size', 'created_at')
     search_fields = ('company_name', 'member__user__username', 'member__user__email', 'company_description', 'solution_description', 'investment_philosophy')
     readonly_fields = ('created_at', 'updated_at')
     inlines = [CompanyDocumentInline]
@@ -124,6 +127,9 @@ class CompanyAdmin(admin.ModelAdmin):
         ('Status', {
             'fields': ('is_primary', 'is_active')
         }),
+        ('Verification', {
+            'fields': ('verification_status', 'verified_at', 'verified_by', 'verification_notes')
+        }),
         ('Timestamps', {
             'fields': ('created_at', 'updated_at'),
             'classes': ('collapse',)
@@ -132,8 +138,8 @@ class CompanyAdmin(admin.ModelAdmin):
 
 @admin.register(MemberDocument)
 class MemberDocumentAdmin(admin.ModelAdmin):
-    list_display = ('name', 'member', 'status', 'uploaded_at', 'reviewed_at')
-    list_filter = ('status', 'uploaded_at', 'reviewed_at')
+    list_display = ('name', 'member', 'uploaded_at')
+    list_filter = ('uploaded_at',)
     search_fields = ('name', 'member__user__username', 'member__user__email')
     readonly_fields = ('uploaded_at',)
     
@@ -141,20 +147,11 @@ class MemberDocumentAdmin(admin.ModelAdmin):
         ('Document Information', {
             'fields': ('member', 'name', 'file')
         }),
-        ('Review Status', {
-            'fields': ('status', 'reviewer_notes', 'reviewed_at')
-        }),
         ('Timestamps', {
             'fields': ('uploaded_at',),
             'classes': ('collapse',)
         }),
     )
-    
-    def save_model(self, request, obj, form, change):
-        if change and 'status' in form.changed_data:
-            from django.utils import timezone
-            obj.reviewed_at = timezone.now()
-        super().save_model(request, obj, form, change)
 
 @admin.register(CompanyDocument)
 class CompanyDocumentAdmin(admin.ModelAdmin):

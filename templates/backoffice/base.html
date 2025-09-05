@@ -391,10 +391,23 @@
             <div class="nav-section">
                 <div class="nav-section-title">Verification</div>
                 <div class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="bi bi-shield-check"></i>
-                        <span>Profile Verification</span>
-                        <span class="badge bg-warning">Soon</span>
+                    <a href="{% url 'backoffice_verification' %}" class="nav-link {% if request.resolver_match.url_name == 'backoffice_verification' %}active{% endif %}">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Verification Dashboard</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="{% url 'backoffice_user_verification' %}" class="nav-link {% if request.resolver_match.url_name == 'backoffice_user_verification' %}active{% endif %}">
+                        <i class="bi bi-person-check"></i>
+                        <span>User Verification</span>
+                        {% comment %}<!-- We'll add dynamic badges later -->{% endcomment %}
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="{% url 'backoffice_company_verification' %}" class="nav-link {% if request.resolver_match.url_name == 'backoffice_company_verification' %}active{% endif %}">
+                        <i class="bi bi-building-check"></i>
+                        <span>Company Verification</span>
+                        {% comment %}<!-- We'll add dynamic badges later -->{% endcomment %}
                     </a>
                 </div>
                 <div class="nav-item">

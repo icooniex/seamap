@@ -103,11 +103,11 @@ def user_management(request):
             Q(job_position__icontains=search_query)
         )
     
-    # Apply status filter
+    # Apply status filter - use verification_status instead of documents__status
     if status_filter == 'verified':
-        members = members.filter(documents__status='approved').distinct()
+        members = members.filter(verification_status='approved')
     elif status_filter == 'pending':
-        members = members.filter(documents__status='pending').distinct()
+        members = members.filter(verification_status='pending')
     elif status_filter == 'incomplete':
         members = members.filter(
             Q(user__first_name='') | Q(user__last_name='') | 
@@ -118,9 +118,9 @@ def user_management(request):
     members_with_counts = []
     for member in members:
         member.doc_count = member.documents.count()
-        member.approved_docs = member.documents.filter(status='approved').count()
-        member.pending_docs = member.documents.filter(status='pending').count()
-        member.rejected_docs = member.documents.filter(status='rejected').count()
+        # Since documents don't have status, we'll just show document counts
+        member.total_docs = member.documents.count()
+        member.has_docs = member.documents.count() > 0
         members_with_counts.append(member)
     
     # Pagination
@@ -315,3 +315,234 @@ def backoffice_logout(request):
     logout(request)
     messages.success(request, 'You have been logged out successfully.')
     return redirect('backoffice_login')
+
+
+# Verification Management Views
+
+@user_passes_test(is_admin_user, login_url='/backoffice/login/')
+def verification_dashboard(request):
+    """
+    Verification dashboard showing overview of pending verifications
+    """
+    # Get verification statistics
+    pending_users = Member.objects.filter(verification_status='pending').count()
+    pending_companies = Company.objects.filter(verification_status='pending').count()
+    under_review_users = Member.objects.filter(verification_status='under_review').count()
+    under_review_companies = Company.objects.filter(verification_status='under_review').count()
+    approved_users = Member.objects.filter(verification_status='approved').count()
+    approved_companies = Company.objects.filter(verification_status='approved').count()
+    
+    # Get recent verification activity
+    recent_user_verifications = Member.objects.filter(
+        verification_status__in=['approved', 'rejected']
+    ).select_related('verified_by', 'user').order_by('-verified_at')[:10]
+    
+    recent_company_verifications = Company.objects.filter(
+        verification_status__in=['approved', 'rejected']
+    ).select_related('verified_by', 'member__user').order_by('-verified_at')[:10]
+    
+    context = {
+        'pending_users': pending_users,
+        'pending_companies': pending_companies,
+        'under_review_users': under_review_users,
+        'under_review_companies': under_review_companies,
+        'approved_users': approved_users,
+        'approved_companies': approved_companies,
+        'recent_user_verifications': recent_user_verifications,
+        'recent_company_verifications': recent_company_verifications,
+        'total_pending': pending_users + pending_companies,
+    }
+    
+    return render(request, 'backoffice/verification_dashboard.html', context)
+
+
+@user_passes_test(is_admin_user, login_url='/backoffice/login/')
+def user_verification(request):
+    """
+    User verification management
+    """
+    # Get search and filter parameters
+    search_query = request.GET.get('search', '')
+    status_filter = request.GET.get('status', '')
+    
+    # Build queryset
+    users = Member.objects.select_related('user', 'verified_by').all()
+    
+    # Apply search
+    if search_query:
+        users = users.filter(
+            Q(user__first_name__icontains=search_query) |
+            Q(user__last_name__icontains=search_query) |
+            Q(user__email__icontains=search_query) |
+            Q(user__username__icontains=search_query) |
+            Q(job_position__icontains=search_query)
+        )
+    
+    # Apply status filter
+    if status_filter:
+        users = users.filter(verification_status=status_filter)
+    
+    # Order by verification priority (pending first, then by creation date)
+    users = users.order_by('verification_status', '-created_at')
+    
+    # Paginate results
+    paginator = Paginator(users, 25)  # Show 25 users per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    # Get status counts
+    status_counts = {
+        'all': Member.objects.count(),
+        'pending': Member.objects.filter(verification_status='pending').count(),
+        'under_review': Member.objects.filter(verification_status='under_review').count(),
+        'approved': Member.objects.filter(verification_status='approved').count(),
+        'rejected': Member.objects.filter(verification_status='rejected').count(),
+    }
+    
+    context = {
+        'page_obj': page_obj,
+        'search_query': search_query,
+        'status_filter': status_filter,
+        'status_counts': status_counts,
+        'total_users': users.count(),
+    }
+    
+    return render(request, 'backoffice/user_verification.html', context)
+
+
+@user_passes_test(is_admin_user, login_url='/backoffice/login/')
+@require_http_methods(["POST"])
+def update_user_verification(request, user_id):
+    """
+    Update user verification status
+    """
+    member = get_object_or_404(Member, id=user_id)
+    
+    action = request.POST.get('action')
+    notes = request.POST.get('notes', '')
+    
+    if action in ['approve', 'reject', 'under_review']:
+        if action == 'approve':
+            member.verification_status = 'approved'
+            message = f'User {member.user.get_full_name()} has been approved.'
+        elif action == 'reject':
+            member.verification_status = 'rejected'
+            message = f'User {member.user.get_full_name()} has been rejected.'
+        elif action == 'under_review':
+            member.verification_status = 'under_review'
+            message = f'User {member.user.get_full_name()} is now under review.'
+        
+        # Update verification fields
+        member.verified_at = timezone.now()
+        member.verified_by = request.user
+        member.verification_notes = notes
+        member.save()
+        
+        messages.success(request, message)
+    else:
+        messages.error(request, 'Invalid action.')
+    
+    return redirect('backoffice_user_verification')
+
+
+@user_passes_test(is_admin_user, login_url='/backoffice/login/')
+def company_verification(request):
+    """
+    Company verification management
+    """
+    # Get search and filter parameters
+    search_query = request.GET.get('search', '')
+    status_filter = request.GET.get('status', '')
+    type_filter = request.GET.get('type', '')
+    
+    # Build queryset
+    companies = Company.objects.select_related('member__user', 'verified_by').all()
+    
+    # Apply search
+    if search_query:
+        companies = companies.filter(
+            Q(company_name__icontains=search_query) |
+            Q(member__user__first_name__icontains=search_query) |
+            Q(member__user__last_name__icontains=search_query) |
+            Q(member__user__email__icontains=search_query) |
+            Q(company_description__icontains=search_query)
+        )
+    
+    # Apply status filter
+    if status_filter:
+        companies = companies.filter(verification_status=status_filter)
+    
+    # Apply type filter
+    if type_filter:
+        companies = companies.filter(company_type=type_filter)
+    
+    # Order by verification priority (pending first, then by creation date)
+    companies = companies.order_by('verification_status', '-created_at')
+    
+    # Paginate results
+    paginator = Paginator(companies, 25)  # Show 25 companies per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    # Get status counts
+    status_counts = {
+        'all': Company.objects.count(),
+        'pending': Company.objects.filter(verification_status='pending').count(),
+        'under_review': Company.objects.filter(verification_status='under_review').count(),
+        'approved': Company.objects.filter(verification_status='approved').count(),
+        'rejected': Company.objects.filter(verification_status='rejected').count(),
+    }
+    
+    # Get type counts
+    type_counts = {
+        'startup': Company.objects.filter(company_type='startup').count(),
+        'investor': Company.objects.filter(company_type='investor').count(),
+        'corporate': Company.objects.filter(company_type='corporate').count(),
+    }
+    
+    context = {
+        'page_obj': page_obj,
+        'search_query': search_query,
+        'status_filter': status_filter,
+        'type_filter': type_filter,
+        'status_counts': status_counts,
+        'type_counts': type_counts,
+        'total_companies': companies.count(),
+    }
+    
+    return render(request, 'backoffice/company_verification.html', context)
+
+
+@user_passes_test(is_admin_user, login_url='/backoffice/login/')
+@require_http_methods(["POST"])
+def update_company_verification(request, company_id):
+    """
+    Update company verification status
+    """
+    company = get_object_or_404(Company, id=company_id)
+    
+    action = request.POST.get('action')
+    notes = request.POST.get('notes', '')
+    
+    if action in ['approve', 'reject', 'under_review']:
+        if action == 'approve':
+            company.verification_status = 'approved'
+            message = f'Company {company.company_name} has been approved.'
+        elif action == 'reject':
+            company.verification_status = 'rejected'
+            message = f'Company {company.company_name} has been rejected.'
+        elif action == 'under_review':
+            company.verification_status = 'under_review'
+            message = f'Company {company.company_name} is now under review.'
+        
+        # Update verification fields
+        company.verified_at = timezone.now()
+        company.verified_by = request.user
+        company.verification_notes = notes
+        company.save()
+        
+        messages.success(request, message)
+    else:
+        messages.error(request, 'Invalid action.')
+    
+    return redirect('backoffice_company_verification')

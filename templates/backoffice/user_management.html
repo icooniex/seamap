@@ -109,15 +109,16 @@
                             {% if member.doc_count > 0 %}
                                 <div class="small">
                                     {{ member.doc_count }} document{{ member.doc_count|pluralize }}
-                                    {% if member.pending_docs > 0 %}
-                                        <div class="status-badge status-pending">{{ member.pending_docs }} pending</div>
-                                    {% elif member.approved_docs > 0 %}
-                                        <div class="status-badge status-verified">{{ member.approved_docs }} approved</div>
-                                    {% endif %}
                                 </div>
                             {% else %}
                                 <span class="text-muted small">No documents</span>
                             {% endif %}
+                            <!-- Display verification status -->
+                            <div class="mt-1">
+                                <span class="badge bg-{{ member.get_verification_status_color }} badge-sm">
+                                    {{ member.get_verification_status_display }}
+                                </span>
+                            </div>
                         </td>
                         <td>
                             <small class="text-muted">{{ member.created_at|date:"M d, Y" }}</small>
