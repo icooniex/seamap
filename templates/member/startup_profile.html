@@ -188,7 +188,29 @@
                     <div class="metric-icon mx-auto mb-2">
                         <i class="bi bi-currency-dollar text-primary"></i>
                     </div>
-                    <div class="stat-value text-primary">{{ startup.funding_goal|default:"$2.5M" }}</div>
+                    <div class="stat-value text-primary">
+                        {% if startup.funding_goal == "under_10k" %}
+                            Under $10K
+                        {% elif startup.funding_goal == "10k_50k" %}
+                            $10K - $50K
+                        {% elif startup.funding_goal == "50k_100k" %}
+                            $50K - $100K
+                        {% elif startup.funding_goal == "100k_500k" %}
+                            $100K - $500K
+                        {% elif startup.funding_goal == "500k_1m" %}
+                            $500K - $1M
+                        {% elif startup.funding_goal == "1m_5m" %}
+                            $1M - $5M
+                        {% elif startup.funding_goal == "5m_10m" %}
+                            $5M - $10M
+                        {% elif startup.funding_goal == "over_10m" %}
+                            Over $10M
+                        {% elif startup.funding_goal == "not_seeking" %}
+                            Not currently seeking
+                        {% else %}
+                            -
+                        {% endif %}
+                    </div>
                     <div class="stat-label">Funding Goal</div>
                 </div>
             </div>
