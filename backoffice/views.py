@@ -26,7 +26,14 @@ class BackOfficeLoginView(LoginView):
     """
     template_name = 'backoffice/login.html'
     form_class = BackOfficeLoginForm
-    redirect_authenticated_user = True
+    redirect_authenticated_user = False  # Changed to False to prevent redirect loop
+    
+    def dispatch(self, request, *args, **kwargs):
+        """Handle request before processing"""
+        # If user is already authenticated and is admin, redirect to dashboard
+        if request.user.is_authenticated and is_admin_user(request.user):
+            return redirect('backoffice:dashboard')
+        return super().dispatch(request, *args, **kwargs)
     
     def get_success_url(self):
         """Redirect to back office dashboard after successful login"""
