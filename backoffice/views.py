@@ -314,7 +314,7 @@ def backoffice_logout(request):
     """
     logout(request)
     messages.success(request, 'You have been logged out successfully.')
-    return redirect('backoffice_login')
+    return redirect('backoffice:login')
 
 
 # Verification Management Views
