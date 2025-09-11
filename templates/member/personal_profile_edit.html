@@ -160,42 +160,6 @@
                 </div>
             </div>
 
-            <!-- Location Information Section -->
-            <div class="form-section">
-                <div class="section-header">
-                    <h4 class="section-title">
-                        <i class="bi bi-geo-alt me-2"></i>
-                        Location Information
-                    </h4>
-                    <p class="section-subtitle">Where you're located and operating</p>
-                </div>
-                
-                <div class="row g-4">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="country" class="form-label">Country</label>
-                            <select class="form-select" id="country" name="country">
-                                <option value="">Select Country</option>
-                                <option value="SG" {% if user.member.country == 'SG' %}selected{% endif %}>Singapore</option>
-                                <option value="ID" {% if user.member.country == 'ID' %}selected{% endif %}>Indonesia</option>
-                                <option value="TH" {% if user.member.country == 'TH' %}selected{% endif %}>Thailand</option>
-                                <option value="MY" {% if user.member.country == 'MY' %}selected{% endif %}>Malaysia</option>
-                                <option value="PH" {% if user.member.country == 'PH' %}selected{% endif %}>Philippines</option>
-                                <option value="VN" {% if user.member.country == 'VN' %}selected{% endif %}>Vietnam</option>
-                                <option value="other" {% if user.member.country == 'other' %}selected{% endif %}>Other</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="city" class="form-label">City</label>
-                            <input type="text" class="form-control" id="city" name="city" 
-                                   value="{{ user.member.city|default:'' }}">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Form Actions -->
             <div class="form-actions">
                 <div class="d-flex justify-content-between">
