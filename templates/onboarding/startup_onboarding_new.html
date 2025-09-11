@@ -402,7 +402,7 @@
             
             <div class="form-group">
                 <label class="form-label">
-                    <i class="bi bi-handshake me-2 text-primary"></i>Areas of Support <span class="text-muted">(select all that apply)</span>
+                    <i class="bi bi-handshake me-2 text-primary"></i>Areas of Support <span class="text-danger">*</span> <span class="text-muted">(select all that apply)</span>
                 </label>
                 <div class="checkbox-grid">
                     <div class="checkbox-card" data-checkbox="branding_marketing">
@@ -458,10 +458,10 @@
 
             <div class="form-group">
                 <label for="support_details" class="form-label">
-                    <i class="bi bi-chat-text me-2 text-primary"></i>Support Details
+                    <i class="bi bi-chat-text me-2 text-primary"></i>Support Details <span class="text-danger">*</span>
                 </label>
                 <textarea class="form-control" id="support_details" name="support_details" 
-                          placeholder="Tell us more about the specific support you need..." rows="3"></textarea>
+                          placeholder="Tell us more about the specific support you need..." rows="3" required></textarea>
             </div>
 
             <div class="form-group">
@@ -910,6 +910,27 @@
                 
             } else if (stepNumber === 3) {
                 // Step 3: Support & Consent
+                
+                // Validate Support Details (required field)
+                const supportDetailsField = document.getElementById('support_details');
+                if (supportDetailsField && !supportDetailsField.value.trim()) {
+                    isValid = false;
+                    supportDetailsField.classList.add('is-invalid');
+                    if (!firstInvalidField) firstInvalidField = supportDetailsField;
+                }
+                
+                // Validate Areas of Support (at least one must be selected)
+                const supportAreas = currentStepElement.querySelectorAll('input[name="support_areas"]:checked');
+                if (supportAreas.length === 0) {
+                    isValid = false;
+                    const supportContainer = currentStepElement.querySelector('input[name="support_areas"]')?.closest('.checkbox-grid');
+                    if (supportContainer) {
+                        supportContainer.classList.add('is-invalid');
+                    }
+                    if (!errorMessage) errorMessage = 'Please select at least one area where you need support.';
+                }
+                
+                // Validate consent agreements
                 const consentInfo = document.getElementById('consent_info');
                 const consentMarketplace = document.getElementById('consent_marketplace');
                 
@@ -921,7 +942,11 @@
                     if (consentMarketplace && !consentMarketplace.checked) {
                         consentMarketplace.classList.add('is-invalid');
                     }
-                    errorMessage = 'Please accept both privacy consent agreements to complete your registration.';
+                    if (!errorMessage) errorMessage = 'Please accept both privacy consent agreements to complete your registration.';
+                }
+                
+                if (!isValid && !errorMessage) {
+                    errorMessage = 'Please complete all required fields, select support areas, and accept consent agreements.';
                 }
             }
             
@@ -989,6 +1014,19 @@
                 }
                 
             } else if (stepNumber === 3) {
+                // Validate Support Details (required field)
+                const supportDetailsField = document.getElementById('support_details');
+                if (supportDetailsField && !supportDetailsField.value.trim()) {
+                    isValid = false;
+                }
+                
+                // Validate Areas of Support (at least one must be selected)
+                const supportAreas = currentStepElement.querySelectorAll('input[name="support_areas"]:checked');
+                if (supportAreas.length === 0) {
+                    isValid = false;
+                }
+                
+                // Validate consent agreements
                 const consentInfo = document.getElementById('consent_info');
                 const consentMarketplace = document.getElementById('consent_marketplace');
                 
