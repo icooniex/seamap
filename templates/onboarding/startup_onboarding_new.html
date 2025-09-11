@@ -24,6 +24,11 @@
     background: #e7f3ff;
 }
 
+.logo-upload-container.is-invalid {
+    border-color: #dc3545;
+    background: #f8d7da;
+}
+
 .logo-upload-placeholder {
     display: flex;
     flex-direction: column;
@@ -39,6 +44,10 @@
 
 .logo-upload-container:hover .upload-icon {
     color: #0d6efd;
+}
+
+.logo-upload-container.is-invalid .upload-icon {
+    color: #dc3545;
 }
 
 .upload-text p {
@@ -75,6 +84,17 @@
 
 .logo-preview:hover .logo-overlay {
     opacity: 1;
+}
+
+/* Additional validation styles */
+.form-control.is-invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.form-select.is-invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
 }
 </style>
 {% endblock %}
@@ -130,7 +150,7 @@
             
             <div class="form-group">
                 <label for="company_name" class="form-label">
-                    <i class="bi bi-building me-2 text-primary"></i>Company Name *
+                    <i class="bi bi-building me-2 text-primary"></i>Company Name <span class="text-danger">*</span>
                 </label>
                 <input type="text" class="form-control" id="company_name" name="company_name" 
                        placeholder="Enter your company or project name" required>
@@ -138,7 +158,7 @@
 
             <div class="form-group">
                 <label for="company_logo" class="form-label">
-                    <i class="bi bi-image me-2 text-primary"></i>Company Logo
+                    <i class="bi bi-image me-2 text-primary"></i>Company Logo <span class="text-danger">*</span>
                 </label>
                 <div class="logo-upload-container">
                     <div class="logo-preview" id="logoPreview" style="display: none;">
@@ -165,7 +185,7 @@
                         </button>
                     </div>
                     <input type="file" class="form-control d-none" id="company_logo" name="company_logo" 
-                           accept="image/png,image/jpeg,image/jpg,image/svg+xml" onchange="handleLogoUpload(this)">
+                           accept="image/png,image/jpeg,image/jpg,image/svg+xml" onchange="handleLogoUpload(this)" required>
                 </div>
             </div>
 
@@ -173,19 +193,19 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="website" class="form-label">
-                            <i class="bi bi-globe me-2 text-primary"></i>Website
+                            <i class="bi bi-globe me-2 text-primary"></i>Website <span class="text-danger">*</span>
                         </label>
                         <input type="url" class="form-control" id="website" name="website" 
-                               placeholder="https://www.example.com">
+                               placeholder="https://www.example.com" required>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="founded_year" class="form-label">
-                            <i class="bi bi-calendar-event me-2 text-primary"></i>Founded Year
+                            <i class="bi bi-calendar-event me-2 text-primary"></i>Founded Year <span class="text-danger">*</span>
                         </label>
                         <input type="number" class="form-control" id="founded_year" name="founded_year" 
-                               placeholder="e.g. 2020" min="1900" max="2025">
+                               placeholder="e.g. 2020" min="1900" max="2025" required>
                     </div>
                 </div>
             </div>
@@ -194,7 +214,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="team_size" class="form-label">
-                            <i class="bi bi-people me-2 text-primary"></i>Team Size *
+                            <i class="bi bi-people me-2 text-primary"></i>Team Size <span class="text-danger">*</span>
                         </label>
                         <select class="form-select" id="team_size" name="team_size" required>
                             <option value="">Select team size</option>
@@ -211,7 +231,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="primary_location" class="form-label">
-                            <i class="bi bi-geo-alt me-2 text-primary"></i>Primary Location *
+                            <i class="bi bi-geo-alt me-2 text-primary"></i>Primary Location <span class="text-danger">*</span>
                         </label>
                         <select class="form-select" id="primary_location" name="primary_location" required>
                             <option value="">Select your country</option>
@@ -233,10 +253,10 @@
 
             <div class="form-group">
                 <label for="company_description" class="form-label">
-                    <i class="bi bi-card-text me-2 text-primary"></i>Company Description
+                    <i class="bi bi-card-text me-2 text-primary"></i>Company Description <span class="text-danger">*</span>
                 </label>
                 <textarea class="form-control" id="company_description" name="company_description" 
-                          placeholder="Tell us about your company's mission, vision, and what makes you unique..." rows="4"></textarea>
+                          placeholder="Tell us about your company's mission, vision, and what makes you unique..." rows="4" required></textarea>
             </div>
         </div>
 
@@ -634,11 +654,17 @@
                     const logoImage = document.getElementById('logoImage');
                     const logoPreview = document.getElementById('logoPreview');
                     const logoPlaceholder = document.getElementById('logoPlaceholder');
+                    const logoContainer = document.querySelector('.logo-upload-container');
                     
                     if (logoImage && logoPreview && logoPlaceholder) {
                         logoImage.src = e.target.result;
                         logoPreview.style.display = 'block';
                         logoPlaceholder.style.display = 'none';
+                        
+                        // Clear validation error when file is uploaded
+                        if (logoContainer) {
+                            logoContainer.classList.remove('is-invalid');
+                        }
                     }
                 };
                 reader.readAsDataURL(file);
@@ -650,11 +676,15 @@
                 const logoPlaceholder = document.getElementById('logoPlaceholder');
                 const logoInput = document.getElementById('company_logo');
                 const logoImage = document.getElementById('logoImage');
+                const logoContainer = document.querySelector('.logo-upload-container');
                 
                 if (logoInput) logoInput.value = '';
                 if (logoImage) logoImage.src = '';
                 if (logoPreview) logoPreview.style.display = 'none';
                 if (logoPlaceholder) logoPlaceholder.style.display = 'block';
+                
+                // This will likely trigger validation error on next validation check
+                // since the logo becomes required
             };
         }
         
@@ -799,18 +829,31 @@
             
             if (stepNumber === 1) {
                 // Step 1: Company Information
-                const requiredFields = ['company_name', 'team_size', 'primary_location'];
+                const requiredFields = ['company_name', 'company_logo', 'website', 'founded_year', 'company_description', 'team_size', 'primary_location'];
                 
                 requiredFields.forEach(fieldId => {
                     const field = document.getElementById(fieldId);
-                    if (field && !field.value.trim()) {
-                        isValid = false;
-                        field.classList.add('is-invalid');
-                        if (!firstInvalidField) firstInvalidField = field;
+                    if (field) {
+                        if (fieldId === 'company_logo') {
+                            // Special handling for file input
+                            if (!field.files || field.files.length === 0) {
+                                isValid = false;
+                                const logoContainer = document.querySelector('.logo-upload-container');
+                                if (logoContainer) logoContainer.classList.add('is-invalid');
+                                if (!firstInvalidField) firstInvalidField = field;
+                            }
+                        } else {
+                            // Regular text/select fields
+                            if (!field.value.trim()) {
+                                isValid = false;
+                                field.classList.add('is-invalid');
+                                if (!firstInvalidField) firstInvalidField = field;
+                            }
+                        }
                     }
                 });
                 
-                // Validate website URL if provided
+                // Additional website URL validation
                 const websiteField = document.getElementById('website');
                 if (websiteField && websiteField.value.trim()) {
                     const urlPattern = /^https?:\/\/.+/;
@@ -892,12 +935,22 @@
             let isValid = true;
             
             if (stepNumber === 1) {
-                const requiredFields = ['company_name', 'team_size', 'primary_location'];
+                const requiredFields = ['company_name', 'company_logo', 'website', 'founded_year', 'company_description', 'team_size', 'primary_location'];
                 
                 requiredFields.forEach(fieldId => {
                     const field = document.getElementById(fieldId);
-                    if (field && !field.value.trim()) {
-                        isValid = false;
+                    if (field) {
+                        if (fieldId === 'company_logo') {
+                            // Special handling for file input
+                            if (!field.files || field.files.length === 0) {
+                                isValid = false;
+                            }
+                        } else {
+                            // Regular text/select fields
+                            if (!field.value.trim()) {
+                                isValid = false;
+                            }
+                        }
                     }
                 });
                 
