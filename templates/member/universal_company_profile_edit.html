@@ -138,6 +138,17 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" id="innovation-info-tab" data-bs-toggle="tab" href="#innovation-info" role="tab">
+                        <span class="tab-text">
+                            <i class="bi bi-lightbulb tab-icon"></i>
+                            Innovation Information
+                        </span>
+                        {% if progress %}
+                        <span class="tab-status {% if progress.tabs.innovation_info.status == 'complete' %}complete{% elif progress.tabs.innovation_info.percentage > 0 %}incomplete{% else %}empty{% endif %}"></span>
+                        {% endif %}
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" id="market-traction-tab" data-bs-toggle="tab" href="#market-traction" role="tab">
                         <span class="tab-text">
                             <i class="bi bi-graph-up-arrow tab-icon"></i>
@@ -186,7 +197,12 @@
                         {% include 'member/forms/startup_company_info.html' %}
                     </div>
                     
-                    <!-- Tab 2: Market & Traction -->
+                    <!-- Tab 2: Innovation Information -->
+                    <div class="tab-pane fade" id="innovation-info" role="tabpanel">
+                        {% include 'member/forms/startup_innovation_info.html' %}
+                    </div>
+                    
+                    <!-- Tab 3: Market & Traction -->
                     <div class="tab-pane fade" id="market-traction" role="tabpanel">
                         {% include 'member/forms/startup_market_traction.html' %}
                     </div>

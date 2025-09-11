@@ -40,19 +40,11 @@
     </div>
     
     <div class="row g-4">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <div class="form-group">
                 <label for="company_name" class="form-label">Company Name *</label>
                 <input type="text" class="form-control" id="company_name" name="company_name" 
                        value="{{ company.company_name|default:'' }}" required>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="company_type" class="form-label">Company Type</label>
-                <select class="form-select" id="company_type" name="company_type">
-                    <option value="startup" selected>Startup</option>
-                </select>
             </div>
         </div>
         <div class="col-12">
@@ -61,14 +53,6 @@
                 <textarea class="form-control" id="company_description" name="company_description" rows="4" 
                           placeholder="Describe your startup's mission, products, services, and what makes you unique..." required>{{ company.company_description|default:'' }}</textarea>
                 <small class="form-text text-muted">This description will be visible on your company profile</small>
-            </div>
-        </div>
-        <div class="col-12">
-            <div class="form-group">
-                <label for="problem_statement" class="form-label">Problem Statement *</label>
-                <textarea class="form-control" id="problem_statement" name="problem_statement" rows="4" 
-                          placeholder="What problem does your startup solve? Describe the pain point your solution addresses..." required>{{ company.problem_statement|default:'' }}</textarea>
-                <small class="form-text text-muted">Clearly articulate the problem your startup is solving</small>
             </div>
         </div>
         <div class="col-md-6">

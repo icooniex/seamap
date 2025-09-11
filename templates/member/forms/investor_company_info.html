@@ -77,7 +77,7 @@
                     <span class="input-group-text">
                         <i class="bi bi-globe"></i>
                     </span>
-                    <input type="url" class="form-control" id="website" name="website_url" 
+                    <input type="url" class="form-control" id="website" name="website" 
                            value="{{ company.website|default:'' }}" 
                            placeholder="https://www.yourcompany.com">
                 </div>
@@ -170,11 +170,13 @@
                 <label for="average_deal_size" class="form-label">Average Deal Size *</label>
                                 <select class="form-select" id="average_deal_size" name="average_deal_size" required>
                     <option value="">Select average deal size</option>
-                    <option value="under_1m" {% if company.average_deal_size == 'under_1m' %}selected{% endif %}>Under $1M</option>
-                    <option value="1m_50m" {% if company.average_deal_size == '1m_50m' %}selected{% endif %}>$1M - $50M</option>
-                    <option value="100m_200m" {% if company.average_deal_size == '100m_200m' %}selected{% endif %}>$100M - $200M</option>
-                    <option value="200m_500m" {% if company.average_deal_size == '200m_500m' %}selected{% endif %}>$200M - $500M</option>
-                    <option value="over_500m" {% if company.average_deal_size == 'over_500m' %}selected{% endif %}>Over $500M</option>
+                    <option value="under_100k" {% if company.average_deal_size == 'under_100k' %}selected{% endif %}>Under $100K</option>
+                    <option value="100k_500k" {% if company.average_deal_size == '100k_500k' %}selected{% endif %}>$100K - $500K</option>
+                    <option value="500k_1m" {% if company.average_deal_size == '500k_1m' %}selected{% endif %}>$500K - $1M</option>
+                    <option value="1m_5m" {% if company.average_deal_size == '1m_5m' %}selected{% endif %}>$1M - $5M</option>
+                    <option value="5m_10m" {% if company.average_deal_size == '5m_10m' %}selected{% endif %}>$5M - $10M</option>
+                    <option value="10m_50m" {% if company.average_deal_size == '10m_50m' %}selected{% endif %}>$10M - $50M</option>
+                    <option value="over_50m" {% if company.average_deal_size == 'over_50m' %}selected{% endif %}>Over $50M</option>
                 </select>
             </div>
         </div>
@@ -186,9 +188,7 @@
                         <input type="checkbox" name="funding_stages" value="pre_seed" 
                                {% if 'pre_seed' in company.funding_stages %}checked{% endif %}>
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                                <i class="bi bi-check"></i>
-                            </div>
+                            <div class="checkbox-icon"></div>
                             <span class="checkbox-label">Pre-Seed</span>
                         </div>
                     </div>
@@ -196,9 +196,7 @@
                         <input type="checkbox" name="funding_stages" value="seed" 
                                {% if 'seed' in company.funding_stages %}checked{% endif %}>
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                                <i class="bi bi-check"></i>
-                            </div>
+                            <div class="checkbox-icon"></div>
                             <span class="checkbox-label">Seed</span>
                         </div>
                     </div>
@@ -206,9 +204,7 @@
                         <input type="checkbox" name="funding_stages" value="series_a" 
                                {% if 'series_a' in company.funding_stages %}checked{% endif %}>
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                                <i class="bi bi-check"></i>
-                            </div>
+                            <div class="checkbox-icon"></div>
                             <span class="checkbox-label">Series A</span>
                         </div>
                     </div>
@@ -216,9 +212,7 @@
                         <input type="checkbox" name="funding_stages" value="series_b" 
                                {% if 'series_b' in company.funding_stages %}checked{% endif %}>
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                                <i class="bi bi-check"></i>
-                            </div>
+                            <div class="checkbox-icon"></div>
                             <span class="checkbox-label">Series B</span>
                         </div>
                     </div>
@@ -226,9 +220,7 @@
                         <input type="checkbox" name="funding_stages" value="series_c" 
                                {% if 'series_c' in company.funding_stages %}checked{% endif %}>
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                                <i class="bi bi-check"></i>
-                            </div>
+                            <div class="checkbox-icon"></div>
                             <span class="checkbox-label">Series C</span>
                         </div>
                     </div>
@@ -236,9 +228,7 @@
                         <input type="checkbox" name="funding_stages" value="series_d_plus" 
                                {% if 'series_d_plus' in company.funding_stages %}checked{% endif %}>
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                                <i class="bi bi-check"></i>
-                            </div>
+                            <div class="checkbox-icon"></div>
                             <span class="checkbox-label">Series D+</span>
                         </div>
                     </div>
@@ -253,9 +243,7 @@
                         <input type="checkbox" name="investment_categories" value="eliminate_redesign" 
                                {% if 'eliminate_redesign' in company.investment_categories %}checked{% endif %}>
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                                <i class="bi bi-check"></i>
-                            </div>
+                            <div class="checkbox-icon"></div>
                             <span class="checkbox-label">Eliminate & Redesign Packaging</span>
                         </div>
                     </div>
@@ -263,9 +251,7 @@
                         <input type="checkbox" name="investment_categories" value="refill_reuse" 
                                {% if 'refill_reuse' in company.investment_categories %}checked{% endif %}>
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                                <i class="bi bi-check"></i>
-                            </div>
+                            <div class="checkbox-icon"></div>
                             <span class="checkbox-label">Refill & Reuse Solutions</span>
                         </div>
                     </div>
@@ -273,9 +259,7 @@
                         <input type="checkbox" name="investment_categories" value="collection_sorting" 
                                {% if 'collection_sorting' in company.investment_categories %}checked{% endif %}>
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                                <i class="bi bi-check"></i>
-                            </div>
+                            <div class="checkbox-icon"></div>
                             <span class="checkbox-label">Collection & Sorting Technologies</span>
                         </div>
                     </div>
@@ -283,9 +267,7 @@
                         <input type="checkbox" name="investment_categories" value="advanced_recycling" 
                                {% if 'advanced_recycling' in company.investment_categories %}checked{% endif %}>
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                                <i class="bi bi-check"></i>
-                            </div>
+                            <div class="checkbox-icon"></div>
                             <span class="checkbox-label">Advanced Recycling & Upcycling</span>
                         </div>
                     </div>
@@ -293,9 +275,7 @@
                         <input type="checkbox" name="investment_categories" value="bioplastics" 
                                {% if 'bioplastics' in company.investment_categories %}checked{% endif %}>
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                                <i class="bi bi-check"></i>
-                            </div>
+                            <div class="checkbox-icon"></div>
                             <span class="checkbox-label">Bioplastics & Compostable Materials</span>
                         </div>
                     </div>
@@ -303,9 +283,7 @@
                         <input type="checkbox" name="investment_categories" value="waste_management" 
                                {% if 'waste_management' in company.investment_categories %}checked{% endif %}>
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                                <i class="bi bi-check"></i>
-                            </div>
+                            <div class="checkbox-icon"></div>
                             <span class="checkbox-label">Waste Management Infrastructure</span>
                         </div>
                     </div>
@@ -313,9 +291,7 @@
                         <input type="checkbox" name="investment_categories" value="data_monitoring" 
                                {% if 'data_monitoring' in company.investment_categories %}checked{% endif %}>
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                                <i class="bi bi-check"></i>
-                            </div>
+                            <div class="checkbox-icon"></div>
                             <span class="checkbox-label">Data, Monitoring & Traceability</span>
                         </div>
                     </div>
@@ -323,9 +299,7 @@
                         <input type="checkbox" name="investment_categories" value="other" 
                                {% if 'other' in company.investment_categories %}checked{% endif %}>
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                                <i class="bi bi-check"></i>
-                            </div>
+                            <div class="checkbox-icon"></div>
                             <span class="checkbox-label">Other</span>
                         </div>
                     </div>
@@ -361,9 +335,7 @@
                         <input type="checkbox" name="market_country_interests" value="Singapore" 
                                {% if 'Singapore' in company.market_country_interests %}checked{% endif %}>
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                                <i class="bi bi-check"></i>
-                            </div>
+                            <div class="checkbox-icon"></div>
                             <span class="checkbox-label">🇸🇬 Singapore</span>
                         </div>
                     </div>
@@ -371,9 +343,7 @@
                         <input type="checkbox" name="market_country_interests" value="Indonesia" 
                                {% if 'Indonesia' in company.market_country_interests %}checked{% endif %}>
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                                <i class="bi bi-check"></i>
-                            </div>
+                            <div class="checkbox-icon"></div>
                             <span class="checkbox-label">🇮🇩 Indonesia</span>
                         </div>
                     </div>
@@ -381,9 +351,7 @@
                         <input type="checkbox" name="market_country_interests" value="Thailand" 
                                {% if 'Thailand' in company.market_country_interests %}checked{% endif %}>
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                                <i class="bi bi-check"></i>
-                            </div>
+                            <div class="checkbox-icon"></div>
                             <span class="checkbox-label">🇹🇭 Thailand</span>
                         </div>
                     </div>
@@ -391,9 +359,7 @@
                         <input type="checkbox" name="market_country_interests" value="Malaysia" 
                                {% if 'Malaysia' in company.market_country_interests %}checked{% endif %}>
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                                <i class="bi bi-check"></i>
-                            </div>
+                            <div class="checkbox-icon"></div>
                             <span class="checkbox-label">🇲🇾 Malaysia</span>
                         </div>
                     </div>
@@ -401,9 +367,7 @@
                         <input type="checkbox" name="market_country_interests" value="Philippines" 
                                {% if 'Philippines' in company.market_country_interests %}checked{% endif %}>
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                                <i class="bi bi-check"></i>
-                            </div>
+                            <div class="checkbox-icon"></div>
                             <span class="checkbox-label">🇵🇭 Philippines</span>
                         </div>
                     </div>
@@ -411,9 +375,7 @@
                         <input type="checkbox" name="market_country_interests" value="Vietnam" 
                                {% if 'Vietnam' in company.market_country_interests %}checked{% endif %}>
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                                <i class="bi bi-check"></i>
-                            </div>
+                            <div class="checkbox-icon"></div>
                             <span class="checkbox-label">🇻🇳 Vietnam</span>
                         </div>
                     </div>
@@ -421,9 +383,7 @@
                         <input type="checkbox" name="market_country_interests" value="Cambodia" 
                                {% if 'Cambodia' in company.market_country_interests %}checked{% endif %}>
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                                <i class="bi bi-check"></i>
-                            </div>
+                            <div class="checkbox-icon"></div>
                             <span class="checkbox-label">🇰🇭 Cambodia</span>
                         </div>
                     </div>
@@ -431,9 +391,7 @@
                         <input type="checkbox" name="market_country_interests" value="Laos" 
                                {% if 'Laos' in company.market_country_interests %}checked{% endif %}>
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                                <i class="bi bi-check"></i>
-                            </div>
+                            <div class="checkbox-icon"></div>
                             <span class="checkbox-label">🇱🇦 Laos</span>
                         </div>
                     </div>
@@ -441,9 +399,7 @@
                         <input type="checkbox" name="market_country_interests" value="Myanmar" 
                                {% if 'Myanmar' in company.market_country_interests %}checked{% endif %}>
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                                <i class="bi bi-check"></i>
-                            </div>
+                            <div class="checkbox-icon"></div>
                             <span class="checkbox-label">🇲🇲 Myanmar</span>
                         </div>
                     </div>
@@ -451,9 +407,7 @@
                         <input type="checkbox" name="market_country_interests" value="Brunei" 
                                {% if 'Brunei' in company.market_country_interests %}checked{% endif %}>
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                                <i class="bi bi-check"></i>
-                            </div>
+                            <div class="checkbox-icon"></div>
                             <span class="checkbox-label">🇧🇳 Brunei</span>
                         </div>
                     </div>
@@ -461,9 +415,7 @@
                         <input type="checkbox" name="market_country_interests" value="Other" 
                                {% if 'Other' in company.market_country_interests %}checked{% endif %}>
                         <div class="checkbox-card-content">
-                            <div class="checkbox-icon">
-                                <i class="bi bi-check"></i>
-                            </div>
+                            <div class="checkbox-icon"></div>
                             <span class="checkbox-label">🌍 Other</span>
                         </div>
                     </div>

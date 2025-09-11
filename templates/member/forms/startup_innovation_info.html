@@ -1,0 +1,254 @@
+<div class="form-section">
+    <div class="section-header">
+        <h4 class="section-title">
+            <i class="bi bi-lightbulb me-2"></i>
+            Innovation Information
+        </h4>
+        <p class="section-subtitle">Details about your startup's solution and innovation approach</p>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="bi bi-lightbulb me-2 text-primary"></i>Type of Innovation <span class="text-danger">*</span> <span class="text-muted">(select all that apply)</span>
+                </label>
+                <div class="checkbox-grid">
+                    <div class="checkbox-card" data-checkbox="plastic_alternatives">
+                        <input type="checkbox" id="plastic_alternatives" name="innovation_type" value="Eliminate & Redesign Packaging" 
+                               {% if 'Eliminate & Redesign Packaging' in company.innovation_types %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <label for="plastic_alternatives" class="checkbox-label">Eliminate & Redesign Packaging</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="recycling_technologies">
+                        <input type="checkbox" id="recycling_technologies" name="innovation_type" value="Refill & Reuse Solutions"
+                               {% if 'Refill & Reuse Solutions' in company.innovation_types %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <label for="recycling_technologies" class="checkbox-label">Refill & Reuse Solutions</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="waste_collection">
+                        <input type="checkbox" id="waste_collection" name="innovation_type" value="Reusable Packaging Collection/Drop Off"
+                               {% if 'Reusable Packaging Collection/Drop Off' in company.innovation_types %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <label for="waste_collection" class="checkbox-label">Reusable Packaging Collection/Drop Off</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="circular_economy">
+                        <input type="checkbox" id="circular_economy" name="innovation_type" value="Upcycling Plastic Waste"
+                               {% if 'Upcycling Plastic Waste' in company.innovation_types %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <label for="circular_economy" class="checkbox-label">Upcycling Plastic Waste</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="monitoring_tools">
+                        <input type="checkbox" id="monitoring_tools" name="innovation_type" value="Sustainable Alternative Materials"
+                               {% if 'Sustainable Alternative Materials' in company.innovation_types %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <label for="monitoring_tools" class="checkbox-label">Sustainable Alternative Materials</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="education_partnerships">
+                        <input type="checkbox" id="education_partnerships" name="innovation_type" value="Education & Industry Partnerships"
+                               {% if 'Education & Industry Partnerships' in company.innovation_types %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <label for="education_partnerships" class="checkbox-label">Education & Industry Partnerships</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="tracking_monitoring">
+                        <input type="checkbox" id="tracking_monitoring" name="innovation_type" value="Tracking & Monitoring Waste"
+                               {% if 'Tracking & Monitoring Waste' in company.innovation_types %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <label for="tracking_monitoring" class="checkbox-label">Tracking & Monitoring Waste</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="other">
+                        <input type="checkbox" id="other" name="innovation_type" value="Other Innovation"
+                               {% if 'Other Innovation' in company.innovation_types %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <label for="other" class="checkbox-label">Other Innovation</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-12">
+            <div class="form-group">
+                <label for="problem_statement" class="form-label">Problem Statement <span class="text-danger">*</span></label>
+                <textarea class="form-control" id="problem_statement" name="problem_statement" rows="4" 
+                          placeholder="What problem does your startup solve? Describe the pain point your solution addresses..." required>{{ company.problem_statement|default:'' }}</textarea>
+                <small class="form-text text-muted">Clearly articulate the problem your startup is solving</small>
+            </div>
+        </div>
+        
+        <div class="col-12">
+            <div class="form-group">
+                <label for="solution_description" class="form-label">Solution Description & USP <span class="text-danger">*</span></label>
+                <textarea class="form-control" id="solution_description" name="solution_description" rows="5" 
+                          placeholder="Describe your solution in detail. What makes it unique? What's your competitive advantage? How does it solve the problem you identified?" required>{{ company.solution_description|default:'' }}</textarea>
+                <small class="form-text text-muted">Explain your solution and unique selling proposition (USP) that sets you apart from competitors</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Checkbox Grid Styles - คัดลอกจาก onboarding.css */
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.checkbox-card {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+}
+
+.checkbox-card:hover {
+    border-color: var(--bs-primary);
+    background: rgba(44, 89, 167, 0.05);
+    transform: translateY(-2px);
+}
+
+.checkbox-card.selected {
+    border-color: var(--bs-primary);
+    background: rgba(44, 89, 167, 0.1);
+}
+
+.checkbox-card input[type="checkbox"] {
+    display: none;
+}
+
+.checkbox-card-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    z-index: 1;
+}
+
+.checkbox-icon {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #cbd5e0;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    flex-shrink: 0;
+    background: white;
+    position: relative;
+}
+
+.checkbox-icon:hover {
+    border-color: var(--bs-primary);
+    background: rgba(44, 89, 167, 0.05);
+}
+
+.checkbox-card.selected .checkbox-icon {
+    background: var(--bs-primary);
+    border-color: var(--bs-primary);
+    color: white;
+}
+
+.checkbox-card.selected .checkbox-icon:hover {
+    background: #1e3a8a;
+    border-color: #1e3a8a;
+}
+
+.checkbox-label {
+    font-weight: 500;
+    color: #4a5568;
+    flex: 1;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Add checkmark icon when selected */
+.checkbox-card.selected .checkbox-icon::before {
+    content: "✓";
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+@media (max-width: 768px) {
+    .checkbox-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Innovation info script loaded');
+    
+    // Checkbox card interactions - วิธีใหม่
+    const checkboxCards = document.querySelectorAll('.checkbox-card');
+    console.log('Found checkbox cards:', checkboxCards.length);
+    
+    checkboxCards.forEach((card, index) => {
+        const checkbox = card.querySelector('input[type="checkbox"]');
+        
+        if (!checkbox) {
+            console.error(`No checkbox found in card ${index}`);
+            return;
+        }
+        
+        // เพิ่ม event listener ให้ checkbox โดยตรง
+        checkbox.addEventListener('change', function() {
+            console.log('Checkbox changed:', this.checked);
+            updateCardState(card, this.checked);
+        });
+        
+        // เพิ่ม event listener ให้ card
+        card.addEventListener('click', function(e) {
+            console.log('Card clicked:', e.target);
+            // ป้องกันการ click ซ้ำถ้า click ที่ checkbox โดยตรง
+            if (e.target === checkbox) {
+                return;
+            }
+            
+            // Toggle checkbox
+            checkbox.checked = !checkbox.checked;
+            console.log('Checkbox toggled to:', checkbox.checked);
+            updateCardState(card, checkbox.checked);
+        });
+        
+        // Function to update card appearance
+        function updateCardState(card, isChecked) {
+            if (isChecked) {
+                card.classList.add('selected');
+            } else {
+                card.classList.remove('selected');
+            }
+        }
+        
+        // Initialize state based on checkbox status
+        if (checkbox.checked) {
+            updateCardState(card, true);
+            console.log(`Card ${index} initialized as selected`);
+        }
+    });
+});
+</script>

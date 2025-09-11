@@ -328,6 +328,13 @@
     color: white;
 }
 
+.checkbox-card.selected .checkbox-icon::after {
+    content: "✓";
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+}
+
 .checkbox-card.selected .checkbox-icon:hover {
     background: #1e3a8a;
     border-color: #1e3a8a;

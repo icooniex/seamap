@@ -14,12 +14,37 @@ from .forms import EmailLoginForm, SignUpForm, CompanyForm, StartupForm, Investo
 import json
 import random
 from django.views import View
+from functools import wraps
 
 import os
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.conf import settings
 from django.views import View
+
+
+def onboarding_required(view_func):
+    """
+    Decorator that checks if user has completed onboarding before accessing views
+    """
+    @wraps(view_func)
+    @login_required
+    def _wrapped_view(request, *args, **kwargs):
+        try:
+            member = Member.objects.get(user=request.user)
+            onboarding_redirect = member.get_incomplete_onboarding_redirect()
+            
+            if onboarding_redirect:
+                messages.info(request, 'Please complete your profile setup before accessing this page.')
+                return redirect(onboarding_redirect)
+                
+        except Member.DoesNotExist:
+            messages.error(request, 'Profile not found. Please complete registration.')
+            return redirect('onboarding_user_profile')
+        
+        return view_func(request, *args, **kwargs)
+    
+    return _wrapped_view
 
 
 def homepage(request):
@@ -36,8 +61,42 @@ class CustomLoginView(LoginView):
     redirect_authenticated_user = True
     
     def get_success_url(self):
-        """Redirect to startup matchmaking dashboard after successful login"""
-        return '/dashboard/startups/'
+        """Redirect based on onboarding completion status after successful login"""
+        try:
+            member = Member.objects.get(user=self.request.user)
+            
+            # Check if user profile is complete first
+            if not member.is_profile_complete():
+                messages.success(self.request, 'Welcome back! Please complete your profile setup.')
+                return '/onboarding/profile/'
+            
+            # Check if user has company profile
+            if not member.has_company_profile():
+                # User has profile but no company
+                # Check if they have a stored role in session
+                stored_role = self.request.session.get('selected_role')
+                if stored_role:
+                    # User has selected role before, redirect directly to company onboarding
+                    messages.success(self.request, 'Welcome back! Please complete your organization setup.')
+                    if stored_role == 'startup':
+                        return '/onboarding/startup/new/'
+                    elif stored_role == 'investor':
+                        return '/onboarding/investor/'
+                    elif stored_role == 'corporate':
+                        return '/onboarding/corporate/'
+                
+                # No stored role, go to role selection
+                messages.success(self.request, 'Welcome back! Please select your role and set up your organization profile.')
+                return '/onboarding/'
+            
+            # User has completed onboarding, go to dashboard
+            messages.success(self.request, 'Welcome back!')
+            return '/dashboard/startups/'
+            
+        except Member.DoesNotExist:
+            # No member profile exists, redirect to user profile creation
+            messages.info(self.request, 'Welcome! Please complete your profile setup.')
+            return '/onboarding/profile/'
     
     def form_valid(self, form):
         """Handle successful form submission"""
@@ -89,6 +148,7 @@ def custom_logout(request):
 class OnboardingRoleSelectionView(View):
     """First step: Role selection page using Django class-based view"""
     def get(self, request):
+        # Simple role selection page - no redirect loops
         return render(request, 'onboarding/index.html')
 
     def post(self, request):
@@ -99,11 +159,14 @@ class OnboardingRoleSelectionView(View):
         if user_role not in ['startup', 'investor', 'corporate']:
             messages.error(request, 'Please select a valid role.')
             return render(request, 'onboarding/index.html')
+        
+        # Store the selected role
         request.session['selected_role'] = user_role
-        # Redirect to user profile step first
+        
+        # Always go to user profile first after role selection
         return redirect('onboarding_user_profile')
 
-@login_required
+@onboarding_required
 def dashboard(request):
     """Dashboard after successful onboarding"""
     try:
@@ -113,7 +176,7 @@ def dashboard(request):
         primary_company = companies.filter(is_primary=True).first()
     except Member.DoesNotExist:
         messages.error(request, 'Member profile not found. Please complete onboarding.')
-        return redirect('onboarding_role_selection')
+        return redirect('onboarding_user_profile')
     
     context = {
         'member': member,
@@ -173,7 +236,7 @@ def calculate_match_score(startup):
     # Ensure score is within bounds
     return max(0, min(100, score))
 
-@login_required
+@onboarding_required
 def startup_matchmaking(request):
     """Startup matchmaking view with search and filter functionality"""
     
@@ -565,7 +628,7 @@ def calculate_investor_match_score(investor):
     # Ensure score is within bounds
     return max(0, min(100, score))
 
-@login_required
+@onboarding_required
 def investor_matchmaking(request):
     """Investor matchmaking view with search and filter functionality"""
     
@@ -736,7 +799,7 @@ def calculate_corporate_match_score(corporate):
     # Ensure score is within bounds
     return max(0, min(100, score))
 
-@login_required
+@onboarding_required
 def corporate_matchmaking(request):
     """Corporate matchmaking view with search and filter functionality"""
     
@@ -851,7 +914,7 @@ def corporate_matchmaking(request):
 
 
 
-
+@onboarding_required
 def problem(request):
     from .models import ProblemStatement
     try:
@@ -864,6 +927,7 @@ def problem(request):
         context = {'problems': [], 'total_problems': 0}
     return render(request, 'resources/problem.html', context)
 
+@onboarding_required
 def challenge(request):
     from .models import Challenge
     try:
@@ -876,6 +940,7 @@ def challenge(request):
         context = {'challenges': [], 'total_challenges': 0}
     return render(request, 'resources/challenge.html', context)
 
+@onboarding_required
 def challenge_detail(request, challenge_id):
     """Display detailed challenge page"""
     # Try to fetch actual challenge data from database
@@ -917,6 +982,7 @@ def challenge_detail(request, challenge_id):
         }
     return render(request, 'resources/challenge_detail.html', context)
 
+@onboarding_required
 def problem_detail(request, problem_id):
     """Display detailed problem statement page"""
     # Try to fetch actual problem data from database
@@ -959,7 +1025,7 @@ def problem_detail(request, problem_id):
     return render(request, 'resources/problem_detail.html', context)
 
 
-@login_required
+@onboarding_required
 def create_challenge(request):
     """Create a new challenge (Corporate users only)"""
     # Check if user is corporate
@@ -1074,7 +1140,7 @@ def create_challenge(request):
     return render(request, 'resources/create_challenge.html')
 
 
-@login_required
+@onboarding_required
 def create_problem_statement(request):
     """Create a new problem statement (Corporate users only)"""
     # Check if user is corporate
@@ -1179,11 +1245,11 @@ def create_problem_statement(request):
     
     return render(request, 'resources/create_problem.html')
 
-
+@onboarding_required
 def accelerator_landing(request):
     return render(request, 'accelerator_landing.html')
 
-
+@onboarding_required
 def startup_profile(request, startup_id):
     """Display detailed startup profile page"""
     # Fetch the actual startup from the database
@@ -1379,7 +1445,7 @@ def startup_profile(request, startup_id):
     }
     
     return render(request, 'member/startup_profile.html', {'startup': startup_data})
-
+@onboarding_required
 def investor_profile(request, investor_id):
     """Display detailed investor profile page"""
     # Fetch the actual investor from the database
@@ -1563,7 +1629,7 @@ def investor_profile(request, investor_id):
     }
     
     return render(request, 'member/investor_profile.html', {'investor': investor_data})
-
+@onboarding_required
 def corporate_profile(request, corporate_id):
     """Display detailed corporate profile page"""
     # Fetch the actual corporate from the database
@@ -1823,12 +1889,13 @@ def onboarding_startup_step3(request):
 @login_required
 def onboarding_user_profile(request):
     """User profile setup step - comes after role selection"""
-    # Check if role was selected
-    if 'selected_role' not in request.session:
-        messages.warning(request, 'Please select your role first.')
-        return redirect('onboarding_role_selection')
-    
+    # Get selected role from session
     selected_role = request.session.get('selected_role')
+    
+    # If no role selected, redirect to role selection BUT don't create another message
+    # to avoid infinite loop messages
+    if not selected_role:
+        return redirect('onboarding_role_selection')
     
     if request.method == 'POST':
         try:
@@ -1857,6 +1924,9 @@ def onboarding_user_profile(request):
                 return redirect('onboarding_investor')
             elif selected_role == 'corporate':
                 return redirect('onboarding_corporate')
+            else:
+                # Fallback - should not happen
+                return redirect('onboarding_role_selection')
                 
         except Exception as e:
             messages.error(request, f'Error saving profile: {str(e)}')
@@ -1959,128 +2029,10 @@ def account_settings(request):
     if company and company.company_type == 'startup':
         progress_data = company.get_startup_profile_progress()
     
-    # Get document statistics
-    documents = member.documents.all()
-    total_documents = documents.count()
-    total_size = sum(doc.file.size for doc in documents if doc.file)
-    
-    # Calculate storage usage (100MB limit)
-    storage_limit = 100 * 1024 * 1024  # 100MB in bytes
-    storage_used_mb = total_size / (1024 * 1024)  # Convert to MB
-    storage_remaining_mb = 100 - storage_used_mb
-    storage_percentage = (total_size / storage_limit) * 100
-    
-    # Calculate document status counts
-    approved_documents = documents.filter(status='approved').count()
-    pending_documents = documents.filter(status='pending').count()
-    rejected_documents = documents.filter(status='rejected').count()
-    
-    document_stats = {
-        'total_documents': total_documents,
-        'total_size_bytes': total_size,
-        'storage_used_mb': round(storage_used_mb, 1),
-        'storage_remaining_mb': round(storage_remaining_mb, 1),
-        'storage_limit_mb': 100,
-        'storage_percentage': round(storage_percentage, 1),
-        'approved_documents': approved_documents,
-        'pending_documents': pending_documents,
-        'rejected_documents': rejected_documents,
-    }
-    
-    # Calculate detailed verification progress
-    
-    # Personal Profile Verification
-    personal_verification = {
-        'email_verified': True,  # Assuming email is verified since user is logged in
-        'linkedin_verified': bool(member.linkedin_url),  # Has LinkedIn profile
-        'profile_complete': bool(
-            member.user.first_name and 
-            member.user.last_name and 
-            member.job_position and 
-            member.short_bio and 
-            member.phone_number
-        ),
-    }
-    
-    # Company Profile Verification
-    company_verification = {
-        'company_exists': bool(company),
-        'company_info_complete': False,
-        'documents_uploaded': total_documents > 0,
-        'documents_verified': approved_documents > 0 and pending_documents == 0,
-    }
-    
-    # Check company info completeness based on company type
-    if company:
-        if company.company_type == 'startup':
-            company_verification['company_info_complete'] = bool(
-                company.company_name and
-                company.company_description and
-                company.solution_description and
-                company.current_stage and
-                company.team_size and
-                company.primary_location and
-                company.funding_needed
-            )
-        elif company.company_type == 'investor':
-            company_verification['company_info_complete'] = bool(
-                company.company_name and
-                company.investment_philosophy and
-                company.investor_type and
-                company.primary_location and
-                company.average_deal_size
-            )
-        elif company.company_type == 'corporate':
-            company_verification['company_info_complete'] = bool(
-                company.company_name and
-                company.company_description and
-                company.organization_type and
-                company.primary_location and
-                company.team_size
-            )
-    
-    # Calculate overall progress
-    personal_completed = sum(personal_verification.values())
-    personal_total = len(personal_verification)
-    personal_percentage = (personal_completed / personal_total) * 100 if personal_total > 0 else 0
-    
-    company_completed = sum(company_verification.values())
-    company_total = len(company_verification)
-    company_percentage = (company_completed / company_total) * 100 if company_total > 0 else 0
-    
-    # Overall verification
-    total_completed = personal_completed + company_completed
-    total_steps = personal_total + company_total
-    overall_percentage = (total_completed / total_steps) * 100 if total_steps > 0 else 0
-    remaining_steps = total_steps - total_completed
-    
-    verification_data = {
-        'overall': {
-            'percentage': round(overall_percentage),
-            'completed_steps': total_completed,
-            'total_steps': total_steps,
-            'remaining_steps': remaining_steps,
-        },
-        'personal': {
-            'percentage': round(personal_percentage),
-            'completed_steps': personal_completed,
-            'total_steps': personal_total,
-            'checks': personal_verification,
-        },
-        'company': {
-            'percentage': round(company_percentage),
-            'completed_steps': company_completed,
-            'total_steps': company_total,
-            'checks': company_verification,
-        }
-    }
-    
     context = {
         'member': member,
         'company': company,
         'progress': progress_data,
-        'document_stats': document_stats,
-        'verification_data': verification_data,
     }
     return render(request, 'member/account_settings.html', context)
 
@@ -2158,10 +2110,51 @@ def company_profile_edit(request):
         form_class = CompanyForm
     
     if request.method == 'POST':
+        # Initialize form for all cases
         form = form_class(request.POST, request.FILES, instance=company)
         
-        # Handle JSON field validation separately for corporate forms
-        if company_type == 'corporate':
+        # Handle JSON field validation separately for startup forms
+        if company_type == 'startup':
+            # Remove JSON fields from form validation to handle them manually
+            temp_post = request.POST.copy()
+            json_fields = ['customer_segments', 'innovation_types']
+            for field in json_fields:
+                if field in temp_post:
+                    del temp_post[field]
+            
+            # Create a modified form without JSON fields
+            form_without_json = form_class(temp_post, request.FILES, instance=company)
+            form_without_json.fields = {k: v for k, v in form.fields.items() if k not in json_fields}
+            
+            # Use the modified form for validation
+            if form_without_json.is_valid():
+                company = form_without_json.save(commit=False)
+                
+                # Set company member and type if creating new
+                if not company.pk:
+                    company.member = member
+                    company.company_type = company_type
+                    company.is_primary = True
+                
+                # Handle JSON fields manually for startups
+                innovation_types = request.POST.getlist('innovation_type') or []
+                company.innovation_types = innovation_types
+                
+                customer_segments = request.POST.getlist('customer_segments') or []
+                company.customer_segments = customer_segments
+                
+                # Handle boolean fields
+                company.has_external_funding = request.POST.get('has_external_funding') == 'true'
+                company.is_female_led = request.POST.get('is_female_led') == 'true'
+                
+                company.save()
+                messages.success(request, 'Your company profile has been updated successfully!')
+                return redirect('company_profile_edit')
+            else:
+                # Form validation failed - use original form for displaying errors
+                form = form_without_json
+        
+        elif company_type == 'corporate':
             # Remove JSON fields from form validation to handle them manually
             temp_post = request.POST.copy()
             json_fields = ['industry_expertise', 'investment_categories', 'market_country_interests', 'support_areas']
@@ -2193,10 +2186,42 @@ def company_profile_edit(request):
                 messages.success(request, 'Your company profile has been updated successfully!')
                 return redirect('company_profile_edit')
             else:
-                # Form validation failed
-                for field, errors in form_without_json.errors.items():
-                    for error in errors:
-                        messages.error(request, f'{field}: {error}')
+                # Form validation failed - use original form for displaying errors
+                form = form_without_json
+        
+        elif company_type == 'investor':
+            # Remove JSON fields from form validation to handle them manually
+            temp_post = request.POST.copy()
+            json_fields = ['funding_stages', 'investment_categories', 'market_country_interests']
+            for field in json_fields:
+                if field in temp_post:
+                    del temp_post[field]
+            
+            # Create a modified form without JSON fields
+            form_without_json = form_class(temp_post, request.FILES, instance=company)
+            form_without_json.fields = {k: v for k, v in form.fields.items() if k not in json_fields}
+            
+            # Use the modified form for validation
+            if form_without_json.is_valid():
+                company = form_without_json.save(commit=False)
+                
+                # Set company member and type if creating new
+                if not company.pk:
+                    company.member = member
+                    company.company_type = company_type
+                    company.is_primary = True
+                
+                # Handle JSON fields manually for investors
+                company.funding_stages = request.POST.getlist('funding_stages') or []
+                company.investment_categories = request.POST.getlist('investment_categories') or []
+                company.market_country_interests = request.POST.getlist('market_country_interests') or []
+                
+                company.save()
+                messages.success(request, 'Your company profile has been updated successfully!')
+                return redirect('company_profile_edit')
+            else:
+                # Form validation failed - use original form for displaying errors
+                form = form_without_json
         
         elif form.is_valid():
             company = form.save(commit=False)
@@ -2207,30 +2232,14 @@ def company_profile_edit(request):
                 company.company_type = company_type
                 company.is_primary = True
             
-            # Handle checkbox fields and special form data
-            if company_type == 'startup':
-                # Handle customer segments (multiple checkbox)
-                customer_segments = request.POST.getlist('customer_segments') or []
-                company.customer_segments = customer_segments
-                
-                # Handle boolean fields
-                company.has_external_funding = request.POST.get('has_external_funding') == 'true'
-                company.is_female_led = request.POST.get('is_female_led') == 'true'
-                
-            elif company_type == 'investor':
-                # Handle multiple selections for investors
-                company.funding_stages = request.POST.getlist('funding_stages') or []
-                company.investment_categories = request.POST.getlist('investment_categories') or []
-                company.market_country_interests = request.POST.getlist('market_country_interests') or []
-            
             company.save()
             messages.success(request, 'Your company profile has been updated successfully!')
             return redirect('company_profile_edit')
-        else:
-            # Form validation failed
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f'{field}: {error}')
+        
+        # If we reach here, form validation failed
+        for field, errors in form.errors.items():
+            for error in errors:
+                messages.error(request, f'{field}: {error}')
     else:
         # GET request - display form with existing data
         form = form_class(instance=company)
@@ -2360,8 +2369,13 @@ def startup_company_profile_edit(request):
             company.current_stage = request.POST.get('current_stage', '').strip()
             company.team_size = request.POST.get('team_size', '').strip()
             
+            # Innovation Information tab
+            innovation_types = request.POST.getlist('innovation_type')
+            company.innovation_types = innovation_types
+            company.solution_description = request.POST.get('solution_description', '').strip()
+            
             # Startup-specific fields
-            # Company Information tab
+            # Company Information tab (moved problem_statement to Innovation tab)
             company.problem_statement = request.POST.get('problem_statement', '').strip()
             
             # Market & Traction tab
@@ -2404,7 +2418,7 @@ def startup_company_profile_edit(request):
         'member': member,
         'company': company,
     }
-    return render(request, 'member/universal_company_profile_edit.html', context)  # Use unified template
+    return render(request, 'member/startup_company_profile_edit.html', context)
 
 
 @login_required
@@ -2591,129 +2605,8 @@ def view_document(request, doc_id):
 def verification_center(request):
     """Verification center page"""
     member = get_object_or_404(Member, user=request.user)
-    company = Company.objects.filter(member=member).first()
-    
-    # Get document statistics
-    documents = member.documents.all()
-    total_documents = documents.count()
-    total_size = sum(doc.file.size for doc in documents if doc.file)
-    
-    # Calculate storage usage (100MB limit)
-    storage_limit = 100 * 1024 * 1024  # 100MB in bytes
-    storage_used_mb = total_size / (1024 * 1024)  # Convert to MB
-    storage_remaining_mb = 100 - storage_used_mb
-    storage_percentage = (total_size / storage_limit) * 100
-    
-    # Calculate document status counts
-    approved_documents = documents.filter(status='approved').count()
-    pending_documents = documents.filter(status='pending').count()
-    rejected_documents = documents.filter(status='rejected').count()
-    
-    document_stats = {
-        'total_documents': total_documents,
-        'total_size_bytes': total_size,
-        'storage_used_mb': round(storage_used_mb, 1),
-        'storage_remaining_mb': round(storage_remaining_mb, 1),
-        'storage_limit_mb': 100,
-        'storage_percentage': round(storage_percentage, 1),
-        'approved_documents': approved_documents,
-        'pending_documents': pending_documents,
-        'rejected_documents': rejected_documents,
-    }
-    
-    # Calculate detailed verification progress
-    
-    # Personal Profile Verification
-    personal_verification = {
-        'email_verified': True,  # Assuming email is verified since user is logged in
-        'linkedin_verified': bool(member.linkedin_url),  # Has LinkedIn profile
-        'profile_complete': bool(
-            member.user.first_name and 
-            member.user.last_name and 
-            member.job_position and 
-            member.short_bio and 
-            member.phone_number
-        ),
-    }
-    
-    # Company Profile Verification
-    company_verification = {
-        'company_exists': bool(company),
-        'company_info_complete': False,
-        'documents_uploaded': total_documents > 0,
-        'documents_verified': approved_documents > 0 and pending_documents == 0,
-    }
-    
-    # Check company info completeness based on company type
-    if company:
-        if company.company_type == 'startup':
-            company_verification['company_info_complete'] = bool(
-                company.company_name and
-                company.company_description and
-                company.solution_description and
-                company.current_stage and
-                company.team_size and
-                company.primary_location and
-                company.funding_needed
-            )
-        elif company.company_type == 'investor':
-            company_verification['company_info_complete'] = bool(
-                company.company_name and
-                company.investment_philosophy and
-                company.investor_type and
-                company.primary_location and
-                company.average_deal_size
-            )
-        elif company.company_type == 'corporate':
-            company_verification['company_info_complete'] = bool(
-                company.company_name and
-                company.company_description and
-                company.organization_type and
-                company.primary_location and
-                company.team_size
-            )
-    
-    # Calculate overall progress
-    personal_completed = sum(personal_verification.values())
-    personal_total = len(personal_verification)
-    personal_percentage = (personal_completed / personal_total) * 100 if personal_total > 0 else 0
-    
-    company_completed = sum(company_verification.values())
-    company_total = len(company_verification)
-    company_percentage = (company_completed / company_total) * 100 if company_total > 0 else 0
-    
-    # Overall verification
-    total_completed = personal_completed + company_completed
-    total_steps = personal_total + company_total
-    overall_percentage = (total_completed / total_steps) * 100 if total_steps > 0 else 0
-    remaining_steps = total_steps - total_completed
-    
-    verification_data = {
-        'overall': {
-            'percentage': round(overall_percentage),
-            'completed_steps': total_completed,
-            'total_steps': total_steps,
-            'remaining_steps': remaining_steps,
-        },
-        'personal': {
-            'percentage': round(personal_percentage),
-            'completed_steps': personal_completed,
-            'total_steps': personal_total,
-            'checks': personal_verification,
-        },
-        'company': {
-            'percentage': round(company_percentage),
-            'completed_steps': company_completed,
-            'total_steps': company_total,
-            'checks': company_verification,
-        }
-    }
-    
     context = {
         'member': member,
-        'company': company,
-        'document_stats': document_stats,
-        'verification_data': verification_data,
     }
     return render(request, 'member/verification_center.html', context)
 

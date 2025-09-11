@@ -200,6 +200,50 @@ class Member(models.Model):
         # Return default profile picture
         return '/static/images/default-profile.png'
 
+    def is_profile_complete(self):
+        """Check if user profile is complete"""
+        required_fields = [
+            self.user.first_name,
+            self.user.last_name, 
+            self.user.email,
+            self.job_position,
+            self.short_bio,
+        ]
+        return all(field and str(field).strip() for field in required_fields) and self.profile_completed
+
+    def has_company_profile(self):
+        """Check if user has at least one company profile"""
+        return self.companies.filter(is_active=True).exists()
+
+    def get_onboarding_status(self):
+        """Get detailed onboarding status and next step"""
+        if not self.is_profile_complete():
+            return {
+                'completed': False,
+                'next_step': 'user_profile',
+                'redirect_url': '/onboarding/profile/'
+            }
+        
+        if not self.has_company_profile():
+            # Check if user has selected a role in session - this will need to be handled in views
+            # For now, assume they need to select company type
+            return {
+                'completed': False,
+                'next_step': 'company_profile',
+                'redirect_url': '/onboarding/'
+            }
+        
+        return {
+            'completed': True,
+            'next_step': None,
+            'redirect_url': None
+        }
+
+    def get_incomplete_onboarding_redirect(self):
+        """Get redirect URL for incomplete onboarding"""
+        status = self.get_onboarding_status()
+        return status.get('redirect_url') if not status['completed'] else None
+
     class Meta:
         verbose_name = "Member Profile"
         verbose_name_plural = "Member Profiles"
