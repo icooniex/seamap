@@ -96,6 +96,17 @@
     border-color: #dc3545;
     box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
 }
+
+.checkbox-grid.is-invalid {
+    border: 2px solid #dc3545;
+    border-radius: 8px;
+    padding: 0.5rem;
+    background-color: rgba(220, 53, 69, 0.05);
+}
+
+.checkbox-grid.is-invalid .checkbox-card {
+    border-color: rgba(220, 53, 69, 0.3);
+}
 </style>
 {% endblock %}
 
@@ -267,7 +278,7 @@
             
             <div class="form-group">
                 <label class="form-label">
-                    <i class="bi bi-lightbulb me-2 text-primary"></i>Type of Innovation * <span class="text-muted">(select all that apply)</span>
+                    <i class="bi bi-lightbulb me-2 text-primary"></i>Type of Innovation <span class="text-danger">*</span> <span class="text-muted">(select all that apply)</span>
                 </label>
                 <div class="checkbox-grid">
                     <div class="checkbox-card" data-checkbox="plastic_alternatives">
@@ -339,7 +350,7 @@
 
             <div class="form-group">
                 <label for="solution_description" class="form-label">
-                    <i class="bi bi-star me-2 text-primary"></i>Solution Description & USP *
+                    <i class="bi bi-star me-2 text-primary"></i>Solution Description & USP <span class="text-danger">*</span>
                 </label>
                 <textarea class="form-control" id="solution_description" name="solution_description" 
                           placeholder="Describe your solution and what makes it unique in one paragraph..." rows="4" required></textarea>
@@ -349,7 +360,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="current_stage" class="form-label">
-                            <i class="bi bi-graph-up-arrow me-2 text-primary"></i>Current Stage *
+                            <i class="bi bi-graph-up-arrow me-2 text-primary"></i>Current Stage <span class="text-danger">*</span>
                         </label>
                         <select class="form-select" id="current_stage" name="current_stage" required>
                             <option value="">Select current stage</option>
@@ -365,7 +376,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="funding_needed" class="form-label">
-                            <i class="bi bi-currency-dollar me-2 text-primary"></i>Funding Needed *
+                            <i class="bi bi-currency-dollar me-2 text-primary"></i>Funding Needed <span class="text-danger">*</span>
                         </label>
                         <select class="form-select" id="funding_needed" name="funding_needed" required>
                             <option value="">Select funding range</option>
