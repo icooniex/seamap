@@ -2312,8 +2312,13 @@ def startup_company_profile_edit(request):
             company.current_stage = request.POST.get('current_stage', '').strip()
             company.team_size = request.POST.get('team_size', '').strip()
             
+            # Innovation Information tab
+            innovation_types = request.POST.getlist('innovation_type')
+            company.innovation_types = innovation_types
+            company.solution_description = request.POST.get('solution_description', '').strip()
+            
             # Startup-specific fields
-            # Company Information tab
+            # Company Information tab (moved problem_statement to Innovation tab)
             company.problem_statement = request.POST.get('problem_statement', '').strip()
             
             # Market & Traction tab
@@ -2356,7 +2361,7 @@ def startup_company_profile_edit(request):
         'member': member,
         'company': company,
     }
-    return render(request, 'member/universal_company_profile_edit.html', context)  # Use unified template
+    return render(request, 'member/startup_company_profile_edit.html', context)
 
 
 @login_required
