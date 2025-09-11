@@ -76,6 +76,24 @@
 .logo-preview:hover .logo-overlay {
     opacity: 1;
 }
+
+/* Form validation styles */
+.is-invalid {
+    border-color: #dc3545 !important;
+    background-color: #f8d7da;
+}
+
+.logo-upload-container.is-invalid {
+    border-color: #dc3545 !important;
+    background-color: #f8d7da;
+}
+
+.checkbox-grid.is-invalid {
+    border: 2px solid #dc3545;
+    background-color: #f8d7da;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
 </style>
 {% endblock %}
 
@@ -130,7 +148,7 @@
             
             <div class="form-group">
                 <label for="company_name" class="form-label">
-                    <i class="bi bi-building me-2 text-primary"></i>Company Name *
+                    <i class="bi bi-building me-2 text-primary"></i>Company Name <span class="text-danger">*</span>
                 </label>
                 <input type="text" class="form-control" id="company_name" name="company_name" 
                        placeholder="Enter your company or project name" required>
@@ -138,7 +156,7 @@
 
             <div class="form-group">
                 <label for="investor_type" class="form-label">
-                    <i class="bi bi-person-badge me-2 text-primary"></i>Type of Investor *
+                    <i class="bi bi-person-badge me-2 text-primary"></i>Type of Investor <span class="text-danger">*</span>
                 </label>
                 <select class="form-select" id="investor_type" name="investor_type" required>
                     <option value="">Select investor type</option>
@@ -154,7 +172,7 @@
 
             <div class="form-group">
                 <label for="company_logo" class="form-label">
-                    <i class="bi bi-image me-2 text-primary"></i>Company Logo
+                    <i class="bi bi-image me-2 text-primary"></i>Company Logo <span class="text-danger">*</span>
                 </label>
                 <div class="logo-upload-container">
                     <div class="logo-preview" id="logoPreview" style="display: none;">
@@ -181,7 +199,7 @@
                         </button>
                     </div>
                     <input type="file" class="form-control d-none" id="company_logo" name="company_logo" 
-                           accept="image/png,image/jpeg,image/jpg,image/svg+xml" onchange="handleLogoUpload(this)">
+                           accept="image/png,image/jpeg,image/jpg,image/svg+xml" onchange="handleLogoUpload(this)" required>
                 </div>
             </div>
 
@@ -189,19 +207,19 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="website" class="form-label">
-                            <i class="bi bi-globe me-2 text-primary"></i>Website
+                            <i class="bi bi-globe me-2 text-primary"></i>Website <span class="text-danger">*</span>
                         </label>
                         <input type="url" class="form-control" id="website" name="website" 
-                               placeholder="https://www.example.com">
+                               placeholder="https://www.example.com" required>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="founded_year" class="form-label">
-                            <i class="bi bi-calendar-event me-2 text-primary"></i>Founded Year
+                            <i class="bi bi-calendar-event me-2 text-primary"></i>Founded Year <span class="text-danger">*</span>
                         </label>
                         <input type="number" class="form-control" id="founded_year" name="founded_year" 
-                               placeholder="e.g. 2020" min="1900" max="2025">
+                               placeholder="e.g. 2020" min="1900" max="2025" required>
                     </div>
                 </div>
             </div>
@@ -210,7 +228,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="team_size" class="form-label">
-                            <i class="bi bi-people me-2 text-primary"></i>Team Size *
+                            <i class="bi bi-people me-2 text-primary"></i>Team Size <span class="text-danger">*</span>
                         </label>
                         <select class="form-select" id="team_size" name="team_size" required>
                             <option value="">Select team size</option>
@@ -227,7 +245,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="primary_location" class="form-label">
-                            <i class="bi bi-geo-alt me-2 text-primary"></i>Primary Location *
+                            <i class="bi bi-geo-alt me-2 text-primary"></i>Primary Location <span class="text-danger">*</span>
                         </label>
                         <select class="form-select" id="primary_location" name="primary_location" required>
                             <option value="">Select your country</option>
@@ -249,10 +267,10 @@
 
             <div class="form-group">
                 <label for="company_description" class="form-label">
-                    <i class="bi bi-card-text me-2 text-primary"></i>Company Description
+                    <i class="bi bi-card-text me-2 text-primary"></i>Company Description <span class="text-danger">*</span>
                 </label>
                 <textarea class="form-control" id="company_description" name="company_description" 
-                          placeholder="Tell us about your company's mission, vision, and what makes you unique..." rows="4"></textarea>
+                          placeholder="Tell us about your company's mission, vision, and what makes you unique..." rows="4" required></textarea>
             </div>
         </div>
 
@@ -265,7 +283,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="funding_size" class="form-label">
-                            <i class="bi bi-cash-stack me-2 text-primary"></i>What is your Fund Size? *
+                            <i class="bi bi-cash-stack me-2 text-primary"></i>What is your Fund Size? <span class="text-danger">*</span>
                         </label>
                         <select class="form-select" id="funding_size" name="funding_size" required>
                             <option value="">Select typical funding size</option>
@@ -281,7 +299,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="average_deal_size" class="form-label">
-                            <i class="bi bi-currency-dollar me-2 text-primary"></i>Average Deal Size *
+                            <i class="bi bi-currency-dollar me-2 text-primary"></i>Average Deal Size <span class="text-danger">*</span>
                         </label>
                         <select class="form-select" id="average_deal_size" name="average_deal_size" required>
                             <option value="">Select average deal size</option>
@@ -299,7 +317,7 @@
 
             <div class="form-group">
                 <label class="form-label">
-                    <i class="bi bi-flag me-2 text-primary"></i>Preferred Funding Stage(s) *
+                    <i class="bi bi-flag me-2 text-primary"></i>Preferred Funding Stage(s) <span class="text-danger">*</span>
                     <span class="text-muted">(select all that apply)</span>
                 </label>
                 <div class="checkbox-grid">
@@ -311,35 +329,35 @@
                         </div>
                     </div>
                     <div class="checkbox-card" data-checkbox="seed">
-                        <input type="checkbox" id="seed" name="funding_stage" value="seed">
+                        <input type="checkbox" id="seed" name="funding_stage" value="seed" data-required-group="funding_stage">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon"></div>
                             <label for="seed" class="checkbox-label">Seed</label>
                         </div>
                     </div>
                     <div class="checkbox-card" data-checkbox="series_a">
-                        <input type="checkbox" id="series_a" name="funding_stage" value="series_a">
+                        <input type="checkbox" id="series_a" name="funding_stage" value="series_a" data-required-group="funding_stage">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon"></div>
                             <label for="series_a" class="checkbox-label">Series A</label>
                         </div>
                     </div>
                     <div class="checkbox-card" data-checkbox="series_b">
-                        <input type="checkbox" id="series_b" name="funding_stage" value="series_b">
+                        <input type="checkbox" id="series_b" name="funding_stage" value="series_b" data-required-group="funding_stage">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon"></div>
                             <label for="series_b" class="checkbox-label">Series B</label>
                         </div>
                     </div>
                     <div class="checkbox-card" data-checkbox="series_c">
-                        <input type="checkbox" id="series_c" name="funding_stage" value="series_c">
+                        <input type="checkbox" id="series_c" name="funding_stage" value="series_c" data-required-group="funding_stage">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon"></div>
                             <label for="series_c" class="checkbox-label">Series C</label>
                         </div>
                     </div>
                     <div class="checkbox-card" data-checkbox="series_d">
-                        <input type="checkbox" id="series_d" name="funding_stage" value="series_d">
+                        <input type="checkbox" id="series_d" name="funding_stage" value="series_d" data-required-group="funding_stage">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon"></div>
                             <label for="series_d" class="checkbox-label">Series D and Above</label>
@@ -350,61 +368,61 @@
 
             <div class="form-group">
                 <label class="form-label">
-                    <i class="bi bi-tags me-2 text-primary"></i>Investment Category Interests *
+                    <i class="bi bi-tags me-2 text-primary"></i>Investment Category Interests <span class="text-danger">*</span>
                     <span class="text-muted">(select all that apply)</span>
                 </label>
                 <div class="checkbox-grid">
                     <div class="checkbox-card" data-checkbox="eliminate_redesign">
-                        <input type="checkbox" id="eliminate_redesign" name="investment_categories" value="eliminate_redesign">
+                        <input type="checkbox" id="eliminate_redesign" name="investment_categories" value="eliminate_redesign" data-required-group="investment_categories">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon"></div>
                             <label for="eliminate_redesign" class="checkbox-label">Eliminate & Redesign Packaging</label>
                         </div>
                     </div>
                     <div class="checkbox-card" data-checkbox="refill_reuse">
-                        <input type="checkbox" id="refill_reuse" name="investment_categories" value="refill_reuse">
+                        <input type="checkbox" id="refill_reuse" name="investment_categories" value="refill_reuse" data-required-group="investment_categories">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon"></div>
                             <label for="refill_reuse" class="checkbox-label">Refill & Reuse Solutions</label>
                         </div>
                     </div>
                     <div class="checkbox-card" data-checkbox="collection_sorting">
-                        <input type="checkbox" id="collection_sorting" name="investment_categories" value="collection_sorting">
+                        <input type="checkbox" id="collection_sorting" name="investment_categories" value="collection_sorting" data-required-group="investment_categories">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon"></div>
                             <label for="collection_sorting" class="checkbox-label">Collection & Sorting Technologies</label>
                         </div>
                     </div>
                     <div class="checkbox-card" data-checkbox="advanced_recycling">
-                        <input type="checkbox" id="advanced_recycling" name="investment_categories" value="advanced_recycling">
+                        <input type="checkbox" id="advanced_recycling" name="investment_categories" value="advanced_recycling" data-required-group="investment_categories">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon"></div>
                             <label for="advanced_recycling" class="checkbox-label">Advanced Recycling & Upcycling</label>
                         </div>
                     </div>
                     <div class="checkbox-card" data-checkbox="bioplastics">
-                        <input type="checkbox" id="bioplastics" name="investment_categories" value="bioplastics">
+                        <input type="checkbox" id="bioplastics" name="investment_categories" value="bioplastics" data-required-group="investment_categories">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon"></div>
                             <label for="bioplastics" class="checkbox-label">Bioplastics & Compostable Materials</label>
                         </div>
                     </div>
                     <div class="checkbox-card" data-checkbox="waste_management">
-                        <input type="checkbox" id="waste_management" name="investment_categories" value="waste_management">
+                        <input type="checkbox" id="waste_management" name="investment_categories" value="waste_management" data-required-group="investment_categories">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon"></div>
                             <label for="waste_management" class="checkbox-label">Waste Management Infrastructure</label>
                         </div>
                     </div>
                     <div class="checkbox-card" data-checkbox="data_monitoring">
-                        <input type="checkbox" id="data_monitoring" name="investment_categories" value="data_monitoring">
+                        <input type="checkbox" id="data_monitoring" name="investment_categories" value="data_monitoring" data-required-group="investment_categories">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon"></div>
                             <label for="data_monitoring" class="checkbox-label">Data, Monitoring & Traceability</label>
                         </div>
                     </div>
                     <div class="checkbox-card" data-checkbox="other_category">
-                        <input type="checkbox" id="other_category" name="investment_categories" value="other">
+                        <input type="checkbox" id="other_category" name="investment_categories" value="other" data-required-group="investment_categories">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon"></div>
                             <label for="other_category" class="checkbox-label">Other</label>
@@ -415,82 +433,82 @@
 
             <div class="form-group">
                 <label class="form-label">
-                    <i class="bi bi-geo me-2 text-primary"></i>Market Country Interests *
+                    <i class="bi bi-geo me-2 text-primary"></i>Market Country Interests <span class="text-danger">*</span>
                     <span class="text-muted">(select all that apply)</span>
                 </label>
                 <div class="checkbox-grid">
                     <div class="checkbox-card" data-checkbox="singapore_interest">
-                        <input type="checkbox" id="singapore_interest" name="market_country_interests" value="Singapore">
+                        <input type="checkbox" id="singapore_interest" name="market_country_interests" value="Singapore" data-required-group="market_country_interests">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon"></div>
                             <label for="singapore_interest" class="checkbox-label">🇸🇬 Singapore</label>
                         </div>
                     </div>
                     <div class="checkbox-card" data-checkbox="indonesia_interest">
-                        <input type="checkbox" id="indonesia_interest" name="market_country_interests" value="Indonesia">
+                        <input type="checkbox" id="indonesia_interest" name="market_country_interests" value="Indonesia" data-required-group="market_country_interests">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon"></div>
                             <label for="indonesia_interest" class="checkbox-label">🇮🇩 Indonesia</label>
                         </div>
                     </div>
                     <div class="checkbox-card" data-checkbox="thailand_interest">
-                        <input type="checkbox" id="thailand_interest" name="market_country_interests" value="Thailand">
+                        <input type="checkbox" id="thailand_interest" name="market_country_interests" value="Thailand" data-required-group="market_country_interests">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon"></div>
                             <label for="thailand_interest" class="checkbox-label">🇹🇭 Thailand</label>
                         </div>
                     </div>
                     <div class="checkbox-card" data-checkbox="malaysia_interest">
-                        <input type="checkbox" id="malaysia_interest" name="market_country_interests" value="Malaysia">
+                        <input type="checkbox" id="malaysia_interest" name="market_country_interests" value="Malaysia" data-required-group="market_country_interests">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon"></div>
                             <label for="malaysia_interest" class="checkbox-label">🇲🇾 Malaysia</label>
                         </div>
                     </div>
                     <div class="checkbox-card" data-checkbox="philippines_interest">
-                        <input type="checkbox" id="philippines_interest" name="market_country_interests" value="Philippines">
+                        <input type="checkbox" id="philippines_interest" name="market_country_interests" value="Philippines" data-required-group="market_country_interests">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon"></div>
                             <label for="philippines_interest" class="checkbox-label">🇵🇭 Philippines</label>
                         </div>
                     </div>
                     <div class="checkbox-card" data-checkbox="vietnam_interest">
-                        <input type="checkbox" id="vietnam_interest" name="market_country_interests" value="Vietnam">
+                        <input type="checkbox" id="vietnam_interest" name="market_country_interests" value="Vietnam" data-required-group="market_country_interests">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon"></div>
                             <label for="vietnam_interest" class="checkbox-label">🇻🇳 Vietnam</label>
                         </div>
                     </div>
                     <div class="checkbox-card" data-checkbox="cambodia_interest">
-                        <input type="checkbox" id="cambodia_interest" name="market_country_interests" value="Cambodia">
+                        <input type="checkbox" id="cambodia_interest" name="market_country_interests" value="Cambodia" data-required-group="market_country_interests">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon"></div>
                             <label for="cambodia_interest" class="checkbox-label">🇰🇭 Cambodia</label>
                         </div>
                     </div>
                     <div class="checkbox-card" data-checkbox="laos_interest">
-                        <input type="checkbox" id="laos_interest" name="market_country_interests" value="Laos">
+                        <input type="checkbox" id="laos_interest" name="market_country_interests" value="Laos" data-required-group="market_country_interests">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon"></div>
                             <label for="laos_interest" class="checkbox-label">🇱🇦 Laos</label>
                         </div>
                     </div>
                     <div class="checkbox-card" data-checkbox="myanmar_interest">
-                        <input type="checkbox" id="myanmar_interest" name="market_country_interests" value="Myanmar">
+                        <input type="checkbox" id="myanmar_interest" name="market_country_interests" value="Myanmar" data-required-group="market_country_interests">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon"></div>
                             <label for="myanmar_interest" class="checkbox-label">🇲🇲 Myanmar</label>
                         </div>
                     </div>
                     <div class="checkbox-card" data-checkbox="brunei_interest">
-                        <input type="checkbox" id="brunei_interest" name="market_country_interests" value="Brunei">
+                        <input type="checkbox" id="brunei_interest" name="market_country_interests" value="Brunei" data-required-group="market_country_interests">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon"></div>
                             <label for="brunei_interest" class="checkbox-label">🇧🇳 Brunei</label>
                         </div>
                     </div>
                     <div class="checkbox-card" data-checkbox="other_country_interest">
-                        <input type="checkbox" id="other_country_interest" name="market_country_interests" value="Other">
+                        <input type="checkbox" id="other_country_interest" name="market_country_interests" value="Other" data-required-group="market_country_interests">
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon"></div>
                             <label for="other_country_interest" class="checkbox-label">🌍 Other</label>
@@ -501,7 +519,7 @@
 
             <div class="form-group">
                 <label for="investment_philosophy" class="form-label">
-                    <i class="bi bi-lightbulb me-2 text-primary"></i>Investment Philosophy & Value Proposition *
+                    <i class="bi bi-lightbulb me-2 text-primary"></i>Investment Philosophy & Value Proposition <span class="text-danger">*</span>
                 </label>
                 <textarea class="form-control" id="investment_philosophy" name="investment_philosophy" 
                           placeholder="Describe your investment philosophy and what value you bring to startups..." rows="4" required></textarea>
@@ -737,10 +755,23 @@ document.addEventListener('DOMContentLoaded', function() {
                     return false;
                 }
             }
+            
+            // Special validation for company logo (file upload)
+            const logoField = document.getElementById('company_logo');
+            if (logoField && logoField.hasAttribute('required') && !logoField.files.length) {
+                isValid = false;
+                const logoContainer = logoField.closest('.logo-upload-container');
+                if (logoContainer) {
+                    logoContainer.classList.add('is-invalid');
+                }
+                if (!firstInvalidField) firstInvalidField = logoField;
+            }
         }
         
         // Special validations for Step 2
         if (stepNumber === 2) {
+            const validationErrors = [];
+            
             // Check funding stages
             const fundingStages = currentStepElement.querySelectorAll('input[name="funding_stage"]:checked');
             if (fundingStages.length === 0) {
@@ -749,9 +780,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (groupContainer) {
                     groupContainer.classList.add('is-invalid');
                 }
-                validationModalBody.innerHTML = '<p class="mb-0">Please select at least one preferred funding stage.</p>';
-                validationModal.show();
-                return false;
+                validationErrors.push('Please select at least one preferred funding stage.');
             }
             
             // Check investment categories
@@ -762,9 +791,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (groupContainer) {
                     groupContainer.classList.add('is-invalid');
                 }
-                validationModalBody.innerHTML = '<p class="mb-0">Please select at least one investment category interest.</p>';
-                validationModal.show();
-                return false;
+                validationErrors.push('Please select at least one investment category interest.');
             }
             
             // Check market country interests
@@ -775,7 +802,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (groupContainer) {
                     groupContainer.classList.add('is-invalid');
                 }
-                validationModalBody.innerHTML = '<p class="mb-0">Please select at least one market country interest.</p>';
+                validationErrors.push('Please select at least one market country interest.');
+            }
+            
+            // Show all validation errors if any exist
+            if (validationErrors.length > 0) {
+                const errorList = validationErrors.map(error => `<p class="mb-1">• ${error}</p>`).join('');
+                validationModalBody.innerHTML = `<div class="mb-0">${errorList}</div>`;
                 validationModal.show();
                 return false;
             }
@@ -864,6 +897,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     isValid = false;
                 }
             }
+            
+            // Special validation for company logo (file upload)
+            const logoField = document.getElementById('company_logo');
+            if (logoField && logoField.hasAttribute('required') && !logoField.files.length) {
+                isValid = false;
+            }
         }
         
         // Special validations for Step 2
@@ -908,6 +947,21 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
+    // Remove error styling on checkbox groups when any checkbox is selected
+    document.querySelectorAll('input[type="checkbox"][data-required-group]').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const groupName = this.getAttribute('data-required-group');
+            const checkboxGrid = this.closest('.checkbox-grid');
+            
+            // Check if any checkbox in the group is now selected
+            const anySelected = document.querySelectorAll(`input[name="${groupName}"]:checked`).length > 0;
+            
+            if (anySelected && checkboxGrid && checkboxGrid.classList.contains('is-invalid')) {
+                checkboxGrid.classList.remove('is-invalid');
+            }
+        });
+    });
+    
     // Initialize
     updateStepIndicators();
     
@@ -917,6 +971,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const logoPreview = document.getElementById('logoPreview');
         const logoPlaceholder = document.getElementById('logoPlaceholder');
         const logoImage = document.getElementById('logoImage');
+        const logoContainer = input.closest('.logo-upload-container');
         
         if (file) {
             // Validate file size (5MB max)
@@ -931,6 +986,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Please select a PNG, JPG, or SVG file');
                 input.value = '';
                 return;
+            }
+            
+            // Clear validation state
+            if (logoContainer) {
+                logoContainer.classList.remove('is-invalid');
             }
             
             // Create file reader
@@ -949,11 +1009,17 @@ document.addEventListener('DOMContentLoaded', function() {
         const logoPlaceholder = document.getElementById('logoPlaceholder');
         const logoInput = document.getElementById('company_logo');
         const logoImage = document.getElementById('logoImage');
+        const logoContainer = logoInput.closest('.logo-upload-container');
         
         logoInput.value = '';
         logoImage.src = '';
         logoPreview.style.display = 'none';
         logoPlaceholder.style.display = 'block';
+        
+        // Restore validation state if field is required
+        if (logoInput.hasAttribute('required') && logoContainer) {
+            logoContainer.classList.add('is-invalid');
+        }
     };
 });
 </script>
