@@ -2110,10 +2110,51 @@ def company_profile_edit(request):
         form_class = CompanyForm
     
     if request.method == 'POST':
+        # Initialize form for all cases
         form = form_class(request.POST, request.FILES, instance=company)
         
-        # Handle JSON field validation separately for corporate forms
-        if company_type == 'corporate':
+        # Handle JSON field validation separately for startup forms
+        if company_type == 'startup':
+            # Remove JSON fields from form validation to handle them manually
+            temp_post = request.POST.copy()
+            json_fields = ['customer_segments', 'innovation_types']
+            for field in json_fields:
+                if field in temp_post:
+                    del temp_post[field]
+            
+            # Create a modified form without JSON fields
+            form_without_json = form_class(temp_post, request.FILES, instance=company)
+            form_without_json.fields = {k: v for k, v in form.fields.items() if k not in json_fields}
+            
+            # Use the modified form for validation
+            if form_without_json.is_valid():
+                company = form_without_json.save(commit=False)
+                
+                # Set company member and type if creating new
+                if not company.pk:
+                    company.member = member
+                    company.company_type = company_type
+                    company.is_primary = True
+                
+                # Handle JSON fields manually for startups
+                innovation_types = request.POST.getlist('innovation_type') or []
+                company.innovation_types = innovation_types
+                
+                customer_segments = request.POST.getlist('customer_segments') or []
+                company.customer_segments = customer_segments
+                
+                # Handle boolean fields
+                company.has_external_funding = request.POST.get('has_external_funding') == 'true'
+                company.is_female_led = request.POST.get('is_female_led') == 'true'
+                
+                company.save()
+                messages.success(request, 'Your company profile has been updated successfully!')
+                return redirect('company_profile_edit')
+            else:
+                # Form validation failed - use original form for displaying errors
+                form = form_without_json
+        
+        elif company_type == 'corporate':
             # Remove JSON fields from form validation to handle them manually
             temp_post = request.POST.copy()
             json_fields = ['industry_expertise', 'investment_categories', 'market_country_interests', 'support_areas']
@@ -2145,10 +2186,8 @@ def company_profile_edit(request):
                 messages.success(request, 'Your company profile has been updated successfully!')
                 return redirect('company_profile_edit')
             else:
-                # Form validation failed
-                for field, errors in form_without_json.errors.items():
-                    for error in errors:
-                        messages.error(request, f'{field}: {error}')
+                # Form validation failed - use original form for displaying errors
+                form = form_without_json
         
         elif form.is_valid():
             company = form.save(commit=False)
@@ -2159,17 +2198,8 @@ def company_profile_edit(request):
                 company.company_type = company_type
                 company.is_primary = True
             
-            # Handle checkbox fields and special form data
-            if company_type == 'startup':
-                # Handle customer segments (multiple checkbox)
-                customer_segments = request.POST.getlist('customer_segments') or []
-                company.customer_segments = customer_segments
-                
-                # Handle boolean fields
-                company.has_external_funding = request.POST.get('has_external_funding') == 'true'
-                company.is_female_led = request.POST.get('is_female_led') == 'true'
-                
-            elif company_type == 'investor':
+            # Handle checkbox fields for investors
+            if company_type == 'investor':
                 # Handle multiple selections for investors
                 company.funding_stages = request.POST.getlist('funding_stages') or []
                 company.investment_categories = request.POST.getlist('investment_categories') or []
@@ -2178,11 +2208,11 @@ def company_profile_edit(request):
             company.save()
             messages.success(request, 'Your company profile has been updated successfully!')
             return redirect('company_profile_edit')
-        else:
-            # Form validation failed
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f'{field}: {error}')
+        
+        # If we reach here, form validation failed
+        for field, errors in form.errors.items():
+            for error in errors:
+                messages.error(request, f'{field}: {error}')
     else:
         # GET request - display form with existing data
         form = form_class(instance=company)
