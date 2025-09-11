@@ -45,7 +45,7 @@
                 <button type="submit" class="btn btn-admin-primary me-2">
                     <i class="bi bi-search me-1"></i>Search
                 </button>
-                <a href="{% url 'backoffice_companies' %}" class="btn btn-admin-outline">
+                <a href="{% url 'backoffice:company_management' %}" class="btn btn-admin-outline">
                     <i class="bi bi-arrow-clockwise me-1"></i>Reset
                 </a>
             </div>
@@ -170,7 +170,7 @@
                         </td>
                         <td>
                             <div class="btn-group" role="group">
-                                <a href="{% url 'backoffice_company_detail' company.id %}" class="btn btn-sm btn-admin-outline" title="View Details">
+                                <a href="{% url 'backoffice:company_detail' company.id %}" class="btn btn-sm btn-admin-outline" title="View Details">
                                     <i class="bi bi-eye"></i>
                                 </a>
                                 <button type="button" class="btn btn-sm btn-admin-outline" title="Edit Company" disabled>
@@ -223,7 +223,7 @@
             <h4 class="mt-3 mb-2">No Companies Found</h4>
             {% if search_query or type_filter or status_filter %}
                 <p class="text-muted mb-3">No companies match your current filters.</p>
-                <a href="{% url 'backoffice_companies' %}" class="btn btn-admin-outline">
+                <a href="{% url 'backoffice:company_management' %}" class="btn btn-admin-outline">
                     <i class="bi bi-arrow-clockwise me-1"></i>Clear Filters
                 </a>
             {% else %}

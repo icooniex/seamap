@@ -773,3 +773,294 @@ def review_company_document(request, doc_id):
         
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)})
+
+
+
+# Challenge Management Views
+@user_passes_test(is_admin_user, login_url='/backoffice/login/')
+def challenge_management(request):
+    """
+    Challenge management page
+    """
+    search_query = request.GET.get('search', '')
+    status_filter = request.GET.get('status', '')
+    category_filter = request.GET.get('category', '')
+    
+    # Base queryset
+    challenges = Challenge.objects.select_related('organizer', 'created_by__user')
+    
+    # Apply filters
+    if search_query:
+        challenges = challenges.filter(
+            Q(title__icontains=search_query) |
+            Q(subtitle__icontains=search_query) |
+            Q(organizer__company_name__icontains=search_query) |
+            Q(created_by__user__email__icontains=search_query)
+        )
+    
+    if status_filter:
+        challenges = challenges.filter(status=status_filter)
+        
+    if category_filter:
+        challenges = challenges.filter(innovation_category=category_filter)
+    
+    # Get categories for filter dropdown
+    categories = Challenge.objects.exclude(
+        innovation_category=''
+    ).values_list('innovation_category', flat=True).distinct()
+    
+    # Pagination
+    paginator = Paginator(challenges, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'page_obj': page_obj,
+        'search_query': search_query,
+        'status_filter': status_filter,
+        'category_filter': category_filter,
+        'categories': categories,
+        'status_choices': Challenge._meta.get_field('status').choices,
+    }
+    
+    return render(request, 'backoffice/challenge_management.html', context)
+
+
+@user_passes_test(is_admin_user, login_url='/backoffice/login/')
+def challenge_detail(request, challenge_id):
+    """
+    Challenge detail view
+    """
+    challenge = get_object_or_404(Challenge, id=challenge_id)
+    
+    context = {
+        'challenge': challenge,
+    }
+    
+    return render(request, 'backoffice/challenge_detail.html', context)
+
+# Challenge Management Views
+@user_passes_test(is_admin_user, login_url='/backoffice/login/')
+def challenge_management(request):
+    """
+    Challenge management page
+    """
+    search_query = request.GET.get('search', '')
+    status_filter = request.GET.get('status', '')
+    category_filter = request.GET.get('category', '')
+    
+    # Base queryset
+    challenges = Challenge.objects.select_related('organizer', 'created_by__user')
+    
+    # Apply filters
+    if search_query:
+        challenges = challenges.filter(
+            Q(title__icontains=search_query) |
+            Q(subtitle__icontains=search_query) |
+            Q(organizer__company_name__icontains=search_query) |
+            Q(created_by__user__email__icontains=search_query)
+        )
+    
+    if status_filter:
+        challenges = challenges.filter(status=status_filter)
+        
+    if category_filter:
+        challenges = challenges.filter(innovation_category=category_filter)
+    
+    # Get categories for filter dropdown
+    categories = Challenge.objects.exclude(
+        innovation_category=''
+    ).values_list('innovation_category', flat=True).distinct()
+    
+    # Pagination
+    paginator = Paginator(challenges, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'page_obj': page_obj,
+        'search_query': search_query,
+        'status_filter': status_filter,
+        'category_filter': category_filter,
+        'categories': categories,
+        'status_choices': Challenge._meta.get_field('status').choices,
+    }
+    
+    return render(request, 'backoffice/challenge_management.html', context)
+
+
+@user_passes_test(is_admin_user, login_url='/backoffice/login/')
+def challenge_detail(request, challenge_id):
+    """
+    Challenge detail view
+    """
+    challenge = get_object_or_404(Challenge, id=challenge_id)
+    
+    context = {
+        'challenge': challenge,
+    }
+    
+    return render(request, 'backoffice/challenge_detail.html', context)
+
+
+@require_http_methods(["POST"])
+@user_passes_test(is_admin_user, login_url='/backoffice/login/')
+def review_challenge(request, challenge_id):
+    """
+    Review challenge (AJAX)
+    """
+    try:
+        data = json.loads(request.body)
+        status = data.get('status')
+        notes = data.get('notes', '')
+        
+        if status not in ['draft', 'pending', 'approved', 'rejected', 'published']:
+            return JsonResponse({'success': False, 'message': 'Invalid status'})
+        
+        challenge = get_object_or_404(Challenge, id=challenge_id)
+        challenge.status = status
+        challenge.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Challenge {status} successfully'
+        })
+        
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})
+
+
+@require_http_methods(["POST"])
+@user_passes_test(is_admin_user, login_url='/backoffice/login/')
+def publish_challenge(request, challenge_id):
+    """
+    Publish approved challenge
+    """
+    try:
+        challenge = get_object_or_404(Challenge, id=challenge_id)
+        
+        if challenge.status != 'approved':
+            return JsonResponse({
+                'success': False, 
+                'message': 'Challenge must be approved before publishing'
+            })
+        
+        challenge.status = 'published'
+        challenge.published_at = timezone.now()
+        challenge.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Challenge published successfully'
+        })
+        
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})
+
+
+# Problem Statement Management Views
+@user_passes_test(is_admin_user, login_url='/backoffice/login/')
+def problem_management(request):
+    """
+    Problem statement management page
+    """
+    search_query = request.GET.get('search', '')
+    status_filter = request.GET.get('status', '')
+    
+    # Base queryset
+    problems = ProblemStatement.objects.select_related('company', 'created_by__user')
+    
+    # Apply filters
+    if search_query:
+        problems = problems.filter(
+            Q(title__icontains=search_query) |
+            Q(subtitle__icontains=search_query) |
+            Q(company__company_name__icontains=search_query) |
+            Q(created_by__user__email__icontains=search_query)
+        )
+    
+    if status_filter:
+        problems = problems.filter(status=status_filter)
+    
+    # Pagination
+    paginator = Paginator(problems, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'page_obj': page_obj,
+        'search_query': search_query,
+        'status_filter': status_filter,
+        'status_choices': ProblemStatement._meta.get_field('status').choices,
+    }
+    
+    return render(request, 'backoffice/problem_management.html', context)
+
+
+@user_passes_test(is_admin_user, login_url='/backoffice/login/')
+def problem_detail(request, problem_id):
+    """
+    Problem statement detail view
+    """
+    problem = get_object_or_404(ProblemStatement, id=problem_id)
+    
+    context = {
+        'problem': problem,
+    }
+    
+    return render(request, 'backoffice/problem_detail.html', context)
+
+
+@require_http_methods(["POST"])
+@user_passes_test(is_admin_user, login_url='/backoffice/login/')
+def review_problem(request, problem_id):
+    """
+    Review problem statement (AJAX)
+    """
+    try:
+        data = json.loads(request.body)
+        status = data.get('status')
+        notes = data.get('notes', '')
+        
+        if status not in ['draft', 'pending', 'approved', 'rejected', 'published']:
+            return JsonResponse({'success': False, 'message': 'Invalid status'})
+        
+        problem = get_object_or_404(ProblemStatement, id=problem_id)
+        problem.status = status
+        problem.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Problem statement {status} successfully'
+        })
+        
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})
+
+
+@require_http_methods(["POST"])
+@user_passes_test(is_admin_user, login_url='/backoffice/login/')
+def publish_problem(request, problem_id):
+    """
+    Publish approved problem statement
+    """
+    try:
+        problem = get_object_or_404(ProblemStatement, id=problem_id)
+        
+        if problem.status != 'approved':
+            return JsonResponse({
+                'success': False, 
+                'message': 'Problem statement must be approved before publishing'
+            })
+        
+        problem.status = 'published'
+        problem.published_at = timezone.now()
+        problem.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Problem statement published successfully'
+        })
+        
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})

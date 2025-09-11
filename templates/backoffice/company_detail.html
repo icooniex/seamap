@@ -6,7 +6,7 @@
 <!-- Company Header -->
 <div class="page-header d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center">
-        <a href="{% url 'backoffice_companies' %}" class="btn btn-admin-outline me-3">
+        <a href="{% url 'backoffice:company_management' %}" class="btn btn-admin-outline me-3">
             <i class="bi bi-arrow-left"></i> Back to Companies
         </a>
         <div>
@@ -190,7 +190,7 @@
                             {% endif %}
                         </div>
                     </div>
-                    <a href="{% url 'backoffice_user_detail' company.member.id %}" class="btn btn-sm btn-admin-outline">
+                    <a href="{% url 'backoffice:user_detail' company.member.id %}" class="btn btn-sm btn-admin-outline">
                         <i class="bi bi-eye"></i> View Profile
                     </a>
                 </div>
@@ -567,7 +567,7 @@
             return;
         }
         
-        fetch('/backoffice/update_company_verification/', {
+        fetch('/backoffice/backoffice:update_company_verification/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

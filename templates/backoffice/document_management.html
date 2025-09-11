@@ -16,7 +16,7 @@
         <div class="admin-card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Member Documents</h5>
-                <a href="{% url 'backoffice_member_documents' %}" class="btn btn-admin-outline btn-sm">
+                <a href="{% url 'backoffice:member_documents' %}" class="btn btn-admin-outline btn-sm">
                     <i class="bi bi-eye"></i> View All
                 </a>
             </div>
@@ -56,7 +56,7 @@
         <div class="admin-card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Company Documents</h5>
-                <a href="{% url 'backoffice_company_documents' %}" class="btn btn-admin-outline btn-sm">
+                <a href="{% url 'backoffice:company_documents' %}" class="btn btn-admin-outline btn-sm">
                     <i class="bi bi-eye"></i> View All
                 </a>
             </div>
@@ -115,7 +115,7 @@
                                 </div>
                                 <div class="d-flex align-items-center gap-2">
                                     <span class="badge bg-{{ doc.get_status_color }}">{{ doc.get_status_display }}</span>
-                                    <a href="{% url 'backoffice_member_document_detail' doc.id %}" class="btn btn-sm btn-admin-outline">
+                                    <a href="{% url 'backoffice:member_document_detail' doc.id %}" class="btn btn-sm btn-admin-outline">
                                         <i class="bi bi-eye"></i>
                                     </a>
                                 </div>
@@ -150,7 +150,7 @@
                                 </div>
                                 <div class="d-flex align-items-center gap-2">
                                     <span class="badge bg-{{ doc.get_status_color }}">{{ doc.get_status_display }}</span>
-                                    <a href="{% url 'backoffice_company_document_detail' doc.id %}" class="btn btn-sm btn-admin-outline">
+                                    <a href="{% url 'backoffice:company_document_detail' doc.id %}" class="btn btn-sm btn-admin-outline">
                                         <i class="bi bi-eye"></i>
                                     </a>
                                 </div>

@@ -10,7 +10,7 @@
         <p class="page-subtitle">Review and manage company uploaded documents</p>
     </div>
     <div class="page-actions">
-        <a href="{% url 'backoffice_documents' %}" class="btn btn-admin-outline">
+        <a href="{% url 'backoffice:document_dashboard' %}" class="btn btn-admin-outline">
             <i class="bi bi-arrow-left"></i> Back to Documents
         </a>
     </div>
@@ -51,7 +51,7 @@
                 <button type="submit" class="btn btn-admin me-2">
                     <i class="bi bi-search"></i> Filter
                 </button>
-                <a href="{% url 'backoffice_company_documents' %}" class="btn btn-admin-outline">
+                <a href="{% url 'backoffice:company_documents' %}" class="btn btn-admin-outline">
                     <i class="bi bi-x"></i>
                 </a>
             </div>
@@ -134,7 +134,7 @@
                                 </td>
                                 <td>
                                     <div class="btn-group btn-group-sm">
-                                        <a href="{% url 'backoffice_company_document_detail' document.id %}" 
+                                        <a href="{% url 'backoffice:company_document_detail' document.id %}" 
                                            class="btn btn-admin-outline" title="View Details">
                                             <i class="bi bi-eye"></i>
                                         </a>

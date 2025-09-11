@@ -1,0 +1,283 @@
+{% extends "backoffice/base.html" %}
+{% load static %}
+
+{% block title %}Problem Statement Management - Back Office{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="page-title">Problem Statement Management</h1>
+        <p class="page-subtitle">Manage and review problem statements submitted by corporate users</p>
+    </div>
+    <div class="page-actions">
+        <span class="badge bg-info">{{ page_obj.paginator.count }} Total Problem Statements</span>
+    </div>
+</div>
+
+<!-- Search and Filter Section -->
+<div class="admin-card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label">Search Problem Statements</label>
+                <input type="text" class="form-control" name="search" placeholder="Search by title, organizer..." value="{{ search_query }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Status</label>
+                <select class="form-select" name="status">
+                    <option value="">All Statuses</option>
+                    {% for status_key, status_label in status_choices %}
+                    <option value="{{ status_key }}" {% if status_filter == status_key %}selected{% endif %}>
+                        {{ status_label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Category</label>
+                <select class="form-select" name="category">
+                    <option value="">All Categories</option>
+                    {% for category in categories %}
+                    <option value="{{ category }}" {% if category_filter == category %}selected{% endif %}>
+                        {{ category }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-admin-primary me-2">
+                    <i class="bi bi-search me-1"></i>Search
+                </button>
+                <a href="{% url 'backoffice:problem_management' %}" class="btn btn-admin-outline">
+                    <i class="bi bi-arrow-clockwise me-1"></i>Reset
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Problem Statements Table -->
+<div class="admin-card">
+    {% if page_obj %}
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Problem Statement</th>
+                        <th>Organizer</th>
+                        <th>Status</th>
+                        <th>Category</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for problem in page_obj %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar me-3">
+                                    <div class="rounded-circle bg-warning d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                        <i class="bi bi-exclamation-diamond text-white"></i>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="fw-medium">{{ problem.title|truncatechars:50 }}</div>
+                                    {% if problem.subtitle %}
+                                    <small class="text-muted">{{ problem.subtitle|truncatechars:60 }}</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="fw-medium">{{ problem.organizer.company_name }}</div>
+                            {% if problem.organizer.contact_email %}
+                            <small class="text-muted">{{ problem.organizer.contact_email }}</small>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="status-badge status-{{ problem.status }}">
+                                {{ problem.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if problem.innovation_category %}
+                            <span class="badge bg-secondary">{{ problem.innovation_category }}</span>
+                            {% else %}
+                            <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="small text-muted">{{ problem.created_at|date:"M d, Y" }}</div>
+                            {% if problem.published_at %}
+                            <div class="small text-success">Published: {{ problem.published_at|date:"M d" }}</div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a href="{% url 'backoffice:problem_detail' problem.id %}" class="btn btn-sm btn-admin-outline" title="View Details">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                {% if problem.status == 'pending' %}
+                                <button type="button" class="btn btn-sm btn-success" 
+                                        onclick="reviewProblem({{ problem.id }}, 'approved')"
+                                        title="Approve">
+                                    <i class="bi bi-check"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-danger" 
+                                        onclick="reviewProblem({{ problem.id }}, 'rejected')"
+                                        title="Reject">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                                {% elif problem.status == 'approved' %}
+                                <button type="button" class="btn btn-sm btn-primary" 
+                                        onclick="publishProblem({{ problem.id }})"
+                                        title="Publish">
+                                    <i class="bi bi-megaphone"></i>
+                                </button>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5">
+                            <i class="bi bi-lightbulb text-muted" style="font-size: 3rem;"></i>
+                            <h4 class="mt-3">No problem statements found</h4>
+                            <p class="text-muted">No problem statements match your search criteria.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <div class="card-footer">
+            <nav aria-label="Problem statement pagination">
+                <ul class="pagination justify-content-center mb-0">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}">First</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}">Previous</a>
+                    </li>
+                    {% endif %}
+                    
+                    <li class="page-item active">
+                        <span class="page-link">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                    </li>
+                    
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}">Next</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}">Last</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
+    {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-lightbulb text-muted" style="font-size: 3rem;"></i>
+            <h4 class="mt-3">No problem statements found</h4>
+            <p class="text-muted">No problem statements have been submitted yet.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function reviewProblem(problemId, status) {
+    const statusText = status === 'approved' ? 'approve' : 'reject';
+    
+    if (!confirm(`Are you sure you want to ${statusText} this problem statement?`)) {
+        return;
+    }
+    
+    fetch(`/backoffice/problems/${problemId}/review/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            status: status
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('success', data.message);
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            showAlert('error', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showAlert('error', 'An error occurred. Please try again.');
+    });
+}
+
+function publishProblem(problemId) {
+    if (!confirm('Are you sure you want to publish this problem statement?')) {
+        return;
+    }
+    
+    fetch(`/backoffice/problems/${problemId}/publish/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('success', data.message);
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            showAlert('error', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showAlert('error', 'An error occurred. Please try again.');
+    });
+}
+
+function showAlert(type, message) {
+    const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+    const alertHtml = `
+        <div class="alert ${alertClass} alert-dismissible fade show position-fixed" 
+             style="top: 20px; right: 20px; z-index: 9999;">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', alertHtml);
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock extra_js %}

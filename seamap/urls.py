@@ -25,13 +25,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     
     # Back office URLs
-    path('backoffice/', include('backoffice.urls')),
+    path('backoffice/', include('backoffice.urls', namespace='backoffice')),
     
     # Include member app URLs
     path('', include('member.urls')),
-    
-    # Back office URLs
-    path('backoffice/', include('backoffice.urls')),
 
     # Match making dashboard
     path('dashboard/startups/', startup_matchmaking, name='startup_matchmaking'),

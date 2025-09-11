@@ -3,17 +3,12 @@
 {% block title %}Company Verification Management{% endblock %}
 
 {% block content %}
-<div class="page-header d-flex justify-content-between align-items-center">
-    <div>
-        <h1 class="page-title">Company Verification</h1>
-        <p class="page-subtitle">Review and verify company profiles</p>
-    </div>
-    <div class="page-actions">
-        <a href="{% url 'backoffice_verification' %}" class="btn btn-admin-outline">
-            <i class="bi bi-arrow-left"></i> Back to Dashboard
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-building-check me-2"></i>Company Verification</h2>
+        <a href="{% url 'backoffice:verification_dashboard' %}" class="btn btn-admin-outline">
+            <i class="fas fa-arrow-left"></i> Back to Verification
         </a>
     </div>
-</div>
 
 <!-- Search and Filter Section -->
 <div class="card mb-4">
@@ -53,7 +48,7 @@
                 </button>
             </div>
             <div class="col-md-3">
-                <a href="{% url 'backoffice_company_verification' %}" class="btn btn-admin-outline w-100">
+                <a href="{% url 'backoffice:company_verification' %}" class="btn btn-admin-outline w-100">
                     <i class="bi bi-x-circle"></i> Clear Filters
                 </a>
             </div>
@@ -149,7 +144,7 @@
                                          style="width: 40px; height: 40px; object-fit: cover;">
                                     <div>
                                         <div class="fw-bold">
-                                            <a href="{% url 'backoffice_company_detail' company.id %}" class="text-decoration-none">
+                                            <a href="{% url 'backoffice:company_detail' company.id %}" class="text-decoration-none">
                                                 {{ company.company_name|default:"Unnamed Company" }}
                                             </a>
                                         </div>
@@ -188,7 +183,7 @@
                             <td>{{ company.created_at|date:"M d, Y" }}</td>
                             <td>
                                 <div class="btn-group btn-group-sm">
-                                    <a href="{% url 'backoffice_company_detail' company.id %}" 
+                                    <a href="{% url 'backoffice:company_detail' company.id %}" 
                                        class="btn btn-outline-primary btn-sm" 
                                        title="View Details">
                                         <i class="bi bi-eye"></i>
@@ -261,7 +256,7 @@
             <div class="text-center py-5">
                 <i class="bi bi-building" style="font-size: 3rem; color: #ddd;"></i>
                 <p class="text-muted mt-3">No companies found matching your criteria.</p>
-                <a href="{% url 'backoffice_company_verification' %}" class="btn btn-admin-outline">Clear Filters</a>
+                <a href="{% url 'backoffice:company_verification' %}" class="btn btn-admin-outline">Clear Filters</a>
             </div>
         {% endif %}
     </div>

@@ -34,7 +34,7 @@
                 <button type="submit" class="btn btn-admin-primary me-2">
                     <i class="bi bi-search me-1"></i>Search
                 </button>
-                <a href="{% url 'backoffice_users' %}" class="btn btn-admin-outline">
+                <a href="{% url 'backoffice:user_management' %}" class="btn btn-admin-outline">
                     <i class="bi bi-arrow-clockwise me-1"></i>Reset
                 </a>
             </div>
@@ -125,7 +125,7 @@
                         </td>
                         <td>
                             <div class="btn-group" role="group">
-                                <a href="{% url 'backoffice_user_detail' member.id %}" class="btn btn-sm btn-admin-outline" title="View Details">
+                                <a href="{% url 'backoffice:user_detail' member.id %}" class="btn btn-sm btn-admin-outline" title="View Details">
                                     <i class="bi bi-eye"></i>
                                 </a>
                                 <button type="button" class="btn btn-sm btn-admin-outline" title="Send Message" disabled>
@@ -178,7 +178,7 @@
             <h4 class="mt-3 mb-2">No Users Found</h4>
             {% if search_query or status_filter %}
                 <p class="text-muted mb-3">No users match your current filters.</p>
-                <a href="{% url 'backoffice_users' %}" class="btn btn-admin-outline">
+                <a href="{% url 'backoffice:user_management' %}" class="btn btn-admin-outline">
                     <i class="bi bi-arrow-clockwise me-1"></i>Clear Filters
                 </a>
             {% else %}
