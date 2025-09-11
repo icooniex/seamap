@@ -595,7 +595,7 @@
                 {% endif %}
 
                 <!-- Social Login Options -->
-                <div class="social-login">
+                <!-- <div class="social-login">
                     <a href="#" class="social-btn">
                         <i class="bi bi-google"></i>
                         Google
@@ -608,7 +608,7 @@
 
                 <div class="divider">
                     <span>or create with email</span>
-                </div>
+                </div> -->
 
                 <form method="post" id="signupForm">
                     {% csrf_token %}
@@ -716,7 +716,7 @@
                         <input type="checkbox" id="terms" name="terms" required>
                         <div class="terms-text">
                             <label for="terms">
-                                I agree to the <a href="#" target="_blank">Terms of Service</a> and acknowledge that I have read the <a href="#" target="_blank">Privacy Policy</a>. I consent to receive occasional updates about SEA-MAP innovations and opportunities.
+                                I agree to the <a href="{% url 'terms_and_conditions' %}" target="_blank">Terms of Service</a> and acknowledge that I have read the <a href="{% url 'privacy_policy' %}" target="_blank">Privacy Policy</a>. I consent to receive occasional updates about SEA-MAP innovations and opportunities.
                             </label>
                         </div>
                     </div>
