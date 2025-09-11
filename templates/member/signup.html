@@ -877,6 +877,7 @@
                     if (password1.value === password2.value) {
                         matchIcon.classList.add('valid');
                         matchIcon.querySelector('i').className = 'bi bi-check-circle';
+                        matchIcon.querySelector('span').textContent = 'Passwords matched';
                         passwordsMatch = true;
                     } else {
                         matchIcon.classList.remove('valid');
