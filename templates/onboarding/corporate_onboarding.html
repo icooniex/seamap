@@ -76,6 +76,48 @@
 .logo-preview:hover .logo-overlay {
     opacity: 1;
 }
+
+/* Additional validation styles */
+.logo-upload-container.is-invalid {
+    border-color: #dc3545;
+    background: #f8d7da;
+}
+
+.logo-upload-container.is-invalid .upload-icon {
+    color: #dc3545;
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.form-select.is-invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.checkbox-grid.is-invalid {
+    border: 2px solid #dc3545;
+    border-radius: 8px;
+    padding: 0.5rem;
+    background-color: rgba(220, 53, 69, 0.05);
+}
+
+.checkbox-grid.is-invalid .checkbox-card {
+    border-color: rgba(220, 53, 69, 0.3);
+}
+
+.form-group.is-invalid {
+    border: 2px solid #dc3545;
+    border-radius: 8px;
+    padding: 0.5rem;
+    background-color: rgba(220, 53, 69, 0.05);
+}
+
+.form-group.is-invalid .form-check-label {
+    color: #dc3545;
+}
 </style>
 {% endblock %}
 
@@ -130,7 +172,7 @@
             
             <div class="form-group">
                 <label for="company_name" class="form-label">
-                    <i class="bi bi-building me-2 text-primary"></i>Company Name *
+                    <i class="bi bi-building me-2 text-primary"></i>Company Name <span class="text-danger">*</span>
                 </label>
                 <input type="text" class="form-control" id="company_name" name="company_name" 
                        placeholder="Enter your company or project name" required>
@@ -138,7 +180,7 @@
 
             <div class="form-group">
                 <label for="organization_type" class="form-label">
-                    <i class="bi bi-building-gear me-2 text-primary"></i>Type of Organization *
+                    <i class="bi bi-building-gear me-2 text-primary"></i>Type of Organization <span class="text-danger">*</span>
                 </label>
                 <select class="form-select" id="organization_type" name="organization_type" required>
                     <option value="">Select organization type</option>
@@ -152,7 +194,7 @@
 
             <div class="form-group">
                 <label for="company_logo" class="form-label">
-                    <i class="bi bi-image me-2 text-primary"></i>Company Logo
+                    <i class="bi bi-image me-2 text-primary"></i>Company Logo <span class="text-danger">*</span>
                 </label>
                 <div class="logo-upload-container">
                     <div class="logo-preview" id="logoPreview" style="display: none;">
@@ -179,7 +221,7 @@
                         </button>
                     </div>
                     <input type="file" class="form-control d-none" id="company_logo" name="company_logo" 
-                           accept="image/png,image/jpeg,image/jpg,image/svg+xml" onchange="handleLogoUpload(this)">
+                           accept="image/png,image/jpeg,image/jpg,image/svg+xml" onchange="handleLogoUpload(this)" required>
                 </div>
             </div>
 
@@ -187,19 +229,19 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="website" class="form-label">
-                            <i class="bi bi-globe me-2 text-primary"></i>Website
+                            <i class="bi bi-globe me-2 text-primary"></i>Website <span class="text-danger">*</span>
                         </label>
                         <input type="url" class="form-control" id="website" name="website" 
-                               placeholder="https://www.example.com">
+                               placeholder="https://www.example.com" required>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="founded_year" class="form-label">
-                            <i class="bi bi-calendar-event me-2 text-primary"></i>Founded Year
+                            <i class="bi bi-calendar-event me-2 text-primary"></i>Founded Year <span class="text-danger">*</span>
                         </label>
                         <input type="number" class="form-control" id="founded_year" name="founded_year" 
-                               placeholder="e.g. 2020" min="1900" max="2025">
+                               placeholder="e.g. 2020" min="1900" max="2025" required>
                     </div>
                 </div>
             </div>
@@ -208,7 +250,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="team_size" class="form-label">
-                            <i class="bi bi-people me-2 text-primary"></i>Team Size *
+                            <i class="bi bi-people me-2 text-primary"></i>Team Size <span class="text-danger">*</span>
                         </label>
                         <select class="form-select" id="team_size" name="team_size" required>
                             <option value="">Select team size</option>
@@ -225,7 +267,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="primary_location" class="form-label">
-                            <i class="bi bi-geo-alt me-2 text-primary"></i>Primary Location *
+                            <i class="bi bi-geo-alt me-2 text-primary"></i>Primary Location <span class="text-danger">*</span>
                         </label>
                         <select class="form-select" id="primary_location" name="primary_location" required>
                             <option value="">Select your country</option>
@@ -247,10 +289,10 @@
 
             <div class="form-group">
                 <label for="company_description" class="form-label">
-                    <i class="bi bi-card-text me-2 text-primary"></i>Company Description
+                    <i class="bi bi-card-text me-2 text-primary"></i>Company Description <span class="text-danger">*</span>
                 </label>
                 <textarea class="form-control" id="company_description" name="company_description" 
-                          placeholder="Tell us about your company's mission, vision, and what makes you unique..." rows="4"></textarea>
+                          placeholder="Tell us about your company's mission, vision, and what makes you unique..." rows="4" required></textarea>
             </div>
         </div>
 
@@ -261,7 +303,7 @@
 
             <div class="form-group">
                 <label class="form-label">
-                    <i class="bi bi-briefcase me-2 text-primary"></i>Organization's Industry Expertise *
+                    <i class="bi bi-briefcase me-2 text-primary"></i>Organization's Industry Expertise <span class="text-danger">*</span>
                     <span class="text-muted">(select all that apply)</span>
                 </label>
                 <div class="checkbox-grid">
@@ -369,7 +411,7 @@
             <div class="form-group">
                 <label class="form-label">
                     <i class="bi bi-cpu me-2 text-primary"></i>
-                    Which technological areas are of greatest interest to your organization? *
+                    Which technological areas are of greatest interest to your organization? <span class="text-danger">*</span>
                     <span class="text-muted">(select all that apply)</span>
                 </label>
                 <div class="checkbox-grid">
@@ -448,7 +490,7 @@
 
             <div class="form-group">
                 <label class="form-label">
-                    <i class="bi bi-geo me-2 text-primary"></i>Which markets are you interested in (for the startups you work with)?
+                    <i class="bi bi-geo me-2 text-primary"></i>Which markets are you interested in (for the startups you work with)? <span class="text-danger">*</span>
                     <span class="text-muted">(select all that apply)</span>
                 </label>
                 <div class="checkbox-grid">
@@ -543,7 +585,7 @@
             <div class="form-group">
                 <label class="form-label">
                     <i class="bi bi-handshake me-2 text-primary"></i>
-                    How would you like to collaborate with / support startups?
+                    How would you like to collaborate with / support startups? <span class="text-danger">*</span>
                     <span class="text-muted">(select all that apply)</span>
                 </label>
                 <div class="checkbox-grid">
@@ -581,23 +623,23 @@
             <div class="form-group">
                 <label for="specific_goals" class="form-label">
                     <i class="bi bi-bullseye me-2 text-primary"></i>
-                    Do you have any specific goals or outcomes you aim to achieve?
+                    Do you have any specific goals or outcomes you aim to achieve? <span class="text-danger">*</span>
                 </label>
                 <textarea class="form-control" id="specific_goals" name="specific_goals"
-                          placeholder="Describe your goals or desired outcomes..." rows="3"></textarea>
+                          placeholder="Describe your goals or desired outcomes..." rows="3" required></textarea>
             </div>
 
             <div class="form-group">
                 <label class="form-label">
                     <i class="bi bi-people-arrows me-2 text-primary"></i>
-                    Does your organization currently collaborate with start-ups or innovation hubs?
+                    Does your organization currently collaborate with start-ups or innovation hubs? <span class="text-danger">*</span>
                 </label>
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="collaborate_startups" id="collaborate_yes" value="yes">
+                    <input class="form-check-input" type="radio" name="collaborate_startups" id="collaborate_yes" value="yes" required>
                     <label class="form-check-label" for="collaborate_yes">Yes</label>
                 </div>
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="collaborate_startups" id="collaborate_no" value="no">
+                    <input class="form-check-input" type="radio" name="collaborate_startups" id="collaborate_no" value="no" required>
                     <label class="form-check-label" for="collaborate_no">No</label>
                 </div>
             </div>
@@ -820,11 +862,17 @@
                     const logoImage = document.getElementById('logoImage');
                     const logoPreview = document.getElementById('logoPreview');
                     const logoPlaceholder = document.getElementById('logoPlaceholder');
+                    const logoContainer = document.querySelector('.logo-upload-container');
                     
                     if (logoImage && logoPreview && logoPlaceholder) {
                         logoImage.src = e.target.result;
                         logoPreview.style.display = 'block';
                         logoPlaceholder.style.display = 'none';
+                        
+                        // Clear validation error when file is uploaded
+                        if (logoContainer) {
+                            logoContainer.classList.remove('is-invalid');
+                        }
                     }
                 };
                 reader.readAsDataURL(file);
@@ -985,18 +1033,31 @@
             
             if (stepNumber === 1) {
                 // Step 1: Company/Organization Information
-                const requiredFields = ['company_name', 'organization_type', 'team_size', 'primary_location'];
+                const requiredFields = ['company_name', 'organization_type', 'company_logo', 'website', 'founded_year', 'company_description', 'team_size', 'primary_location'];
                 
                 requiredFields.forEach(fieldId => {
                     const field = document.getElementById(fieldId);
-                    if (field && !field.value.trim()) {
-                        isValid = false;
-                        field.classList.add('is-invalid');
-                        if (!firstInvalidField) firstInvalidField = field;
+                    if (field) {
+                        if (fieldId === 'company_logo') {
+                            // Special handling for file input
+                            if (!field.files || field.files.length === 0) {
+                                isValid = false;
+                                const logoContainer = document.querySelector('.logo-upload-container');
+                                if (logoContainer) logoContainer.classList.add('is-invalid');
+                                if (!firstInvalidField) firstInvalidField = field;
+                            }
+                        } else {
+                            // Regular text/select fields
+                            if (!field.value.trim()) {
+                                isValid = false;
+                                field.classList.add('is-invalid');
+                                if (!firstInvalidField) firstInvalidField = field;
+                            }
+                        }
                     }
                 });
                 
-                // Validate website URL if provided
+                // Additional website URL validation
                 const websiteField = document.getElementById('website');
                 if (websiteField && websiteField.value.trim()) {
                     const urlPattern = /^https?:\/\/.+/;
@@ -1038,24 +1099,41 @@
                     if (!errorMessage) errorMessage = 'Please select at least one technological area of interest.';
                 }
                 
+                // Validate market interests (at least one must be selected)
+                const marketInterests = currentStepElement.querySelectorAll('input[name="market_country_interests"]:checked');
+                if (marketInterests.length === 0) {
+                    isValid = false;
+                    const groupContainer = currentStepElement.querySelector('input[name="market_country_interests"]')?.closest('.checkbox-grid');
+                    if (groupContainer) {
+                        groupContainer.classList.add('is-invalid');
+                    }
+                    if (!errorMessage) errorMessage = 'Please select at least one market that interests your organization.';
+                }
+                
                 if (!isValid && !errorMessage) {
-                    errorMessage = 'Please make all required selections.';
+                    errorMessage = 'Please make all required selections in corporate information.';
                 }
                 
             } else if (stepNumber === 3) {
                 // Step 3: Support & Consent
-                const consentInfo = document.getElementById('consent_info');
-                const consentMarketplace = document.getElementById('consent_marketplace');
                 
-                if (!consentInfo?.checked || !consentMarketplace?.checked) {
+                // Validate specific goals (required field)
+                const specificGoalsField = document.getElementById('specific_goals');
+                if (specificGoalsField && !specificGoalsField.value.trim()) {
                     isValid = false;
-                    if (consentInfo && !consentInfo.checked) {
-                        consentInfo.classList.add('is-invalid');
+                    specificGoalsField.classList.add('is-invalid');
+                    if (!firstInvalidField) firstInvalidField = specificGoalsField;
+                }
+                
+                // Validate collaborate_startups radio button (required)
+                const collaborateStartupsRadio = currentStepElement.querySelector('input[name="collaborate_startups"]:checked');
+                if (!collaborateStartupsRadio) {
+                    isValid = false;
+                    const radioGroup = currentStepElement.querySelector('input[name="collaborate_startups"]')?.closest('.form-group');
+                    if (radioGroup) {
+                        radioGroup.classList.add('is-invalid');
                     }
-                    if (consentMarketplace && !consentMarketplace.checked) {
-                        consentMarketplace.classList.add('is-invalid');
-                    }
-                    errorMessage = 'Please accept both privacy consent agreements to complete your registration.';
+                    if (!errorMessage) errorMessage = 'Please specify if your organization currently collaborates with start-ups.';
                 }
                 
                 // Validate collaboration methods (at least one must be selected)
@@ -1067,6 +1145,25 @@
                         groupContainer.classList.add('is-invalid');
                     }
                     if (!errorMessage) errorMessage = 'Please select at least one collaboration method.';
+                }
+                
+                // Validate consent agreements
+                const consentInfo = document.getElementById('consent_info');
+                const consentMarketplace = document.getElementById('consent_marketplace');
+                
+                if (!consentInfo?.checked || !consentMarketplace?.checked) {
+                    isValid = false;
+                    if (consentInfo && !consentInfo.checked) {
+                        consentInfo.classList.add('is-invalid');
+                    }
+                    if (consentMarketplace && !consentMarketplace.checked) {
+                        consentMarketplace.classList.add('is-invalid');
+                    }
+                    if (!errorMessage) errorMessage = 'Please accept both privacy consent agreements to complete your registration.';
+                }
+                
+                if (!isValid && !errorMessage) {
+                    errorMessage = 'Please complete all required fields and make necessary selections.';
                 }
             }
             
@@ -1091,12 +1188,22 @@
             let isValid = true;
             
             if (stepNumber === 1) {
-                const requiredFields = ['company_name', 'organization_type', 'team_size', 'primary_location'];
+                const requiredFields = ['company_name', 'organization_type', 'company_logo', 'website', 'founded_year', 'company_description', 'team_size', 'primary_location'];
                 
                 requiredFields.forEach(fieldId => {
                     const field = document.getElementById(fieldId);
-                    if (field && !field.value.trim()) {
-                        isValid = false;
+                    if (field) {
+                        if (fieldId === 'company_logo') {
+                            // Special handling for file input
+                            if (!field.files || field.files.length === 0) {
+                                isValid = false;
+                            }
+                        } else {
+                            // Regular text/select fields
+                            if (!field.value.trim()) {
+                                isValid = false;
+                            }
+                        }
                     }
                 });
                 
@@ -1112,12 +1219,26 @@
                 // Step 2: Corporate Information - only checkbox groups validation
                 const industryExpertise = currentStepElement.querySelectorAll('input[name="industry_expertise"]:checked');
                 const technologicalAreas = currentStepElement.querySelectorAll('input[name="technological_areas"]:checked');
+                const marketInterests = currentStepElement.querySelectorAll('input[name="market_country_interests"]:checked');
                 
-                if (industryExpertise.length === 0 || technologicalAreas.length === 0) {
+                if (industryExpertise.length === 0 || technologicalAreas.length === 0 || marketInterests.length === 0) {
                     isValid = false;
                 }
                 
             } else if (stepNumber === 3) {
+                // Validate specific goals (required field)
+                const specificGoalsField = document.getElementById('specific_goals');
+                if (specificGoalsField && !specificGoalsField.value.trim()) {
+                    isValid = false;
+                }
+                
+                // Validate collaborate_startups radio button (required)
+                const collaborateStartupsRadio = currentStepElement.querySelector('input[name="collaborate_startups"]:checked');
+                if (!collaborateStartupsRadio) {
+                    isValid = false;
+                }
+                
+                // Validate collaboration methods and consent agreements
                 const consentInfo = document.getElementById('consent_info');
                 const consentMarketplace = document.getElementById('consent_marketplace');
                 const collaborationMethods = currentStepElement.querySelectorAll('input[name="collaboration_methods"]:checked');
