@@ -2189,6 +2189,40 @@ def company_profile_edit(request):
                 # Form validation failed - use original form for displaying errors
                 form = form_without_json
         
+        elif company_type == 'investor':
+            # Remove JSON fields from form validation to handle them manually
+            temp_post = request.POST.copy()
+            json_fields = ['funding_stages', 'investment_categories', 'market_country_interests']
+            for field in json_fields:
+                if field in temp_post:
+                    del temp_post[field]
+            
+            # Create a modified form without JSON fields
+            form_without_json = form_class(temp_post, request.FILES, instance=company)
+            form_without_json.fields = {k: v for k, v in form.fields.items() if k not in json_fields}
+            
+            # Use the modified form for validation
+            if form_without_json.is_valid():
+                company = form_without_json.save(commit=False)
+                
+                # Set company member and type if creating new
+                if not company.pk:
+                    company.member = member
+                    company.company_type = company_type
+                    company.is_primary = True
+                
+                # Handle JSON fields manually for investors
+                company.funding_stages = request.POST.getlist('funding_stages') or []
+                company.investment_categories = request.POST.getlist('investment_categories') or []
+                company.market_country_interests = request.POST.getlist('market_country_interests') or []
+                
+                company.save()
+                messages.success(request, 'Your company profile has been updated successfully!')
+                return redirect('company_profile_edit')
+            else:
+                # Form validation failed - use original form for displaying errors
+                form = form_without_json
+        
         elif form.is_valid():
             company = form.save(commit=False)
             
@@ -2197,13 +2231,6 @@ def company_profile_edit(request):
                 company.member = member
                 company.company_type = company_type
                 company.is_primary = True
-            
-            # Handle checkbox fields for investors
-            if company_type == 'investor':
-                # Handle multiple selections for investors
-                company.funding_stages = request.POST.getlist('funding_stages') or []
-                company.investment_categories = request.POST.getlist('investment_categories') or []
-                company.market_country_interests = request.POST.getlist('market_country_interests') or []
             
             company.save()
             messages.success(request, 'Your company profile has been updated successfully!')
