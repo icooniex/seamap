@@ -74,13 +74,13 @@ body {
     font-size: 1.3rem;
     font-weight: 700;
     line-height: 1;
-    color: #2d3748;
+    color: #2c59a7;
 }
 
 .navbar-tagline {
-    font-size: 0.8rem;
-    color: #718096;
-    font-weight: 400;
+    font-size: 0.75rem; 
+    color:#718096;
+    font-weight: normal;
     line-height: 1;
 }
 
