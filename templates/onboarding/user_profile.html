@@ -77,6 +77,28 @@
 .profile-preview:hover .profile-overlay {
     opacity: 1;
 }
+
+/* Button state styles */
+.btn-secondary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Character counter styles */
+.character-count {
+    font-size: 0.875rem;
+    color: #6c757d;
+    text-align: right;
+    margin-top: 0.25rem;
+}
+
+.character-count.text-warning {
+    color: #f57c00 !important;
+}
+
+.character-count.text-danger {
+    color: #dc3545 !important;
+}
 </style>
 {% endblock %}
 
@@ -157,7 +179,7 @@
             <!-- Profile Picture Upload -->
             <div class="form-group">
                 <label class="form-label">
-                    <i class="bi bi-camera me-2 text-primary"></i>Profile Picture
+                    <i class="bi bi-camera me-2 text-primary"></i>Profile Picture <span class="text-danger">*</span>
                 </label>
                 <div class="profile-upload-container" id="uploadArea">
                     <div class="profile-upload-placeholder" id="uploadPlaceholder">
@@ -181,7 +203,7 @@
                         </div>
                     </div>
                     <input type="file" class="form-control d-none" id="profile_picture" name="profile_picture" 
-                           accept="image/png,image/jpeg,image/jpg" onchange="handleProfileUpload(this)">
+                           accept="image/png,image/jpeg,image/jpg" onchange="handleProfileUpload(this)" required>
                 </div>
             </div>
 
@@ -190,21 +212,21 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="job_position" class="form-label">
-                            <i class="bi bi-briefcase me-2 text-primary"></i>Job Position
+                            <i class="bi bi-briefcase me-2 text-primary"></i>Job Position <span class="text-danger">*</span>
                         </label>
                         <input type="text" class="form-control" id="job_position" name="job_position" 
                                placeholder="e.g., CEO, CTO, Investment Manager"
-                               value="{{ member.job_position|default:'' }}">
+                               value="{{ member.job_position|default:'' }}" required>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="phone_number" class="form-label">
-                            <i class="bi bi-telephone me-2 text-primary"></i>Phone Number
+                            <i class="bi bi-telephone me-2 text-primary"></i>Phone Number <span class="text-danger">*</span>
                         </label>
                         <input type="tel" class="form-control" id="phone_number" name="phone_number" 
                                placeholder="+65 9123 4567"
-                               value="{{ member.phone_number|default:'' }}">
+                               value="{{ member.phone_number|default:'' }}" required>
                     </div>
                 </div>
             </div>
@@ -222,11 +244,11 @@
             <!-- Bio Section -->
             <div class="form-group">
                 <label for="short_bio" class="form-label">
-                    <i class="bi bi-person-lines-fill me-2 text-primary"></i>Short Bio
+                    <i class="bi bi-person-lines-fill me-2 text-primary"></i>Short Bio <span class="text-danger">*</span>
                 </label>
                 <textarea class="form-control" id="short_bio" name="short_bio" 
                           placeholder="Tell us about yourself, your background, and what drives you in the plastic circularity space..."
-                          rows="4" maxlength="500">{{ member.short_bio|default:'' }}</textarea>
+                          rows="4" maxlength="500" required>{{ member.short_bio|default:'' }}</textarea>
                 <div class="character-count" id="bioCounter">
                     <span id="bioCount">0</span>/500 characters
                 </div>
@@ -281,9 +303,76 @@ document.addEventListener('DOMContentLoaded', function() {
         updateBioCount(); // Initial count
     }
 
+    // Form validation function
+    function validateRequiredFields() {
+        const requiredFields = [
+            { id: 'profile_picture', name: 'Profile Picture', isFile: true },
+            { id: 'job_position', name: 'Job Position' },
+            { id: 'phone_number', name: 'Phone Number' },
+            { id: 'short_bio', name: 'Short Bio' }
+        ];
+        
+        const errors = [];
+        
+        requiredFields.forEach(field => {
+            const element = document.getElementById(field.id);
+            let isEmpty = false;
+            
+            if (field.isFile) {
+                // Special handling for file input
+                isEmpty = !element.files || element.files.length === 0;
+            } else {
+                isEmpty = !element.value.trim();
+            }
+            
+            if (isEmpty) {
+                errors.push(field.name);
+            }
+        });
+        
+        return errors;
+    }
+
+    // Update submit button state based on validation
+    function updateSubmitButtonState() {
+        const errors = validateRequiredFields();
+        const submitBtn = document.getElementById('continueBtn');
+        
+        if (errors.length > 0) {
+            submitBtn.disabled = true;
+            submitBtn.classList.add('btn-secondary');
+            submitBtn.classList.remove('btn-primary');
+        } else {
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('btn-secondary');
+            submitBtn.classList.add('btn-primary');
+        }
+    }
+
+    // Add event listeners to all form fields for real-time validation
+    const formFields = ['job_position', 'phone_number', 'short_bio'];
+    formFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.addEventListener('input', updateSubmitButtonState);
+            field.addEventListener('blur', updateSubmitButtonState);
+        }
+    });
+
+    // Initial validation check
+    updateSubmitButtonState();
+
     // Form submission
     form.addEventListener('submit', function(e) {
         e.preventDefault();
+        
+        // Validate all required fields
+        const errors = validateRequiredFields();
+        
+        if (errors.length > 0) {
+            // Just prevent submission - no error messages or red styling
+            return;
+        }
         
         // Show loading state
         continueBtn.disabled = true;
@@ -320,6 +409,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('previewImage').src = e.target.result;
                 document.getElementById('uploadPlaceholder').style.display = 'none';
                 document.getElementById('previewContainer').style.display = 'block';
+                
+                // Update validation state when image is uploaded
+                updateSubmitButtonState();
             };
             reader.readAsDataURL(file);
         }
@@ -335,6 +427,9 @@ document.addEventListener('DOMContentLoaded', function() {
         profileImage.src = '';
         uploadPlaceholder.style.display = 'flex';
         previewContainer.style.display = 'none';
+        
+        // Update validation state when image is removed
+        updateSubmitButtonState();
     };
 });
 </script>
