@@ -241,26 +241,35 @@
             color: #2d3748;
         }
 
-        .password-requirements {
-            background: #f7fafc;
-            border-radius: 8px;
-            padding: 1rem;
+        /* Password requirements and matching */
+        .password-requirements,
+        .password-match {
             margin-top: 0.5rem;
+            padding: 0.75rem;
+            background: #f8f9fa;
+            border-radius: 6px;
             font-size: 0.85rem;
         }
 
-        .password-requirements h6 {
-            color: #4a5568;
-            font-size: 0.85rem;
+        .password-requirements h6,
+        .password-match h6 {
             margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #495057;
+            font-weight: 600;
         }
 
         .requirement {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            color: #718096;
             margin-bottom: 0.25rem;
+            color: #6c757d;
+            transition: color 0.3s ease;
+        }
+
+        .requirement:last-child {
+            margin-bottom: 0;
         }
 
         .requirement.valid {
@@ -268,10 +277,13 @@
         }
 
         .requirement i {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
         }
 
-        .terms-checkbox {
+        .requirement.valid i {
+            color: var(--bs-success);
+        }        .terms-checkbox {
             display: flex;
             align-items: flex-start;
             gap: 0.75rem;
@@ -413,6 +425,21 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin-right: 0.5rem;
+        }
+
+        /* Disabled button state */
+        .btn-secondary {
+            background-color: #6c757d !important;
+            border-color: #6c757d !important;
+            cursor: not-allowed !important;
+            opacity: 0.65 !important;
+        }
+
+        .btn-secondary:hover {
+            background-color: #6c757d !important;
+            border-color: #6c757d !important;
+            transform: none !important;
+            box-shadow: none !important;
         }
 
         @keyframes spin {
@@ -701,6 +728,14 @@
                                 {% endfor %}
                             </div>
                         {% endif %}
+                        
+                        <!-- Password Match Indicator -->
+                        <div class="password-match" id="passwordMatch" style="display: none;">
+                            <div class="requirement" id="passwordMatchIndicator">
+                                <i class="bi bi-x-circle"></i>
+                                <span>Passwords match</span>
+                            </div>
+                        </div>
                     </div>
 
                     {% if form.non_field_errors %}
@@ -784,46 +819,124 @@
             const spinner = document.getElementById('spinner');
             const btnText = document.getElementById('btnText');
             const password1 = document.getElementById('{{ form.password1.id_for_label }}');
+            const password2 = document.getElementById('{{ form.password2.id_for_label }}');
+
+            let passwordStrengthValid = false;
+            let passwordsMatch = false;
 
             // Password strength validation
+            function checkPasswordStrength(password) {
+                const lengthReq = document.getElementById('length');
+                const letterReq = document.getElementById('letter');
+                const numberReq = document.getElementById('number');
+
+                let validCount = 0;
+
+                // Length check
+                if (password.length >= 8) {
+                    lengthReq.classList.add('valid');
+                    lengthReq.querySelector('i').className = 'bi bi-check-circle';
+                    validCount++;
+                } else {
+                    lengthReq.classList.remove('valid');
+                    lengthReq.querySelector('i').className = 'bi bi-x-circle';
+                }
+
+                // Letter check
+                if (/[a-zA-Z]/.test(password)) {
+                    letterReq.classList.add('valid');
+                    letterReq.querySelector('i').className = 'bi bi-check-circle';
+                    validCount++;
+                } else {
+                    letterReq.classList.remove('valid');
+                    letterReq.querySelector('i').className = 'bi bi-x-circle';
+                }
+
+                // Number check
+                if (/\d/.test(password)) {
+                    numberReq.classList.add('valid');
+                    numberReq.querySelector('i').className = 'bi bi-check-circle';
+                    validCount++;
+                } else {
+                    numberReq.classList.remove('valid');
+                    numberReq.querySelector('i').className = 'bi bi-x-circle';
+                }
+
+                passwordStrengthValid = validCount === 3;
+                updateSubmitButton();
+            }
+
+            // Password match validation
+            function checkPasswordMatch() {
+                const matchIndicator = document.getElementById('passwordMatch');
+                const matchIcon = document.getElementById('passwordMatchIndicator');
+                
+                if (password1.value && password2.value) {
+                    matchIndicator.style.display = 'block';
+                    
+                    if (password1.value === password2.value) {
+                        matchIcon.classList.add('valid');
+                        matchIcon.querySelector('i').className = 'bi bi-check-circle';
+                        passwordsMatch = true;
+                    } else {
+                        matchIcon.classList.remove('valid');
+                        matchIcon.querySelector('i').className = 'bi bi-x-circle';
+                        matchIcon.querySelector('span').textContent = 'Passwords do not match';
+                        passwordsMatch = false;
+                    }
+                } else {
+                    matchIndicator.style.display = 'none';
+                    passwordsMatch = false;
+                }
+                updateSubmitButton();
+            }
+
+            // Update submit button state
+            function updateSubmitButton() {
+                if (passwordStrengthValid && passwordsMatch) {
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('btn-secondary');
+                    submitBtn.classList.add('btn-primary');
+                } else {
+                    submitBtn.disabled = true;
+                    submitBtn.classList.remove('btn-primary');
+                    submitBtn.classList.add('btn-secondary');
+                }
+            }
+
+            // Event listeners
             if (password1) {
                 password1.addEventListener('input', function() {
-                    const password = this.value;
-                    const lengthReq = document.getElementById('length');
-                    const letterReq = document.getElementById('letter');
-                    const numberReq = document.getElementById('number');
-
-                    // Length check
-                    if (password.length >= 8) {
-                        lengthReq.classList.add('valid');
-                        lengthReq.querySelector('i').className = 'bi bi-check-circle';
-                    } else {
-                        lengthReq.classList.remove('valid');
-                        lengthReq.querySelector('i').className = 'bi bi-x-circle';
-                    }
-
-                    // Letter check
-                    if (/[a-zA-Z]/.test(password)) {
-                        letterReq.classList.add('valid');
-                        letterReq.querySelector('i').className = 'bi bi-check-circle';
-                    } else {
-                        letterReq.classList.remove('valid');
-                        letterReq.querySelector('i').className = 'bi bi-x-circle';
-                    }
-
-                    // Number check
-                    if (/\d/.test(password)) {
-                        numberReq.classList.add('valid');
-                        numberReq.querySelector('i').className = 'bi bi-check-circle';
-                    } else {
-                        numberReq.classList.remove('valid');
-                        numberReq.querySelector('i').className = 'bi bi-x-circle';
-                    }
+                    checkPasswordStrength(this.value);
+                    checkPasswordMatch();
                 });
             }
 
+            if (password2) {
+                password2.addEventListener('input', function() {
+                    checkPasswordMatch();
+                });
+            }
+
+            // Initial button state
+            updateSubmitButton();
+
             // Form submission handling
             form.addEventListener('submit', function(e) {
+                // Check password strength
+                if (!passwordStrengthValid) {
+                    e.preventDefault();
+                    alert('Please ensure your password meets all requirements');
+                    return;
+                }
+
+                // Check password match
+                if (!passwordsMatch) {
+                    e.preventDefault();
+                    alert('Passwords do not match');
+                    return;
+                }
+
                 // Check terms checkbox
                 const termsChecked = document.getElementById('terms').checked;
                 if (!termsChecked) {
@@ -832,6 +945,7 @@
                     return;
                 }
 
+                // Show loading state
                 submitBtn.disabled = true;
                 spinner.style.display = 'inline-block';
                 btnText.innerHTML = '<i class="bi bi-arrow-clockwise me-2"></i>Creating account...';
