@@ -1864,7 +1864,9 @@
 
 
 
-
+/* ============================================
+   INVESTOR DESIGN
+   ============================================ */
 
 
 /* Investor-specific styling - inherits most from startup matchmaking */
@@ -1971,4 +1973,101 @@
         font-size: 0.7rem;
         padding: 0.1rem 0.4rem;
     }
+}
+
+
+/* ============================================
+   CORPORATE DESIGN
+   ============================================ */
+
+.corporate-icon-container {
+    position: relative;
+    z-index: 2;
+}
+
+.corporate-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #ffffff15 0%, #ffffff25 100%);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.corporate-icon i {
+    font-size: 2.5rem;
+    color: white;
+    animation: buildingFloat 3s ease-in-out infinite;
+}
+
+@keyframes buildingFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+}
+
+
+/* Industry Expert Tags */
+.industry-expert-tags {
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+}
+
+.industry-expert-tag {
+    background: #e3f2fd;
+    color: #1565c0;
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    border: 1px solid #42a5f5;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: inline-block;
+    margin-right: 0.25rem;
+    margin-bottom: 0.25rem;
+}
+
+.industry-expert-tag:hover {
+    background: #42a5f5;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(66, 165, 245, 0.2);
+}
+
+.industry-expert-more {
+    background: #f5f5f5;
+    color: #757575;
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    border: 1px solid #bdbdbd;
+    font-weight: 500;
+    display: inline-block;
+    margin-right: 0.25rem;
+    margin-bottom: 0.25rem;
+}
+
+/* Collaboration Tags */
+.collaboration-info-sm{
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+}
+
+.collaboration-tag-sm {
+    background: #fff3e0;
+    color: #e65100;
+    border: 1px solid #ff9800;
+    
+
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
 }
