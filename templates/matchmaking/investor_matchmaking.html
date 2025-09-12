@@ -50,7 +50,7 @@
             <span class="filter-tag" data-filter="early-stage">Early Stage Focus</span>
             <span class="filter-tag" data-filter="growth">Growth Stage Focus</span>
             <span class="filter-tag" data-filter="high-match">High Match (>80%)</span>
-            <span class="filter-tag" data-filter="active">Active Investors</span>
+            <span class="filter-tag" data-filter="recent">Recently Added</span>
         </div>
     </div>
 
@@ -1316,10 +1316,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     const matchScore = parseInt(dataItem.getAttribute('data-match')) || 0;
                     shouldShow = matchScore > 80;
                     break;
-                case 'active':
-                    // Show active investors only
-                    const isActive = dataItem.getAttribute('data-is-active') === 'true';
-                    shouldShow = isActive;
+                case 'recent':
+                    // Show investors registered within the last 1 month
+                    const createdAt = dataItem.getAttribute('data-created-at');
+                    if (!createdAt) {
+                        shouldShow = false;
+                        break;
+                    }
+                    const now = new Date();
+                    const oneMonthAgo = new Date();
+                    oneMonthAgo.setMonth(now.getMonth() - 1);
+                    const investorDate = new Date(createdAt);
+                    shouldShow = investorDate >= oneMonthAgo;
                     break;
                 default:
                     shouldShow = true;
