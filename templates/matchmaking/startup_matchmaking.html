@@ -594,6 +594,41 @@
                                             <span class="checkbox-text">🇻🇳 Vietnam</span>
                                         </label>
                                     </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="locCambodia" name="primary_location" value="Cambodia" class="form-check-input">
+                                        <label for="locCambodia" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🇰🇭 Cambodia</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="locLaos" name="primary_location" value="Laos" class="form-check-input">
+                                        <label for="locLaos" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🇱🇦 Laos</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="locMyanmar" name="primary_location" value="Myanmar" class="form-check-input">
+                                        <label for="locMyanmar" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🇲🇲 Myanmar</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="locBrunei" name="primary_location" value="Brunei" class="form-check-input">
+                                        <label for="locBrunei" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🇧🇳 Brunei</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="locOther" name="primary_location" value="Other" class="form-check-input">
+                                        <label for="locOther" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🌍 Other</span>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div></label>
@@ -2892,7 +2927,7 @@ document.addEventListener('DOMContentLoaded', function() {
             case 'early-stage':
                 return ['idea', 'prototype', 'validation', 'early'].includes(data.stage);
             case 'growth':
-                return ['scaling', 'profit'].includes(data.stage);
+                return ['scaling', 'profitable'].includes(data.stage);
             case 'high-match':
                 return data.matchScore > 80;
             case 'recent':
@@ -2949,32 +2984,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 return true;
             }
             
-            // Partial matching for display text
-            if (range === 'under_10k' && (dataFundingLower.includes('under') || dataFundingLower.includes('10k'))) {
+            // More precise matching for display text to avoid overlaps
+            if (range === 'under_10k' && dataFundingLower.includes('under') && dataFundingLower.includes('$10k')) {
                 return true;
             }
-            if (range === '10k_50k' && (dataFundingLower.includes('10k') && dataFundingLower.includes('50k'))) {
+            if (range === '10k_50k' && dataFundingLower.includes('$10k') && dataFundingLower.includes('$50k')) {
                 return true;
             }
-            if (range === '50k_100k' && (dataFundingLower.includes('50k') && dataFundingLower.includes('100k'))) {
+            if (range === '50k_100k' && dataFundingLower.includes('$50k') && dataFundingLower.includes('$100k')) {
                 return true;
             }
-            if (range === '100k_500k' && (dataFundingLower.includes('100k') && dataFundingLower.includes('500k'))) {
+            if (range === '100k_500k' && dataFundingLower.includes('$100k') && dataFundingLower.includes('$500k')) {
                 return true;
             }
-            if (range === '500k_1m' && (dataFundingLower.includes('500k') || dataFundingLower.includes('1m'))) {
+            if (range === '500k_1m' && dataFundingLower.includes('$500k') && dataFundingLower.includes('$1m')) {
                 return true;
             }
-            if (range === '1m_5m' && (dataFundingLower.includes('1m') && dataFundingLower.includes('5m'))) {
+            if (range === '1m_5m' && dataFundingLower.includes('$1m') && dataFundingLower.includes('$5m')) {
                 return true;
             }
-            if (range === '5m_10m' && (dataFundingLower.includes('5m') && dataFundingLower.includes('10m'))) {
+            if (range === '5m_10m' && dataFundingLower.includes('$5m') && dataFundingLower.includes('$10m')) {
                 return true;
             }
-            if (range === 'over_10m' && (dataFundingLower.includes('over') || dataFundingLower.includes('10m'))) {
+            if (range === 'over_10m' && dataFundingLower.includes('over') && dataFundingLower.includes('$10m')) {
                 return true;
             }
-            if (range === 'not_seeking' && (dataFundingLower.includes('not') || dataFundingLower.includes('seeking'))) {
+            if (range === 'not_seeking' && dataFundingLower.includes('not currently seeking funding')) {
                 return true;
             }
             
