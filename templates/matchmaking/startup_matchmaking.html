@@ -415,7 +415,12 @@
                                     Match Score: <span id="matchValue">0</span>%+
                                 </label>
                                 <div class="range-container">
-                                    <input type="range" class="form-range" id="matchRange" min="0" max="100" value="0">
+                                    <div class="custom-range-slider">
+                                        <input type="range" class="range-input" id="matchRange" min="0" max="100" value="0">
+                                        <div class="slider-track">
+                                            <div class="slider-fill" id="matchProgress"></div>
+                                        </div>
+                                    </div>
                                     <div class="range-labels">
                                         <span>0%</span>
                                         <span>100%</span>
@@ -1312,6 +1317,11 @@
 
 .startup-row:hover td:not(.sticky-column) {
     background: #f8f9fa;
+}
+
+.startup-table th {
+    border: none;
+    border-bottom: 2px solid #dee2e6;
 }
 
 .startup-table th:not(.sticky-column) {
@@ -2371,48 +2381,93 @@
     border: 2px solid #e9ecef;
 }
 
-.form-range {
-    width: 100%;
-    height: 6px;
-    background: #e9ecef;
-    border-radius: 3px;
-    outline: none;
-    -webkit-appearance: none;
-    appearance: none;
+.custom-range-slider {
+    position: relative;
+    height: 20px;
     margin: 0.75rem 0;
 }
 
-.form-range::-webkit-slider-thumb {
+.slider-track {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    background-color: #e9ecef;
+    border-radius: 3px;
+    transform: translateY(-50%);
+}
+
+.slider-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #2C59A7 0%, #4169E1 100%);
+    border-radius: 3px;
+    transition: width 0.2s ease;
+}
+
+.range-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 20px;
+    background: transparent;
     -webkit-appearance: none;
     appearance: none;
+    outline: none;
+    cursor: pointer;
+    margin: 0;
+    z-index: 10;
+}
+
+.range-input::-webkit-slider-track {
+    height: 6px;
+    background: transparent;
+    border: none;
+}
+
+.range-input::-webkit-slider-thumb {
+    -webkit-appearance: none;
     width: 20px;
     height: 20px;
     background: #2C59A7;
     border-radius: 50%;
     cursor: pointer;
-    box-shadow: 0 3px 8px rgba(44, 89, 167, 0.25);
-    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(44, 89, 167, 0.3);
+    transition: all 0.2s ease;
 }
 
-.form-range::-webkit-slider-thumb:hover {
+.range-input::-webkit-slider-thumb:hover {
+    background: #1e4085;
     transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(44, 89, 167, 0.35);
+    box-shadow: 0 3px 12px rgba(44, 89, 167, 0.4);
 }
 
-.form-range::-moz-range-thumb {
+.range-input::-moz-range-track {
+    height: 6px;
+    background: transparent;
+    border: none;
+}
+
+.range-input::-moz-range-thumb {
     width: 20px;
     height: 20px;
     background: #2C59A7;
     border-radius: 50%;
     cursor: pointer;
     border: none;
-    box-shadow: 0 3px 8px rgba(44, 89, 167, 0.25);
-    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(44, 89, 167, 0.3);
+    transition: all 0.2s ease;
 }
 
-.form-range::-moz-range-thumb:hover {
+.range-input::-moz-range-thumb:hover {
+    background: #1e4085;
     transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(44, 89, 167, 0.35);
+    box-shadow: 0 3px 12px rgba(44, 89, 167, 0.4);
 }
 
 .range-labels {
@@ -2644,13 +2699,52 @@ document.addEventListener('DOMContentLoaded', function() {
     const filterModal = document.getElementById('filterModal');
     const applyFiltersBtn = document.getElementById('applyFiltersBtn');
     const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+    
+    // Update match range display and progress
     const matchRange = document.getElementById('matchRange');
     const matchValue = document.getElementById('matchValue');
+    const matchProgress = document.getElementById('matchProgress');
     
-    // Update match range display
-    if (matchRange && matchValue) {
-        matchRange.addEventListener('input', function() {
-            matchValue.textContent = this.value;
+    if (matchRange && matchValue && matchProgress) {
+        // Function to update progress bar
+        function updateMatchProgress() {
+            const value = parseInt(matchRange.value);
+            console.log('Updating slider - Value:', value); // Debug
+            
+            // Update display text
+            matchValue.textContent = value;
+            
+            // Update progress bar width
+            matchProgress.style.width = value + '%';
+            console.log('Progress width set to:', value + '%'); // Debug
+            console.log('Progress element:', matchProgress); // Debug
+        }
+        
+        // Test the progress bar immediately
+        console.log('Slider elements found:', {
+            range: !!matchRange,
+            value: !!matchValue,
+            progress: !!matchProgress
+        });
+        
+        // Initialize progress on load
+        updateMatchProgress();
+        
+        // Add event listeners
+        matchRange.addEventListener('input', updateMatchProgress);
+        matchRange.addEventListener('change', updateMatchProgress);
+        
+        // Test with a default value
+        setTimeout(() => {
+            matchRange.value = 25;
+            updateMatchProgress();
+            console.log('Test: Set slider to 25%');
+        }, 500);
+    } else {
+        console.error('Missing slider elements:', {
+            range: !!matchRange,
+            value: !!matchValue,
+            progress: !!matchProgress
         });
     }
     
@@ -2732,6 +2826,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (matchRange) {
             matchRange.value = 0;
             matchValue.textContent = '0';
+            if (matchProgress) {
+                matchProgress.style.width = '0%';
+            }
         }
         
         document.querySelectorAll('#filterModal input[type="checkbox"]').forEach(input => {
