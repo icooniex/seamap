@@ -3,8 +3,6 @@
 {% load media_tags %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/matchmaking.css' %}">
-
 <div class="container-fluid p-0">
     <!-- Header Section -->
     <div class="dashboard-header mb-4">
@@ -12,7 +10,7 @@
             <div class="d-flex align-items-center">
                 <div class="investor-icon-container me-3">
                     <div class="investor-icon">
-                        <i class="bi bi-currency-dollar"></i>
+                        <i class="bi bi-bank"></i>
                     </div>
                 </div>
                 <div>
@@ -50,7 +48,7 @@
             <span class="filter-tag" data-filter="early-stage">Early Stage Focus</span>
             <span class="filter-tag" data-filter="growth">Growth Stage Focus</span>
             <span class="filter-tag" data-filter="high-match">High Match (>80%)</span>
-            <span class="filter-tag" data-filter="recent">Recently Added</span>
+            <span class="filter-tag" data-filter="active">Active Investors</span>
         </div>
     </div>
 
@@ -83,42 +81,38 @@
                         </th>
                         <th class="sortable" data-sort="match">
                             <div class="d-flex align-items-center gap-2">
-                                <i class="bi bi-percent text-muted me-2"></i>
-                                <span>Match</span>
+                                <span>Match Score</span>
                                 <i class="bi bi-arrow-down sort-icon"></i>
                             </div>
                         </th>
                         <th class="sortable" data-sort="type">
                             <div class="d-flex align-items-center gap-2">
-                                <i class="bi bi-buildings text-muted me-2"></i>
                                 <span>Investor Type</span>
                                 <i class="bi bi-arrow-down sort-icon"></i>
                             </div>
                         </th>
                         <th class="sortable" data-sort="location">
                             <div class="d-flex align-items-center gap-2">
-                                <i class="bi bi-geo-alt text-muted me-2"></i>
                                 <span>Location</span>
                                 <i class="bi bi-arrow-down sort-icon"></i>
                             </div>
                         </th>
                         <th class="sortable" data-sort="funding">
                             <div class="d-flex align-items-center gap-2">
-                                <i class="bi bi-currency-dollar text-muted me-2"></i>
                                 <span>Funding Size</span>
                                 <i class="bi bi-arrow-down sort-icon"></i>
                             </div>
                         </th>
-                        <th>
+                        <th class="sortable" data-sort="stages">
                             <div class="d-flex align-items-center gap-2">
-                                <i class="bi bi-graph-up-arrow text-muted me-2"></i>
                                 <span>Preferred Stages</span>
+                                <i class="bi bi-arrow-down sort-icon"></i>
                             </div>
                         </th>
-                        <th>
+                        <th class="sortable" data-sort="categories">
                             <div class="d-flex align-items-center gap-2">
-                                <i class="bi bi-briefcase text-muted me-2"></i>
                                 <span>Investment Categories</span>
+                                <i class="bi bi-arrow-down sort-icon"></i>
                             </div>
                         </th>
                     </tr>
@@ -129,12 +123,9 @@
                         data-match="{{ investor.match_score }}" 
                         data-type="{{ investor.investor_type|default:'unknown' }}" 
                         data-name="{{ investor.company_name|lower|cut:' '|cut:'-' }}" 
-                        data-location="{{ investor.primary_location|default:'unknown' }}"
                         data-funding-size="{{ investor.funding_size|default:'' }}"
                         data-preferred-stages="{{ investor.preferred_stages|join:',' }}"
                         data-investment-categories="{{ investor.investment_categories|join:',' }}"
-                        data-is-active="{{ investor.is_active|yesno:'true,false' }}"
-                        data-created-at="{{ investor.created_at|date:'c' }}"
                         data-href="/investor/{{ investor.id }}/">
                         <td class="company-cell sticky-column">
                             <div class="d-flex align-items-center">
@@ -172,19 +163,21 @@
                         </td>
                         <td class="type-cell">
                             <div class="d-flex align-items-center">
+                                <i class="bi bi-briefcase text-muted me-2"></i>
                                 <span>{{ investor.get_investor_type_display|default:investor.investor_type|default:"Not specified" }}</span>
                             </div>
                         </td>
                         <td class="location-cell">
                             <div class="d-flex align-items-center">
+                                <i class="bi bi-geo-alt text-muted me-2"></i>
                                 <span>{{ investor.get_primary_location_display|default:investor.primary_location|default:"Not specified" }}</span>
                             </div>
                         </td>
                         <td class="funding-cell">
                             <div class="funding-info-sm">
                                 {% if investor.funding_size %}
-                                    <div class="funding-amount-sm">{{ investor.get_funding_size_display }}</div>
-                                    <div class="funding-type-sm">Fund Size</div>
+                                    <div class="funding-amount-sm">{{ investor.get_funding_size_display|default:investor.funding_size }}</div>
+                                    <div class="funding-type-sm">Investment Range</div>
                                 {% else %}
                                     <div class="funding-amount-sm">Not specified</div>
                                 {% endif %}
@@ -195,21 +188,7 @@
                                 <div class="stage-badges-sm">
                                     {% for stage in investor.preferred_stages|slice:":2" %}
                                         <span class="stage-badge-sm stage-{{ stage }}">
-                                            {% if stage == "pre_seed" %}
-                                                🌱 Pre-Seed
-                                            {% elif stage == "seed" %}
-                                                🌿 Seed
-                                            {% elif stage == "series_a" %}
-                                                🚀 Series A
-                                            {% elif stage == "series_b" %}
-                                                🏗️ Series B
-                                            {% elif stage == "series_c" %}
-                                                🏢 Series C
-                                            {% elif stage == "series_d" %}
-                                                🏆 Series D+
-                                            {% else %}
-                                                {{ stage|title }}
-                                            {% endif %}
+                                            {{ stage|title }}
                                         </span>
                                     {% endfor %}
                                     {% if investor.preferred_stages|length > 2 %}
@@ -251,158 +230,107 @@
         </div>
     </div>
 
-    <!-- JavaScript Empty State for Table View -->
-    <div class="empty-state-table text-center py-5" id="emptyStateTable" style="display: none;">
-        <div class="d-flex flex-column align-items-center">
-            <i class="bi bi-search fs-1 text-muted mb-3"></i>
-            <h5 class="text-muted">No investors found</h5>
-            <p class="text-muted">Try adjusting your search criteria or filters.</p>
-        </div>
-    </div>
-
-    <!-- Grid View Container (hidden by default) -->
-    <div class="container-fluid d-none" id="cardContainer">
-        <div class="row g-4">
+    <!-- Grid View (Hidden by default) -->
+    <div class="startups-grid-container" id="cardContainer" style="display: none;">
+        <div class="startups-grid">
             {% for investor in investors %}
-            <div class="col-12 col-md-6 col-lg-4 investor-grid-item">
-                <div class="startup-card card h-100" 
-                     data-match="{{ investor.match_score }}" 
-                     data-type="{{ investor.investor_type|default:'unknown' }}" 
-                     data-name="{{ investor.company_name|lower|cut:' '|cut:'-' }}" 
-                     data-location="{{ investor.primary_location|default:'unknown' }}"
-                     data-funding-size="{{ investor.funding_size|default:'' }}"
-                     data-preferred-stages="{{ investor.preferred_stages|join:',' }}"
-                     data-investment-categories="{{ investor.investment_categories|join:',' }}"
-                     data-is-active="{{ investor.is_active|yesno:'true,false' }}"
-                     data-created-at="{{ investor.created_at|date:'c' }}"
-                     onclick="window.location.href='/investor/{{ investor.id }}/'">
-                    <div class="card-body p-3">
-                        <!-- Investor Header -->
-                        <div class="startup-header mb-3">
-                            <div class="d-flex align-items-start justify-content-between">
-                                <div class="d-flex align-items-center flex-grow-1">
-                                    <div class="company-avatar me-3">
-                                        {% if investor.company_logo %}
-                                            <img src="{% company_logo_url investor %}" alt="{{ investor.company_name }}" class="avatar-img">
-                                        {% else %}
-                                            <div class="avatar-placeholder">
-                                                {{ investor.company_name|slice:":2"|upper }}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <h6 class="company-name mb-1">{{ investor.company_name }}</h6>
-                                        <div class="location-badge">
-                                            <i class="bi bi-geo-alt"></i>
-                                            {{ investor.get_primary_location_display|default:investor.primary_location|default:"Not specified" }}
+            <div class="startup-grid-item clickable-card" 
+                 data-match="{{ investor.match_score }}" 
+                 data-type="{{ investor.investor_type|default:'unknown' }}" 
+                 data-funding-size="{{ investor.funding_size|default:'' }}"
+                 data-preferred-stages="{{ investor.preferred_stages|join:',' }}"
+                 data-investment-categories="{{ investor.investment_categories|join:',' }}"
+                 data-href="/investor/{{ investor.id }}/">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body d-flex flex-column">
+                        <!-- Header Section -->
+                        <div class="grid-header mb-3">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <!-- Company Logo/Avatar -->
+                                <div class="company-avatar-grid">
+                                    {% if investor.company_logo %}
+                                        <img src="{% company_logo_url investor %}" alt="{{ investor.company_name }}" class="avatar-img-grid">
+                                    {% else %}
+                                        <div class="avatar-placeholder-grid">
+                                            {{ investor.company_name|slice:":2"|upper }}
                                         </div>
-                                    </div>
+                                    {% endif %}
                                 </div>
-                                <div class="match-score">
-                                    <span class="match-percentage">{{ investor.match_score }}%</span>
+                                <!-- Match Score Badge -->
+                                <div class="match-badge">
+                                    <span class="match-percentage-grid">{{ investor.match_score }}%</span>
                                 </div>
+                            </div>
+                            
+                            <!-- Company Name -->
+                            <h5 class="company-name-grid mb-1">{{ investor.company_name }}</h5>
+                            
+                            <!-- Location & Investor Type -->
+                            <div class="company-meta mb-2">
+                                <span class="meta-item">
+                                    <i class="bi bi-geo-alt text-muted"></i> {{ investor.get_primary_location_display|default:investor.primary_location|default:"Not specified" }}
+                                </span>
+                                <span class="meta-separator">•</span>
+                                <span class="meta-item">
+                                    <i class="bi bi-briefcase text-muted"></i> {{ investor.get_investor_type_display|default:investor.investor_type|default:"Not specified" }}
+                                </span>
                             </div>
                         </div>
 
                         <!-- Description -->
-                        <p class="startup-description">
-                            {{ investor.investment_philosophy|default:investor.company_description|truncatewords:15|default:"No description available." }}
+                        <p class="company-description-grid flex-grow-1">
+                            {{ investor.investment_focus|default:investor.company_description|truncatewords:15|default:"No investment focus specified." }}
                         </p>
 
-                        <!-- Investor Details -->
-                        <div class="startup-details mb-3">
-                            <div class="detail-row">
-                                <span class="detail-label">Type:</span>
-                                {% if investor.investor_type %}
-                                    <span class="stage-badge stage-{{ investor.investor_type }}">
-                                        {{ investor.get_investor_type_display }}
-                                    </span>
+                        <!-- Investment Categories Tags -->
+                        {% if investor.investment_categories %}
+                        <div class="tech-tags-grid mb-3">
+                            {% for category in investor.investment_categories|slice:":3" %}
+                                <span class="tech-tag-grid">{{ category|title }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <!-- Footer Section -->
+                        <div class="grid-footer mt-auto">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <!-- Preferred Stages -->
+                                {% if investor.preferred_stages %}
+                                    <div class="stage-badges-grid">
+                                        {% for stage in investor.preferred_stages|slice:":2" %}
+                                            <span class="stage-badge-grid stage-{{ stage }}">{{ stage|title }}</span>
+                                        {% endfor %}
+                                    </div>
                                 {% else %}
-                                    <span class="text-muted">Not specified</span>
+                                    <span class="text-muted small">No stage preference</span>
                                 {% endif %}
                             </div>
                             
-                            <div class="detail-row">
-                                <span class="detail-label">Fund Size:</span>
-                                {% if investor.funding_size %}
-                                    <span>{{ investor.get_funding_size_display }}</span>
-                                {% else %}
-                                    <span class="text-muted">Not specified</span>
-                                {% endif %}
-                            </div>
-
-                            <div class="detail-row">
-                                <span class="detail-label">Team Size:</span>
-                                {% if investor.get_team_size_display or investor.team_size %}
-                                    <span>{{ investor.get_team_size_display|default:investor.team_size }}</span>
-                                {% else %}
-                                    <span class="text-muted">Not specified</span>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <!-- Investment Categories -->
-                        {% if investor.investment_categories %}
-                        <div class="tech-tags mb-3">
-                            {% for category in investor.investment_categories|slice:":4" %}
-                                <span class="tech-tag">{{ category|title }}</span>
-                            {% endfor %}
-                            {% if investor.investment_categories|length > 4 %}
-                                <span class="tech-tag-more">+{{ investor.investment_categories|length|add:"-4" }}</span>
+                            <!-- Funding Info -->
+                            {% if investor.funding_size %}
+                                <div class="funding-info-grid">
+                                    <i class="bi bi-currency-dollar text-success"></i>
+                                    <span class="funding-text">Investment Range: {{ investor.get_funding_size_display }}</span>
+                                </div>
+                            {% else %}
+                                <div class="funding-info-grid text-muted">
+                                    <i class="bi bi-info-circle"></i>
+                                    <span class="funding-text">Investment range not specified</span>
+                                </div>
                             {% endif %}
                         </div>
-                        {% endif %}
-
-                        <!-- Preferred Stages -->
-                        {% if investor.preferred_stages %}
-                        <div class="support-areas">
-                            <small class="text-muted d-block mb-1">Preferred Stages:</small>
-                            <div class="support-tags">
-                                {% for stage in investor.preferred_stages|slice:":3" %}
-                                    <span class="support-tag">{{ stage|title }}</span>
-                                {% endfor %}
-                                {% if investor.preferred_stages|length > 3 %}
-                                    <span class="support-tag-more">+{{ investor.preferred_stages|length|add:"-3" }}</span>
-                                {% endif %}
-                            </div>
-                        </div>
-                        {% endif %}
-
-                        <!-- Market Country Interests -->
-                        {% if investor.market_country_interests %}
-                        <div class="customer-segments-section mt-3">
-                            <small class="text-muted d-block mb-1">Market Interests:</small>
-                            <div class="customer-segments-tags">
-                                {% for country in investor.market_country_interests|slice:":3" %}
-                                    <span class="customer-segment-tag">{{ country|title }}</span>
-                                {% endfor %}
-                                {% if investor.market_country_interests|length > 3 %}
-                                    <span class="customer-segment-more">+{{ investor.market_country_interests|length|add:"-3" }}</span>
-                                {% endif %}
-                            </div>
-                        </div>
-                        {% endif %}
                     </div>
                 </div>
             </div>
             {% empty %}
-            <div class="col-12">
-                <div class="text-center text-muted py-5">
-                    <i class="bi bi-search fs-1 text-muted mb-3 d-block"></i>
+            <div class="empty-state">
+                <div class="d-flex flex-column align-items-center text-muted">
+                    <i class="bi bi-search fs-1 mb-3"></i>
                     <h5>No investors found</h5>
                     <p>Try adjusting your search criteria or filters.</p>
                 </div>
             </div>
             {% endfor %}
-        </div>
-    </div>
-
-    <!-- JavaScript Empty State for Grid View -->
-    <div class="empty-state-grid text-center py-5" id="emptyStateGrid" style="display: none;">
-        <div class="d-flex flex-column align-items-center">
-            <i class="bi bi-search fs-1 text-muted mb-3"></i>
-            <h5 class="text-muted">No investors found</h5>
-            <p class="text-muted">Try adjusting your search criteria or filters.</p>
         </div>
     </div>
 
@@ -428,15 +356,10 @@
                             <div class="form-group">
                                 <label class="form-label">
                                     <i class="bi bi-percent me-2"></i>
-                                    Minimum Matched Score : <span id="matchValue" style="padding-left: 5px;"> 0 </span> %
+                                    Match Score: <span id="matchValue">0</span>%+
                                 </label>
                                 <div class="range-container">
-                                    <div class="custom-range-slider">
-                                        <input type="range" class="range-input" id="matchRange" min="0" max="100" value="0">
-                                        <div class="slider-track">
-                                            <div class="slider-fill" id="matchProgress"></div>
-                                        </div>
-                                    </div>
+                                    <input type="range" class="form-range" id="matchRange" min="0" max="100" value="0">
                                     <div class="range-labels">
                                         <span>0%</span>
                                         <span>100%</span>
@@ -446,7 +369,7 @@
                         </div>
 
                         <!-- Investor Type Filter -->
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label class="form-label">
                                     <i class="bi bi-briefcase me-2"></i>
@@ -457,49 +380,42 @@
                                         <input type="checkbox" id="typeAngel" name="investor_type" value="angel" class="form-check-input">
                                         <label for="typeAngel" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">🦸 Angel Investor</span>
+                                            <span class="checkbox-text">👼 Angel Investor</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
                                         <input type="checkbox" id="typeVC" name="investor_type" value="vc" class="form-check-input">
                                         <label for="typeVC" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">💼 Venture Capital (VC)</span>
+                                            <span class="checkbox-text">🏢 Venture Capital</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="typePE" name="investor_type" value="pe" class="form-check-input">
+                                        <label for="typePE" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">💼 Private Equity</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
                                         <input type="checkbox" id="typeCorporate" name="investor_type" value="corporate" class="form-check-input">
                                         <label for="typeCorporate" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">🏢 Corporate Investor</span>
+                                            <span class="checkbox-text">🏭 Corporate Investor</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="typeFamilyOffice" name="investor_type" value="family_office" class="form-check-input">
-                                        <label for="typeFamilyOffice" class="checkbox-label">
+                                        <input type="checkbox" id="typeGrant" name="investor_type" value="grant" class="form-check-input">
+                                        <label for="typeGrant" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">👨‍👩‍👧‍👦 Family Office</span>
+                                            <span class="checkbox-text">🎯 Grant Provider</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="typeImpactFund" name="investor_type" value="impact_fund" class="form-check-input">
-                                        <label for="typeImpactFund" class="checkbox-label">
+                                        <input type="checkbox" id="typeAccelerator" name="investor_type" value="accelerator" class="form-check-input">
+                                        <label for="typeAccelerator" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">🌱 Impact Fund</span>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="typeGovernment" name="investor_type" value="government" class="form-check-input">
-                                        <label for="typeGovernment" class="checkbox-label">
-                                            <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">🏛️ Government/Development Agency</span>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="typeOther" name="investor_type" value="other" class="form-check-input">
-                                        <label for="typeOther" class="checkbox-label">
-                                            <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">🔎 Other</span>
+                                            <span class="checkbox-text">🚀 Accelerator/Incubator</span>
                                         </label>
                                     </div>
                                 </div>
@@ -514,10 +430,6 @@
                                     Location
                                 </label>
                                 <div class="tech-checkbox-grid">
-                                    {% comment %}
-                                    Location options based on investor onboarding form.
-                                    Add/modify as needed for full coverage.
-                                    {% endcomment %}
                                     <div class="checkbox-item">
                                         <input type="checkbox" id="locSingapore" name="primary_location" value="Singapore" class="form-check-input">
                                         <label for="locSingapore" class="checkbox-label">
@@ -560,41 +472,6 @@
                                             <span class="checkbox-text">🇻🇳 Vietnam</span>
                                         </label>
                                     </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="locCambodia" name="primary_location" value="Cambodia" class="form-check-input">
-                                        <label for="locCambodia" class="checkbox-label">
-                                            <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">🇰🇭 Cambodia</span>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="locLaos" name="primary_location" value="Laos" class="form-check-input">
-                                        <label for="locLaos" class="checkbox-label">
-                                            <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">🇱🇦 Laos</span>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="locMyanmar" name="primary_location" value="Myanmar" class="form-check-input">
-                                        <label for="locMyanmar" class="checkbox-label">
-                                            <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">🇲🇲 Myanmar</span>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="locBrunei" name="primary_location" value="Brunei" class="form-check-input">
-                                        <label for="locBrunei" class="checkbox-label">
-                                            <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">🇧🇳 Brunei</span>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="locOther" name="primary_location" value="Other" class="form-check-input">
-                                        <label for="locOther" class="checkbox-label">
-                                            <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">🌏 Other</span>
-                                        </label>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -604,42 +481,49 @@
                             <div class="form-group">
                                 <label class="form-label">
                                     <i class="bi bi-currency-dollar me-2"></i>
-                                    Fund Size
+                                    Investment Range
                                 </label>
                                 <div class="tech-checkbox-grid">
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="fundingUnder1M" name="funding_size" value="under_1m" class="form-check-input">
-                                        <label for="fundingUnder1M" class="checkbox-label">
+                                        <input type="checkbox" id="fundingMicro" name="funding_size" value="micro" class="form-check-input">
+                                        <label for="fundingMicro" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Under $1M</span>
+                                            <span class="checkbox-text">Micro ($1K - $25K)</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="funding1M50M" name="funding_size" value="1m_50m" class="form-check-input">
-                                        <label for="funding1M50M" class="checkbox-label">
+                                        <input type="checkbox" id="fundingSeed" name="funding_size" value="seed" class="form-check-input">
+                                        <label for="fundingSeed" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">$1M - $50M</span>
+                                            <span class="checkbox-text">Seed ($25K - $100K)</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="funding100M200M" name="funding_size" value="100m_200m" class="form-check-input">
-                                        <label for="funding100M200M" class="checkbox-label">
+                                        <input type="checkbox" id="fundingEarly" name="funding_size" value="early" class="form-check-input">
+                                        <label for="fundingEarly" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">$100M - $200M</span>
+                                            <span class="checkbox-text">Early Stage ($100K - $1M)</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="funding200M500M" name="funding_size" value="200m_500m" class="form-check-input">
-                                        <label for="funding200M500M" class="checkbox-label">
+                                        <input type="checkbox" id="fundingSeriesA" name="funding_size" value="series_a" class="form-check-input">
+                                        <label for="fundingSeriesA" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">$200M - $500M</span>
+                                            <span class="checkbox-text">Series A ($1M - $5M)</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="fundingOver500M" name="funding_size" value="over_500m" class="form-check-input">
-                                        <label for="fundingOver500M" class="checkbox-label">
+                                        <input type="checkbox" id="fundingSeriesB" name="funding_size" value="series_b" class="form-check-input">
+                                        <label for="fundingSeriesB" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Over $500M</span>
+                                            <span class="checkbox-text">Series B ($5M - $15M)</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="fundingGrowth" name="funding_size" value="growth" class="form-check-input">
+                                        <label for="fundingGrowth" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Growth Stage ($15M+)</span>
                                         </label>
                                     </div>
                                 </div>
@@ -655,45 +539,45 @@
                                 </label>
                                 <div class="tech-checkbox-grid">
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="stagePreSeed" name="preferred_stages" value="pre_seed" class="form-check-input">
-                                        <label for="stagePreSeed" class="checkbox-label">
+                                        <input type="checkbox" id="stageIdea" name="preferred_stages" value="idea" class="form-check-input">
+                                        <label for="stageIdea" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">🌱 Pre-Seed</span>
+                                            <span class="checkbox-text">💡 Ideation</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="stageSeed" name="preferred_stages" value="seed" class="form-check-input">
-                                        <label for="stageSeed" class="checkbox-label">
+                                        <input type="checkbox" id="stagePrototype" name="preferred_stages" value="prototype" class="form-check-input">
+                                        <label for="stagePrototype" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">🌿 Seed</span>
+                                            <span class="checkbox-text">🔧 Prototype/MVP</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="stageSeriesA" name="preferred_stages" value="series_a" class="form-check-input">
-                                        <label for="stageSeriesA" class="checkbox-label">
+                                        <input type="checkbox" id="stageValidation" name="preferred_stages" value="validation" class="form-check-input">
+                                        <label for="stageValidation" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">🚀 Series A</span>
+                                            <span class="checkbox-text">🧪 Validation</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="stageSeriesB" name="preferred_stages" value="series_b" class="form-check-input">
-                                        <label for="stageSeriesB" class="checkbox-label">
+                                        <input type="checkbox" id="stageEarly" name="preferred_stages" value="early" class="form-check-input">
+                                        <label for="stageEarly" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">🏗️ Series B</span>
+                                            <span class="checkbox-text">📈 Early Growth</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="stageSeriesC" name="preferred_stages" value="series_c" class="form-check-input">
-                                        <label for="stageSeriesC" class="checkbox-label">
+                                        <input type="checkbox" id="stageScaling" name="preferred_stages" value="scaling" class="form-check-input">
+                                        <label for="stageScaling" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">🏢 Series C</span>
+                                            <span class="checkbox-text">🚀 Scaling</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="stageSeriesD" name="preferred_stages" value="series_d" class="form-check-input">
-                                        <label for="stageSeriesD" class="checkbox-label">
+                                        <input type="checkbox" id="stageProfit" name="preferred_stages" value="profit" class="form-check-input">
+                                        <label for="stageProfit" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">🏆 Series D+</span>
+                                            <span class="checkbox-text">💰 Established/Profitable</span>
                                         </label>
                                     </div>
                                 </div>
@@ -709,59 +593,59 @@
                                 </label>
                                 <div class="tech-checkbox-grid">
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="catEliminateRedesign" name="investment_categories" value="eliminate_redesign" class="form-check-input">
-                                        <label for="catEliminateRedesign" class="checkbox-label">
+                                        <input type="checkbox" id="catPlasticAlternatives" name="investment_categories" value="plastic_alternatives" class="form-check-input">
+                                        <label for="catPlasticAlternatives" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
                                             <span class="checkbox-text">Eliminate & Redesign Packaging</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="catRefillReuse" name="investment_categories" value="refill_reuse" class="form-check-input">
-                                        <label for="catRefillReuse" class="checkbox-label">
+                                        <input type="checkbox" id="catRecyclingTech" name="investment_categories" value="recycling_technologies" class="form-check-input">
+                                        <label for="catRecyclingTech" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
                                             <span class="checkbox-text">Refill & Reuse Solutions</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="catCollectionSorting" name="investment_categories" value="collection_sorting" class="form-check-input">
-                                        <label for="catCollectionSorting" class="checkbox-label">
+                                        <input type="checkbox" id="catWasteCollection" name="investment_categories" value="waste_collection" class="form-check-input">
+                                        <label for="catWasteCollection" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Collection & Sorting Technologies</span>
+                                            <span class="checkbox-text">Reusable Packaging Collection/Drop Off</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="catAdvancedRecycling" name="investment_categories" value="advanced_recycling" class="form-check-input">
-                                        <label for="catAdvancedRecycling" class="checkbox-label">
+                                        <input type="checkbox" id="catCircularEconomy" name="investment_categories" value="circular_economy" class="form-check-input">
+                                        <label for="catCircularEconomy" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Advanced Recycling & Upcycling</span>
+                                            <span class="checkbox-text">Upcycling Plastic Waste</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="catBioplastics" name="investment_categories" value="bioplastics" class="form-check-input">
-                                        <label for="catBioplastics" class="checkbox-label">
+                                        <input type="checkbox" id="catMonitoringTools" name="investment_categories" value="monitoring_tools" class="form-check-input">
+                                        <label for="catMonitoringTools" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Bioplastics & Compostable Materials</span>
+                                            <span class="checkbox-text">Sustainable Alternative Materials</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="catWasteManagement" name="investment_categories" value="waste_management" class="form-check-input">
-                                        <label for="catWasteManagement" class="checkbox-label">
+                                        <input type="checkbox" id="catEducationPartnerships" name="investment_categories" value="education_partnerships" class="form-check-input">
+                                        <label for="catEducationPartnerships" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Waste Management Infrastructure</span>
+                                            <span class="checkbox-text">Education & Industry Partnerships</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="catDataMonitoring" name="investment_categories" value="data_monitoring" class="form-check-input">
-                                        <label for="catDataMonitoring" class="checkbox-label">
+                                        <input type="checkbox" id="catTrackingMonitoring" name="investment_categories" value="tracking_monitoring" class="form-check-input">
+                                        <label for="catTrackingMonitoring" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Data, Monitoring & Traceability</span>
+                                            <span class="checkbox-text">Tracking & Monitoring Waste</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
                                         <input type="checkbox" id="catOther" name="investment_categories" value="other" class="form-check-input">
                                         <label for="catOther" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Other</span>
+                                            <span class="checkbox-text">Other Innovation</span>
                                         </label>
                                     </div>
                                 </div>
@@ -787,6 +671,1152 @@
     </div>
 </div>
 
+<style>
+/* Investor-specific styling - inherits most from startup matchmaking */
+.investor-icon-container {
+    position: relative;
+    z-index: 2;
+}
+
+.investor-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #ffffff15 0%, #ffffff25 100%);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.investor-icon i {
+    font-size: 2.5rem;
+    color: white;
+    animation: investorFloat 3s ease-in-out infinite;
+}
+
+@keyframes investorFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+}
+
+/* Responsive adjustments for investor icon */
+@media (max-width: 768px) {
+    .investor-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+    }
+    
+    .investor-icon i {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .investor-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+    }
+    
+    .investor-icon i {
+        font-size: 1.5rem;
+    }
+}
+
+/* Investor-specific table cell styling */
+.stage-badges-sm {
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+}
+
+.stage-badges-grid {
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+}
+
+.categories-sm {
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+}
+
+.category-tag-sm {
+    background: #e8f5e8;
+    color: #58946e;
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    border: 1px solid #58946e;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.category-tag-sm:hover {
+    background: linear-gradient(135deg, #58946e 0%, #639ac0 100%);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(88, 148, 110, 0.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .stage-badges-sm,
+    .stage-badges-grid {
+        gap: 0.125rem;
+    }
+    
+    .category-tag-sm {
+        font-size: 0.7rem;
+        padding: 0.1rem 0.4rem;
+    }
+}
+
+/* Include all dashboard and filter modal styles from startup matchmaking */
+/* These styles will be the same as the startup page for consistency */
+
+/* Dashboard Styling - Onboarding Theme */
+.dashboard-header {
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    color: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(44, 89, 167, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    opacity: 0.3;
+}
+
+.text-primary-light {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-weight: 500;
+}
+
+.header-subtitle {
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-size: 1.1rem;
+    font-weight: 400;
+    line-height: 1.4;
+}
+
+/* Search Section Styling */
+.search-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem;
+}
+
+.search-input-group {
+    position: relative;
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+    z-index: 10;
+}
+
+.search-input {
+    padding-left: 2.5rem;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.search-input:focus {
+    border-color: #2c59a7;
+    background: white;
+    box-shadow: 0 0 0 0.2rem rgba(44, 89, 167, 0.1);
+}
+
+.search-btn {
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    border: none;
+    border-radius: 12px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(44, 89, 167, 0.2);
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+}
+
+.filter-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(44, 89, 167, 0.1);
+}
+
+.filter-tag {
+    padding: 0.2rem 0.75rem;
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #495057;
+}
+
+.filter-tag:hover {
+    border-color: #2c59a7;
+    color: #2c59a7;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(44, 89, 167, 0.15);
+}
+
+.filter-tag.active {
+    background-color: #2c59a7;
+    color: white;
+    border-color: #2c59a7;
+    box-shadow: 0 4px 16px rgba(44, 89, 167, 0.25);
+}
+
+.filter-btn-primary {
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%) !important;
+    color: white !important;
+    border: 2px solid #2c59a7 !important;
+    font-weight: 600;
+}
+
+.filter-btn-primary:hover {
+    background: linear-gradient(135deg, #234a91 0%, #4a3f8a 100%) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(44, 89, 167, 0.3) !important;
+}
+
+.results-summary {
+    padding: 0 0.5rem;
+}
+
+.view-options .btn {
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+}
+
+.view-options .btn.active {
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    color: white;
+    border: none;
+    box-shadow: 0 2px 8px rgba(44, 89, 167, 0.2);
+}
+
+/* Table Styling with Fixed Sticky Column */
+.table-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    position: relative;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    position: relative;
+}
+
+.startup-table {
+    margin-bottom: 0;
+    min-width: 1200px;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+}
+
+.table-header {
+    background: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.table-header th {
+    font-weight: 600;
+    color: #2c3e50;
+    padding: 1rem;
+    border-bottom: 2px solid #dee2e6;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+/* Enhanced Sticky Column Styling with Persistent Border */
+.sticky-column {
+    position: sticky;
+    left: 0;
+    background: white !important;
+    z-index: 999 !important;
+    min-width: 350px;
+    max-width: 350px;
+    border-right: 2px solid #dee2e6 !important;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
+}
+
+.sticky-column::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 0;
+    background: #dee2e6;
+    z-index: 1001;
+}
+
+.table-header .sticky-column {
+    background: #f8f9fa !important;
+    border-right: 2px solid #dee2e6 !important;
+    position: sticky;
+    left: 0;
+    z-index: 1000 !important;
+}
+
+.table-header .sticky-column::after {
+    background: #dee2e6;
+}
+
+.startup-row .sticky-column {
+    background: white !important;
+    position: sticky;
+    left: 0;
+    z-index: 999 !important;
+    border-right: 2px solid #dee2e6 !important;
+}
+
+.startup-row:hover .sticky-column {
+    background: #f8f9fa !important;
+}
+
+.startup-row:hover .sticky-column::after {
+    background: #dee2e6;
+}
+
+.sticky-column.sortable:hover {
+    background: #e9ecef !important;
+}
+
+.table-header .sticky-column.sortable:hover {
+    background: #e9ecef !important;
+}
+
+.sticky-column.sortable:hover::after {
+    background: #dee2e6;
+}
+
+.sortable {
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s ease;
+}
+
+.sortable:hover {
+    background: #e9ecef;
+}
+
+.sort-icon {
+    opacity: 0.5;
+    transition: all 0.2s ease;
+}
+
+.sortable:hover .sort-icon {
+    opacity: 1;
+}
+
+.sortable.asc .sort-icon {
+    transform: rotate(180deg);
+    opacity: 1;
+}
+
+.sortable.desc .sort-icon {
+    transform: rotate(0deg);
+    opacity: 1;
+}
+
+.startup-row {
+    border-bottom: 1px solid #f1f3f4;
+    transition: all 0.2s ease;
+}
+
+.startup-row:hover {
+    background: #f8f9fa;
+}
+
+.startup-row td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.startup-row td:not(.sticky-column) {
+    background: white;
+}
+
+.startup-row:hover td:not(.sticky-column) {
+    background: #f8f9fa;
+}
+
+.startup-table td {
+    border: none;
+}
+
+.startup-table th {
+    border: none;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.startup-table th:not(.sticky-column) {
+    border-right: 1px solid #f1f3f4;
+}
+
+.startup-table td:not(.sticky-column) {
+    border-right: 1px solid #f1f3f4;
+}
+
+/* Table Cell Styling */
+.company-avatar-sm {
+    flex-shrink: 0;
+}
+
+.avatar-placeholder-sm {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(44, 89, 167, 0.2);
+}
+
+.company-name-sm {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.25rem;
+}
+
+.company-description-sm {
+    font-size: 0.875rem;
+    color: #6c757d;
+    line-height: 1.4;
+    margin-bottom: 0.25rem;
+}
+
+.tech-tags-sm {
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+}
+
+.tech-tag-sm {
+    background: #f8f9ff;
+    color: #2c59a7;
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    border: 1px solid #2c59a7;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.tech-tag-sm:hover {
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(44, 89, 167, 0.2);
+}
+
+.match-score-sm {
+    text-align: center;
+    min-width: 80px;
+}
+
+.match-percentage-sm {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #28a745;
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.match-bar {
+    width: 60px;
+    height: 6px;
+    background: #e9ecef;
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+.match-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+    border-radius: 3px;
+    transition: width 0.8s ease;
+}
+
+.stage-badge-sm {
+    padding: 0.25rem 0.75rem;
+    border-radius: 16px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stage-early {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #EBCA38;
+}
+
+.stage-growth {
+    background: #e8f5e8;
+    color: #58946e;
+    border: 1px solid #58946e;
+}
+
+.stage-mature {
+    background: #e7f3ff;
+    color: #639ac0;
+    border: 1px solid #639ac0;
+}
+
+.stage-idea {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #EBCA38;
+}
+
+.stage-prototype {
+    background: #e8f5e8;
+    color: #58946e;
+    border: 1px solid #58946e;
+}
+
+.stage-validation {
+    background: #e7f3ff;
+    color: #639ac0;
+    border: 1px solid #639ac0;
+}
+
+.stage-scaling {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #28a745;
+}
+
+.stage-profit {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #dc3545;
+}
+
+.funding-info-sm {
+    text-align: left;
+}
+
+.funding-amount-sm {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.25rem;
+}
+
+.funding-type-sm {
+    font-size: 0.75rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Grid View Styling */
+.startups-grid-container {
+    background: transparent;
+}
+
+.startups-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    padding: 0;
+}
+
+.startup-grid-item {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.startup-grid-item:hover {
+    transform: translateY(-4px);
+}
+
+.startup-grid-item .card {
+    border: none;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.startup-grid-item:hover .card {
+    border-color: #2c59a7;
+    box-shadow: 0 8px 30px rgba(44, 89, 167, 0.15);
+}
+
+/* Grid Header */
+.grid-header {
+    border-bottom: 1px solid #f1f3f4;
+    padding-bottom: 1rem;
+}
+
+.company-avatar-grid {
+    flex-shrink: 0;
+}
+
+.avatar-img-grid {
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 2px solid #f8f9fa;
+}
+
+.avatar-placeholder-grid {
+    width: 45px;
+    height: 45px;
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    color: white;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 700;
+    box-shadow: 0 3px 10px rgba(44, 89, 167, 0.2);
+}
+
+.match-badge {
+    text-align: center;
+}
+
+.match-percentage-grid {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    box-shadow: 0 3px 10px rgba(40, 167, 69, 0.3);
+}
+
+.company-name-grid {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #2c3e50;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+}
+
+.company-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: #6c757d;
+    flex-wrap: wrap;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-weight: 500;
+}
+
+.meta-separator {
+    color: #dee2e6;
+    font-weight: bold;
+}
+
+.company-description-grid {
+    color: #495057;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 0;
+}
+
+.tech-tags-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.tech-tag-grid {
+    background: #f8f9ff;
+    color: #2c59a7;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    border: 1px solid #2c59a7;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.tech-tag-grid:hover {
+    background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(44, 89, 167, 0.2);
+}
+
+.grid-footer {
+    border-top: 1px solid #f1f3f4;
+    padding-top: 1rem;
+}
+
+.stage-badge-grid {
+    padding: 0.25rem 0.6rem;
+    border-radius: 14px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.funding-info-grid {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: #495057;
+}
+
+.funding-text {
+    font-weight: 500;
+}
+
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem 1rem;
+}
+
+/* Clickable Row Styling */
+.clickable-row {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.clickable-row:hover {
+    background: #f8f9fa !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.clickable-row:hover .sticky-column {
+    background: #f8f9fa !important;
+}
+
+.clickable-row:hover td:not(.sticky-column) {
+    background: #f8f9fa !important;
+}
+
+.clickable-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.clickable-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(44, 89, 167, 0.15);
+}
+
+.clickable-card:hover .card {
+    border-color: #2c59a7;
+    box-shadow: 0 4px 20px rgba(44, 89, 167, 0.1);
+}
+
+.clickable-card:hover .company-name-grid {
+    color: #2c59a7;
+}
+
+.clickable-row:active,
+.clickable-card:active {
+    transform: translateY(0);
+}
+
+.clickable-row:hover .company-name-sm,
+.clickable-card:hover .company-name,
+.clickable-card:hover .company-name-grid {
+    color: #2c59a7;
+}
+
+/* Filter Modal Styling */
+.modal-dialog.modal-xl {
+    max-width: 900px;
+}
+
+.modal-content {
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #2C59A7 0%, #1e3a8a 100%);
+    color: white;
+    border-bottom: none;
+    border-radius: 16px 16px 0 0;
+    padding: 1.5rem 2rem;
+}
+
+.modal-title {
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: white;
+}
+
+.modal-title i {
+    color: white;
+}
+
+.btn-close {
+    filter: invert(1);
+    opacity: 0.8;
+}
+
+.btn-close:hover {
+    opacity: 1;
+}
+
+.modal-body {
+    padding: 2rem;
+    background: #f8f9fa;
+}
+
+.modal-footer {
+    border-top: none;
+    padding: 1.25rem 2rem 2rem;
+    background: #f8f9fa;
+    border-radius: 0 0 16px 16px;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    font-size: 0.95rem;
+}
+
+.form-label i {
+    color: #2C59A7;
+    font-size: 1.1rem;
+}
+
+.range-container {
+    position: relative;
+    margin-top: 0.5rem;
+}
+
+.form-range {
+    width: 100%;
+    height: 6px;
+    background: linear-gradient(to right, #e9ecef 0%, #2C59A7 0%);
+    border-radius: 3px;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.form-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(135deg, #2C59A7 0%, #574da1 100%);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid white;
+    box-shadow: 0 2px 6px rgba(44, 89, 167, 0.3);
+}
+
+.form-range::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(135deg, #2C59A7 0%, #574da1 100%);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid white;
+    box-shadow: 0 2px 6px rgba(44, 89, 167, 0.3);
+}
+
+.range-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.tech-checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.checkbox-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-item .form-check-input {
+    display: none;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 0.9rem;
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #495057;
+    width: 100%;
+    margin-bottom: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.checkbox-label:hover {
+    border-color: #2C59A7;
+    background: #f8f9ff;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(44, 89, 167, 0.1);
+}
+
+.checkbox-item .form-check-input:checked + .checkbox-label {
+    background: linear-gradient(135deg, #2C59A7 0%, #574da1 100%);
+    border-color: #2C59A7;
+    color: white;
+    box-shadow: 0 4px 12px rgba(44, 89, 167, 0.25);
+}
+
+.checkbox-item .form-check-input:checked + .checkbox-label:hover {
+    background: linear-gradient(135deg, #234a91 0%, #4a3f8a 100%);
+    transform: translateY(-1px);
+}
+
+.checkbox-custom {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #dee2e6;
+    border-radius: 4px;
+    margin-right: 0.6rem;
+    position: relative;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.checkbox-item .form-check-input:checked + .checkbox-label .checkbox-custom {
+    background: white;
+    border-color: white;
+}
+
+.checkbox-item .form-check-input:checked + .checkbox-label .checkbox-custom::after {
+    content: '✓';
+    position: absolute;
+    top: -2px;
+    left: 2px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #2C59A7;
+}
+
+.checkbox-text {
+    flex: 1;
+    line-height: 1.3;
+}
+
+.modal-footer .btn {
+    padding: 0.6rem 1.5rem;
+    font-weight: 600;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.modal-footer .btn-primary {
+    background: linear-gradient(135deg, #2C59A7 0%, #574da1 100%);
+    border: none;
+    box-shadow: 0 3px 10px rgba(44, 89, 167, 0.2);
+}
+
+.modal-footer .btn-primary:hover {
+    background: linear-gradient(135deg, #234a91 0%, #4a3f8a 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(44, 89, 167, 0.3);
+}
+
+.modal-footer .btn-outline-secondary {
+    border: 2px solid #dee2e6;
+    color: #6c757d;
+    background: white;
+}
+
+.modal-footer .btn-outline-secondary:hover {
+    background: #f8f9fa;
+    border-color: #adb5bd;
+    color: #495057;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .startups-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.25rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-header {
+        padding: 1rem;
+    }
+    
+    .search-section {
+        padding: 1rem;
+    }
+    
+    .search-input-group {
+        margin-bottom: 1rem;
+    }
+    
+    .filter-tags {
+        justify-content: center;
+    }
+    
+    .table-wrapper {
+        font-size: 0.875rem;
+    }
+    
+    .startup-table th,
+    .startup-table td {
+        padding: 0.5rem;
+    }
+    
+    .sticky-column {
+        min-width: 280px;
+        max-width: 280px;
+    }
+    
+    .company-name-sm {
+        font-size: 0.9rem;
+    }
+    
+    .company-description-sm {
+        font-size: 0.8rem;
+    }
+    
+    .tech-tags-sm {
+        display: none;
+    }
+    
+    .startups-grid {
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 1rem;
+    }
+    
+    .startup-grid-item .card-body {
+        padding: 1rem;
+    }
+    
+    .company-name-grid {
+        font-size: 1rem;
+    }
+    
+    .company-meta {
+        font-size: 0.75rem;
+    }
+    
+    .tech-tags-grid {
+        gap: 0.3rem;
+    }
+    
+    .tech-tag-grid {
+        font-size: 0.7rem;
+        padding: 0.15rem 0.5rem;
+    }
+    
+    .tech-checkbox-grid {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .table-container {
+        margin: 0 -15px;
+        border-radius: 0;
+    }
+    
+    .sticky-column {
+        min-width: 250px;
+        max-width: 250px;
+    }
+    
+    .startups-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .startup-grid-item .card {
+        border-radius: 12px;
+    }
+}
+</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -834,7 +1864,6 @@ document.addEventListener('DOMContentLoaded', function() {
         isTableView = true;
         tableContainer.style.display = 'block';
         cardContainer.style.display = 'none';
-        cardContainer.classList.add('d-none');
         
         tableViewBtn.classList.add('active');
         cardViewBtn.classList.remove('active');
@@ -850,7 +1879,6 @@ document.addEventListener('DOMContentLoaded', function() {
         isTableView = false;
         tableContainer.style.display = 'none';
         cardContainer.style.display = 'block';
-        cardContainer.classList.remove('d-none');
         
         cardViewBtn.classList.add('active');
         tableViewBtn.classList.remove('active');
@@ -921,22 +1949,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     aValue = a.getAttribute('data-type') || '';
                     bValue = b.getAttribute('data-type') || '';
                     break;
-                case 'location':
-                    aValue = a.getAttribute('data-location') || '';
-                    bValue = b.getAttribute('data-location') || '';
-                    break;
                 case 'funding':
-                    // Convert funding size strings to numeric order for proper sorting
-                    const fundingSizeOrder = {
-                        'under_1m': 1,
-                        '1m_50m': 2,
-                        '100m_200m': 3,
-                        '200m_500m': 4,
-                        'over_500m': 5,
-                        '': 0 // empty/unknown values go first
-                    };
-                    aValue = fundingSizeOrder[a.getAttribute('data-funding-size')] || 0;
-                    bValue = fundingSizeOrder[b.getAttribute('data-funding-size')] || 0;
+                    aValue = a.getAttribute('data-funding-size') || '';
+                    bValue = b.getAttribute('data-funding-size') || '';
                     break;
                 default:
                     return 0;
@@ -966,43 +1981,28 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function sortGridItems(column, direction) {
-        const grid = document.querySelector('.row.g-4');
-        const items = Array.from(grid.querySelectorAll('.col-12.col-md-6.col-lg-4'));
+        const grid = document.querySelector('.startups-grid');
+        const items = Array.from(grid.querySelectorAll('.startup-grid-item'));
         
         items.sort((a, b) => {
             let aValue, bValue;
-            const cardA = a.querySelector('.startup-card');
-            const cardB = b.querySelector('.startup-card');
             
             switch(column) {
                 case 'name':
-                    aValue = cardA.querySelector('.company-name').textContent.toLowerCase() || '';
-                    bValue = cardB.querySelector('.company-name').textContent.toLowerCase() || '';
+                    aValue = a.querySelector('.company-name-grid').textContent.toLowerCase() || '';
+                    bValue = b.querySelector('.company-name-grid').textContent.toLowerCase() || '';
                     break;
                 case 'match':
-                    aValue = parseInt(cardA.getAttribute('data-match')) || 0;
-                    bValue = parseInt(cardB.getAttribute('data-match')) || 0;
+                    aValue = parseInt(a.getAttribute('data-match')) || 0;
+                    bValue = parseInt(b.getAttribute('data-match')) || 0;
                     break;
                 case 'type':
-                    aValue = cardA.getAttribute('data-type') || '';
-                    bValue = cardB.getAttribute('data-type') || '';
-                    break;
-                case 'location':
-                    aValue = cardA.getAttribute('data-location') || '';
-                    bValue = cardB.getAttribute('data-location') || '';
+                    aValue = a.getAttribute('data-type') || '';
+                    bValue = b.getAttribute('data-type') || '';
                     break;
                 case 'funding':
-                    // Convert funding size strings to numeric order for proper sorting
-                    const fundingSizeOrder = {
-                        'under_1m': 1,
-                        '1m_50m': 2,
-                        '100m_200m': 3,
-                        '200m_500m': 4,
-                        'over_500m': 5,
-                        '': 0 // empty/unknown values go first
-                    };
-                    aValue = fundingSizeOrder[cardA.getAttribute('data-funding-size')] || 0;
-                    bValue = fundingSizeOrder[cardB.getAttribute('data-funding-size')] || 0;
+                    aValue = a.getAttribute('data-funding-size') || '';
+                    bValue = b.getAttribute('data-funding-size') || '';
                     break;
                 default:
                     return 0;
@@ -1106,12 +2106,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         // Filter grid items
-        const gridItems = document.querySelectorAll('.investor-grid-item');
+        const gridItems = document.querySelectorAll('.startup-grid-item');
         let visibleGridCount = 0;
         
         gridItems.forEach(item => {
-            const card = item.querySelector('.startup-card');
-            if (matchesFilters(card)) {
+            if (matchesFilters(item)) {
                 item.style.display = '';
                 visibleGridCount++;
                 // Add fade-in animation
@@ -1144,14 +2143,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (currentFilters.investorTypes.length > 0) {
             const elementType = element.getAttribute('data-type');
             if (!currentFilters.investorTypes.includes(elementType)) {
-                return false;
-            }
-        }
-        
-        // Location filter
-        if (currentFilters.locations.length > 0) {
-            const elementLocation = element.getAttribute('data-location');
-            if (!currentFilters.locations.includes(elementLocation)) {
                 return false;
             }
         }
@@ -1195,7 +2186,7 @@ document.addEventListener('DOMContentLoaded', function() {
         currentFilters = {};
         
         // Show all items
-        document.querySelectorAll('.startup-row, .investor-grid-item').forEach(item => {
+        document.querySelectorAll('.startup-row, .startup-grid-item').forEach(item => {
             item.style.display = '';
         });
         
@@ -1209,31 +2200,20 @@ document.addEventListener('DOMContentLoaded', function() {
             tag.classList.remove('active');
         });
         document.querySelector('.filter-tag[data-filter="all"]').classList.add('active');
-        
-        // Close the modal by clicking the close button
-        const closeButton = document.querySelector('#filterModal [data-bs-dismiss="modal"]');
-        if (closeButton) {
-            closeButton.click();
-        }
     }
 
     function updateFilterDisplay() {
-        // Update filter button to show active state
+        // Update filter button to show active filters count
+        const activeFiltersCount = Object.values(currentFilters).flat().length;
         const filterBtn = document.getElementById('filterBtn');
-        if (hasActiveAdvancedFilters()) {
-            filterBtn.classList.add('has-filters');
+        
+        if (activeFiltersCount > 0) {
+            filterBtn.innerHTML = `<i class="bi bi-funnel me-2"></i><span>Filters (${activeFiltersCount})</span>`;
+            filterBtn.classList.add('active');
         } else {
-            filterBtn.classList.remove('has-filters');
+            filterBtn.innerHTML = '<i class="bi bi-funnel me-2"></i><span>Advanced Filters</span>';
+            filterBtn.classList.remove('active');
         }
-    }
-
-    function hasActiveAdvancedFilters() {
-        return (currentFilters.minMatch || 0) > 0 ||
-               (currentFilters.investorTypes && currentFilters.investorTypes.length > 0) ||
-               (currentFilters.locations && currentFilters.locations.length > 0) ||
-               (currentFilters.fundingSizes && currentFilters.fundingSizes.length > 0) ||
-               (currentFilters.preferredStages && currentFilters.preferredStages.length > 0) ||
-               (currentFilters.investmentCategories && currentFilters.investmentCategories.length > 0);
     }
 
     function updateResultsCount(count = null) {
@@ -1253,7 +2233,7 @@ document.addEventListener('DOMContentLoaded', function() {
             tableCount = document.querySelectorAll('.startup-row:not([style*="display: none"])').length;
         }
         if (gridCount === null) {
-            gridCount = document.querySelectorAll('.investor-grid-item:not([style*="display: none"])').length;
+            gridCount = document.querySelectorAll('.startup-grid-item:not([style*="display: none"])').length;
         }
         
         // Handle table empty state
@@ -1287,47 +2267,31 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function applyQuickFilter(filterType) {
-        const items = document.querySelectorAll('.startup-row, .investor-grid-item');
+        const items = document.querySelectorAll('.startup-row, .startup-grid-item');
         let visibleCount = 0;
         
         items.forEach(item => {
             let shouldShow = false;
-            
-            // For grid items, get data attributes from the card inside
-            const dataItem = item.classList.contains('investor-grid-item') 
-                ? item.querySelector('.startup-card') 
-                : item;
             
             switch(filterType) {
                 case 'all':
                     shouldShow = true;
                     break;
                 case 'early-stage':
-                    // Show investors who prefer early stage investments
-                    const preferredStages = dataItem.getAttribute('data-preferred-stages') || '';
-                    shouldShow = preferredStages.includes('seed') || preferredStages.includes('pre_seed') || preferredStages.includes('angel');
+                    const stages = item.getAttribute('data-preferred-stages') || '';
+                    shouldShow = stages.includes('idea') || stages.includes('prototype') || stages.includes('validation');
                     break;
                 case 'growth':
-                    // Show investors who prefer growth stage investments
-                    const growthStages = dataItem.getAttribute('data-preferred-stages') || '';
-                    shouldShow = growthStages.includes('series_a') || growthStages.includes('series_b') || growthStages.includes('series_c');
+                    const growthStages = item.getAttribute('data-preferred-stages') || '';
+                    shouldShow = growthStages.includes('early') || growthStages.includes('scaling');
                     break;
                 case 'high-match':
-                    const matchScore = parseInt(dataItem.getAttribute('data-match')) || 0;
+                    const matchScore = parseInt(item.getAttribute('data-match')) || 0;
                     shouldShow = matchScore > 80;
                     break;
-                case 'recent':
-                    // Show investors registered within the last 1 month
-                    const createdAt = dataItem.getAttribute('data-created-at');
-                    if (!createdAt) {
-                        shouldShow = false;
-                        break;
-                    }
-                    const now = new Date();
-                    const oneMonthAgo = new Date();
-                    oneMonthAgo.setMonth(now.getMonth() - 1);
-                    const investorDate = new Date(createdAt);
-                    shouldShow = investorDate >= oneMonthAgo;
+                case 'active':
+                    // Assume all investors are active for now
+                    shouldShow = true;
                     break;
                 default:
                     shouldShow = true;
@@ -1352,26 +2316,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Range Slider Functionality
     function initializeRangeSlider() {
-        const matchProgress = document.getElementById('matchProgress');
-        
-        if (matchRange && matchValue && matchProgress) {
-            // Function to update progress bar
-            function updateMatchProgress() {
-                const value = parseInt(matchRange.value);
+        if (matchRange) {
+            matchRange.addEventListener('input', function() {
+                matchValue.textContent = this.value;
                 
-                // Update display text
-                matchValue.textContent = value;
-                
-                // Update progress bar width
-                matchProgress.style.width = value + '%';
-            }
+                // Update slider background
+                const value = (this.value - this.min) / (this.max - this.min) * 100;
+                this.style.background = `linear-gradient(to right, #2C59A7 0%, #2C59A7 ${value}%, #e9ecef ${value}%, #e9ecef 100%)`;
+            });
             
-            // Initialize progress on load
-            updateMatchProgress();
-            
-            // Add event listeners
-            matchRange.addEventListener('input', updateMatchProgress);
-            matchRange.addEventListener('change', updateMatchProgress);
+            // Initialize slider appearance
+            matchRange.dispatchEvent(new Event('input'));
         }
     }
 
@@ -1458,7 +2413,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }, observerOptions);
 
     // Observe grid items for scroll animations
-    document.querySelectorAll('.investor-grid-item').forEach(item => {
+    document.querySelectorAll('.startup-grid-item').forEach(item => {
         observer.observe(item);
     });
 

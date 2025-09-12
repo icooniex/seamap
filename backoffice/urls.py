@@ -1,9 +1,25 @@
 from django.urls import path
+from django.shortcuts import redirect
+from django.contrib.auth.decorators import user_passes_test
 from . import views
 
 app_name = 'backoffice'
 
+def is_admin_user(user):
+    """Check if user is staff or superuser"""
+    return user.is_authenticated and (user.is_staff or user.is_superuser)
+
+def backoffice_root(request):
+    """Redirect root backoffice URL to appropriate page"""
+    if is_admin_user(request.user):
+        return redirect('backoffice:dashboard')
+    else:
+        return redirect('backoffice:login')
+
 urlpatterns = [
+    # Root redirect
+    path('', backoffice_root, name='root'),
+    
     # Back office authentication
     path('login/', views.BackOfficeLoginView.as_view(), name='login'),
     path('logout/', views.backoffice_logout, name='logout'),

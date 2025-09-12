@@ -26,7 +26,14 @@ class BackOfficeLoginView(LoginView):
     """
     template_name = 'backoffice/login.html'
     form_class = BackOfficeLoginForm
-    redirect_authenticated_user = True
+    redirect_authenticated_user = False  # Changed to False to prevent redirect loop
+    
+    def dispatch(self, request, *args, **kwargs):
+        """Handle request before processing"""
+        # If user is already authenticated and is admin, redirect to dashboard
+        if request.user.is_authenticated and is_admin_user(request.user):
+            return redirect('backoffice:dashboard')
+        return super().dispatch(request, *args, **kwargs)
     
     def get_success_url(self):
         """Redirect to back office dashboard after successful login"""
@@ -442,7 +449,7 @@ def update_user_verification(request, user_id):
     else:
         messages.error(request, 'Invalid action.')
     
-    return redirect('backoffice_user_verification')
+    return redirect('backoffice:user_verification')
 
 
 @user_passes_test(is_admin_user, login_url='/backoffice/login/')
@@ -545,7 +552,7 @@ def update_company_verification(request, company_id):
     else:
         messages.error(request, 'Invalid action.')
     
-    return redirect('backoffice_company_verification')
+    return redirect('backoffice:company_verification')
 
 
 # Document Management Views
