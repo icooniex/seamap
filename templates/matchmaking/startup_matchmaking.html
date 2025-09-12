@@ -2623,7 +2623,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     const startupRows = document.querySelectorAll('.startup-row');
-    const startupCards = document.querySelectorAll('.startup-grid-item');
+    const startupCards = document.querySelectorAll('.startup-card');
     
     // Search functionality
     const searchInput = document.querySelector('.search-input');
@@ -2780,7 +2780,10 @@ document.addEventListener('DOMContentLoaded', function() {
         startupRows.forEach(row => {
             if (matchesAllFilters(row, 'table')) {
                 row.style.display = 'table-row';
-                visibleCount++;
+                // Only count if table view is active
+                if (!document.getElementById('tableContainer').classList.contains('d-none')) {
+                    visibleCount++;
+                }
             } else {
                 row.style.display = 'none';
             }
@@ -2788,10 +2791,15 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Filter grid cards
         startupCards.forEach(card => {
+            const cardColumn = card.closest('.col-12, .col-md-6, .col-lg-4');
             if (matchesAllFilters(card, 'grid')) {
-                card.style.display = 'block';
+                if (cardColumn) cardColumn.style.display = 'block';
+                // Only count if grid view is active
+                if (!document.getElementById('cardContainer').classList.contains('d-none')) {
+                    visibleCount++;
+                }
             } else {
-                card.style.display = 'none';
+                if (cardColumn) cardColumn.style.display = 'none';
             }
         });
         
@@ -2869,26 +2877,24 @@ document.addEventListener('DOMContentLoaded', function() {
         } else { // grid view
             data.matchScore = parseInt(element.dataset.match) || 0;
             data.stage = element.dataset.stage || '';
-            data.companyName = element.querySelector('.company-name-grid')?.textContent || '';
-            data.description = element.querySelector('.company-description-grid')?.textContent || '';
+            data.companyName = element.querySelector('.company-name')?.textContent || '';
+            data.description = element.querySelector('.startup-description')?.textContent || '';
             
-            // Extract location from meta
-            const locationMeta = Array.from(element.querySelectorAll('.meta-item')).find(item => 
-                item.textContent.includes('🌍') || item.textContent.includes('📍')
-            );
-            data.location = locationMeta ? locationMeta.textContent.replace(/🌍|📍/g, '').trim() : '';
+            // Extract location from location-badge as fallback
+            const locationBadge = element.querySelector('.location-badge');
+            data.location = locationBadge ? locationBadge.textContent.replace(/🌍|📍/g, '').trim() : '';
             
-            // Extract team size from meta
-            const teamMeta = Array.from(element.querySelectorAll('.meta-item')).find(item => 
-                item.textContent.includes('👥')
-            );
-            data.teamSize = teamMeta ? teamMeta.textContent.replace('👥', '').trim() : '';
+            // For grid view, try to get data from attributes first, then fallback to DOM
+            data.teamSize = element.dataset.team || '';
+            if (!data.teamSize) {
+                const teamRow = Array.from(element.querySelectorAll('.detail-row')).find(row => 
+                    row.textContent.includes('Team:')
+                );
+                data.teamSize = teamRow ? teamRow.querySelector('span:last-child')?.textContent?.trim() : '';
+            }
             
-            // Extract funding
-            data.funding = element.querySelector('.funding-text')?.textContent || '';
-            
-            // Extract tech tags
-            const techTags = element.querySelectorAll('.tech-tag-grid');
+            // Extract tech tags as fallback - data attributes take priority later
+            const techTags = element.querySelectorAll('.tech-tag');
             data.innovationTypes = Array.from(techTags).map(tag => tag.textContent.trim());
         }
         
