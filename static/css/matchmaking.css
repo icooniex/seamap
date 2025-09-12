@@ -1859,3 +1859,63 @@
         padding: 0.625rem;
     }
 }
+
+
+
+
+
+
+/* Investor-specific styling - inherits most from startup matchmaking */
+.investor-icon-container {
+    position: relative;
+    z-index: 2;
+}
+
+.investor-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #ffffff15 0%, #ffffff25 100%);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.investor-icon i {
+    font-size: 2.5rem;
+    color: white;
+    animation: investorFloat 3s ease-in-out infinite;
+}
+
+@keyframes investorFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+}
+
+/* Responsive adjustments for investor icon */
+@media (max-width: 768px) {
+    .investor-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+    }
+    
+    .investor-icon i {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .investor-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+    }
+    
+    .investor-icon i {
+        font-size: 1.5rem;
+    }
+}
