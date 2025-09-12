@@ -1093,19 +1093,36 @@ document.addEventListener('DOMContentLoaded', function() {
                 case 'innovation-programs':
                     // Show corporates that have innovation-related areas
                     const areasInterest = row.getAttribute('data-areas-interest') || '';
-                    show = areasInterest.toLowerCase().includes('innovation') || 
-                           areasInterest.toLowerCase().includes('ai') || 
-                           areasInterest.toLowerCase().includes('tech') ||
-                           areasInterest.toLowerCase().includes('sustainable alternative materials') ||
-                           areasInterest.toLowerCase().includes('tracking & monitoring');
+                    // Show corporates that selected innovation-related technological areas in onboarding form
+                    const innovationAreas = [
+                        "Eliminate & Redesign Packaging",
+                        "Refill & Reuse Solutions",
+                        "Reusable Packaging Collection/Drop Off",
+                        "Upcycling Plastic Waste",
+                        "Sustainable Alternative Materials",
+                        "Education & Industry Partnerships",
+                        "Tracking & Monitoring Waste",
+                        "Plastic Footprint Offsetting",
+                        "Enhancing Plastic Recycling Systems",
+                        "Improved Waste Collection Systems"
+                    ];
+                    show = innovationAreas.some(area =>
+                        areasInterest.toLowerCase().includes(area.toLowerCase())
+                    );
                     break;
                 case 'partnerships':
                     // Show corporates looking for partnerships
                     const collaborationMethods = row.getAttribute('data-collaboration') || '';
-                    show = collaborationMethods.toLowerCase().includes('partnership') || 
-                           collaborationMethods.toLowerCase().includes('collaboration') ||
-                           collaborationMethods.toLowerCase().includes('co-development') ||
-                           collaborationMethods.toLowerCase().includes('mentorship');
+                    // Partnership Focus: Show corporates that selected partnership-related collaboration methods in onboarding form
+                    const partnershipKeywords = [
+                        "Co-Development – Collaborating on tailored solutions",
+                        "Mentorship & Expertise – Guiding startups with knowledge",
+                        "Pilot Programs – Testing innovative solution",
+                        "Financial Support – Funding startups and projects"
+                    ];
+                    show = partnershipKeywords.some(keyword =>
+                        collaborationMethods.toLowerCase().includes(keyword.toLowerCase())
+                    );
                     break;
                 case 'high-match':
                     const matchScore = parseInt(row.getAttribute('data-match')) || 0;
