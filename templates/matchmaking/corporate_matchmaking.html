@@ -121,7 +121,7 @@
                     {% for corporate in corporates %}
                     <tr class="startup-row clickable-row" 
                         data-match="{{ corporate.match_score }}" 
-                        data-type="{{ corporate.organization_type|default:'unknown' }}" 
+                        data-type="{% if corporate.organization_type in 'private_company,multinational_corporation,sme,startup_subsidiary,other' %}{{ corporate.organization_type|default:'other' }}{% else %}other{% endif %}" 
                         data-name="{{ corporate.company_name|lower|cut:' '|cut:'-' }}" 
                         data-location="{{ corporate.primary_location|default:'Not specified' }}"
                         data-areas-interest="{{ corporate.investment_categories|join:',' }}"
@@ -227,7 +227,7 @@
             <div class="col-12 col-md-6 col-lg-4">
                 <div class="corporate-card card h-100" 
                      data-match="{{ corporate.match_score }}" 
-                     data-type="{{ corporate.organization_type|default:'unknown' }}" 
+                     data-type="{% if corporate.organization_type in 'private_company,multinational_corporation,sme,startup_subsidiary,other' %}{{ corporate.organization_type|default:'other' }}{% else %}other{% endif %}" 
                      data-name="{{ corporate.company_name|lower|cut:' '|cut:'-' }}" 
                      data-location="{{ corporate.primary_location|default:'Not specified' }}"
                      data-areas-interest="{{ corporate.investment_categories|join:',' }}"
@@ -393,7 +393,7 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label class="form-label">
-                                    <i class="bi bi-building me-2"></i>
+                                    <i class="bi bi-buildings me-2"></i>
                                     Type of Organization
                                 </label>
                                 <div class="tech-checkbox-grid">
@@ -415,7 +415,7 @@
                                         <input type="checkbox" id="orgSME" name="organization_type" value="sme" class="form-check-input">
                                         <label for="orgSME" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">� SME</span>
+                                            <span class="checkbox-text">🏭 SME</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
@@ -429,7 +429,7 @@
                                         <input type="checkbox" id="orgOther" name="organization_type" value="other" class="form-check-input">
                                         <label for="orgOther" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">� Other</span>
+                                            <span class="checkbox-text">🔎 Other</span>
                                         </label>
                                     </div>
                                 </div>
@@ -516,7 +516,7 @@
                                         <input type="checkbox" id="industryCommerce" name="industry_expertise" value="Commerce & Advertising" class="form-check-input">
                                         <label for="industryCommerce" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">� Commerce & Advertising</span>
+                                            <span class="checkbox-text">🛒 Commerce & Advertising</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
@@ -558,28 +558,28 @@
                                         <input type="checkbox" id="industryFood" name="industry_expertise" value="Food Production & Service" class="form-check-input">
                                         <label for="industryFood" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">�️ Food Production & Service</span>
+                                            <span class="checkbox-text">🍽️ Food Production & Service</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
                                         <input type="checkbox" id="industryHealthcare" name="industry_expertise" value="Healthcare" class="form-check-input">
                                         <label for="industryHealthcare" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">� Healthcare</span>
+                                            <span class="checkbox-text">🏥 Healthcare</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
                                         <input type="checkbox" id="industryHospitality" name="industry_expertise" value="Hospitality & Tourism" class="form-check-input">
                                         <label for="industryHospitality" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">� Hospitality & Tourism</span>
+                                            <span class="checkbox-text">🏨 Hospitality & Tourism</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
                                         <input type="checkbox" id="industryIndustrial" name="industry_expertise" value="Industrial & Manufacturing" class="form-check-input">
                                         <label for="industryIndustrial" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">� Industrial & Manufacturing</span>
+                                            <span class="checkbox-text">🏭 Industrial & Manufacturing</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
@@ -739,12 +739,6 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <div class="filter-preview me-auto">
-                    <small class="text-muted">
-                        <i class="bi bi-info-circle me-1"></i>
-                        <span id="filterPreview">Ready to filter</span>
-                    </small>
-                </div>
                 <button type="button" class="btn btn-outline-secondary" id="clearFiltersBtn">
                     <i class="bi bi-x-circle me-2"></i>
                     Clear All
@@ -837,116 +831,22 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('#filterForm input[type="checkbox"]').forEach(checkbox => {
         checkbox.addEventListener('change', function() {
             updateFilterButtonState(); // Update button state when checkboxes change
-            updateFilterPreview(); // Update preview count
         });
     });
     
     // Add event listener to match score range for preview updates
     if (matchScoreRange) {
         matchScoreRange.addEventListener('input', function() {
-            updateFilterPreview(); // Update preview count when range changes
+            // Range input already calls updateFilterButtonState in updateMatchProgress
         });
     }
     
     // Function to update filter preview
-    function updateFilterPreview() {
-        const rows = document.querySelectorAll('.corporate-row, .corporate-card');
-        let previewCount = 0;
-        
-        // Get current filter values
-        const minMatchScore = parseInt(document.getElementById('matchRange')?.value) || 0;
-        const selectedOrgTypes = Array.from(document.querySelectorAll('input[name="organization_type"]:checked')).map(cb => cb.value);
-        const selectedLocations = Array.from(document.querySelectorAll('input[name="primary_location"]:checked')).map(cb => cb.value);
-        const selectedIndustries = Array.from(document.querySelectorAll('input[name="industry_expertise"]:checked')).map(cb => cb.value);
-        const selectedTechAreas = Array.from(document.querySelectorAll('input[name="technological_areas"]:checked')).map(cb => cb.value);
-        const selectedCollabMethods = Array.from(document.querySelectorAll('input[name="collaboration_methods"]:checked')).map(cb => cb.value);
-        
-        // Check if any filters are active
-        const hasActiveFilters = minMatchScore > 0 || selectedOrgTypes.length > 0 || selectedLocations.length > 0 || 
-                                selectedIndustries.length > 0 || selectedTechAreas.length > 0 || selectedCollabMethods.length > 0;
-        
-        if (!hasActiveFilters) {
-            document.getElementById('filterPreview').textContent = 'Ready to filter';
-            return;
-        }
-        
-        // Count matching rows
-        rows.forEach(row => {
-            let show = true;
-            
-            // Apply same logic as in applyAdvancedFilters
-            if (minMatchScore > 0) {
-                const matchScore = parseInt(row.getAttribute('data-match')) || 0;
-                if (matchScore < minMatchScore) show = false;
-            }
-            
-            if (selectedOrgTypes.length > 0) {
-                const orgType = row.getAttribute('data-type') || '';
-                if (!selectedOrgTypes.includes(orgType)) show = false;
-            }
-            
-            if (selectedLocations.length > 0) {
-                const location = row.querySelector('.location-cell')?.textContent?.trim() || '';
-                let locationMatch = false;
-                selectedLocations.forEach(selectedLoc => {
-                    if (location.toLowerCase().includes(selectedLoc.toLowerCase())) {
-                        locationMatch = true;
-                    }
-                });
-                if (!locationMatch) show = false;
-            }
-            
-            if (selectedIndustries.length > 0) {
-                const industryExpertise = row.getAttribute('data-industry-expertise') || '';
-                let industryMatch = false;
-                selectedIndustries.forEach(selectedIndustry => {
-                    if (industryExpertise.toLowerCase().includes(selectedIndustry.toLowerCase())) {
-                        industryMatch = true;
-                    }
-                });
-                if (!industryMatch) show = false;
-            }
-            
-            if (selectedTechAreas.length > 0) {
-                const areasInterest = row.getAttribute('data-areas-interest') || '';
-                let techMatch = false;
-                selectedTechAreas.forEach(selectedTech => {
-                    if (areasInterest.toLowerCase().includes(selectedTech.toLowerCase())) {
-                        techMatch = true;
-                    }
-                });
-                if (!techMatch) show = false;
-            }
-            
-            if (selectedCollabMethods.length > 0) {
-                const collaborationMethods = row.getAttribute('data-collaboration') || '';
-                let collabMatch = false;
-                selectedCollabMethods.forEach(selectedCollab => {
-                    if (collaborationMethods.toLowerCase().includes(selectedCollab.toLowerCase())) {
-                        collabMatch = true;
-                    }
-                });
-                if (!collabMatch) show = false;
-            }
-            
-            if (show) previewCount++;
-        });
-        
-        const previewElement = document.getElementById('filterPreview');
-        if (previewElement) {
-            previewElement.textContent = `Will show ${previewCount} corporate${previewCount !== 1 ? 's' : ''}`;
-        }
-    }
-    
-    // Initialize filter preview
-    updateFilterPreview();
-    
     // Add event listener for modal events
     const filterModal = document.getElementById('filterModal');
     if (filterModal) {
         filterModal.addEventListener('shown.bs.modal', function() {
-            // Update preview when modal opens
-            updateFilterPreview();
+            // Update button state when modal opens
             updateFilterButtonState();
         });
         
@@ -979,7 +879,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to clear all filters and show all corporates
     function clearAllFilters() {
-        const rows = document.querySelectorAll('.corporate-row, .corporate-card');
+        const rows = document.querySelectorAll('.startup-row, .corporate-card');
         let totalCount = 0;
         
         rows.forEach(row => {
@@ -1016,7 +916,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Advanced filtering function
     function applyAdvancedFilters() {
-        const rows = document.querySelectorAll('.corporate-row, .corporate-card');
+        const rows = document.querySelectorAll('.startup-row, .corporate-card');
         let visibleCount = 0;
         
         // Get filter values
@@ -1130,7 +1030,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (hasActiveFilters) {
             filterBtn.classList.add('has-filters');
-            filterBtn.innerHTML = '<i class="bi bi-funnel-fill me-2"></i><span>Filters Active</span>';
+            // filterBtn.innerHTML = '<i class="bi bi-funnel-fill me-2"></i><span>Filters Active</span>';
         } else {
             filterBtn.classList.remove('has-filters');
             filterBtn.innerHTML = '<i class="bi bi-funnel me-2"></i><span>Advanced Filters</span>';
@@ -1171,7 +1071,7 @@ document.addEventListener('DOMContentLoaded', function() {
             clearAllAdvancedFilters();
         }
         
-        const rows = document.querySelectorAll('.corporate-row, .corporate-card');
+        const rows = document.querySelectorAll('.startup-row, .corporate-card');
         let visibleCount = 0;
         
         rows.forEach(row => {
