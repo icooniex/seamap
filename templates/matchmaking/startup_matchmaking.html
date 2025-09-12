@@ -3130,8 +3130,15 @@ document.addEventListener('DOMContentLoaded', function() {
                         bValue = b.querySelector('.location-cell span')?.textContent.toLowerCase() || '';
                         break;
                     case 'stage':
-                        aValue = a.querySelector('.stage-badge-sm')?.textContent.toLowerCase() || '';
-                        bValue = b.querySelector('.stage-badge-sm')?.textContent.toLowerCase() || '';
+                        // Define stage order based on actual data attributes
+                        const stageOrder = ['idea', 'prototype', 'validation', 'early', 'scaling', 'profitable'];
+                        const aStage = a.dataset.stage || '';
+                        const bStage = b.dataset.stage || '';
+                        aValue = stageOrder.indexOf(aStage);
+                        bValue = stageOrder.indexOf(bStage);
+                        // If stage not found in order, put it at the end
+                        if (aValue === -1) aValue = 999;
+                        if (bValue === -1) bValue = 999;
                         break;
                     case 'funding':
                         aValue = a.querySelector('.funding-amount-sm')?.textContent.toLowerCase() || '';
