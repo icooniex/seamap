@@ -471,21 +471,21 @@
                                         <input type="checkbox" id="typeImpactFund" name="investor_type" value="impact_fund" class="form-check-input">
                                         <label for="typeImpactFund" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">� Impact Fund</span>
+                                            <span class="checkbox-text">🌱 Impact Fund</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
                                         <input type="checkbox" id="typeGovernment" name="investor_type" value="government" class="form-check-input">
                                         <label for="typeGovernment" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">�️ Government/Development Agency</span>
+                                            <span class="checkbox-text">🏛️ Government/Development Agency</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
                                         <input type="checkbox" id="typeOther" name="investor_type" value="other" class="form-check-input">
                                         <label for="typeOther" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">� Other</span>
+                                            <span class="checkbox-text">🔎 Other</span>
                                         </label>
                                     </div>
                                 </div>
@@ -500,6 +500,10 @@
                                     Location
                                 </label>
                                 <div class="tech-checkbox-grid">
+                                    {% comment %}
+                                    Location options based on investor onboarding form.
+                                    Add/modify as needed for full coverage.
+                                    {% endcomment %}
                                     <div class="checkbox-item">
                                         <input type="checkbox" id="locSingapore" name="primary_location" value="Singapore" class="form-check-input">
                                         <label for="locSingapore" class="checkbox-label">
@@ -540,6 +544,41 @@
                                         <label for="locVietnam" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
                                             <span class="checkbox-text">🇻🇳 Vietnam</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="locCambodia" name="primary_location" value="Cambodia" class="form-check-input">
+                                        <label for="locCambodia" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🇰🇭 Cambodia</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="locLaos" name="primary_location" value="Laos" class="form-check-input">
+                                        <label for="locLaos" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🇱🇦 Laos</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="locMyanmar" name="primary_location" value="Myanmar" class="form-check-input">
+                                        <label for="locMyanmar" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🇲🇲 Myanmar</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="locBrunei" name="primary_location" value="Brunei" class="form-check-input">
+                                        <label for="locBrunei" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🇧🇳 Brunei</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="locOther" name="primary_location" value="Other" class="form-check-input">
+                                        <label for="locOther" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🌏 Other</span>
                                         </label>
                                     </div>
                                 </div>
@@ -602,45 +641,45 @@
                                 </label>
                                 <div class="tech-checkbox-grid">
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="stageIdea" name="preferred_stages" value="idea" class="form-check-input">
-                                        <label for="stageIdea" class="checkbox-label">
+                                        <input type="checkbox" id="stagePreSeed" name="preferred_stages" value="pre_seed" class="form-check-input">
+                                        <label for="stagePreSeed" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">💡 Ideation</span>
+                                            <span class="checkbox-text">🌱 Pre-Seed</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="stagePrototype" name="preferred_stages" value="prototype" class="form-check-input">
-                                        <label for="stagePrototype" class="checkbox-label">
+                                        <input type="checkbox" id="stageSeed" name="preferred_stages" value="seed" class="form-check-input">
+                                        <label for="stageSeed" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">🔧 Prototype/MVP</span>
+                                            <span class="checkbox-text">🌿 Seed</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="stageValidation" name="preferred_stages" value="validation" class="form-check-input">
-                                        <label for="stageValidation" class="checkbox-label">
+                                        <input type="checkbox" id="stageSeriesA" name="preferred_stages" value="series_a" class="form-check-input">
+                                        <label for="stageSeriesA" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">🧪 Validation</span>
+                                            <span class="checkbox-text">🚀 Series A</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="stageEarly" name="preferred_stages" value="early" class="form-check-input">
-                                        <label for="stageEarly" class="checkbox-label">
+                                        <input type="checkbox" id="stageSeriesB" name="preferred_stages" value="series_b" class="form-check-input">
+                                        <label for="stageSeriesB" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">📈 Early Growth</span>
+                                            <span class="checkbox-text">� Series B</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="stageScaling" name="preferred_stages" value="scaling" class="form-check-input">
-                                        <label for="stageScaling" class="checkbox-label">
+                                        <input type="checkbox" id="stageSeriesC" name="preferred_stages" value="series_c" class="form-check-input">
+                                        <label for="stageSeriesC" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">🚀 Scaling</span>
+                                            <span class="checkbox-text">🏢 Series C</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="stageProfit" name="preferred_stages" value="profit" class="form-check-input">
-                                        <label for="stageProfit" class="checkbox-label">
+                                        <input type="checkbox" id="stageSeriesD" name="preferred_stages" value="series_d" class="form-check-input">
+                                        <label for="stageSeriesD" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">💰 Established/Profitable</span>
+                                            <span class="checkbox-text">🏆 Series D+</span>
                                         </label>
                                     </div>
                                 </div>
@@ -1090,6 +1129,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (currentFilters.investorTypes.length > 0) {
             const elementType = element.getAttribute('data-type');
             if (!currentFilters.investorTypes.includes(elementType)) {
+                return false;
+            }
+        }
+        
+        // Location filter
+        if (currentFilters.locations.length > 0) {
+            const elementLocation = element.getAttribute('data-location');
+            if (!currentFilters.locations.includes(elementLocation)) {
                 return false;
             }
         }
