@@ -127,6 +127,7 @@
                         data-areas-interest="{{ corporate.investment_categories|join:',' }}"
                         data-collaboration="{{ corporate.support_areas|join:',' }}"
                         data-industry-expertise="{{ corporate.industry_expertise|join:',' }}"
+                        data-created="{{ corporate.created_at|date:'Y-m-d' }}"
                         data-href="/corporate/{{ corporate.id }}/">
                         <td class="company-cell sticky-column">
                             <div class="d-flex align-items-center">
@@ -233,6 +234,7 @@
                      data-areas-interest="{{ corporate.investment_categories|join:',' }}"
                      data-collaboration="{{ corporate.support_areas|join:',' }}"
                      data-industry-expertise="{{ corporate.industry_expertise|join:',' }}"
+                     data-created="{{ corporate.created_at|date:'Y-m-d' }}"
                      onclick="window.location.href='/corporate/profile/{{ corporate.id }}/'">
                     <div class="card-body p-3">
                         <!-- Corporate Header -->
@@ -900,6 +902,13 @@ document.addEventListener('DOMContentLoaded', function() {
         // Reset quick filter tags
         document.querySelectorAll('.filter-tag:not(.filter-btn-primary)').forEach(t => t.classList.remove('active'));
         document.querySelector('.filter-tag[data-filter="all"]')?.classList.add('active');
+        
+        // Close the modal automatically
+        const modalElement = document.getElementById('filterModal');
+        if (modalElement) {
+            const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+            modal.hide();
+        }
     }
 
     // Apply filters
@@ -1103,9 +1112,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     show = matchScore > 80;
                     break;
                 case 'recent':
-                    // For demo purposes, show random subset but make it consistent
-                    const name = row.getAttribute('data-name') || '';
-                    show = name.length % 2 === 0; // More predictable than random
+                    // Show corporates created within the last 1 month
+                    const createdAttr = row.getAttribute('data-created');
+                    if (!createdAttr) {
+                        show = false;
+                    } else {
+                        const createdDate = new Date(createdAttr);
+                        const now = new Date();
+                        const oneMonthAgo = new Date();
+                        oneMonthAgo.setMonth(now.getMonth() - 1);
+                        show = createdDate >= oneMonthAgo;
+                    }
                     break;
             }
             
