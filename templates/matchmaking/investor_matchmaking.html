@@ -1277,17 +1277,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Range Slider Functionality
     function initializeRangeSlider() {
-        if (matchRange) {
-            matchRange.addEventListener('input', function() {
-                matchValue.textContent = this.value;
+        const matchProgress = document.getElementById('matchProgress');
+        
+        if (matchRange && matchValue && matchProgress) {
+            // Function to update progress bar
+            function updateMatchProgress() {
+                const value = parseInt(matchRange.value);
                 
-                // Update slider background
-                const value = (this.value - this.min) / (this.max - this.min) * 100;
-                this.style.background = `linear-gradient(to right, #2C59A7 0%, #2C59A7 ${value}%, #e9ecef ${value}%, #e9ecef 100%)`;
-            });
+                // Update display text
+                matchValue.textContent = value;
+                
+                // Update progress bar width
+                matchProgress.style.width = value + '%';
+            }
             
-            // Initialize slider appearance
-            matchRange.dispatchEvent(new Event('input'));
+            // Initialize progress on load
+            updateMatchProgress();
+            
+            // Add event listeners
+            matchRange.addEventListener('input', updateMatchProgress);
+            matchRange.addEventListener('change', updateMatchProgress);
         }
     }
 

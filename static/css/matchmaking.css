@@ -249,6 +249,8 @@
     background: linear-gradient(135deg, #234a91 0%, #4a3f8a 100%) ;
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(44, 89, 167, 0.3) ;
+    color: white ;
+
 }
 
 .filter-btn-primary i {
