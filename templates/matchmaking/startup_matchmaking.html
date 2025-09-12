@@ -81,42 +81,42 @@
                             </div>
                         </th>
                         <th class="sortable" data-sort="match">
-                            <div class="d-flex align-items-center gap-2">
+                            <div class="d-flex align-items-center justify-content-center gap-2">
                                 <i class="bi bi-percent text-muted me-2"></i>
                                 <span>Match</span>
                                 <i class="bi bi-arrow-down sort-icon"></i>
                             </div>
                         </th>
                         <th class="sortable" data-sort="location">
-                            <div class="d-flex align-items-center gap-2">
+                            <div class="d-flex align-items-center justify-content-center gap-2">
                                 <i class="bi bi-geo-alt text-muted me-2"></i>
                                 <span>Location</span>
                                 <i class="bi bi-arrow-down sort-icon"></i>
                             </div>
                         </th>
                         <th class="sortable" data-sort="stage">
-                            <div class="d-flex align-items-center gap-2">
+                            <div class="d-flex align-items-center justify-content-center gap-2">
                                 <i class="bi bi-graph-up-arrow text-muted me-2"></i>
                                 <span>Stage</span>
                                 <i class="bi bi-arrow-down sort-icon"></i>
                             </div>
                         </th>
                         <th class="sortable" data-sort="funding">
-                            <div class="d-flex align-items-center gap-2">
+                            <div class="d-flex align-items-center justify-content-center gap-2">
                                 <i class="bi bi-currency-dollar text-muted me-2"></i>
                                 <span>Funding</span>
                                 <i class="bi bi-arrow-down sort-icon"></i>
                             </div>
                         </th>
                         <th class="sortable" data-sort="team">
-                            <div class="d-flex align-items-center gap-2">
+                            <div class="d-flex align-items-center justify-content-center gap-2">
                                 <i class="bi bi-people text-muted me-2"></i>
                                 <span>Team Size</span>
                                 <i class="bi bi-arrow-down sort-icon"></i>
                             </div>
                         </th>
                         <th class="sortable" data-sort="founded">
-                            <div class="d-flex align-items-center gap-2">
+                            <div class="d-flex align-items-center justify-content-center gap-2">
                                 <i class="bi bi-calendar text-muted me-2"></i>
                                 <span>Founded</span>
                                 <i class="bi bi-arrow-down sort-icon"></i>
@@ -171,7 +171,7 @@
                             </div>
                         </td>
                         <td class="location-cell">
-                            <div class="d-flex align-items-center">
+                            <div class="d-flex align-items-center justify-content-center">
                                 <span>{{ startup.get_primary_location_display|default:startup.primary_location|default:"Not specified" }}</span>
                             </div>
                         </td>
@@ -211,12 +211,12 @@
                             </div>
                         </td>
                         <td class="team-cell">
-                            <div class="d-flex align-items-center">
+                            <div class="d-flex align-items-center justify-content-center">
                                 <span>{{ startup.get_team_size_display|default:startup.team_size|default:"Not specified" }}</span>
                             </div>
                         </td>
                         <td class="founded-cell">
-                            <div class="d-flex align-items-center">
+                            <div class="d-flex align-items-center justify-content-center">
                                 <span>{{ startup.founded_year|default:"Not specified" }}</span>
                             </div>
                         </td>
@@ -1326,10 +1326,13 @@
 
 .startup-table th:not(.sticky-column) {
     border-right: 1px solid #f1f3f4;
+    text-align: center;
 }
 
 .startup-table td:not(.sticky-column) {
     border-right: 1px solid #f1f3f4;
+    text-align: center;
+    vertical-align: middle;
 }
 
 /* Clickable row styling */
