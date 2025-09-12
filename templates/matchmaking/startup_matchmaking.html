@@ -2686,10 +2686,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // Add Enter key support for search input
     if (searchInput) {
-        searchInput.addEventListener('input', function() {
-            currentFilters.search = this.value.toLowerCase().trim();
-            applyAllFilters();
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                performSearch();
+            }
         });
     }
     
