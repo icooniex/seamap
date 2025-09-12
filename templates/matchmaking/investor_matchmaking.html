@@ -264,7 +264,7 @@
     <div class="container-fluid d-none" id="cardContainer">
         <div class="row g-4">
             {% for investor in investors %}
-            <div class="col-12 col-md-6 col-lg-4">
+            <div class="col-12 col-md-6 col-lg-4 investor-grid-item">
                 <div class="startup-card card h-100" 
                      data-match="{{ investor.match_score }}" 
                      data-type="{{ investor.investor_type|default:'unknown' }}" 
@@ -1106,11 +1106,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         // Filter grid items
-        const gridItems = document.querySelectorAll('.startup-card');
+        const gridItems = document.querySelectorAll('.investor-grid-item');
         let visibleGridCount = 0;
         
         gridItems.forEach(item => {
-            if (matchesFilters(item)) {
+            const card = item.querySelector('.startup-card');
+            if (matchesFilters(card)) {
                 item.style.display = '';
                 visibleGridCount++;
                 // Add fade-in animation
@@ -1194,7 +1195,7 @@ document.addEventListener('DOMContentLoaded', function() {
         currentFilters = {};
         
         // Show all items
-        document.querySelectorAll('.startup-row, .startup-card').forEach(item => {
+        document.querySelectorAll('.startup-row, .investor-grid-item').forEach(item => {
             item.style.display = '';
         });
         
@@ -1252,7 +1253,7 @@ document.addEventListener('DOMContentLoaded', function() {
             tableCount = document.querySelectorAll('.startup-row:not([style*="display: none"])').length;
         }
         if (gridCount === null) {
-            gridCount = document.querySelectorAll('.startup-card:not([style*="display: none"])').length;
+            gridCount = document.querySelectorAll('.investor-grid-item:not([style*="display: none"])').length;
         }
         
         // Handle table empty state
@@ -1286,11 +1287,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function applyQuickFilter(filterType) {
-        const items = document.querySelectorAll('.startup-row, .startup-card');
+        const items = document.querySelectorAll('.startup-row, .investor-grid-item');
         let visibleCount = 0;
         
         items.forEach(item => {
             let shouldShow = false;
+            
+            // For grid items, get data attributes from the card inside
+            const dataItem = item.classList.contains('investor-grid-item') 
+                ? item.querySelector('.startup-card') 
+                : item;
             
             switch(filterType) {
                 case 'all':
@@ -1298,21 +1304,21 @@ document.addEventListener('DOMContentLoaded', function() {
                     break;
                 case 'early-stage':
                     // Show investors who prefer early stage investments
-                    const preferredStages = item.getAttribute('data-preferred-stages') || '';
+                    const preferredStages = dataItem.getAttribute('data-preferred-stages') || '';
                     shouldShow = preferredStages.includes('seed') || preferredStages.includes('pre_seed') || preferredStages.includes('angel');
                     break;
                 case 'growth':
                     // Show investors who prefer growth stage investments
-                    const growthStages = item.getAttribute('data-preferred-stages') || '';
+                    const growthStages = dataItem.getAttribute('data-preferred-stages') || '';
                     shouldShow = growthStages.includes('series_a') || growthStages.includes('series_b') || growthStages.includes('series_c');
                     break;
                 case 'high-match':
-                    const matchScore = parseInt(item.getAttribute('data-match')) || 0;
+                    const matchScore = parseInt(dataItem.getAttribute('data-match')) || 0;
                     shouldShow = matchScore > 80;
                     break;
                 case 'active':
                     // Show active investors only
-                    const isActive = item.getAttribute('data-is-active') === 'true';
+                    const isActive = dataItem.getAttribute('data-is-active') === 'true';
                     shouldShow = isActive;
                     break;
                 default:
@@ -1444,7 +1450,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }, observerOptions);
 
     // Observe grid items for scroll animations
-    document.querySelectorAll('.startup-card').forEach(item => {
+    document.querySelectorAll('.investor-grid-item').forEach(item => {
         observer.observe(item);
     });
 
