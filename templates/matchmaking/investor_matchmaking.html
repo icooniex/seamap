@@ -133,6 +133,8 @@
                         data-funding-size="{{ investor.funding_size|default:'' }}"
                         data-preferred-stages="{{ investor.preferred_stages|join:',' }}"
                         data-investment-categories="{{ investor.investment_categories|join:',' }}"
+                        data-is-active="{{ investor.is_active|yesno:'true,false' }}"
+                        data-created-at="{{ investor.created_at|date:'c' }}"
                         data-href="/investor/{{ investor.id }}/">
                         <td class="company-cell sticky-column">
                             <div class="d-flex align-items-center">
@@ -257,6 +259,8 @@
                      data-funding-size="{{ investor.funding_size|default:'' }}"
                      data-preferred-stages="{{ investor.preferred_stages|join:',' }}"
                      data-investment-categories="{{ investor.investment_categories|join:',' }}"
+                     data-is-active="{{ investor.is_active|yesno:'true,false' }}"
+                     data-created-at="{{ investor.created_at|date:'c' }}"
                      onclick="window.location.href='/investor/{{ investor.id }}/'">
                     <div class="card-body p-3">
                         <!-- Investor Header -->
@@ -1143,20 +1147,31 @@ document.addEventListener('DOMContentLoaded', function() {
             tag.classList.remove('active');
         });
         document.querySelector('.filter-tag[data-filter="all"]').classList.add('active');
+        
+        // Close the modal by clicking the close button
+        const closeButton = document.querySelector('#filterModal [data-bs-dismiss="modal"]');
+        if (closeButton) {
+            closeButton.click();
+        }
     }
 
     function updateFilterDisplay() {
-        // Update filter button to show active filters count
-        const activeFiltersCount = Object.values(currentFilters).flat().length;
+        // Update filter button to show active state
         const filterBtn = document.getElementById('filterBtn');
-        
-        if (activeFiltersCount > 0) {
-            filterBtn.innerHTML = `<i class="bi bi-funnel me-2"></i><span>Filters (${activeFiltersCount})</span>`;
-            filterBtn.classList.add('active');
+        if (hasActiveAdvancedFilters()) {
+            filterBtn.classList.add('has-filters');
         } else {
-            filterBtn.innerHTML = '<i class="bi bi-funnel me-2"></i><span>Advanced Filters</span>';
-            filterBtn.classList.remove('active');
+            filterBtn.classList.remove('has-filters');
         }
+    }
+
+    function hasActiveAdvancedFilters() {
+        return (currentFilters.minMatch || 0) > 0 ||
+               (currentFilters.investorTypes && currentFilters.investorTypes.length > 0) ||
+               (currentFilters.locations && currentFilters.locations.length > 0) ||
+               (currentFilters.fundingSizes && currentFilters.fundingSizes.length > 0) ||
+               (currentFilters.preferredStages && currentFilters.preferredStages.length > 0) ||
+               (currentFilters.investmentCategories && currentFilters.investmentCategories.length > 0);
     }
 
     function updateResultsCount(count = null) {
@@ -1221,20 +1236,23 @@ document.addEventListener('DOMContentLoaded', function() {
                     shouldShow = true;
                     break;
                 case 'early-stage':
-                    const stages = item.getAttribute('data-preferred-stages') || '';
-                    shouldShow = stages.includes('idea') || stages.includes('prototype') || stages.includes('validation');
+                    // Show investors who prefer early stage investments
+                    const preferredStages = item.getAttribute('data-preferred-stages') || '';
+                    shouldShow = preferredStages.includes('seed') || preferredStages.includes('pre_seed') || preferredStages.includes('angel');
                     break;
                 case 'growth':
+                    // Show investors who prefer growth stage investments
                     const growthStages = item.getAttribute('data-preferred-stages') || '';
-                    shouldShow = growthStages.includes('early') || growthStages.includes('scaling');
+                    shouldShow = growthStages.includes('series_a') || growthStages.includes('series_b') || growthStages.includes('series_c');
                     break;
                 case 'high-match':
                     const matchScore = parseInt(item.getAttribute('data-match')) || 0;
                     shouldShow = matchScore > 80;
                     break;
                 case 'active':
-                    // Assume all investors are active for now
-                    shouldShow = true;
+                    // Show active investors only
+                    const isActive = item.getAttribute('data-is-active') === 'true';
+                    shouldShow = isActive;
                     break;
                 default:
                     shouldShow = true;
