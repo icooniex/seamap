@@ -431,56 +431,56 @@
                                 </label>
                                 <div class="tech-checkbox-grid">
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="innPlasticAlternatives" name="innovation_types" value="plastic_alternatives" class="form-check-input">
+                                        <input type="checkbox" id="innPlasticAlternatives" name="innovation_types" value="Eliminate & Redesign Packaging" class="form-check-input">
                                         <label for="innPlasticAlternatives" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
                                             <span class="checkbox-text">Eliminate & Redesign Packaging</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="innRecyclingTech" name="innovation_types" value="recycling_technologies" class="form-check-input">
+                                        <input type="checkbox" id="innRecyclingTech" name="innovation_types" value="Refill & Reuse Solutions" class="form-check-input">
                                         <label for="innRecyclingTech" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
                                             <span class="checkbox-text">Refill & Reuse Solutions</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="innWasteCollection" name="innovation_types" value="waste_collection" class="form-check-input">
+                                        <input type="checkbox" id="innWasteCollection" name="innovation_types" value="Reusable Packaging Collection/Drop Off" class="form-check-input">
                                         <label for="innWasteCollection" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
                                             <span class="checkbox-text">Reusable Packaging Collection/Drop Off</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="innCircularEconomy" name="innovation_types" value="circular_economy" class="form-check-input">
+                                        <input type="checkbox" id="innCircularEconomy" name="innovation_types" value="Upcycling Plastic Waste" class="form-check-input">
                                         <label for="innCircularEconomy" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
                                             <span class="checkbox-text">Upcycling Plastic Waste</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="innMonitoringTools" name="innovation_types" value="monitoring_tools" class="form-check-input">
+                                        <input type="checkbox" id="innMonitoringTools" name="innovation_types" value="Sustainable Alternative Materials" class="form-check-input">
                                         <label for="innMonitoringTools" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
                                             <span class="checkbox-text">Sustainable Alternative Materials</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="innEducationPartnerships" name="innovation_types" value="education_partnerships" class="form-check-input">
+                                        <input type="checkbox" id="innEducationPartnerships" name="innovation_types" value="Education & Industry Partnerships" class="form-check-input">
                                         <label for="innEducationPartnerships" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
                                             <span class="checkbox-text">Education & Industry Partnerships</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="innTrackingMonitoring" name="innovation_types" value="tracking_monitoring" class="form-check-input">
+                                        <input type="checkbox" id="innTrackingMonitoring" name="innovation_types" value="Tracking & Monitoring Waste" class="form-check-input">
                                         <label for="innTrackingMonitoring" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
                                             <span class="checkbox-text">Tracking & Monitoring Waste</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="innOther" name="innovation_types" value="other" class="form-check-input">
+                                        <input type="checkbox" id="innOther" name="innovation_types" value="Other Innovation" class="form-check-input">
                                         <label for="innOther" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
                                             <span class="checkbox-text">Other Innovation</span>
@@ -534,7 +534,7 @@
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="stageProfit" name="current_stage" value="profit" class="form-check-input">
+                                        <input type="checkbox" id="stageProfit" name="current_stage" value="profitable" class="form-check-input">
                                         <label for="stageProfit" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
                                             <span class="checkbox-text">💰 Established/Profitable</span>
@@ -2465,6 +2465,7 @@
 .modal-footer .btn-secondary {
     background: #6c757d;
     border-color: #6c757d;
+    border: none;
 }
 
 .modal-footer .btn-secondary:hover {
@@ -2993,51 +2994,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 const filterTypeLower = filterType.toLowerCase();
                 const dataTypeLower = dataType.toLowerCase();
                 
-                // Direct match
+                // Direct match (exact text match)
                 if (dataTypeLower === filterTypeLower) return true;
                 
-                // Handle sustainability-focused mappings
-                switch (filterTypeLower) {
-                    case 'plastic_alternatives':
-                        return dataTypeLower.includes('plastic') && 
-                               (dataTypeLower.includes('alternative') || dataTypeLower.includes('eliminate') || 
-                                dataTypeLower.includes('redesign') || dataTypeLower.includes('packaging'));
-                    
-                    case 'recycling_technologies':
-                        return dataTypeLower.includes('recycling') || dataTypeLower.includes('refill') || 
-                               dataTypeLower.includes('reuse') || dataTypeLower.includes('solution');
-                    
-                    case 'waste_collection':
-                        return dataTypeLower.includes('waste') && dataTypeLower.includes('collection') ||
-                               dataTypeLower.includes('drop') || dataTypeLower.includes('reusable');
-                    
-                    case 'circular_economy':
-                        return dataTypeLower.includes('circular') || dataTypeLower.includes('upcycling') ||
-                               dataTypeLower.includes('economy') || dataTypeLower.includes('sustainable');
-                    
-                    case 'monitoring_tools':
-                        return dataTypeLower.includes('monitoring') || dataTypeLower.includes('tools') ||
-                               dataTypeLower.includes('alternative') && dataTypeLower.includes('materials');
-                    
-                    case 'education_partnerships':
-                        return dataTypeLower.includes('education') || dataTypeLower.includes('partnership') ||
-                               dataTypeLower.includes('industry') || dataTypeLower.includes('training');
-                    
-                    case 'tracking_monitoring':
-                        return dataTypeLower.includes('tracking') || dataTypeLower.includes('monitoring') ||
-                               dataTypeLower.includes('waste') && dataTypeLower.includes('track');
-                    
-                    case 'other':
-                        return dataTypeLower.includes('other') || dataTypeLower.includes('innovation') ||
-                               !filterTypes.slice(0, -1).some(ft => // Check if doesn't match any other category
-                                   dataTypeLower.includes(ft.toLowerCase())
-                               );
-                    
-                    default:
-                        // Fallback to partial string matching
-                        return dataTypeLower.includes(filterTypeLower) || 
-                               filterTypeLower.includes(dataTypeLower);
-                }
+                // Partial matching for common variations
+                return dataTypeLower.includes(filterTypeLower) || 
+                       filterTypeLower.includes(dataTypeLower);
             });
         });
     }
