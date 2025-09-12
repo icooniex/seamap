@@ -103,18 +103,16 @@
                                 <i class="bi bi-arrow-down sort-icon"></i>
                             </div>
                         </th>
-                        <th class="sortable" data-sort="areas-interest">
+                        <th>
                             <div class="d-flex align-items-center justify-content-center gap-2">
                                 <i class="bi bi-search text-muted me-2"></i>
                                 <span>Areas of Interest</span>
-                                <i class="bi bi-arrow-down sort-icon"></i>
                             </div>
                         </th>
-                        <th class="sortable" data-sort="collaboration">
+                        <th>
                             <div class="d-flex align-items-center justify-content-center gap-2">
                                 <i class="bi bi-briefcase text-muted me-2"></i>
                                 <span>Collaboration</span>
-                                <i class="bi bi-arrow-down sort-icon"></i>
                             </div>
                         </th>
                     </tr>
@@ -147,19 +145,10 @@
                                     </div>
                                     {% if corporate.industry_expertise %}
                                     <div class="tech-tags-sm mt-1">
+                                        
                                         {% for expertise in corporate.industry_expertise|slice:":3" %}
                                             <span class="tech-tag-sm">{{ expertise|title }}</span>
                                         {% endfor %}
-                                    </div>
-                                    {% endif %}
-                                    {% if corporate.investment_categories %}
-                                    <div class="industry-expert-tags mt-2">
-                                        {% for category in corporate.investment_categories|slice:":3" %}
-                                            <span class="industry-expert-tag">{{ category|title }}</span>
-                                        {% endfor %}
-                                        {% if corporate.investment_categories|length > 3 %}
-                                            <span class="industry-expert-more">+{{ corporate.investment_categories|length|add:"-3" }}</span>
-                                        {% endif %}
                                     </div>
                                     {% endif %}
                                 </div>
@@ -1231,15 +1220,15 @@ document.addEventListener('DOMContentLoaded', function() {
             const rows = Array.from(tbody.querySelectorAll('tr:not(:last-child)')); // Exclude empty state row
             
             // Determine sort direction
-            const isAsc = !this.classList.contains('sort-asc');
+            const isAsc = !this.classList.contains('asc');
             
             // Remove sort classes from all headers
             document.querySelectorAll('.sortable').forEach(h => {
-                h.classList.remove('sort-asc', 'sort-desc');
+                h.classList.remove('asc', 'desc');
             });
             
             // Add sort class to current header
-            this.classList.add(isAsc ? 'sort-asc' : 'sort-desc');
+            this.classList.add(isAsc ? 'asc' : 'desc');
             
             // Sort rows
             rows.sort((a, b) => {

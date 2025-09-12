@@ -2071,3 +2071,17 @@
     font-weight: 600;
     transition: all 0.3s ease;
 }
+
+.organization-badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+
+.organization-private_company { background-color: #e3f2fd; color: #1976d2; }
+.organization-multinational_corporation { background-color: #f3e5f5; color: #7b1fa2; }
+.organization-sme { background-color: #e8f5e8; color: #388e3c; }
+.organization-startup_subsidiary { background-color: #fff3e0; color: #f57c00; }
+.organization-other { background-color: #fce4ec; color: #c2185b; }
