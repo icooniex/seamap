@@ -375,7 +375,12 @@
                                     Match Score: <span id="matchValue">0</span>%+
                                 </label>
                                 <div class="range-container">
-                                    <input type="range" class="form-range" id="matchRange" min="0" max="100" value="0">
+                                    <div class="custom-range-slider">
+                                        <input type="range" class="range-input" id="matchRange" min="0" max="100" value="0">
+                                        <div class="slider-track">
+                                            <div class="slider-fill" id="matchProgress"></div>
+                                        </div>
+                                    </div>
                                     <div class="range-labels">
                                         <span>0%</span>
                                         <span>100%</span>
@@ -385,7 +390,7 @@
                         </div>
 
                         <!-- Organization Type Filter -->
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <div class="form-group">
                                 <label class="form-label">
                                     <i class="bi bi-building me-2"></i>
@@ -432,7 +437,7 @@
                         </div>
 
                         <!-- Location Filter -->
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <div class="form-group">
                                 <label class="form-label">
                                     <i class="bi bi-geo-alt me-2"></i>
@@ -795,14 +800,36 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Match score range display
+    // Match score range display and progress
     const matchScoreRange = document.getElementById('matchRange');
     const matchScoreDisplay = document.getElementById('matchValue');
+    const matchProgress = document.getElementById('matchProgress');
     
-    if (matchScoreRange && matchScoreDisplay) {
-        matchScoreRange.addEventListener('input', function() {
-            matchScoreDisplay.textContent = this.value;
+    if (matchScoreRange && matchScoreDisplay && matchProgress) {
+        // Function to update progress bar
+        function updateMatchProgress() {
+            const value = parseInt(matchScoreRange.value);
+            
+            // Update display text
+            matchScoreDisplay.textContent = value;
+            
+            // Update progress bar width
+            matchProgress.style.width = value + '%';
+            
             updateFilterButtonState(); // Update button state in real-time
+        }
+        
+        // Add event listeners
+        matchScoreRange.addEventListener('input', updateMatchProgress);
+        matchScoreRange.addEventListener('change', updateMatchProgress);
+        
+        // Initialize progress on load
+        updateMatchProgress();
+    } else {
+        console.error('Missing slider elements:', {
+            range: !!matchScoreRange,
+            display: !!matchScoreDisplay,
+            progress: !!matchProgress
         });
     }
     
@@ -941,7 +968,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Reset match score range
             if (matchScoreRange) {
                 matchScoreRange.value = 0;
-                matchScoreDisplay.textContent = '0';
+                if (matchScoreDisplay) matchScoreDisplay.textContent = '0';
+                if (matchProgress) matchProgress.style.width = '0%';
             }
             
             // Clear all filters and show all corporates
@@ -1206,7 +1234,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Reset match score range silently
         if (matchScoreRange) {
             matchScoreRange.value = 0;
-            matchScoreDisplay.textContent = '0';
+            if (matchScoreDisplay) matchScoreDisplay.textContent = '0';
+            if (matchProgress) matchProgress.style.width = '0%';
         }
         
         // Update filter button state
