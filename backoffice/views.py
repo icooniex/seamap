@@ -449,7 +449,7 @@ def update_user_verification(request, user_id):
     else:
         messages.error(request, 'Invalid action.')
     
-    return redirect('backoffice_user_verification')
+    return redirect('backoffice:user_verification')
 
 
 @user_passes_test(is_admin_user, login_url='/backoffice/login/')
@@ -552,7 +552,7 @@ def update_company_verification(request, company_id):
     else:
         messages.error(request, 'Invalid action.')
     
-    return redirect('backoffice_company_verification')
+    return redirect('backoffice:company_verification')
 
 
 # Document Management Views
