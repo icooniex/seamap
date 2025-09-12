@@ -132,6 +132,7 @@
                         data-match="{{ startup.match_score }}" 
                         data-stage="{{ startup.current_stage|default:'unknown' }}" 
                         data-name="{{ startup.company_name|lower|cut:' '|cut:'-' }}" 
+                        data-location="{{ startup.primary_location|default:'Not specified' }}"
                         data-support-areas="{{ startup.support_areas|join:',' }}"
                         data-innovation-types="{{ startup.innovation_types|join:',' }}"
                         data-funding="{{ startup.funding_needed|default:'' }}"
@@ -258,6 +259,7 @@
                      data-match="{{ startup.match_score }}" 
                      data-stage="{{ startup.current_stage|default:'unknown' }}" 
                      data-name="{{ startup.company_name|lower|cut:' '|cut:'-' }}" 
+                     data-location="{{ startup.primary_location|default:'Not specified' }}"
                      data-innovation-types="{{ startup.innovation_types|join:',' }}"
                      data-support-areas="{{ startup.support_areas|join:',' }}"
                      data-funding="{{ startup.funding_needed|default:'' }}"
@@ -1427,8 +1429,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         bValue = parseInt(b.dataset.match) || 0;
                         break;
                     case 'location':
-                        aValue = a.querySelector('.location-cell span')?.textContent.toLowerCase() || '';
-                        bValue = b.querySelector('.location-cell span')?.textContent.toLowerCase() || '';
+                        aValue = (a.getAttribute('data-location') || '').toLowerCase();
+                        bValue = (b.getAttribute('data-location') || '').toLowerCase();
                         break;
                     case 'stage':
                         // Define stage order based on actual data attributes

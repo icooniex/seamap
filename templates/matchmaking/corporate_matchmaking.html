@@ -123,6 +123,7 @@
                         data-match="{{ corporate.match_score }}" 
                         data-type="{{ corporate.organization_type|default:'unknown' }}" 
                         data-name="{{ corporate.company_name|lower|cut:' '|cut:'-' }}" 
+                        data-location="{{ corporate.primary_location|default:'Not specified' }}"
                         data-areas-interest="{{ corporate.investment_categories|join:',' }}"
                         data-collaboration="{{ corporate.support_areas|join:',' }}"
                         data-industry-expertise="{{ corporate.industry_expertise|join:',' }}"
@@ -228,6 +229,7 @@
                      data-match="{{ corporate.match_score }}" 
                      data-type="{{ corporate.organization_type|default:'unknown' }}" 
                      data-name="{{ corporate.company_name|lower|cut:' '|cut:'-' }}" 
+                     data-location="{{ corporate.primary_location|default:'Not specified' }}"
                      data-areas-interest="{{ corporate.investment_categories|join:',' }}"
                      data-collaboration="{{ corporate.support_areas|join:',' }}"
                      data-industry-expertise="{{ corporate.industry_expertise|join:',' }}"
@@ -1242,6 +1244,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     case 'match':
                         aVal = parseInt(a.getAttribute('data-match')) || 0;
                         bVal = parseInt(b.getAttribute('data-match')) || 0;
+                        break;
+                    case 'location':
+                        aVal = (a.getAttribute('data-location') || '').toLowerCase();
+                        bVal = (b.getAttribute('data-location') || '').toLowerCase();
                         break;
                     case 'organization-type':
                         aVal = a.getAttribute('data-type');
