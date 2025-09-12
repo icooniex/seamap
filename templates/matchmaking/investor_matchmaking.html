@@ -109,18 +109,16 @@
                                 <i class="bi bi-arrow-down sort-icon"></i>
                             </div>
                         </th>
-                        <th class="sortable" data-sort="stages">
+                        <th>
                             <div class="d-flex align-items-center gap-2">
                                 <i class="bi bi-graph-up-arrow text-muted me-2"></i>
                                 <span>Preferred Stages</span>
-                                <i class="bi bi-arrow-down sort-icon"></i>
                             </div>
                         </th>
-                        <th class="sortable" data-sort="categories">
+                        <th>
                             <div class="d-flex align-items-center gap-2">
                                 <i class="bi bi-briefcase text-muted me-2"></i>
                                 <span>Investment Categories</span>
-                                <i class="bi bi-arrow-down sort-icon"></i>
                             </div>
                         </th>
                     </tr>
@@ -131,6 +129,7 @@
                         data-match="{{ investor.match_score }}" 
                         data-type="{{ investor.investor_type|default:'unknown' }}" 
                         data-name="{{ investor.company_name|lower|cut:' '|cut:'-' }}" 
+                        data-location="{{ investor.primary_location|default:'unknown' }}"
                         data-funding-size="{{ investor.funding_size|default:'' }}"
                         data-preferred-stages="{{ investor.preferred_stages|join:',' }}"
                         data-investment-categories="{{ investor.investment_categories|join:',' }}"
@@ -182,8 +181,8 @@
                         <td class="funding-cell">
                             <div class="funding-info-sm">
                                 {% if investor.funding_size %}
-                                    <div class="funding-amount-sm">{{ investor.get_funding_size_display|default:investor.funding_size }}</div>
-                                    <div class="funding-type-sm">Investment Range</div>
+                                    <div class="funding-amount-sm">{{ investor.get_funding_size_display }}</div>
+                                    <div class="funding-type-sm">Fund Size</div>
                                 {% else %}
                                     <div class="funding-amount-sm">Not specified</div>
                                 {% endif %}
@@ -243,6 +242,7 @@
             <div class="startup-grid-item clickable-card" 
                  data-match="{{ investor.match_score }}" 
                  data-type="{{ investor.investor_type|default:'unknown' }}" 
+                 data-location="{{ investor.primary_location|default:'unknown' }}"
                  data-funding-size="{{ investor.funding_size|default:'' }}"
                  data-preferred-stages="{{ investor.preferred_stages|join:',' }}"
                  data-investment-categories="{{ investor.investment_categories|join:',' }}"
@@ -316,12 +316,12 @@
                             {% if investor.funding_size %}
                                 <div class="funding-info-grid">
                                     <i class="bi bi-currency-dollar text-success"></i>
-                                    <span class="funding-text">Investment Range: {{ investor.get_funding_size_display }}</span>
+                                    <span class="funding-text">Fund Size: {{ investor.get_funding_size_display }}</span>
                                 </div>
                             {% else %}
                                 <div class="funding-info-grid text-muted">
                                     <i class="bi bi-info-circle"></i>
-                                    <span class="funding-text">Investment range not specified</span>
+                                    <span class="funding-text">Fund size not specified</span>
                                 </div>
                             {% endif %}
                         </div>
@@ -391,42 +391,49 @@
                                         <input type="checkbox" id="typeAngel" name="investor_type" value="angel" class="form-check-input">
                                         <label for="typeAngel" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">👼 Angel Investor</span>
+                                            <span class="checkbox-text">🦸 Angel Investor</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
                                         <input type="checkbox" id="typeVC" name="investor_type" value="vc" class="form-check-input">
                                         <label for="typeVC" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">🏢 Venture Capital</span>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="typePE" name="investor_type" value="pe" class="form-check-input">
-                                        <label for="typePE" class="checkbox-label">
-                                            <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">💼 Private Equity</span>
+                                            <span class="checkbox-text">💼 Venture Capital (VC)</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
                                         <input type="checkbox" id="typeCorporate" name="investor_type" value="corporate" class="form-check-input">
                                         <label for="typeCorporate" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">🏭 Corporate Investor</span>
+                                            <span class="checkbox-text">🏢 Corporate Investor</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="typeGrant" name="investor_type" value="grant" class="form-check-input">
-                                        <label for="typeGrant" class="checkbox-label">
+                                        <input type="checkbox" id="typeFamilyOffice" name="investor_type" value="family_office" class="form-check-input">
+                                        <label for="typeFamilyOffice" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">🎯 Grant Provider</span>
+                                            <span class="checkbox-text">👨‍👩‍👧‍👦 Family Office</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="typeAccelerator" name="investor_type" value="accelerator" class="form-check-input">
-                                        <label for="typeAccelerator" class="checkbox-label">
+                                        <input type="checkbox" id="typeImpactFund" name="investor_type" value="impact_fund" class="form-check-input">
+                                        <label for="typeImpactFund" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">🚀 Accelerator/Incubator</span>
+                                            <span class="checkbox-text">� Impact Fund</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="typeGovernment" name="investor_type" value="government" class="form-check-input">
+                                        <label for="typeGovernment" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">�️ Government/Development Agency</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="typeOther" name="investor_type" value="other" class="form-check-input">
+                                        <label for="typeOther" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">� Other</span>
                                         </label>
                                     </div>
                                 </div>
@@ -492,49 +499,42 @@
                             <div class="form-group">
                                 <label class="form-label">
                                     <i class="bi bi-currency-dollar me-2"></i>
-                                    Investment Range
+                                    Fund Size
                                 </label>
                                 <div class="tech-checkbox-grid">
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="fundingMicro" name="funding_size" value="micro" class="form-check-input">
-                                        <label for="fundingMicro" class="checkbox-label">
+                                        <input type="checkbox" id="fundingUnder1M" name="funding_size" value="under_1m" class="form-check-input">
+                                        <label for="fundingUnder1M" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Micro ($1K - $25K)</span>
+                                            <span class="checkbox-text">Under $1M</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="fundingSeed" name="funding_size" value="seed" class="form-check-input">
-                                        <label for="fundingSeed" class="checkbox-label">
+                                        <input type="checkbox" id="funding1M50M" name="funding_size" value="1m_50m" class="form-check-input">
+                                        <label for="funding1M50M" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Seed ($25K - $100K)</span>
+                                            <span class="checkbox-text">$1M - $50M</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="fundingEarly" name="funding_size" value="early" class="form-check-input">
-                                        <label for="fundingEarly" class="checkbox-label">
+                                        <input type="checkbox" id="funding100M200M" name="funding_size" value="100m_200m" class="form-check-input">
+                                        <label for="funding100M200M" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Early Stage ($100K - $1M)</span>
+                                            <span class="checkbox-text">$100M - $200M</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="fundingSeriesA" name="funding_size" value="series_a" class="form-check-input">
-                                        <label for="fundingSeriesA" class="checkbox-label">
+                                        <input type="checkbox" id="funding200M500M" name="funding_size" value="200m_500m" class="form-check-input">
+                                        <label for="funding200M500M" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Series A ($1M - $5M)</span>
+                                            <span class="checkbox-text">$200M - $500M</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="fundingSeriesB" name="funding_size" value="series_b" class="form-check-input">
-                                        <label for="fundingSeriesB" class="checkbox-label">
+                                        <input type="checkbox" id="fundingOver500M" name="funding_size" value="over_500m" class="form-check-input">
+                                        <label for="fundingOver500M" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Series B ($5M - $15M)</span>
-                                        </label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="fundingGrowth" name="funding_size" value="growth" class="form-check-input">
-                                        <label for="fundingGrowth" class="checkbox-label">
-                                            <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">Growth Stage ($15M+)</span>
+                                            <span class="checkbox-text">Over $500M</span>
                                         </label>
                                     </div>
                                 </div>
@@ -814,9 +814,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     aValue = a.getAttribute('data-type') || '';
                     bValue = b.getAttribute('data-type') || '';
                     break;
+                case 'location':
+                    aValue = a.getAttribute('data-location') || '';
+                    bValue = b.getAttribute('data-location') || '';
+                    break;
                 case 'funding':
-                    aValue = a.getAttribute('data-funding-size') || '';
-                    bValue = b.getAttribute('data-funding-size') || '';
+                    // Convert funding size strings to numeric order for proper sorting
+                    const fundingSizeOrder = {
+                        'under_1m': 1,
+                        '1m_50m': 2,
+                        '100m_200m': 3,
+                        '200m_500m': 4,
+                        'over_500m': 5,
+                        '': 0 // empty/unknown values go first
+                    };
+                    aValue = fundingSizeOrder[a.getAttribute('data-funding-size')] || 0;
+                    bValue = fundingSizeOrder[b.getAttribute('data-funding-size')] || 0;
                     break;
                 default:
                     return 0;
@@ -865,9 +878,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     aValue = a.getAttribute('data-type') || '';
                     bValue = b.getAttribute('data-type') || '';
                     break;
+                case 'location':
+                    aValue = a.getAttribute('data-location') || '';
+                    bValue = b.getAttribute('data-location') || '';
+                    break;
                 case 'funding':
-                    aValue = a.getAttribute('data-funding-size') || '';
-                    bValue = b.getAttribute('data-funding-size') || '';
+                    // Convert funding size strings to numeric order for proper sorting
+                    const fundingSizeOrder = {
+                        'under_1m': 1,
+                        '1m_50m': 2,
+                        '100m_200m': 3,
+                        '200m_500m': 4,
+                        'over_500m': 5,
+                        '': 0 // empty/unknown values go first
+                    };
+                    aValue = fundingSizeOrder[a.getAttribute('data-funding-size')] || 0;
+                    bValue = fundingSizeOrder[b.getAttribute('data-funding-size')] || 0;
                     break;
                 default:
                     return 0;
