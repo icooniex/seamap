@@ -14,6 +14,7 @@
     opacity: 0;
     visibility: hidden;
     margin: -32px;
+    z-index: 1006;
 }
 
 .sticky-header-content.show {

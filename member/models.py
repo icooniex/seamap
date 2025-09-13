@@ -402,6 +402,7 @@ class Company(models.Model):
         
         tabs_progress = {
             'company_info': self._get_company_info_progress(),
+            'innovation_info': self._get_innovation_info_progress(),
             'market_traction': self._get_market_traction_progress(),
             'financing': self._get_financing_progress(),
             'team': self._get_team_progress()
@@ -521,6 +522,29 @@ class Company(models.Model):
                 completed += 1
         
         total_fields = len(required_fields) + 1  # +1 for is_female_led
+        return {
+            'completed': completed,
+            'total': total_fields,
+            'percentage': round((completed / total_fields) * 100),
+            'status': 'complete' if completed == total_fields else 'incomplete'
+        }
+
+    def _get_innovation_info_progress(self):
+        """Calculate innovation information tab progress"""
+        required_fields = ['problem_statement', 'solution_description']
+        completed = 0
+        
+        # Check text fields
+        for field in required_fields:
+            value = getattr(self, field, None)
+            if value and str(value).strip():
+                completed += 1
+        
+        # Check innovation types (JSON array field)
+        if self.innovation_types and len(self.innovation_types) > 0:
+            completed += 1
+            
+        total_fields = len(required_fields) + 1  # +1 for innovation_types
         return {
             'completed': completed,
             'total': total_fields,

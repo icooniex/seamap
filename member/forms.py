@@ -191,7 +191,7 @@ class StartupForm(CompanyForm):
     
     class Meta(CompanyForm.Meta):
         fields = CompanyForm.Meta.fields + [
-            'problem_statement', 'current_stage', 'target_markets',
+            'problem_statement', 'solution_description', 'current_stage', 'target_markets',
             'customer_segments', 'active_users_count', 'paying_customers_count',
             'annual_recurring_revenue', 'has_external_funding', 'funding_history',
             'amount_raised', 'funding_needed', 'use_of_funds', 
@@ -204,6 +204,11 @@ class StartupForm(CompanyForm):
                 'class': 'form-control',
                 'rows': 4,
                 'placeholder': 'What problem does your startup solve?'
+            }),
+            'solution_description': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 5,
+                'placeholder': 'Describe your solution in detail. What makes it unique? What\'s your competitive advantage? How does it solve the problem you identified?'
             }),
             'current_stage': forms.Select(attrs={
                 'class': 'form-select'
