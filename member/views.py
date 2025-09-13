@@ -1324,12 +1324,12 @@ def startup_profile(request, startup_id):
         # Funding Information
         'funding_goal': startup.funding_needed or '',
         'funding_needed': startup.funding_needed or '',
-        'funding_raised': '',  # Could be added as model field
+        'funding_raised': startup.amount_raised or '-',  # Could be added as model field
         'funding_progress': 0,  # Could be calculated based on funding data
         'development_progress': 75 if startup.current_stage else 50,  # Default based on stage
         
         # Problem & Solution
-        'problem_statement': startup.solution_description or startup.company_description or '',
+        'problem_statement': startup.problem_statement or '',
         'innovation_description': startup.solution_description or '',
         'solution_description': startup.solution_description or '',
         'innovation_stage_description': f"Currently in {startup.current_stage} stage" if startup.current_stage else '',
@@ -1340,18 +1340,19 @@ def startup_profile(request, startup_id):
         'intellectual_property': [],  # Could be added as model field
         
         # Market & Traction
-        'target_markets': startup.market_country_interests or [],
+        'target_markets': startup.target_markets or '',
         'market_country_interests': startup.market_country_interests or [],
-        'customer_segments': support_areas_display or [],
-        'customers_count': '',  # Could be added as model field
+        'customer_segments': startup.customer_segments or [],
+        'customers_count': startup.active_users_count or '-',  # Could be added as model field
+        'paying_customers': startup.paying_customers_count or '-',  # Could be added as model field
         'revenue_growth': '',  # Could be added as model field
-        'annual_revenue': '',  # Could be added as model field
+        'annual_revenue': startup.annual_recurring_revenue or '-',  # Could be added as model field
         'market_opportunity_description': startup.investment_philosophy or '',
         
         # Financing Details
-        'use_of_funds': startup.additional_info or 'Funding will be used for product development and market expansion.',
-        'financial_projections': '',  # Could be added as model field
-        'funding_history': [],  # Could be added as model field or separate model
+        'use_of_funds': startup.use_of_funds or '',
+        'financial_projections': startup.financial_projections or '',  # Could be added as model field
+        'funding_history': startup.funding_history or '',  # Could be added as model field or separate model
         'funding_round': startup.current_stage or '',
         
         # Team Information
@@ -1365,12 +1366,13 @@ def startup_profile(request, startup_id):
         ] if startup.member else [],
         'engineering_team_size': str(max(1, int(startup.team_size or '1') // 3)) if startup.team_size and startup.team_size.isdigit() else '',
         'team_description': f"Our team at {startup.company_name} is dedicated to {', '.join(innovation_types_display[:2])}." if innovation_types_display else f"Dedicated team at {startup.company_name}.",
-        'core_expertise': innovation_types_display or ['Technology Innovation'],
+        'core_expertise': startup.core_expertise or f"Expertise in {', '.join(innovation_types_display[:2])}" if innovation_types_display else 'Diverse expertise',
         'team_breakdown': {
             'total': int(startup.team_size or '1') if startup.team_size and startup.team_size.isdigit() else 1,
             'engineers': max(1, int(startup.team_size or '1') // 3) if startup.team_size and startup.team_size.isdigit() else 1,
             'business': max(1, int(startup.team_size or '1') // 4) if startup.team_size and startup.team_size.isdigit() else 1,
         },
+        'team_overview': startup.team_overview or f"Our team is passionate about driving innovation in {', '.join(innovation_types_display[:2])}." if innovation_types_display else "Our team is passionate about innovation.",
         'team_experience': f"Combined experience in {', '.join(innovation_types_display[:2])}" if innovation_types_display else 'Experienced team',
         
         # News & Updates - Mock data based on company info
