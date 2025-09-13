@@ -779,313 +779,73 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Track current view state
+    let isTableView = true;
+    
     // View switching
     const tableView = document.getElementById('tableView');
     const cardView = document.getElementById('cardView');
     const tableContainer = document.getElementById('tableContainer');
     const cardContainer = document.getElementById('cardContainer');
 
-    tableView.addEventListener('click', function() {
-        tableView.classList.add('active');
-        cardView.classList.remove('active');
-        tableContainer.classList.remove('d-none');
-        cardContainer.classList.add('d-none');
-        
-        // Preserve filter state when switching views
-        preserveFilterState();
-    });
+    if (tableView && cardView && tableContainer && cardContainer) {
+        tableView.addEventListener('click', function() {
+            isTableView = true;
+            tableView.classList.add('active');
+            cardView.classList.remove('active');
+            tableContainer.classList.remove('d-none');
+            cardContainer.classList.add('d-none');
+        });
 
-    cardView.addEventListener('click', function() {
-        cardView.classList.add('active');
-        tableView.classList.remove('active');
-        cardContainer.classList.remove('d-none');
-        tableContainer.classList.add('d-none');
-        
-        // Preserve filter state when switching views
-        preserveFilterState();
-    });
-    
-    // Function to preserve filter state across view changes
-    function preserveFilterState() {
-        // Re-apply any active filters
-        if (checkIfFiltersActive()) {
-            // Small delay to ensure DOM is updated
-            setTimeout(() => {
-                applyAdvancedFilters();
-            }, 50);
-        }
+        cardView.addEventListener('click', function() {
+            isTableView = false;
+            cardView.classList.add('active');
+            tableView.classList.remove('active');
+            cardContainer.classList.remove('d-none');
+            tableContainer.classList.add('d-none');
+        });
     }
 
-    // Match score range display and progress
+    // Match score slider functionality
     const matchScoreRange = document.getElementById('matchRange');
     const matchScoreDisplay = document.getElementById('matchValue');
     const matchProgress = document.getElementById('matchProgress');
     
     if (matchScoreRange && matchScoreDisplay && matchProgress) {
-        // Function to update progress bar
-        function updateMatchProgress() {
-            const value = parseInt(matchScoreRange.value);
-            
-            // Update display text
-            matchScoreDisplay.textContent = value;
-            
-            // Update progress bar width
-            matchProgress.style.width = value + '%';
-            
-            updateFilterButtonState(); // Update button state in real-time
-        }
-        
-        // Add event listeners
-        matchScoreRange.addEventListener('input', updateMatchProgress);
-        matchScoreRange.addEventListener('change', updateMatchProgress);
-        
-        // Initialize progress on load
-        updateMatchProgress();
-    } else {
-        console.error('Missing slider elements:', {
-            range: !!matchScoreRange,
-            display: !!matchScoreDisplay,
-            progress: !!matchProgress
-        });
-    }
-    
-    // Add event listeners to all filter checkboxes for real-time updates
-    document.querySelectorAll('#filterForm input[type="checkbox"]').forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            updateFilterButtonState(); // Update button state when checkboxes change
-        });
-    });
-    
-    // Add event listener to match score range for preview updates
-    if (matchScoreRange) {
         matchScoreRange.addEventListener('input', function() {
-            // Range input already calls updateFilterButtonState in updateMatchProgress
+            matchScoreDisplay.textContent = this.value;
+            matchProgress.style.width = this.value + '%';
         });
-    }
-    
-    // Function to update filter preview
-    // Add event listener for modal events
-    const filterModal = document.getElementById('filterModal');
-    if (filterModal) {
-        filterModal.addEventListener('shown.bs.modal', function() {
-            // Update button state when modal opens
-            updateFilterButtonState();
-        });
-        
-        filterModal.addEventListener('hidden.bs.modal', function() {
-            // Optionally do something when modal closes
-        });
-    }
-    
-    // Initialize filter button state
-    updateFilterButtonState();
-
-    // Clear filters
-    const clearFiltersBtn = document.getElementById('clearFiltersBtn');
-    if (clearFiltersBtn) {
-        clearFiltersBtn.addEventListener('click', function() {
-            // Clear all checkboxes
-            document.querySelectorAll('#filterForm input[type="checkbox"]').forEach(cb => cb.checked = false);
-            
-            // Reset match score range
-            if (matchScoreRange) {
-                matchScoreRange.value = 0;
-                if (matchScoreDisplay) matchScoreDisplay.textContent = '0';
-                if (matchProgress) matchProgress.style.width = '0%';
-            }
-            
-            // Clear all filters and show all corporates
-            clearAllFilters();
-        });
-    }
-    
-    // Function to clear all filters and show all corporates
-    function clearAllFilters() {
-        const rows = document.querySelectorAll('.startup-row, .startup-card');
-        let totalCount = 0;
-        
-        rows.forEach(row => {
-            row.style.display = '';
-            row.closest('.col-12, .col-md-6, .col-lg-4')?.style.setProperty('display', '', 'important');
-            totalCount++;
-        });
-        
-        // Update count
-        const countElement = document.querySelector('.results-summary strong');
-        if (countElement) {
-            countElement.textContent = totalCount;
-        }
-        
-        // Reset filter button state
-        updateFilterButtonState();
-        
-        // Reset quick filter tags
-        document.querySelectorAll('.filter-tag:not(.filter-btn-primary)').forEach(t => t.classList.remove('active'));
-        document.querySelector('.filter-tag[data-filter="all"]')?.classList.add('active');
-        
-        // Close the modal automatically
-        const modalElement = document.getElementById('filterModal');
-        if (modalElement) {
-            const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
-            modal.hide();
-        }
     }
 
-    // Apply filters
+    // Apply filters button
     const applyFiltersBtn = document.getElementById('applyFiltersBtn');
     if (applyFiltersBtn) {
         applyFiltersBtn.addEventListener('click', function() {
             applyAdvancedFilters();
-            // Close the modal using Bootstrap 5 method
+            // Close the modal
             const modalElement = document.getElementById('filterModal');
-            const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
-            modal.hide();
+            if (modalElement) {
+                const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+                modal.hide();
+            }
         });
     }
 
-    // Advanced filtering function
-    function applyAdvancedFilters() {
-        const rows = document.querySelectorAll('.startup-row, .startup-card');
-        let visibleCount = 0;
-        
-        // Get filter values
-        const minMatchScore = parseInt(document.getElementById('matchRange')?.value) || 0;
-        const selectedOrgTypes = Array.from(document.querySelectorAll('input[name="organization_type"]:checked')).map(cb => cb.value);
-        const selectedLocations = Array.from(document.querySelectorAll('input[name="primary_location"]:checked')).map(cb => cb.value);
-        const selectedIndustries = Array.from(document.querySelectorAll('input[name="industry_expertise"]:checked')).map(cb => cb.value);
-        const selectedTechAreas = Array.from(document.querySelectorAll('input[name="technological_areas"]:checked')).map(cb => cb.value);
-        const selectedCollabMethods = Array.from(document.querySelectorAll('input[name="collaboration_methods"]:checked')).map(cb => cb.value);
-        
-        rows.forEach(row => {
-            let show = true;
-            
-            // Match Score Filter
-            if (minMatchScore > 0) {
-                const matchScore = parseInt(row.getAttribute('data-match')) || 0;
-                if (matchScore < minMatchScore) {
-                    show = false;
-                }
-            }
-            
-            // Organization Type Filter
-            if (selectedOrgTypes.length > 0) {
-                const orgType = row.getAttribute('data-type') || '';
-                if (!selectedOrgTypes.includes(orgType)) {
-                    show = false;
-                }
-            }
-            
-            // Location Filter
-            if (selectedLocations.length > 0) {
-                const location = row.querySelector('.location-cell')?.textContent?.trim() || '';
-                let locationMatch = false;
-                selectedLocations.forEach(selectedLoc => {
-                    if (location.toLowerCase().includes(selectedLoc.toLowerCase())) {
-                        locationMatch = true;
-                    }
-                });
-                if (!locationMatch) {
-                    show = false;
-                }
-            }
-            
-            // Industry Expertise Filter
-            if (selectedIndustries.length > 0) {
-                const industryExpertise = row.getAttribute('data-industry-expertise') || '';
-                let industryMatch = false;
-                selectedIndustries.forEach(selectedIndustry => {
-                    if (industryExpertise.toLowerCase().includes(selectedIndustry.toLowerCase())) {
-                        industryMatch = true;
-                    }
-                });
-                if (!industryMatch) {
-                    show = false;
-                }
-            }
-            
-            // Technological Areas Filter
-            if (selectedTechAreas.length > 0) {
-                const areasInterest = row.getAttribute('data-areas-interest') || '';
-                let techMatch = false;
-                selectedTechAreas.forEach(selectedTech => {
-                    if (areasInterest.toLowerCase().includes(selectedTech.toLowerCase())) {
-                        techMatch = true;
-                    }
-                });
-                if (!techMatch) {
-                    show = false;
-                }
-            }
-            
-            // Collaboration Methods Filter
-            if (selectedCollabMethods.length > 0) {
-                const collaborationMethods = row.getAttribute('data-collaboration') || '';
-                let collabMatch = false;
-                selectedCollabMethods.forEach(selectedCollab => {
-                    if (collaborationMethods.toLowerCase().includes(selectedCollab.toLowerCase())) {
-                        collabMatch = true;
-                    }
-                });
-                if (!collabMatch) {
-                    show = false;
-                }
-            }
-            
-            // Apply visibility
-            if (show) {
-                row.style.display = '';
-                row.closest('.col-12, .col-md-6, .col-lg-4')?.style.setProperty('display', '', 'important');
-                visibleCount++;
-            } else {
-                row.style.display = 'none';
-                row.closest('.col-12, .col-md-6, .col-lg-4')?.style.setProperty('display', 'none', 'important');
-            }
+    // Clear filters button
+    const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+    if (clearFiltersBtn) {
+        clearFiltersBtn.addEventListener('click', function() {
+            clearAllFilters();
         });
-        
-        // Update count
-        const countElement = document.querySelector('.results-summary strong');
-        if (countElement) {
-            countElement.textContent = visibleCount;
-        }
-        
-        // Update filter button to show active state
-        updateFilterButtonState();
-    }
-    
-    // Function to update filter button state
-    function updateFilterButtonState() {
-        const filterBtn = document.querySelector('.filter-btn-primary');
-        const hasActiveFilters = checkIfFiltersActive();
-        
-        if (hasActiveFilters) {
-            filterBtn.classList.add('has-filters');
-            // filterBtn.innerHTML = '<i class="bi bi-funnel-fill me-2"></i><span>Filters Active</span>';
-        } else {
-            filterBtn.classList.remove('has-filters');
-            filterBtn.innerHTML = '<i class="bi bi-funnel me-2"></i><span>Advanced Filters</span>';
-        }
-    }
-    
-    // Function to check if any filters are active
-    function checkIfFiltersActive() {
-        const minMatchScore = parseInt(document.getElementById('matchRange')?.value) || 0;
-        const hasCheckedFilters = document.querySelectorAll('#filterForm input[type="checkbox"]:checked').length > 0;
-        
-        return minMatchScore > 0 || hasCheckedFilters;
     }
 
-    // Clickable rows
-    document.querySelectorAll('.clickable-row').forEach(row => {
-        row.addEventListener('click', function() {
-            window.location.href = this.getAttribute('data-href');
-        });
-    });
-
-    // Filter tags functionality
+    // Quick filter functionality
     document.querySelectorAll('.filter-tag:not(.filter-btn-primary)').forEach(tag => {
         tag.addEventListener('click', function() {
-            // Remove active class from all tags except the clicked one and the filter button
+            // Remove active from all tags
             document.querySelectorAll('.filter-tag:not(.filter-btn-primary)').forEach(t => t.classList.remove('active'));
+            // Add active to clicked tag
             this.classList.add('active');
             
             const filter = this.getAttribute('data-filter');
@@ -1094,157 +854,311 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function filterCorporates(filter) {
-        // If advanced filters are active, show a warning or combine with advanced filters
-        if (checkIfFiltersActive()) {
-            // Clear advanced filters first, then apply quick filter
-            clearAllAdvancedFilters();
-        }
+        // Filter table rows
+        const tableRows = document.querySelectorAll('.startup-row');
+        let tableVisibleCount = 0;
         
-        const rows = document.querySelectorAll('.startup-row, .startup-card');
-        let visibleCount = 0;
-        
-        rows.forEach(row => {
-            let show = true;
-            
-            switch(filter) {
-                case 'all':
-                    show = true;
-                    break;
-                case 'innovation-programs':
-                    // Show corporates that have innovation-related areas
-                    const areasInterest = row.getAttribute('data-areas-interest') || '';
-                    // Show corporates that selected innovation-related technological areas in onboarding form
-                    const innovationAreas = [
-                        "Eliminate & Redesign Packaging",
-                        "Refill & Reuse Solutions",
-                        "Reusable Packaging Collection/Drop Off",
-                        "Upcycling Plastic Waste",
-                        "Sustainable Alternative Materials",
-                        "Education & Industry Partnerships",
-                        "Tracking & Monitoring Waste",
-                        "Plastic Footprint Offsetting",
-                        "Enhancing Plastic Recycling Systems",
-                        "Improved Waste Collection Systems"
-                    ];
-                    show = innovationAreas.some(area =>
-                        areasInterest.toLowerCase().includes(area.toLowerCase())
-                    );
-                    break;
-                case 'partnerships':
-                    // Show corporates looking for partnerships
-                    const collaborationMethods = row.getAttribute('data-collaboration') || '';
-                    // Partnership Focus: Show corporates that selected partnership-related collaboration methods in onboarding form
-                    const partnershipKeywords = [
-                        "Co-Development – Collaborating on tailored solutions",
-                        "Mentorship & Expertise – Guiding startups with knowledge",
-                        "Pilot Programs – Testing innovative solution",
-                        "Financial Support – Funding startups and projects"
-                    ];
-                    show = partnershipKeywords.some(keyword =>
-                        collaborationMethods.toLowerCase().includes(keyword.toLowerCase())
-                    );
-                    break;
-                case 'high-match':
-                    const matchScore = parseInt(row.getAttribute('data-match')) || 0;
-                    show = matchScore > 80;
-                    break;
-                case 'recent':
-                    // Show corporates created within the last 1 month
-                    const createdAttr = row.getAttribute('data-created');
-                    if (!createdAttr) {
-                        show = false;
-                    } else {
-                        const createdDate = new Date(createdAttr);
-                        const now = new Date();
-                        const oneMonthAgo = new Date();
-                        oneMonthAgo.setMonth(now.getMonth() - 1);
-                        show = createdDate >= oneMonthAgo;
-                    }
-                    break;
-            }
+        tableRows.forEach(row => {
+            let show = getFilterResult(row, filter);
             
             if (show) {
                 row.style.display = '';
-                row.closest('.col-12, .col-md-6, .col-lg-4')?.style.setProperty('display', '', 'important');
-                visibleCount++;
+                tableVisibleCount++;
             } else {
                 row.style.display = 'none';
-                row.closest('.col-12, .col-md-6, .col-lg-4')?.style.setProperty('display', 'none', 'important');
             }
         });
         
-        // Update count
+        // Filter grid items  
+        const gridItems = document.querySelectorAll('.startup-card');
+        let gridVisibleCount = 0;
+        
+        gridItems.forEach(card => {
+            let show = getFilterResult(card, filter);
+            
+            if (show) {
+                const col = card.closest('.col-12, .col-md-6, .col-lg-4');
+                if (col) col.style.setProperty('display', '', 'important');
+                gridVisibleCount++;
+            } else {
+                const col = card.closest('.col-12, .col-md-6, .col-lg-4');
+                if (col) col.style.setProperty('display', 'none', 'important');
+            }
+        });
+        
+        // Update count based on current view
+        const visibleCount = isTableView ? tableVisibleCount : gridVisibleCount;
         const countElement = document.querySelector('.results-summary strong');
         if (countElement) {
             countElement.textContent = visibleCount;
         }
     }
     
-    // Function to clear advanced filters without affecting the UI
-    function clearAllAdvancedFilters() {
-        // Clear all checkboxes silently
-        document.querySelectorAll('#filterForm input[type="checkbox"]').forEach(cb => cb.checked = false);
+    function getFilterResult(element, filter) {
+        let show = true;
         
-        // Reset match score range silently
-        if (matchScoreRange) {
-            matchScoreRange.value = 0;
-            if (matchScoreDisplay) matchScoreDisplay.textContent = '0';
-            if (matchProgress) matchProgress.style.width = '0%';
+        switch(filter) {
+            case 'all':
+                show = true;
+                break;
+            case 'innovation-programs':
+                const areasInterest = element.getAttribute('data-areas-interest') || '';
+                const innovationAreas = [
+                    "Eliminate & Redesign Packaging",
+                    "Refill & Reuse Solutions",
+                    "Reusable Packaging Collection/Drop Off",
+                    "Upcycling Plastic Waste",
+                    "Sustainable Alternative Materials",
+                    "Education & Industry Partnerships",
+                    "Tracking & Monitoring Waste",
+                    "Plastic Footprint Offsetting",
+                    "Enhancing Plastic Recycling Systems",
+                    "Improved Waste Collection Systems"
+                ];
+                show = innovationAreas.some(area =>
+                    areasInterest.toLowerCase().includes(area.toLowerCase())
+                );
+                break;
+            case 'partnerships':
+                const collaborationMethods = element.getAttribute('data-collaboration') || '';
+                const partnershipKeywords = [
+                    "Co-Development – Collaborating on tailored solutions",
+                    "Mentorship & Expertise – Guiding startups with knowledge",
+                    "Pilot Programs – Testing innovative solution",
+                    "Financial Support – Funding startups and projects"
+                ];
+                show = partnershipKeywords.some(keyword =>
+                    collaborationMethods.toLowerCase().includes(keyword.toLowerCase())
+                );
+                break;
+            case 'high-match':
+                const matchScore = parseInt(element.getAttribute('data-match')) || 0;
+                show = matchScore > 80;
+                break;
+            case 'recent':
+                const createdAttr = element.getAttribute('data-created');
+                if (!createdAttr) {
+                    show = false;
+                } else {
+                    const createdDate = new Date(createdAttr);
+                    const now = new Date();
+                    const oneMonthAgo = new Date();
+                    oneMonthAgo.setMonth(now.getMonth() - 1);
+                    show = createdDate >= oneMonthAgo;
+                }
+                break;
         }
         
-        // Update filter button state
-        updateFilterButtonState();
+        return show;
     }
+
+    function applyAdvancedFilters() {
+        // Get filter values
+        const minMatchScore = parseInt(document.getElementById('matchRange')?.value) || 0;
+        const selectedOrgTypes = Array.from(document.querySelectorAll('input[name="organization_type"]:checked')).map(cb => cb.value);
+        const selectedLocations = Array.from(document.querySelectorAll('input[name="primary_location"]:checked')).map(cb => cb.value);
+        const selectedIndustries = Array.from(document.querySelectorAll('input[name="industry_expertise"]:checked')).map(cb => cb.value);
+        const selectedTechAreas = Array.from(document.querySelectorAll('input[name="technological_areas"]:checked')).map(cb => cb.value);
+        const selectedCollabMethods = Array.from(document.querySelectorAll('input[name="collaboration_methods"]:checked')).map(cb => cb.value);
+        
+        // Filter table rows
+        const tableRows = document.querySelectorAll('.startup-row');
+        let tableVisibleCount = 0;
+        
+        tableRows.forEach(row => {
+            let show = checkAdvancedFiltersMatch(row, {
+                minMatchScore, selectedOrgTypes, selectedLocations, 
+                selectedIndustries, selectedTechAreas, selectedCollabMethods
+            });
+            
+            if (show) {
+                row.style.display = '';
+                tableVisibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        
+        // Filter grid items
+        const gridItems = document.querySelectorAll('.startup-card');
+        let gridVisibleCount = 0;
+        
+        gridItems.forEach(card => {
+            let show = checkAdvancedFiltersMatch(card, {
+                minMatchScore, selectedOrgTypes, selectedLocations,
+                selectedIndustries, selectedTechAreas, selectedCollabMethods
+            });
+            
+            if (show) {
+                const col = card.closest('.col-12, .col-md-6, .col-lg-4');
+                if (col) col.style.setProperty('display', '', 'important');
+                gridVisibleCount++;
+            } else {
+                const col = card.closest('.col-12, .col-md-6, .col-lg-4');
+                if (col) col.style.setProperty('display', 'none', 'important');
+            }
+        });
+        
+        // Update count based on current view
+        const visibleCount = isTableView ? tableVisibleCount : gridVisibleCount;
+        const countElement = document.querySelector('.results-summary strong');
+        if (countElement) {
+            countElement.textContent = visibleCount;
+        }
+    }
+    
+    function checkAdvancedFiltersMatch(element, filters) {
+        let show = true;
+        
+        // Match Score Filter
+        if (filters.minMatchScore > 0) {
+            const matchScore = parseInt(element.getAttribute('data-match')) || 0;
+            if (matchScore < filters.minMatchScore) {
+                show = false;
+            }
+        }
+        
+        // Organization Type Filter
+        if (filters.selectedOrgTypes.length > 0) {
+            const orgType = element.getAttribute('data-type') || '';
+            if (!filters.selectedOrgTypes.includes(orgType)) {
+                show = false;
+            }
+        }
+        
+        // Location Filter
+        if (filters.selectedLocations.length > 0) {
+            const location = element.getAttribute('data-location') || '';
+            let locationMatch = false;
+            filters.selectedLocations.forEach(selectedLoc => {
+                if (location.toLowerCase().includes(selectedLoc.toLowerCase())) {
+                    locationMatch = true;
+                }
+            });
+            if (!locationMatch) {
+                show = false;
+            }
+        }
+        
+        // Industry Expertise Filter  
+        if (filters.selectedIndustries.length > 0) {
+            const industryExpertise = element.getAttribute('data-industry-expertise') || '';
+            let industryMatch = false;
+            filters.selectedIndustries.forEach(selectedIndustry => {
+                if (industryExpertise.toLowerCase().includes(selectedIndustry.toLowerCase())) {
+                    industryMatch = true;
+                }
+            });
+            if (!industryMatch) {
+                show = false;
+            }
+        }
+        
+        // Technological Areas Filter
+        if (filters.selectedTechAreas.length > 0) {
+            const areasInterest = element.getAttribute('data-areas-interest') || '';
+            let techMatch = false;
+            filters.selectedTechAreas.forEach(selectedTech => {
+                if (areasInterest.toLowerCase().includes(selectedTech.toLowerCase())) {
+                    techMatch = true;
+                }
+            });
+            if (!techMatch) {
+                show = false;
+            }
+        }
+        
+        // Collaboration Methods Filter
+        if (filters.selectedCollabMethods.length > 0) {
+            const collaborationMethods = element.getAttribute('data-collaboration') || '';
+            let collabMatch = false;
+            filters.selectedCollabMethods.forEach(selectedCollab => {
+                if (collaborationMethods.toLowerCase().includes(selectedCollab.toLowerCase())) {
+                    collabMatch = true;
+                }
+            });
+            if (!collabMatch) {
+                show = false;
+            }
+        }
+        
+        return show;
+    }
+
+    function clearAllFilters() {
+        // Show all rows and cards
+        const tableRows = document.querySelectorAll('.startup-row');
+        const gridItems = document.querySelectorAll('.startup-card');
+        
+        tableRows.forEach(row => {
+            row.style.display = '';
+        });
+        
+        gridItems.forEach(card => {
+            const col = card.closest('.col-12, .col-md-6, .col-lg-4');
+            if (col) col.style.setProperty('display', '', 'important');
+        });
+        
+        // Update count
+        const countElement = document.querySelector('.results-summary strong');
+        if (countElement) {
+            countElement.textContent = isTableView ? tableRows.length : gridItems.length;
+        }
+        
+        // Reset quick filter tags
+        document.querySelectorAll('.filter-tag:not(.filter-btn-primary)').forEach(t => t.classList.remove('active'));
+        const allTag = document.querySelector('.filter-tag[data-filter="all"]');
+        if (allTag) allTag.classList.add('active');
+        
+        // Close the modal
+        const modalElement = document.getElementById('filterModal');
+        if (modalElement) {
+            const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+            modal.hide();
+        }
+    }
+
+    // Make rows clickable
+    document.querySelectorAll('.startup-row').forEach(row => {
+        row.addEventListener('click', function() {
+            const href = this.getAttribute('data-href');
+            if (href) {
+                window.location.href = href;
+            }
+        });
+    });
 
     // Table sorting
     document.querySelectorAll('.sortable').forEach(header => {
         header.addEventListener('click', function() {
-            const sortBy = this.getAttribute('data-sort');
-            const table = this.closest('table');
-            const tbody = table.querySelector('tbody');
-            const rows = Array.from(tbody.querySelectorAll('tr:not(:last-child)')); // Exclude empty state row
+            const column = this.getAttribute('data-sort');
+            const tbody = document.querySelector('.startup-table tbody');
+            if (!tbody) return;
+            
+            const rows = Array.from(tbody.querySelectorAll('.startup-row'));
             
             // Determine sort direction
             const isAsc = !this.classList.contains('asc');
             
             // Remove sort classes from all headers
-            document.querySelectorAll('.sortable').forEach(h => {
-                h.classList.remove('asc', 'desc');
-            });
+            document.querySelectorAll('.sortable').forEach(h => h.classList.remove('asc', 'desc'));
             
-            // Add sort class to current header
+            // Add appropriate class to current header
             this.classList.add(isAsc ? 'asc' : 'desc');
             
-            // Sort rows
             rows.sort((a, b) => {
-                let aVal, bVal;
+                let aVal = a.getAttribute('data-' + column) || '';
+                let bVal = b.getAttribute('data-' + column) || '';
                 
-                switch(sortBy) {
-                    case 'name':
-                        aVal = a.getAttribute('data-name');
-                        bVal = b.getAttribute('data-name');
-                        break;
-                    case 'match':
-                        aVal = parseInt(a.getAttribute('data-match')) || 0;
-                        bVal = parseInt(b.getAttribute('data-match')) || 0;
-                        break;
-                    case 'location':
-                        aVal = (a.getAttribute('data-location') || '').toLowerCase();
-                        bVal = (b.getAttribute('data-location') || '').toLowerCase();
-                        break;
-                    case 'organization-type':
-                        aVal = a.getAttribute('data-type');
-                        bVal = b.getAttribute('data-type');
-                        break;
-                    default:
-                        aVal = a.querySelector(`td:nth-child(${Array.from(this.parentNode.children).indexOf(this) + 1})`)?.textContent || '';
-                        bVal = b.querySelector(`td:nth-child(${Array.from(this.parentNode.children).indexOf(this) + 1})`)?.textContent || '';
+                if (column === 'match') {
+                    aVal = parseInt(aVal) || 0;
+                    bVal = parseInt(bVal) || 0;
                 }
                 
-                if (typeof aVal === 'string') {
-                    return isAsc ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
-                } else {
+                if (typeof aVal === 'number') {
                     return isAsc ? aVal - bVal : bVal - aVal;
+                } else {
+                    return isAsc ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
                 }
             });
             

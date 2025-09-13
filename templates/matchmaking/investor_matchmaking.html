@@ -1287,16 +1287,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function applyQuickFilter(filterType) {
-        const items = document.querySelectorAll('.startup-row, .investor-grid-item');
-        let visibleCount = 0;
+        // Apply filter to both table and grid items
+        const tableItems = document.querySelectorAll('.startup-row');
+        const gridItems = document.querySelectorAll('.investor-grid-item');
+        let tableVisibleCount = 0;
+        let gridVisibleCount = 0;
         
-        items.forEach(item => {
+        // Filter table items
+        tableItems.forEach(item => {
             let shouldShow = false;
-            
-            // For grid items, get data attributes from the card inside
-            const dataItem = item.classList.contains('investor-grid-item') 
-                ? item.querySelector('.startup-card') 
-                : item;
+            const dataItem = item;
             
             switch(filterType) {
                 case 'all':
@@ -1335,7 +1335,52 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (shouldShow) {
                 item.style.display = '';
-                visibleCount++;
+                tableVisibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+        
+        // Filter grid items
+        gridItems.forEach(item => {
+            let shouldShow = false;
+            const dataItem = item.querySelector('.startup-card');
+            
+            switch(filterType) {
+                case 'all':
+                    shouldShow = true;
+                    break;
+                case 'early-stage':
+                    const preferredStages = dataItem.getAttribute('data-preferred-stages') || '';
+                    shouldShow = preferredStages.includes('seed') || preferredStages.includes('pre_seed') || preferredStages.includes('angel');
+                    break;
+                case 'growth':
+                    const growthStages = dataItem.getAttribute('data-preferred-stages') || '';
+                    shouldShow = growthStages.includes('series_a') || growthStages.includes('series_b') || growthStages.includes('series_c');
+                    break;
+                case 'high-match':
+                    const matchScore = parseInt(dataItem.getAttribute('data-match')) || 0;
+                    shouldShow = matchScore > 80;
+                    break;
+                case 'recent':
+                    const createdAt = dataItem.getAttribute('data-created-at');
+                    if (!createdAt) {
+                        shouldShow = false;
+                        break;
+                    }
+                    const now = new Date();
+                    const oneMonthAgo = new Date();
+                    oneMonthAgo.setMonth(now.getMonth() - 1);
+                    const investorDate = new Date(createdAt);
+                    shouldShow = investorDate >= oneMonthAgo;
+                    break;
+                default:
+                    shouldShow = true;
+            }
+            
+            if (shouldShow) {
+                item.style.display = '';
+                gridVisibleCount++;
                 // Add animation
                 item.style.opacity = '0';
                 setTimeout(() => {
@@ -1346,8 +1391,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
+        // Update count based on current view
+        const visibleCount = isTableView ? tableVisibleCount : gridVisibleCount;
         updateResultsCount(visibleCount);
-        updateEmptyStates(visibleCount, visibleCount);
+        updateEmptyStates(visibleCount);
     }
 
     // Range Slider Functionality
