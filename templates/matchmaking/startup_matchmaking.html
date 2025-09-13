@@ -32,7 +32,7 @@
             <div class="search-input-group flex-grow-1">
                 <i class="bi bi-search search-icon"></i>
                 <input type="text" name="q" class="form-control search-input" 
-                       placeholder="Search startups by name, description, or technology..." 
+                       placeholder="Search startups by name, company description, or solution description..." 
                        value="{{ request.GET.q }}">
             </div>
             <button type="submit" class="btn btn-primary search-btn">
@@ -137,6 +137,8 @@
                         data-innovation-types="{{ startup.innovation_types|join:',' }}"
                         data-funding="{{ startup.funding_needed|default:'' }}"
                         data-team="{{ startup.team_size|default:'' }}"
+                        data-company-description="{{ startup.company_description|default:'' }}"
+                        data-solution-description="{{ startup.solution_description|default:'' }}"
                         data-created="{{ startup.created_at|date:'Y-m-d' }}"
                         data-href="/startup/profile/{{ startup.id }}/">
                         <td class="company-cell sticky-column">
@@ -264,6 +266,8 @@
                      data-support-areas="{{ startup.support_areas|join:',' }}"
                      data-funding="{{ startup.funding_needed|default:'' }}"
                      data-team="{{ startup.team_size|default:'' }}"
+                     data-company-description="{{ startup.company_description|default:'' }}"
+                     data-solution-description="{{ startup.solution_description|default:'' }}"
                      data-created="{{ startup.created_at|date:'Y-m-d' }}"
                      onclick="window.location.href='/startup/{{ startup.id }}/'">
                     <div class="card-body p-3">
@@ -1168,13 +1172,19 @@ document.addEventListener('DOMContentLoaded', function() {
             data.createdDate = new Date(createdAttr);
         }
         
+        // Extract company description and solution description from data attributes
+        data.companyDescription = element.dataset.companyDescription || '';
+        data.solutionDescription = element.dataset.solutionDescription || '';
+        
         return data;
     }
     
     function matchesSearch(data, searchTerm) {
         const searchFields = [
             data.companyName,
-            data.description,
+            data.description, // This is the displayed description (fallback for legacy)
+            data.companyDescription, // Company description from data attribute
+            data.solutionDescription, // Solution description from data attribute  
             data.location,
             ...data.innovationTypes
         ].map(field => (field || '').toLowerCase());
@@ -1456,7 +1466,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         break;
                     case 'team':
                         // Define team size order based on actual data attributes
-                        const teamOrder = ['1', '2-5', '6-10', '11-50', 'over_50'];
+                        const teamOrder = ['1', '2-5', '6-10', '11-25', '26-50', '51-100', '100+'];
                         const aTeam = a.dataset.team || '';
                         const bTeam = b.dataset.team || '';
                         aValue = teamOrder.indexOf(aTeam);

@@ -32,7 +32,7 @@
             <div class="search-input-group flex-grow-1">
                 <i class="bi bi-search search-icon"></i>
                 <input type="text" name="q" class="form-control search-input" 
-                       placeholder="Search investors by name, focus area, or investment type..." 
+                       placeholder="Search investors by investor name, company description..." 
                        value="{{ request.GET.q }}">
             </div>
             <button type="submit" class="btn btn-primary search-btn">
@@ -133,6 +133,7 @@
                         data-funding-size="{{ investor.funding_size|default:'' }}"
                         data-preferred-stages="{{ investor.preferred_stages|join:',' }}"
                         data-investment-categories="{{ investor.investment_categories|join:',' }}"
+                        data-company-description="{{ investor.company_description|default:'' }}"
                         data-is-active="{{ investor.is_active|yesno:'true,false' }}"
                         data-created-at="{{ investor.created_at|date:'c' }}"
                         data-href="/investor/{{ investor.id }}/">
@@ -273,6 +274,7 @@
                      data-funding-size="{{ investor.funding_size|default:'' }}"
                      data-preferred-stages="{{ investor.preferred_stages|join:',' }}"
                      data-investment-categories="{{ investor.investment_categories|join:',' }}"
+                     data-company-description="{{ investor.company_description|default:'' }}"
                      data-is-active="{{ investor.is_active|yesno:'true,false' }}"
                      data-created-at="{{ investor.created_at|date:'c' }}"
                      onclick="window.location.href='/investor/{{ investor.id }}/'">
@@ -1087,12 +1089,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function filterInvestors() {
+        // Get current search term
+        const searchInput = document.querySelector('input[name="q"]');
+        const searchTerm = searchInput ? searchInput.value.trim() : '';
+        
         // Filter table rows
         const tableRows = document.querySelectorAll('.startup-row');
         let visibleTableCount = 0;
         
         tableRows.forEach(row => {
-            if (matchesFilters(row)) {
+            if (matchesFilters(row) && matchesSearch(row, searchTerm)) {
                 row.style.display = '';
                 visibleTableCount++;
                 // Add fade-in animation
@@ -1111,7 +1117,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         gridItems.forEach(item => {
             const card = item.querySelector('.startup-card');
-            if (matchesFilters(card)) {
+            if (matchesFilters(card) && matchesSearch(card, searchTerm)) {
                 item.style.display = '';
                 visibleGridCount++;
                 // Add fade-in animation
@@ -1470,6 +1476,64 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 
+    // Search Functions
+    function extractElementData(element) {
+        const investorName = element.getAttribute('data-investor-name') || '';
+        const companyDescription = element.getAttribute('data-company-description') || '';
+        
+        return {
+            investorName: investorName.toLowerCase(),
+            companyDescription: companyDescription.toLowerCase()
+        };
+    }
+    
+    function matchesSearch(element, searchTerm) {
+        if (!searchTerm) return true;
+        
+        const data = extractElementData(element);
+        const term = searchTerm.toLowerCase();
+        
+        return data.investorName.includes(term) ||
+               data.companyDescription.includes(term);
+    }
+    
+    function performSearch() {
+        const searchInput = document.querySelector('input[name="q"]');
+        const searchTerm = searchInput.value.trim();
+        
+        // Filter table rows
+        const tableRows = document.querySelectorAll('.startup-row');
+        let visibleTableCount = 0;
+        
+        tableRows.forEach(row => {
+            if (matchesSearch(row, searchTerm) && matchesFilters(row)) {
+                row.style.display = '';
+                visibleTableCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        
+        // Filter grid items
+        const gridItems = document.querySelectorAll('.investor-grid-item');
+        let visibleGridCount = 0;
+        
+        gridItems.forEach(item => {
+            if (matchesSearch(item, searchTerm) && matchesFilters(item)) {
+                item.style.display = '';
+                visibleGridCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+        
+        // Update results count
+        updateResultsCount(Math.max(visibleTableCount, visibleGridCount));
+        
+        // Show/hide empty states
+        updateEmptyStates(visibleTableCount, visibleGridCount);
+    }
+
     // Search functionality (if search form exists)
     const searchForm = document.querySelector('form[method="get"]');
     if (searchForm) {
@@ -1477,12 +1541,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (searchInput) {
             // Add real-time search with debounce
             const debouncedSearch = debounce(() => {
-                // This would typically submit the form or filter locally
-                // For now, we'll just add visual feedback
-                searchInput.style.background = '#f8f9fa';
-                setTimeout(() => {
-                    searchInput.style.background = '';
-                }, 500);
+                performSearch();
             }, 300);
             
             searchInput.addEventListener('input', debouncedSearch);
