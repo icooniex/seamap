@@ -1675,55 +1675,20 @@ def corporate_profile(request, corporate_id):
         
         # Business Information
         'mission_vision': corporate.investment_philosophy or corporate.company_description or '',
-        'business_model': f"{corporate.organization_type} with focus on {', '.join(investment_categories_display[:3])}" if investment_categories_display else corporate.organization_type or '',
-        'growth_strategy': corporate.investment_philosophy[:100] + '...' if corporate.investment_philosophy and len(corporate.investment_philosophy) > 100 else corporate.investment_philosophy or '',
-        'innovation_focus': ', '.join(investment_categories_display[:3]) if investment_categories_display else '',
-        'esg_rating': 'B+',  # Default - could be added as model field
         
         # Organization & Industry
         'business_focus_areas': investment_categories_display or ['Technology Solutions'],
-        'industry_expertise': investment_categories_display or ['Technology'],
+        'industry_expertise': corporate.industry_expertise or corporate.company_description or '',
         
         # Market Interest & Innovation
         'innovation_interest_description': corporate.investment_philosophy or corporate.company_description or 'We actively seek partnerships with innovative companies that align with our strategic focus areas.',
         'innovation_interest_categories': investment_categories_display or ['Technology Solutions'],
-        'technology_scouting_areas': support_areas_display or ['Strategic Partnerships'],
+        
         'target_markets': corporate.market_country_interests or [],
-        'innovation_timeline': [
-            'Q1 2025: Partnership Program Launch',
-            'Q2 2025: Technology Integration',
-            'Q3 2025: Market Expansion',
-            'Q4 2025: Innovation Hub Development'
-        ],
+        
         'strategic_market_focus': f"Our strategic focus is on {', '.join(corporate.market_country_interests[:3])} markets" if corporate.market_country_interests else 'Regional market expansion',
         
-        # Collaboration & Support
-        'collaboration_overview': corporate.investment_philosophy or f'{corporate.company_name} believes in strategic partnerships to drive innovation and create meaningful impact.',
-        'active_partnerships': str(len(investment_categories_display) * 5) + '+' if investment_categories_display else '10+',
-        'innovation_budget': get_display_value(corporate.average_deal_size, dict(DEAL_SIZE_CHOICES)) if corporate.average_deal_size else '$1M+',
-        'collaboration_types': [
-            {
-                'type': area,
-                'description': f'{area} programs and initiatives.'
-            } for area in support_areas_display[:4]
-        ] if support_areas_display else [
-            {
-                'type': 'Strategic Partnerships',
-                'description': 'Long-term collaboration initiatives.'
-            }
-        ],
-        'collaboration_goals': [
-            goal.strip() for goal in (corporate.investment_philosophy or '').split('.') 
-            if goal.strip() and len(goal.strip()) > 10
-        ][:6] if corporate.investment_philosophy else [
-            'Strategic technology partnerships',
-            'Innovation ecosystem development',
-            'Market expansion support',
-            'Technology advancement initiatives'
-        ],
-        'partnership_success_rate': '90%',  # Default - could be added as model field
-        'avg_partnership_duration': '18 months',  # Default - could be added as model field
-        'roi_partnerships': '3.5x',  # Default - could be added as model field
+
         
         # Leadership & Team - Mock data based on available info
         'leadership_team': [

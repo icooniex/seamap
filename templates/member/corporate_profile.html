@@ -264,218 +264,33 @@
                             <p class="text-muted">{{ corporate.mission_vision }}</p>
                         </div>
 
-                        <div class="mb-4">
-                            <h5 class="subsection-title"><i class="bi bi-gear text-success me-2"></i>Business Focus Areas</h5>
-                            <div class="tech-tags">
-                                {% for area in corporate.business_focus_areas %}
-                                    <span class="tech-tag-success">
-                                        <i class="bi bi-check-circle me-1"></i>{{ area }}
-                                    </span>
-                                {% endfor %}
-                            </div>
-                        </div>
+                        
                     </div>
                     
                     <div class="col-lg-4">
-                        <div class="card border-0 bg-light h-100">
+                        <div class="card border-0 bg-light">
                             <div class="card-body">
-                                <h6 class="fw-bold mb-3">
-                                    <i class="bi bi-ladder text-primary me-2"></i>Organization Type
-                                </h6>
-                                <div class="text-center mb-3">
-                                    <span class="stage-badge stage-{{ corporate.organization_type|lower|cut:" " }}">
-                                        {{ corporate.organization_type }}
-                                    </span>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <small class="text-muted d-block mb-1">Company Size</small>
-                                    <div class="fw-semibold">{{ corporate.company_size }}</div>
-                                </div>
-                                
-                                <hr class="my-3">
-                                
                                 <h6 class="fw-bold mb-3">
                                     <i class="bi bi-diagram-3 text-success me-2"></i>Industry Expertise
                                 </h6>
-                                <div class="tech-tags">
+                                <div class="tech-tags mb-3">
                                     {% for expertise in corporate.industry_expertise %}
-                                        <span class="tech-tag-sm">{{ expertise }}</span>
+                                        <span class="tech-tag-success">
+                                            <i class="bi bi-check-circle me-1"></i>{{ expertise }}
+                                        </span>
                                     {% endfor %}
                                 </div>
+                                
+                                
                             </div>
                         </div>
+                        
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Corporate Information Section -->
-    <div class="profile-card mb-4">
-        <div class="card shadow-sm border-0">
-            <div class="card-body p-4">
-                <h3 class="section-title mb-4">
-                    <i class="bi bi-building text-primary me-2"></i>
-                    Corporate Information
-                </h3>
-                
-                <div class="row">
-                    <!-- Left Column -->
-                    <div class="col-lg-6">
-                        <!-- Organization Type -->
-                        <div class="corporate-info-card mb-4">
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="corporate-type-icon me-3">
-                                    {% if corporate.organization_type == "Private Corporation" %}
-                                        <i class="bi bi-building text-primary"></i>
-                                    {% elif corporate.organization_type == "Multinational Corporation" %}
-                                        <i class="bi bi-globe text-info"></i>
-                                    {% elif corporate.organization_type == "SME" %}
-                                        <i class="bi bi-shop text-success"></i>
-                                    {% elif corporate.organization_type == "Startup Subsidiary" %}
-                                        <i class="bi bi-rocket text-warning"></i>
-                                    {% elif corporate.organization_type == "Government Enterprise" %}
-                                        <i class="bi bi-flag text-secondary"></i>
-                                    {% else %}
-                                        <i class="bi bi-briefcase text-dark"></i>
-                                    {% endif %}
-                                </div>
-                                <div>
-                                    <h5 class="fw-bold mb-1">Organization Type</h5>
-                                    <span class="corporate-type-badge corporate-type-{{ corporate.organization_type|lower|cut:" "|cut:"-" }}">
-                                        {{ corporate.organization_type|default:"Private Corporation" }}
-                                    </span>
-                                </div>
-                            </div>
-                            
-                            {% if corporate.business_model %}
-                                <div class="small text-muted">
-                                    <strong>Business Model:</strong> {{ corporate.business_model }}
-                                </div>
-                            {% endif %}
-                        </div>
-
-                        <!-- Company Scale & Metrics -->
-                        <div class="corporate-info-card">
-                            <div class="corporate-icon mb-3">
-                                <i class="bi bi-bar-chart"></i>
-                            </div>
-                            <h5 class="fw-bold mb-3">Company Scale & Metrics</h5>
-                            
-                            <div class="row g-3 mb-3">
-                                <div class="col-6">
-                                    <div class="metric-stat-card">
-                                        <div class="small text-muted mb-1">Annual Revenue</div>
-                                        <div class="fw-bold text-success">{{ corporate.annual_revenue|default:"$2.8B" }}</div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="metric-stat-card">
-                                        <div class="small text-muted mb-1">Market Cap</div>
-                                        <div class="fw-bold text-primary">{{ corporate.market_cap|default:"$15B" }}</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row g-3 mb-3">
-                                <div class="col-6">
-                                    <div class="metric-stat-card">
-                                        <div class="small text-muted mb-1">Employees</div>
-                                        <div class="fw-bold text-info">{{ corporate.employee_count|default:"15,000+" }}</div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="metric-stat-card">
-                                        <div class="small text-muted mb-1">Global Presence</div>
-                                        <div class="fw-bold text-warning">{{ corporate.global_presence|default:"25+" }}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Right Column -->
-                    <div class="col-lg-6">
-                        <!-- Industry Expertise -->
-                        <div class="mb-4">
-                            <h5 class="subsection-title mb-3">
-                                <i class="bi bi-gear text-primary me-2"></i>Industry Expertise
-                            </h5>
-                            <div class="industry-expertise-container">
-                                {% for expertise in corporate.industry_expertise %}
-                                    <div class="industry-expertise-item">
-                                        <span class="industry-expertise-tag industry-{{ expertise|lower|cut:" "|cut:"&"|cut:"-" }}">
-                                            {% if expertise == "Commerce & Advertising" %}
-                                                <i class="bi bi-shop me-2"></i>
-                                            {% elif expertise == "Real Estate" %}
-                                                <i class="bi bi-house me-2"></i>
-                                            {% elif expertise == "Education" %}
-                                                <i class="bi bi-book me-2"></i>
-                                            {% elif expertise == "Energy" %}
-                                                <i class="bi bi-lightning me-2"></i>
-                                            {% elif expertise == "Healthcare" %}
-                                                <i class="bi bi-heart-pulse me-2"></i>
-                                            {% elif expertise == "Technology" %}
-                                                <i class="bi bi-cpu me-2"></i>
-                                            {% elif expertise == "Finance" %}
-                                                <i class="bi bi-bank me-2"></i>
-                                            {% else %}
-                                                <i class="bi bi-circle me-2"></i>
-                                            {% endif %}
-                                            {{ expertise }}
-                                        </span>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-
-                        <!-- Corporate Strategy -->
-                        <div class="corporate-strategy-card">
-                            <h5 class="subsection-title mb-3">
-                                <i class="bi bi-bullseye text-info me-2"></i>Strategic Focus
-                            </h5>
-                            <div class="row g-3">
-                                <div class="col-12">
-                                    <div class="strategy-item">
-                                        <div class="strategy-icon">
-                                            <i class="bi bi-graph-up"></i>
-                                        </div>
-                                        <div>
-                                            <div class="small text-muted">Growth Strategy</div>
-                                            <div class="fw-semibold">{{ corporate.growth_strategy|default:"Digital Transformation" }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="strategy-item">
-                                        <div class="strategy-icon">
-                                            <i class="bi bi-target"></i>
-                                        </div>
-                                        <div>
-                                            <div class="small text-muted">Innovation Focus</div>
-                                            <div class="fw-semibold">{{ corporate.innovation_focus|default:"Sustainability" }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="strategy-item">
-                                        <div class="strategy-icon">
-                                            <i class="bi bi-award"></i>
-                                        </div>
-                                        <div>
-                                            <div class="small text-muted">ESG Rating</div>
-                                            <div class="fw-semibold">{{ corporate.esg_rating|default:"A+" }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Market Interest Section -->
     <div class="profile-card mb-4">
@@ -499,90 +314,7 @@
                         </div>
 
                         <div class="mb-4">
-                            <h5 class="subsection-title"><i class="bi bi-search text-warning me-2"></i>Technology Scouting Areas</h5>
-                            <div class="tech-tags">
-                                {% for area in corporate.technology_scouting_areas %}
-                                    <span class="tech-tag-warning">{{ area }}</span>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-lg-4">
-                        <div class="card border-0 bg-light">
-                            <div class="card-body">
-                                <h6 class="fw-bold mb-3">
-                                    <i class="bi bi-globe text-success me-2"></i>Market Presence
-                                </h6>
-                                <div class="tech-tags mb-3">
-                                    {% for market in corporate.target_markets %}
-                                        <span class="tech-tag-info">{{ market }}</span>
-                                    {% endfor %}
-                                </div>
-                                
-                                <h6 class="fw-bold mb-3">
-                                    <i class="bi bi-calendar-event text-primary me-2"></i>Innovation Timeline
-                                </h6>
-                                <ul class="list-unstyled mb-0">
-                                    {% for timeline in corporate.innovation_timeline %}
-                                        <li class="mb-2">
-                                            <i class="bi bi-clock text-primary me-2"></i>
-                                            <small>{{ timeline }}</small>
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Market Opportunity -->
-                <div class="alert alert-info d-flex align-items-start mt-4">
-                    <i class="bi bi-info-circle text-info me-3 mt-1"></i>
-                    <div>
-                        <h6 class="mb-1">Strategic Market Focus</h6>
-                        <p class="mb-0">{{ corporate.strategic_market_focus }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Collaboration & Support Section -->
-    <div class="profile-card mb-4">
-        <div class="card shadow-sm border-0">
-            <div class="card-body p-4">
-                <h3 class="section-title mb-4">
-                    <i class="bi bi-handshake text-success me-2"></i>
-                    Collaboration & Support
-                </h3>
-                
-                <div class="row">
-                    <div class="col-lg-8">
-                        <div class="card border-0 bg-success bg-opacity-10 mb-4">
-                            <div class="card-body">
-                                <h5 class="fw-bold text-success mb-3">Collaboration Overview</h5>
-                                <p class="mb-3">{{ corporate.collaboration_overview }}</p>
-                                
-                                <div class="row g-3 mb-3">
-                                    <div class="col-6">
-                                        <div class="text-center">
-                                            <div class="h5 fw-bold text-success">{{ corporate.active_partnerships|default:"25+" }}</div>
-                                            <small class="text-muted">Active Partnerships</small>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="text-center">
-                                            <div class="h5 fw-bold text-info">{{ corporate.innovation_budget|default:"$50M" }}</div>
-                                            <small class="text-muted">Innovation Budget</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <h5 class="subsection-title"><i class="bi bi-gear text-primary me-2"></i>Collaboration Types</h5>
+                            <h5 class="subsection-title"><i class="bi bi-search text-warning me-2"></i>Collaboration Types</h5>
                             <div class="row g-3">
                                 {% for collab_type in corporate.collaboration_types %}
                                     <div class="col-md-6">
@@ -599,7 +331,7 @@
                                                         {% elif collab_type.type == "Pilot Program" %}
                                                             <i class="bi bi-play-circle text-warning"></i>
                                                         {% else %}
-                                                            <i class="bi bi-handshake text-secondary"></i>
+                                                            <i class="bi bi-people text-secondary"></i>
                                                         {% endif %}
                                                     </div>
                                                     <div>
@@ -613,50 +345,29 @@
                                 {% endfor %}
                             </div>
                         </div>
+
                     </div>
                     
                     <div class="col-lg-4">
                         <div class="card border-0 bg-light">
                             <div class="card-body">
                                 <h6 class="fw-bold mb-3">
-                                    <i class="bi bi-target text-primary me-2"></i>Goals & Outcomes
+                                    <i class="bi bi-globe text-success me-2"></i>Market Presence
                                 </h6>
-                                <ul class="list-unstyled mb-4">
-                                    {% for goal in corporate.collaboration_goals %}
-                                        <li class="mb-2">
-                                            <i class="bi bi-check-circle text-success me-2"></i>
-                                            <small>{{ goal }}</small>
-                                        </li>
+                                <div class="tech-tags mb-3">
+                                    {% for market in corporate.target_markets %}
+                                        <span class="tech-tag-info">{{ market }}</span>
                                     {% endfor %}
-                                </ul>
-
-                                <h6 class="fw-bold mb-3">
-                                    <i class="bi bi-award text-warning me-2"></i>Success Metrics
-                                </h6>
-                                <div class="row g-2">
-                                    <div class="col-12">
-                                        <div class="small-stat text-center">
-                                            <div class="fw-bold text-primary">{{ corporate.partnership_success_rate|default:"92%" }}</div>
-                                            <small class="text-muted">Success Rate</small>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="small-stat text-center">
-                                            <div class="fw-bold text-success">{{ corporate.avg_partnership_duration|default:"18 mo" }}</div>
-                                            <small class="text-muted">Avg Duration</small>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="small-stat text-center">
-                                            <div class="fw-bold text-info">{{ corporate.roi_partnerships|default:"3.5x" }}</div>
-                                            <small class="text-muted">Avg ROI</small>
-                                        </div>
-                                    </div>
                                 </div>
+                                
+                                
                             </div>
                         </div>
                     </div>
                 </div>
+
+                
+
             </div>
         </div>
     </div>
