@@ -1671,7 +1671,7 @@ def corporate_profile(request, corporate_id):
         'market_cap': '',  # Not in model - could be added as field
         'employee_count': corporate.team_size or '',
         'global_presence': f"{len(corporate.market_country_interests)} countries" if corporate.market_country_interests else '',
-        'rd_team_size': str(max(1, int(corporate.team_size or '1') // 10)) + '+' if corporate.team_size and corporate.team_size.isdigit() else '',
+        
         
         # Business Information
         'mission_vision': corporate.investment_philosophy or corporate.company_description or '',
@@ -1700,49 +1700,6 @@ def corporate_profile(request, corporate_id):
             }
         ] if corporate.member else [],
         'innovation_team_description': f"Our team at {corporate.company_name} comprises professionals working on innovative solutions and strategic partnerships.",
-        'key_departments': support_areas_display or ['Strategic Partnerships', 'Innovation', 'Business Development'],
-        'team_culture_description': f"Innovation-driven culture at {corporate.company_name} that values collaboration and continuous growth.",
-        
-        # News & Updates - Mock data based on company info
-        'recent_news': [
-            {
-                'title': f'{corporate.company_name} Expands Partnership Programs',
-                'summary': f'Company expands focus to include {", ".join(investment_categories_display[:3])} partnerships.' if investment_categories_display else 'Strategic expansion of partnership initiatives.',
-                'date': '2024-12-01',
-                'category': 'Partnership',
-                'link': '#',
-                'image': None
-            },
-            {
-                'title': f'New Innovation Initiatives at {corporate.company_name}',
-                'summary': f'Launching new programs in {", ".join(corporate.market_country_interests[:3]) if corporate.market_country_interests else "key markets"}.',
-                'date': '2024-11-15',
-                'category': 'Innovation',
-                'link': '#',
-                'image': None
-            }
-        ] if corporate.company_name else [],
-        
-        # Challenges & Problem Statements - Based on support areas
-        'open_challenges': [
-            {
-                'title': f'{area} Innovation Challenge',
-                'description': f'Seeking innovative solutions in {area.lower()} domain.',
-                'priority': 'High' if i == 0 else 'Medium',
-                'reward': f'${(i+1)*25}K',
-                'deadline': f'2025-0{min(i+3, 9)}-15',
-                'link': '#'
-            } for i, area in enumerate(support_areas_display[:4])
-        ] if support_areas_display else [
-            {
-                'title': 'Strategic Partnership Challenge',
-                'description': 'Seeking strategic technology partnerships.',
-                'priority': 'High',
-                'reward': '$50K',
-                'deadline': '2025-03-31',
-                'link': '#'
-            }
-        ],
         
         # Contact & Partnership
         'partnership_message': corporate.additional_info or f'We are actively seeking strategic partnerships with innovative companies. Contact us to learn more about collaboration opportunities with {corporate.company_name}.',
