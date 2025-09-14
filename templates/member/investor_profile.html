@@ -60,12 +60,9 @@
                 <!-- Right Side: Action Buttons -->
                 <div class="sticky-actions">
                     <div class="d-flex gap-2">
-                        <button class="btn btn-primary btn-sm sticky-btn-primary" onclick="openContactModal()">
+                        <button class="btn btn-primary btn-sm sticky-btn-primary" onclick="sendConnectEmail()">
                             <i class="bi bi-envelope me-1"></i>
                             <span class="d-none d-sm-inline">Connect</span>
-                        </button>
-                        <button class="btn btn-outline-info btn-sm sticky-btn-secondary d-none d-lg-inline-flex" onclick="shareProfile()">
-                            <i class="bi bi-globe me-1"></i>Website
                         </button>
                     </div>
                 </div>
@@ -158,35 +155,23 @@
                         <div class="action-buttons">
                             <div class="d-flex gap-2 flex-wrap d-md-none">
                                 <!-- Mobile: Stack buttons vertically -->
-                                <button class="btn btn-primary btn-mobile" onclick="openContactModal()">
+                                <button class="btn btn-primary btn-mobile" onclick="sendConnectEmail()">
                                     <i class="bi bi-envelope me-2"></i>Connect
                                 </button>
                                 <div class="btn-group-mobile">
                                     <button class="btn btn-outline-primary btn-sm btn-mobile-sm" onclick="window.open('{{ investor.website }}', '_blank')">
                                         <i class="bi bi-globe me-1"></i>Website
                                     </button>
-                                    <button class="btn btn-outline-secondary btn-sm btn-mobile-sm" onclick="toggleBookmark({{ investor.id }})">
-                                        <i class="bi bi-bookmark me-1"></i>Save
-                                    </button>
-                                    <button class="btn btn-outline-info btn-sm btn-mobile-sm" onclick="shareProfile()">
-                                        <i class="bi bi-share me-1"></i>Share
-                                    </button>
                                 </div>
                             </div>
                             
                             <div class="d-none d-md-flex gap-2 flex-wrap">
                                 <!-- Desktop: Horizontal layout -->
-                                <button class="btn btn-primary" onclick="openContactModal()">
+                                <button class="btn btn-primary" onclick="sendConnectEmail()">
                                     <i class="bi bi-envelope me-1"></i>Connect
                                 </button>
                                 <button class="btn btn-outline-primary btn-sm" onclick="window.open('{{ investor.website }}', '_blank')">
                                     <i class="bi bi-globe me-1"></i>Website
-                                </button>
-                                <button class="btn btn-outline-secondary btn-sm" onclick="toggleBookmark({{ investor.id }})">
-                                    <i class="bi bi-bookmark me-1"></i>Save
-                                </button>
-                                <button class="btn btn-outline-info btn-sm" onclick="shareProfile()">
-                                    <i class="bi bi-share me-1"></i>Share
                                 </button>
                             </div>
                         </div>
@@ -554,7 +539,7 @@
                 </h3>
                 
                 <div class="row">
-                    <div class="col-lg-8">
+                    <div class="col-lg-12">
                         <div class="card border-0 bg-primary bg-opacity-10">
                             <div class="card-body">
                                 <h5 class="fw-bold mb-3">
@@ -564,10 +549,10 @@
                                 <p class="mb-4">{{ investor.partnership_message }}</p>
                                 
                                 <div class="d-flex gap-3 flex-wrap">
-                                    <button class="btn btn-primary" onclick="openContactModal()">
+                                    <!-- <button class="btn btn-primary" onclick="sendPitchEmail()">
                                         <i class="bi bi-envelope me-2"></i>Submit Pitch
-                                    </button>
-                                    <button class="btn btn-outline-secondary" onclick="sendEmail()">
+                                    </button> -->
+                                    <button class="btn btn-primary" onclick="sendEmail()">
                                         <i class="bi bi-telephone me-2"></i>Request Meeting
                                     </button>
                                 </div>
@@ -575,23 +560,6 @@
                         </div>
                     </div>
                     
-                    <div class="col-lg-4">
-                        <div class="card border-0 bg-warning bg-opacity-10">
-                            <div class="card-body">
-                                <h6 class="fw-bold mb-3">
-                                    <i class="bi bi-file-text text-warning me-2"></i>
-                                    Pitch Requirements
-                                </h6>
-                                <ul class="list-unstyled mb-0">
-                                    {% for requirement in investor.pitch_requirements %}
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-success me-2"></i>{{ requirement }}
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 
                 <!-- Contact Information -->
@@ -643,109 +611,6 @@
     </div>
 </div>
 
-<!-- Contact Modal -->
-<div class="modal fade" id="contactModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content border-0">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title">
-                    <i class="bi bi-envelope me-2"></i>Contact {{ investor.company_name }}
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body p-4">
-                <form id="contactForm">
-                    {% csrf_token %}
-                    <input type="hidden" name="investor_id" value="{{ investor.id }}">
-                    
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <label for="firstName" class="form-label fw-semibold">First Name</label>
-                            <input type="text" class="form-control" id="firstName" name="first_name" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="lastName" class="form-label fw-semibold">Last Name</label>
-                            <input type="text" class="form-control" id="lastName" name="last_name" required>
-                        </div>
-                    </div>
-                    
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <label for="email" class="form-label fw-semibold">Email Address</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="company" class="form-label fw-semibold">Company/Startup Name</label>
-                            <input type="text" class="form-control" id="company" name="company" required>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="subject" class="form-label fw-semibold">Inquiry Type</label>
-                        <select class="form-select" id="subject" name="subject" required>
-                            <option value="">Select inquiry type...</option>
-                            <option value="pitch">Investment Pitch</option>
-                            <option value="series-a">Series A Funding</option>
-                            <option value="series-b">Series B Funding</option>
-                            <option value="follow-on">Follow-on Investment</option>
-                            <option value="partnership">Strategic Partnership</option>
-                            <option value="general">General Inquiry</option>
-                        </select>
-                    </div>
-                    
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <label for="fundingStage" class="form-label fw-semibold">Current Funding Stage</label>
-                            <select class="form-select" id="fundingStage" name="funding_stage">
-                                <option value="">Select stage...</option>
-                                <option value="pre-seed">Pre-Seed</option>
-                                <option value="seed">Seed</option>
-                                <option value="series-a">Series A</option>
-                                <option value="series-b">Series B</option>
-                                <option value="growth">Growth</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="fundingAmount" class="form-label fw-semibold">Funding Amount Needed</label>
-                            <input type="text" class="form-control" id="fundingAmount" name="funding_amount" placeholder="e.g., $2M">
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="message" class="form-label fw-semibold">Pitch Summary</label>
-                        <textarea class="form-control" id="message" name="message" rows="5" required 
-                                  placeholder="Brief description of your startup, market opportunity, and funding needs..."></textarea>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="contactMethod" class="form-label fw-semibold">Preferred Contact Method</label>
-                        <select class="form-select" id="contactMethod" name="contact_method">
-                            <option value="email">Email</option>
-                            <option value="phone">Phone Call</option>
-                            <option value="meeting">Video Meeting</option>
-                            <option value="office">Office Visit</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="copyMe" name="copy_me" checked>
-                        <label class="form-check-label" for="copyMe">
-                            Send me a copy of this submission
-                        </label>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="submitContact()">
-                    <i class="bi bi-send me-2"></i>Submit Pitch
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize tooltips
@@ -789,135 +654,30 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-function openContactModal() {
-    const modal = new bootstrap.Modal(document.getElementById('contactModal'));
-    modal.show();
+function sendConnectEmail() {
+    const subject = encodeURIComponent('Connection Request - {{ investor.company_name }}');
+    const body = encodeURIComponent(`Hello {{ investor.company_name }} team,\n\nI found your investor profile on SEA-MAP and I'm interested in connecting with you for potential investment opportunities.\n\nI would appreciate the opportunity to discuss how my startup might align with your investment criteria.\n\nBest regards`);
+    const email = '{{ investor.contact_email|default:"info@company.com" }}';
+    window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
 }
 
-function submitContact() {
-    const form = document.getElementById('contactForm');
-    const formData = new FormData(form);
-    
-    // Show loading state
-    const submitBtn = document.querySelector('.modal-footer .btn-primary');
-    const originalText = submitBtn.innerHTML;
-    submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Sending...';
-    submitBtn.disabled = true;
-    
-    fetch('/api/contact-startup/', {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-        },
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Show success message
-            const alertDiv = document.createElement('div');
-            alertDiv.className = 'alert alert-success alert-dismissible fade show';
-            alertDiv.innerHTML = `
-                <i class="bi bi-check-circle me-2"></i>
-                Message sent successfully! We'll get back to you soon.
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            document.querySelector('.container-fluid').insertBefore(alertDiv, document.querySelector('.startup-card'));
-            
-            // Close modal and reset form
-            bootstrap.Modal.getInstance(document.getElementById('contactModal')).hide();
-            form.reset();
-            
-            // Auto-hide alert after 5 seconds
-            setTimeout(() => {
-                alertDiv.remove();
-            }, 5000);
-        } else {
-            throw new Error(data.message || 'Unknown error');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        // Show error message
-        const alertDiv = document.createElement('div');
-        alertDiv.className = 'alert alert-danger alert-dismissible fade show';
-        alertDiv.innerHTML = `
-            <i class="bi bi-exclamation-triangle me-2"></i>
-            Error sending message. Please try again or contact us directly.
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        `;
-        document.querySelector('.modal-body').insertBefore(alertDiv, document.querySelector('#contactForm'));
-    })
-    .finally(() => {
-        // Restore button state
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
-    });
-}
-
-function toggleBookmark(startupId) {
-    const button = event.target.closest('button');
-    const icon = button.querySelector('i');
-    const originalClass = icon.className;
-    
-    // Optimistic UI update
-    icon.className = 'bi bi-bookmark-fill me-2';
-    
-    fetch(`/api/toggle-bookmark/${startupId}/`, {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-        },
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.bookmarked) {
-            icon.className = 'bi bi-bookmark-fill me-2';
-            button.innerHTML = '<i class="bi bi-bookmark-fill me-2"></i>Bookmarked';
-        } else {
-            icon.className = 'bi bi-bookmark me-2';
-            button.innerHTML = '<i class="bi bi-bookmark me-2"></i>Bookmark';
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        // Revert on error
-        icon.className = originalClass;
-    });
-}
-
-function shareProfile() {
-    if (navigator.share) {
-        navigator.share({
-            title: '{{ startup.company_name }} - SEA-MAP',
-            text: '{{ startup.short_description }}',
-            url: window.location.href,
-        });
-    } else {
-        navigator.clipboard.writeText(window.location.href).then(function() {
-            // Show success feedback
-            const button = event.target.closest('button');
-            const originalText = button.innerHTML;
-            button.innerHTML = '<i class="bi bi-check me-2"></i>Copied!';
-            setTimeout(() => {
-                button.innerHTML = originalText;
-            }, 2000);
-        }).catch(function() {
-            alert('Link copied to clipboard: ' + window.location.href);
-        });
-    }
+function sendPitchEmail() {
+    const subject = encodeURIComponent('Startup Pitch Submission - {{ investor.company_name }}');
+    const body = encodeURIComponent(`Hello {{ investor.company_name }} investment team,\n\nI would like to submit my startup pitch for your consideration.\n\nAttached you will find:\n- Executive Summary\n- Business Plan/Pitch Deck\n- Financial Projections\n- Team Background\n- Product Information\n\nI believe our startup aligns well with your investment focus and would welcome the opportunity to present to your team.\n\nBest regards`);
+    const email = '{{ investor.contact_email|default:"info@company.com" }}';
+    window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
 }
 
 function sendEmail() {
-    const subject = encodeURIComponent('Partnership Opportunity - {{ startup.company_name }}');
-    const body = encodeURIComponent(`Hello {{ startup.company_name }} team,\n\nI found your startup profile on SEA-MAP and I'm interested in learning more about potential partnership opportunities.\n\nBest regards`);
-    const email = '{{ startup.contact_email|default:"info@company.com" }}';
+    const subject = encodeURIComponent('Meeting Request - {{ investor.company_name }}');
+    const body = encodeURIComponent(`Hello {{ investor.company_name }} team,\n\nI found your investor profile on SEA-MAP and would like to request a meeting to discuss potential investment opportunities.\n\nI believe our startup may align with your investment criteria and would appreciate the opportunity to present our business to your team.\n\nBest regards`);
+    const email = '{{ investor.contact_email|default:"info@company.com" }}';
     window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
 }
 
 function scheduleCall() {
     // This would integrate with a calendar scheduling service
-    alert('Calendar scheduling feature coming soon! Please use the contact form to request a meeting.');
+    alert('Calendar scheduling feature coming soon! Please use the meeting request email for now.');
 }
 
 // Smooth scroll for anchor links
@@ -1029,25 +789,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-
-    // Update bookmark state in sticky header
-    window.updateStickyBookmarkState = function(isBookmarked) {
-        if (!stickyHeader) return;
-        
-        const stickyBookmarkBtn = stickyHeader.querySelector('button[onclick*="toggleBookmark"]');
-        if (stickyBookmarkBtn) {
-            const icon = stickyBookmarkBtn.querySelector('i');
-            const text = stickyBookmarkBtn.querySelector('span');
-            
-            if (isBookmarked) {
-                icon.className = 'bi bi-bookmark-fill me-1';
-                if (text) text.textContent = 'Saved';
-            } else {
-                icon.className = 'bi bi-bookmark me-1';
-                if (text) text.textContent = 'Save';
-            }
-        }
-    };
 });
 </script>
 
