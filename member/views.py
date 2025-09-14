@@ -1588,13 +1588,6 @@ def investor_profile(request, investor_id):
         # Contact & Partnership
         'contact_email': investor.member.user.email if investor.member else '',
         'partnership_message': investor.additional_info or f'We are actively seeking investment opportunities. Contact us to learn more about partnership with {investor.company_name}.',
-        'pitch_requirements': [
-            'Executive Summary',
-            'Business Plan or Pitch Deck',
-            'Financial Projections',
-            'Team Background',
-            'Product Information'
-        ],
         
         # Additional fields for template compatibility
         'company_type': get_display_value(investor.investor_type, dict(INVESTOR_TYPE_CHOICES)),

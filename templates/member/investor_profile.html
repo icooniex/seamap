@@ -64,6 +64,9 @@
                             <i class="bi bi-envelope me-1"></i>
                             <span class="d-none d-sm-inline">Connect</span>
                         </button>
+                        <button class="btn btn-outline-info btn-sm sticky-btn-secondary d-none d-lg-inline-flex" onclick="window.open('{{ investor.website }}', '_blank')">
+                            <i class="bi bi-globe me-1"></i>Website
+                        </button>
                     </div>
                 </div>
             </div>
@@ -510,19 +513,6 @@
                             <p class="text-muted">{{ investor.team_description }}</p>
                         </div>
 
-                        <div class="mb-4">
-                            <h5 class="subsection-title"><i class="bi bi-star text-warning me-2"></i>Advisory Board</h5>
-                            <div class="row">
-                                {% for advisor in investor.advisory_board %}
-                                    <div class="col-md-6 mb-2">
-                                        <div class="d-flex align-items-center">
-                                            <i class="bi bi-check-circle text-success me-2"></i>
-                                            <span>{{ advisor }}</span>
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
