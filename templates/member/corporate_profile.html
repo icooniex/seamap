@@ -63,9 +63,11 @@
                             <i class="bi bi-envelope me-1"></i>
                             <span class="d-none d-sm-inline">Connect</span>
                         </button>
-                        <button class="btn btn-outline-info btn-sm sticky-btn-secondary d-none d-lg-inline-flex" onclick="shareProfile()">
+                        {% if corporate.website %}
+                        <button class="btn btn-outline-info btn-sm sticky-btn-secondary d-none d-lg-inline-flex" onclick="window.open('{{ corporate.website }}', '_blank')">
                             <i class="bi bi-globe me-1"></i>Website
                         </button>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -161,15 +163,11 @@
                                     <i class="bi bi-envelope me-2"></i>Connect
                                 </button>
                                 <div class="btn-group-mobile">
+                                    {% if corporate.website %}
                                     <button class="btn btn-outline-primary btn-sm btn-mobile-sm" onclick="window.open('{{ corporate.website }}', '_blank')">
                                         <i class="bi bi-globe me-1"></i>Website
                                     </button>
-                                    <button class="btn btn-outline-secondary btn-sm btn-mobile-sm" onclick="toggleBookmark({{ corporate.id }})">
-                                        <i class="bi bi-bookmark me-1"></i>Save
-                                    </button>
-                                    <button class="btn btn-outline-info btn-sm btn-mobile-sm" onclick="shareProfile()">
-                                        <i class="bi bi-share me-1"></i>Share
-                                    </button>
+                                    {% endif %}
                                 </div>
                             </div>
                             
@@ -178,15 +176,11 @@
                                 <button class="btn btn-primary" onclick="sendConnectEmail()">
                                     <i class="bi bi-envelope me-1"></i>Connect
                                 </button>
+                                {% if corporate.website %}
                                 <button class="btn btn-outline-primary btn-sm" onclick="window.open('{{ corporate.website }}', '_blank')">
                                     <i class="bi bi-globe me-1"></i>Website
                                 </button>
-                                <button class="btn btn-outline-secondary btn-sm" onclick="toggleBookmark({{ corporate.id }})">
-                                    <i class="bi bi-bookmark me-1"></i>Save
-                                </button>
-                                <button class="btn btn-outline-info btn-sm" onclick="shareProfile()">
-                                    <i class="bi bi-share me-1"></i>Share
-                                </button>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -1062,59 +1056,6 @@ function sendConnectEmail() {
     window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
 }
 
-function toggleBookmark(corporateId) {
-    const button = event.target.closest('button');
-    const icon = button.querySelector('i');
-    const originalClass = icon.className;
-    
-    // Optimistic UI update
-    icon.className = 'bi bi-bookmark-fill me-2';
-    
-    fetch(`/api/toggle-bookmark/${corporateId}/`, {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-        },
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.bookmarked) {
-            icon.className = 'bi bi-bookmark-fill me-2';
-            button.innerHTML = '<i class="bi bi-bookmark-fill me-2"></i>Bookmarked';
-        } else {
-            icon.className = 'bi bi-bookmark me-2';
-            button.innerHTML = '<i class="bi bi-bookmark me-2"></i>Bookmark';
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        // Revert on error
-        icon.className = originalClass;
-    });
-}
-
-function shareProfile() {
-    if (navigator.share) {
-        navigator.share({
-            title: '{{ corporate.company_name }} - SEA-MAP',
-            text: '{{ corporate.description }}',
-            url: window.location.href,
-        });
-    } else {
-        navigator.clipboard.writeText(window.location.href).then(function() {
-            // Show success feedback
-            const button = event.target.closest('button');
-            const originalText = button.innerHTML;
-            button.innerHTML = '<i class="bi bi-check me-2"></i>Copied!';
-            setTimeout(() => {
-                button.innerHTML = originalText;
-            }, 2000);
-        }).catch(function() {
-            alert('Link copied to clipboard: ' + window.location.href);
-        });
-    }
-}
-
 function sendEmail() {
     const subject = encodeURIComponent('Collaboration Opportunity - {{ corporate.company_name }}');
     const body = encodeURIComponent(`Hello {{ corporate.company_name }} team,\n\nI found your corporate profile on SEA-MAP and I'm interested in exploring collaboration opportunities.\n\nBest regards`);
@@ -1231,25 +1172,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-
-    // Update bookmark state in sticky header
-    window.updateStickyBookmarkState = function(isBookmarked) {
-        if (!stickyHeader) return;
-        
-        const stickyBookmarkBtn = stickyHeader.querySelector('button[onclick*="toggleBookmark"]');
-        if (stickyBookmarkBtn) {
-            const icon = stickyBookmarkBtn.querySelector('i');
-            const text = stickyBookmarkBtn.querySelector('span');
-            
-            if (isBookmarked) {
-                icon.className = 'bi bi-bookmark-fill me-1';
-                if (text) text.textContent = 'Saved';
-            } else {
-                icon.className = 'bi bi-bookmark me-1';
-                if (text) text.textContent = 'Save';
-            }
-        }
-    };
 });
 </script>
 
