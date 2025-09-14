@@ -1631,20 +1631,40 @@ def corporate_profile(request, corporate_id):
         }
         investment_categories_display = [category_mapping.get(cat, cat) for cat in corporate.investment_categories]
     
-    # Support areas display mapping
-    support_areas_display = []
+
+    # Collaboration types based on support areas (from corporate onboarding)
+    collaboration_types = []
     if corporate.support_areas:
-        support_mapping = {
-            'funding': 'Funding & Investment',
-            'mentorship': 'Mentorship & Advisory',
-            'technical': 'Technical Support',
-            'market_access': 'Market Access',
-            'partnership': 'Strategic Partnerships',
-            'research': 'Research & Development',
-            'pilot_programs': 'Pilot Programs',
-            'other': 'Other Support',
+        # Map the actual collaboration methods from onboarding to the template structure
+        collaboration_mapping = {
+            'Co-Development – Collaborating on tailored solutions': {
+                'type': 'Co-Development',
+                'description': 'Collaborating on tailored solutions and joint product development.'
+            },
+            'Financial Support – Funding startups and projects': {
+                'type': 'Financial Support',
+                'description': 'Funding startups and projects through various financial instruments.'
+            },
+            'Mentorship & Expertise – Guiding startups with knowledge': {
+                'type': 'Mentorship',
+                'description': 'Guiding startups with industry knowledge and expertise.'
+            },
+            'Pilot Programs – Testing innovative solution': {
+                'type': 'Pilot Program',
+                'description': 'Testing innovative solutions through structured pilot programs.'
+            }
         }
-        support_areas_display = [support_mapping.get(area, area) for area in corporate.support_areas]
+        
+        collaboration_types = []
+        for area in corporate.support_areas:
+            if area in collaboration_mapping:
+                collaboration_types.append(collaboration_mapping[area])
+            else:
+                # Fallback for any unmapped values
+                collaboration_types.append({
+                    'type': area.split('–')[0].strip() if '–' in area else area,
+                    'description': area.split('–')[1].strip() if '–' in area else f'Support through {area.lower()}.'
+                })
 
     # Map database fields to template variables
     corporate_data = {
@@ -1703,11 +1723,12 @@ def corporate_profile(request, corporate_id):
         
         # Contact & Partnership
         'partnership_message': corporate.additional_info or f'We are actively seeking strategic partnerships with innovative companies. Contact us to learn more about collaboration opportunities with {corporate.company_name}.',
-        'collaboration_opportunities': support_areas_display or [
-            'Strategic Technology Partnerships',
-            'Innovation Programs',
-            'Business Development',
-            'Market Expansion Support'
+
+        'collaboration_types': collaboration_types or [
+            {
+                'type': 'Strategic Partnership',
+                'description': 'Various forms of strategic collaboration and business partnership opportunities.'
+            }
         ],
         
         # Additional fields for template compatibility
