@@ -295,52 +295,39 @@
                 </h3>
                 
                 <div class="row">
-                    <div class="col-lg-6">
-                        <div class="investment-card">
-                            <div class="investment-icon">
-                                <i class="bi bi-currency-dollar"></i>
-                            </div>
-                            <h5 class="fw-bold mb-2">Funding Size</h5>
-                            <div class="row g-2 mb-3">
+                    <div class="col-lg-12">
+                        <div class="mb-4">
+                            <h5 class="subsection-title">
+                                <i class="bi bi-currency-dollar text-success me-2"></i>Funding Size
+                            </h5>
+                            <div class="row g-3">
                                 <div class="col-6">
-                                    <div class="small text-muted">Minimum</div>
-                                    <div class="fw-bold">{{ investor.min_investment|default:"$1M" }}</div>
+                                    <div class="card border-0 bg-light text-center">
+                                        <div class="card-body py-3">
+                                            <div class="h5 fw-bold text-success mb-1">{{ investor.funding_size|default:"-" }}</div>
+                                            <small class="text-muted">Funding Size</small>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-6">
-                                    <div class="small text-muted">Maximum</div>
-                                    <div class="fw-bold">{{ investor.max_investment|default:"$15M" }}</div>
+                                    <div class="card border-0 bg-light text-center">
+                                        <div class="card-body py-3">
+                                            <div class="h5 fw-bold text-primary mb-1">{{ investor.average_deal_size|default:"-" }}</div>
+                                            <small class="text-muted">Average Deal Size</small>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="small text-muted">Average Deal Size</div>
-                            <div class="h5 text-primary">{{ investor.average_deal_size|default:"$2-8M" }}</div>
                         </div>
                     </div>
                     
-                    <div class="col-lg-6">
+                    <div class="col-lg-12">
                         <div class="mb-4">
                             <h5 class="subsection-title"><i class="bi bi-ladder text-primary me-2"></i>Preferred Funding Stages</h5>
                             <div class="tech-tags">
                                 {% for stage in investor.preferred_stages %}
                                     <span class="tech-tag-success">{{ stage }}</span>
                                 {% endfor %}
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <h5 class="subsection-title"><i class="bi bi-clock text-info me-2"></i>Investment Process</h5>
-                            <div class="row g-3">
-                                <div class="col-6">
-                                    <div class="small text-muted">Timeline</div>
-                                    <div class="fw-semibold">{{ investor.investment_timeline|default:"3-6 months" }}</div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="small text-muted">Board Role</div>
-                                    <div class="fw-semibold">{{ investor.board_participation|default:"Active" }}</div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="small text-muted">Follow-on Strategy</div>
-                                    <div class="fw-semibold">{{ investor.follow_on_strategy|default:"Yes" }}</div>
-                                </div>
                             </div>
                         </div>
                     </div>

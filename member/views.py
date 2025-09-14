@@ -1523,12 +1523,8 @@ def investor_profile(request, investor_id):
         'total_fund_size': get_display_value(investor.funding_size, dict(FUNDING_SIZE_CHOICES)) if investor.funding_size else '',
         'funding_size': get_display_value(investor.funding_size, dict(FUNDING_SIZE_CHOICES)) if investor.funding_size else '',
         'average_deal_size': get_display_value(investor.average_deal_size, dict(DEAL_SIZE_CHOICES)) if investor.average_deal_size else '',
-        'min_investment': '',  # Not in model - could be calculated or added as field
-        'max_investment': '',  # Not in model - could be calculated or added as field
+        
         'preferred_stages': funding_stages_display,
-        'investment_timeline': '3-6 months',  # Default - could be added as model field
-        'board_participation': 'Active',  # Default - could be added as model field
-        'follow_on_strategy': 'Yes',  # Default - could be added as model field
         
         # About Company
         'investment_philosophy': investor.investment_philosophy or '',
