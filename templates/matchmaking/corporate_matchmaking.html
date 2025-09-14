@@ -1143,7 +1143,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.sortable').forEach(header => {
         header.addEventListener('click', function() {
             const column = this.getAttribute('data-sort');
-            const tbody = document.querySelector('.startup-table tbody');
+            const tbody = document.querySelector('.corporate-table tbody');
             if (!tbody) return;
             
             const rows = Array.from(tbody.querySelectorAll('.startup-row'));
@@ -1158,8 +1158,14 @@ document.addEventListener('DOMContentLoaded', function() {
             this.classList.add(isAsc ? 'asc' : 'desc');
             
             rows.sort((a, b) => {
-                let aVal = a.getAttribute('data-' + column) || '';
-                let bVal = b.getAttribute('data-' + column) || '';
+                let dataAttribute = column;
+                // Map header data-sort to actual row data attributes
+                if (column === 'organization-type') {
+                    dataAttribute = 'type';
+                }
+                
+                let aVal = a.getAttribute('data-' + dataAttribute) || '';
+                let bVal = b.getAttribute('data-' + dataAttribute) || '';
                 
                 if (column === 'match') {
                     aVal = parseInt(aVal) || 0;
