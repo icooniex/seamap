@@ -1540,7 +1540,7 @@ def investor_profile(request, investor_id):
                 'name': cat,
                 'percentage': 100 // len(investment_categories_display) if investment_categories_display else 0,
                 'description': cat
-            } for cat in investment_categories_display[:5]  # Limit to 5 for display
+            } for cat in investment_categories_display
         ],
         'target_markets': investor.market_country_interests or [],
         'market_opportunity_focus': investor.investment_philosophy or '',
@@ -1589,26 +1589,6 @@ def investor_profile(request, investor_id):
         ],
         'due_diligence_process': 'Our investment process typically involves initial screening, due diligence, and investment committee review.',
         
-        # News & Updates - Mock data based on company info
-        'recent_news': [
-            {
-                'title': f'{investor.company_name} Expands Investment Focus',
-                'summary': f'Investment firm expands focus to include {", ".join(investment_categories_display[:3])}.',
-                'date': '2024-12-01',
-                'category': 'Investment',
-                'link': '#',
-                'image': None
-            },
-            {
-                'title': f'New Partnership Opportunities at {investor.company_name}',
-                'summary': f'Seeking partnerships in {", ".join(investor.market_country_interests[:3]) if investor.market_country_interests else "Southeast Asia"}.',
-                'date': '2024-11-15',
-                'category': 'Partnership',
-                'link': '#',
-                'image': None
-            }
-        ] if investor.company_name else [],
-        
         # Contact & Partnership
         'contact_email': investor.member.user.email if investor.member else '',
         'partnership_message': investor.additional_info or f'We are actively seeking investment opportunities. Contact us to learn more about partnership with {investor.company_name}.',
@@ -1625,7 +1605,6 @@ def investor_profile(request, investor_id):
         'stage': 'Established',
         'industry': 'Investment Management',
         'match_score': match_score,
-        'fund_stage': '',
         'investment_focus': ', '.join(funding_stages_display) if funding_stages_display else '',
         'ticket_size': get_display_value(investor.average_deal_size, dict(DEAL_SIZE_CHOICES)) if investor.average_deal_size else '',
         'portfolio_size': '',

@@ -215,7 +215,22 @@
                     <div class="metric-icon mx-auto mb-2">
                         <i class="bi bi-cash-stack text-primary"></i>
                     </div>
-                    <div class="stat-value text-primary">{{ investor.total_fund_size|default:"$500M" }}</div>
+                    <div class="stat-value text-primary">
+                        
+                        {% if investor.total_fund_size == 'under_1m' %}
+                            Under $1M
+                        {% elif investor.total_fund_size == '1m_50m' %}
+                            $1M - $50M
+                        {% elif investor.total_fund_size == '100m_200m' %}
+                            $100M - $200M
+                        {% elif investor.total_fund_size == '200m_500m' %}
+                            $200M - $500M
+                        {% elif investor.total_fund_size == 'over_500m' %}
+                            Over $500M
+                        {% else %}
+                            {{investor.total_fund_size}}
+                        {% endif %}
+                    </div>
                     <div class="stat-label">Fund Size</div>
                 </div>
             </div>
@@ -254,51 +269,15 @@
                 </h3>
                 
                 <div class="row">
-                    <div class="col-lg-8">
+                    <div class="col-lg-12">
                         <div class="mb-4">
                             <h5 class="subsection-title"><i class="bi bi-eye text-primary me-2"></i>Company Overview</h5>
-                            <p class="company-description">{{ investor.detailed_description }}</p>
+                            <p class="company-description" style="white-space: pre-line;">{{ investor.detailed_description }}</p>
                         </div>
 
                         <div class="mb-4">
-                            <h5 class="subsection-title"><i class="bi bi-lightbulb text-warning me-2"></i>Investment Philosophy</h5>
-                            <p class="text-muted">{{ investor.investment_philosophy }}</p>
-                        </div>
-
-                        <div class="mb-4">
-                            <h5 class="subsection-title"><i class="bi bi-star text-success me-2"></i>Value Proposition</h5>
-                            <p class="text-muted">{{ investor.value_proposition }}</p>
-                        </div>
-                    </div>
-                    
-                    <div class="col-lg-4">
-                        <div class="card border-0 bg-light h-100">
-                            <div class="card-body">
-                                <h6 class="fw-bold mb-3">
-                                    <i class="bi bi-diagram-3 text-primary me-2"></i>Investment Focus
-                                </h6>
-                                <div class="text-center mb-3">
-                                    <span class="stage-badge stage-growth">
-                                        {{ investor.fund_stage|default:"Fund III" }}
-                                    </span>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <small class="text-muted d-block mb-1">Investment Range</small>
-                                    <div class="fw-semibold">{{ investor.average_deal_size|default:"$2-8M" }}</div>
-                                </div>
-                                
-                                <hr class="my-3">
-                                
-                                <h6 class="fw-bold mb-3">
-                                    <i class="bi bi-geo-alt text-success me-2"></i>Geographic Focus
-                                </h6>
-                                <div class="tech-tags">
-                                    {% for market in investor.target_markets %}
-                                        <span class="tech-tag-sm">{{ market }}</span>
-                                    {% endfor %}
-                                </div>
-                            </div>
+                            <h5 class="subsection-title"><i class="bi bi-lightbulb text-warning me-2"></i>Investment Philosophy & Value Proposition</h5>
+                            <p class="text-muted" style="white-space: pre-line;">{{ investor.investment_philosophy }}</p>
                         </div>
                     </div>
                 </div>
@@ -382,7 +361,7 @@
                 <div class="row">
                     <div class="col-lg-8">
                         <div class="mb-4">
-                            <h5 class="subsection-title"><i class="bi bi-pie-chart text-primary me-2"></i>Sector Allocation</h5>
+                            <h5 class="subsection-title"><i class="bi bi-pie-chart text-primary me-2"></i>Investment Categories / Allocation</h5>
                             {% for sector in investor.sector_focus %}
                                 <div class="mb-3">
                                     <div class="d-flex justify-content-between align-items-center mb-1">
@@ -402,7 +381,7 @@
                         <div class="card border-0 bg-light">
                             <div class="card-body">
                                 <h6 class="fw-bold mb-3">
-                                    <i class="bi bi-globe text-success me-2"></i>Country Focus
+                                    <i class="bi bi-globe text-success me-2"></i>Market Country Focus
                                 </h6>
                                 <div class="tech-tags mb-3">
                                     {% for country in investor.target_markets %}
@@ -426,14 +405,6 @@
                     </div>
                 </div>
 
-                <!-- Market Opportunity -->
-                <div class="alert alert-info d-flex align-items-start mt-4">
-                    <i class="bi bi-info-circle text-info me-3 mt-1"></i>
-                    <div>
-                        <h6 class="mb-1">Market Opportunity Focus</h6>
-                        <p class="mb-0">{{ investor.market_opportunity_focus }}</p>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
