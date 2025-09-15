@@ -1165,7 +1165,6 @@ def create_problem_statement(request):
             description = request.POST.get('description', '').strip()
             current_challenges = request.POST.get('current_challenges', '').strip()
             contact_email = request.POST.get('contact_email', '').strip()
-            region = request.POST.get('region', '').strip()
             
             # Get new form fields
             preferred_asean_countries = request.POST.getlist('preferred_asean_countries')
@@ -1177,8 +1176,6 @@ def create_problem_statement(request):
             technical_requirements = request.POST.get('technical_requirements', '').strip()
             
             # Get collaboration details
-            collaboration_type = request.POST.get('collaboration_type', '').strip()
-            budget_range = request.POST.get('budget_range', '').strip()
             timeline = request.POST.get('timeline', '').strip()
             implementation_support = request.POST.get('implementation_support', '').strip()
             
@@ -1210,14 +1207,11 @@ def create_problem_statement(request):
                 description=description,
                 current_challenges=current_challenges,
                 contact_email=contact_email,
-                region=region,
                 preferred_asean_countries=preferred_asean_countries,
                 innovation_type=innovation_type,
                 startup_stage=startup_stage,
                 solution_requirements=solution_requirements,
                 technical_requirements=technical_requirements,
-                collaboration_type=collaboration_type,
-                budget_range=budget_range,
                 timeline=timeline,
                 implementation_support=implementation_support,
                 created_by=member,

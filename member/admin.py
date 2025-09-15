@@ -269,8 +269,8 @@ class ProblemDocumentInline(admin.TabularInline):
 
 @admin.register(ProblemStatement)
 class ProblemStatementAdmin(admin.ModelAdmin):
-    list_display = ('title', 'get_company_name', 'get_status_display', 'region', 'get_preferred_countries', 'timeline', 'budget_range', 'created_at')
-    list_filter = ('status', 'region', 'timeline', 'budget_range', 'collaboration_type', 'created_at')
+    list_display = ('title', 'get_company_name', 'get_status_display', 'get_preferred_countries', 'timeline', 'created_at')
+    list_filter = ('status', 'timeline', 'created_at')
     search_fields = ('title', 'subtitle', 'description', 'company__company_name', 'created_by__user__username', 'contact_email', 'current_challenges')
     readonly_fields = ('created_at', 'updated_at')
     inlines = [ProblemDocumentInline]
@@ -307,7 +307,7 @@ class ProblemStatementAdmin(admin.ModelAdmin):
             'fields': ('title', 'subtitle', 'description', 'company', 'contact_email', 'created_by')
         }),
         ('Problem Details', {
-            'fields': ('current_challenges', 'region', 'status')
+            'fields': ('current_challenges', 'status')
         }),
         ('Preferences & Requirements', {
             'fields': ('preferred_asean_countries', 'innovation_type', 'startup_stage'),
@@ -318,7 +318,7 @@ class ProblemStatementAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
         ('Collaboration Details', {
-            'fields': ('collaboration_type', 'budget_range', 'timeline', 'implementation_support'),
+            'fields': ('timeline', 'implementation_support'),
             'classes': ('collapse',)
         }),
         ('Media & Documents', {

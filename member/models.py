@@ -846,13 +846,8 @@ class ProblemStatement(models.Model):
     technical_requirements = models.TextField(blank=True, help_text="Rich text content for technical specifications")
     
     # Collaboration Details
-    collaboration_type = models.CharField(max_length=100, blank=True)
-    budget_range = models.CharField(max_length=100, blank=True)
     timeline = models.CharField(max_length=100, blank=True)
     implementation_support = models.TextField(blank=True)
-    
-    # Location
-    region = models.CharField(max_length=100, blank=True)
     
     # Additional Resources
     technical_specifications = models.FileField(upload_to='problem_specifications/', blank=True, null=True, help_text="Technical specifications document")

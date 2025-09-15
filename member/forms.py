@@ -361,9 +361,8 @@ class ProblemStatementForm(forms.ModelForm):
         fields = [
             'title', 'subtitle', 'description', 'contact_person', 'contact_email',
             'current_challenges', 'solution_requirements',
-            'technical_requirements', 'collaboration_type', 'budget_range',
-            'timeline', 'implementation_support', 'region', 'industry_focus',
-            'priority', 'featured_image'
+            'technical_requirements', 'timeline', 'implementation_support', 
+            'industry_focus', 'priority', 'featured_image'
         ]
         widgets = {
             'title': forms.TextInput(attrs={
