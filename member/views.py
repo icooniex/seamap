@@ -1179,7 +1179,7 @@ def create_problem_statement(request):
             timeline = request.POST.get('timeline', '').strip()
             implementation_support = request.POST.get('implementation_support', '').strip()
             
-            # Validation
+            # Validation - Basic Information
             if not title:
                 messages.error(request, 'Problem title is required.')
                 return render(request, 'resources/create_problem.html')
@@ -1198,6 +1198,28 @@ def create_problem_statement(request):
             
             if not solution_requirements:
                 messages.error(request, 'Solution requirements are required.')
+                return render(request, 'resources/create_problem.html')
+            
+            # Validation - Checkbox fields (at least one required each)
+            if not innovation_type:
+                messages.error(request, 'Please select at least one Type of Innovation.')
+                return render(request, 'resources/create_problem.html')
+            
+            if not startup_stage:
+                messages.error(request, 'Please select at least one Preferred Startup Stage.')
+                return render(request, 'resources/create_problem.html')
+            
+            if not preferred_asean_countries:
+                messages.error(request, 'Please select at least one Preferred ASEAN Country.')
+                return render(request, 'resources/create_problem.html')
+            
+            # Validation - Collaboration Details
+            if not timeline:
+                messages.error(request, 'Implementation timeline is required.')
+                return render(request, 'resources/create_problem.html')
+            
+            if not implementation_support:
+                messages.error(request, 'Implementation support description is required.')
                 return render(request, 'resources/create_problem.html')
             
             # Create problem statement

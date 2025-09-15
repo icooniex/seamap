@@ -484,7 +484,7 @@
                 <div class="section-header">
                     <h4 class="section-title">
                         <i class="bi bi-lightbulb"></i>
-                        Type of Innovation
+                        Type of Innovation <span class="required">*</span>
                     </h4>
                     <p class="section-subtitle">Select the type of innovation you are looking for</p>
                 </div>
@@ -614,7 +614,7 @@
                 <div class="section-header">
                     <h4 class="section-title">
                         <i class="bi bi-graph-up-arrow"></i>
-                        Level of Maturity (Preferred Startup Stage)
+                        Level of Maturity (Preferred Startup Stage) <span class="required">*</span>
                     </h4>
                     <p class="section-subtitle">Select the preferred maturity level of startups you want to work with</p>
                 </div>
@@ -694,7 +694,7 @@
                 <div class="section-header">
                     <h4 class="section-title">
                         <i class="bi bi-globe-asia-australia"></i>
-                        Preferred ASEAN Countries
+                        Preferred ASEAN Countries <span class="required">*</span>
                     </h4>
                     <p class="section-subtitle">Select ASEAN countries where you prefer to find solutions</p>
                 </div>
@@ -826,16 +826,16 @@
                 <div class="row g-4">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="timeline" class="form-label">Implementation Timeline</label>
-                            <input type="text" class="form-control" id="timeline" name="timeline" 
+                            <label for="timeline" class="form-label">Implementation Timeline <span class="required">*</span></label>
+                            <input type="text" class="form-control" id="timeline" name="timeline" required
                                    placeholder="e.g., 6-12 months">
                         </div>
                     </div>
                     
                     <div class="col-12">
                         <div class="form-group">
-                            <label for="implementation_support" class="form-label">Implementation Support</label>
-                            <textarea class="form-control" id="implementation_support" name="implementation_support" rows="4"
+                            <label for="implementation_support" class="form-label">Implementation Support <span class="required">*</span></label>
+                            <textarea class="form-control" id="implementation_support" name="implementation_support" rows="4" required
                                       placeholder="Describe the support you can provide for solution implementation (resources, expertise, facilities, etc.)"></textarea>
                         </div>
                     </div>
@@ -976,6 +976,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     form.addEventListener('submit', function(e) {
         let hasErrors = false;
+        const errorMessages = [];
         
         // Validate required text fields
         requiredFields.forEach(field => {
@@ -989,12 +990,101 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
+        // Validate innovation type checkboxes (at least one required)
+        const innovationTypeCheckboxes = form.querySelectorAll('input[name="innovation_type"]');
+        const innovationTypeChecked = Array.from(innovationTypeCheckboxes).some(cb => cb.checked);
+        if (!innovationTypeChecked) {
+            hasErrors = true;
+            errorMessages.push('Please select at least one Type of Innovation.');
+            // Add visual feedback to the section
+            const innovationSection = form.querySelector('.checkbox-grid');
+            if (innovationSection) {
+                innovationSection.style.borderColor = 'var(--bs-danger)';
+                innovationSection.style.borderWidth = '2px';
+                innovationSection.style.borderStyle = 'solid';
+                innovationSection.style.borderRadius = '8px';
+                innovationSection.style.padding = '10px';
+            }
+        } else {
+            const innovationSection = form.querySelector('.checkbox-grid');
+            if (innovationSection) {
+                innovationSection.style.borderColor = '';
+                innovationSection.style.borderWidth = '';
+                innovationSection.style.borderStyle = '';
+                innovationSection.style.padding = '';
+            }
+        }
+        
+        // Validate startup stage checkboxes (at least one required)
+        const startupStageCheckboxes = form.querySelectorAll('input[name="startup_stage"]');
+        const startupStageChecked = Array.from(startupStageCheckboxes).some(cb => cb.checked);
+        if (!startupStageChecked) {
+            hasErrors = true;
+            errorMessages.push('Please select at least one Preferred Startup Stage.');
+            // Add visual feedback to the section
+            const stageSection = form.querySelectorAll('.checkbox-grid')[1];
+            if (stageSection) {
+                stageSection.style.borderColor = 'var(--bs-danger)';
+                stageSection.style.borderWidth = '2px';
+                stageSection.style.borderStyle = 'solid';
+                stageSection.style.borderRadius = '8px';
+                stageSection.style.padding = '10px';
+            }
+        } else {
+            const stageSection = form.querySelectorAll('.checkbox-grid')[1];
+            if (stageSection) {
+                stageSection.style.borderColor = '';
+                stageSection.style.borderWidth = '';
+                stageSection.style.borderStyle = '';
+                stageSection.style.padding = '';
+            }
+        }
+        
+        // Validate preferred ASEAN countries checkboxes (at least one required)
+        const aseanCountryCheckboxes = form.querySelectorAll('input[name="preferred_asean_countries"]');
+        const aseanCountryChecked = Array.from(aseanCountryCheckboxes).some(cb => cb.checked);
+        if (!aseanCountryChecked) {
+            hasErrors = true;
+            errorMessages.push('Please select at least one Preferred ASEAN Country.');
+            // Add visual feedback to the section
+            const aseanSection = form.querySelectorAll('.checkbox-grid')[2];
+            if (aseanSection) {
+                aseanSection.style.borderColor = 'var(--bs-danger)';
+                aseanSection.style.borderWidth = '2px';
+                aseanSection.style.borderStyle = 'solid';
+                aseanSection.style.borderRadius = '8px';
+                aseanSection.style.padding = '10px';
+            }
+        } else {
+            const aseanSection = form.querySelectorAll('.checkbox-grid')[2];
+            if (aseanSection) {
+                aseanSection.style.borderColor = '';
+                aseanSection.style.borderWidth = '';
+                aseanSection.style.borderStyle = '';
+                aseanSection.style.padding = '';
+            }
+        }
+        
+        // Show error messages if any
         if (hasErrors) {
             e.preventDefault();
+            
+            // Show combined error message
+            let alertMessage = 'Please fill in all required fields:';
+            if (errorMessages.length > 0) {
+                alertMessage += '\n\n' + errorMessages.join('\n');
+            }
+            alert(alertMessage);
+            
             const firstError = form.querySelector('.is-invalid');
             if (firstError) {
                 firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 firstError.focus();
+            } else if (!innovationTypeChecked) {
+                const innovationSection = form.querySelector('.checkbox-grid');
+                if (innovationSection) {
+                    innovationSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
             }
         }
     });
@@ -1029,6 +1119,77 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.style.borderColor = 'var(--bs-success)';
             } else {
                 this.style.borderColor = '#e2e8f0';
+            }
+        });
+    });
+    
+    // Real-time validation for checkbox groups
+    const innovationTypeCheckboxes = form.querySelectorAll('input[name="innovation_type"]');
+    const startupStageCheckboxes = form.querySelectorAll('input[name="startup_stage"]');
+    const aseanCountryCheckboxes = form.querySelectorAll('input[name="preferred_asean_countries"]');
+    
+    // Innovation Type validation
+    innovationTypeCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const innovationTypeChecked = Array.from(innovationTypeCheckboxes).some(cb => cb.checked);
+            const innovationSection = form.querySelector('.checkbox-grid');
+            if (innovationSection) {
+                if (innovationTypeChecked) {
+                    innovationSection.style.borderColor = 'var(--bs-success)';
+                    innovationSection.style.borderWidth = '2px';
+                    innovationSection.style.borderStyle = 'solid';
+                    innovationSection.style.borderRadius = '8px';
+                    innovationSection.style.padding = '10px';
+                } else {
+                    innovationSection.style.borderColor = '';
+                    innovationSection.style.borderWidth = '';
+                    innovationSection.style.borderStyle = '';
+                    innovationSection.style.padding = '';
+                }
+            }
+        });
+    });
+    
+    // Startup Stage validation
+    startupStageCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const startupStageChecked = Array.from(startupStageCheckboxes).some(cb => cb.checked);
+            const stageSection = form.querySelectorAll('.checkbox-grid')[1];
+            if (stageSection) {
+                if (startupStageChecked) {
+                    stageSection.style.borderColor = 'var(--bs-success)';
+                    stageSection.style.borderWidth = '2px';
+                    stageSection.style.borderStyle = 'solid';
+                    stageSection.style.borderRadius = '8px';
+                    stageSection.style.padding = '10px';
+                } else {
+                    stageSection.style.borderColor = '';
+                    stageSection.style.borderWidth = '';
+                    stageSection.style.borderStyle = '';
+                    stageSection.style.padding = '';
+                }
+            }
+        });
+    });
+    
+    // ASEAN Countries validation
+    aseanCountryCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const aseanCountryChecked = Array.from(aseanCountryCheckboxes).some(cb => cb.checked);
+            const aseanSection = form.querySelectorAll('.checkbox-grid')[2];
+            if (aseanSection) {
+                if (aseanCountryChecked) {
+                    aseanSection.style.borderColor = 'var(--bs-success)';
+                    aseanSection.style.borderWidth = '2px';
+                    aseanSection.style.borderStyle = 'solid';
+                    aseanSection.style.borderRadius = '8px';
+                    aseanSection.style.padding = '10px';
+                } else {
+                    aseanSection.style.borderColor = '';
+                    aseanSection.style.borderWidth = '';
+                    aseanSection.style.borderStyle = '';
+                    aseanSection.style.padding = '';
+                }
             }
         });
     });
