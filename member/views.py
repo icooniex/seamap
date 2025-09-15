@@ -1359,8 +1359,8 @@ def startup_profile(request, startup_id):
         'founders': [
             {
                 'name': startup.member.user.get_full_name() or startup.member.user.username,
-                'position': 'Founder',
-                'bio': f"Founder of {startup.company_name}",
+                'position': startup.member.job_position or 'Founder',
+                'bio': startup.member.short_bio or f"Founder of {startup.company_name}",
                 'photo': startup.member.profile_picture if hasattr(startup.member, 'profile_picture') else None
             }
         ] if startup.member else [],
@@ -1484,7 +1484,7 @@ def investor_profile(request, investor_id):
             'series_a': 'Series A',
             'series_b': 'Series B',
             'series_c': 'Series C',
-            'series_d_plus': 'Series D+',
+            'series_d': 'Series D+',
             'growth': 'Growth',
         }
         funding_stages_display = [stages_mapping.get(stage, stage) for stage in investor.funding_stages]
@@ -1558,8 +1558,8 @@ def investor_profile(request, investor_id):
         'partners': [
             {
                 'name': investor.member.user.get_full_name() or investor.member.user.username,
-                'position': 'Partner',
-                'bio': f"Partner at {investor.company_name}",
+                'position': investor.member.job_position or 'Partner',
+                'bio': investor.member.short_bio or f"Partner at {investor.company_name}",
                 'photo': investor.member.profile_picture if hasattr(investor.member, 'profile_picture') else None,
                 'linkedin': '#'
             }
@@ -1711,8 +1711,8 @@ def corporate_profile(request, corporate_id):
         'leadership_team': [
             {
                 'name': corporate.member.user.get_full_name() or corporate.member.user.username,
-                'position': 'Leadership Team Member',
-                'bio': f"Leadership team member at {corporate.company_name}",
+                'position': corporate.member.job_position or 'Leadership Team Member',
+                'bio': corporate.member.short_bio or f"Leadership team member at {corporate.company_name}",
                 'photo': corporate.member.profile_picture if hasattr(corporate.member, 'profile_picture') else None
             }
         ] if corporate.member else [],

@@ -219,7 +219,7 @@
                             {{investor.total_fund_size}}
                         {% endif %}
                     </div>
-                    <div class="stat-label">Fund Size</div>
+                    <div class="stat-label">Fund Size (USD)</div>
                 </div>
             </div>
         </div>
@@ -293,7 +293,7 @@
                                     <div class="card border-0 bg-light text-center">
                                         <div class="card-body py-3">
                                             <div class="h5 fw-bold text-success mb-1">{{ investor.funding_size|default:"-" }}</div>
-                                            <small class="text-muted">Funding Size</small>
+                                            <small class="text-muted">Funding Size (USD)</small>
                                         </div>
                                     </div>
                                 </div>
@@ -301,7 +301,7 @@
                                     <div class="card border-0 bg-light text-center">
                                         <div class="card-body py-3">
                                             <div class="h5 fw-bold text-primary mb-1">{{ investor.average_deal_size|default:"-" }}</div>
-                                            <small class="text-muted">Average Deal Size</small>
+                                            <small class="text-muted">Average Deal Size (USD)</small>
                                         </div>
                                     </div>
                                 </div>
@@ -422,7 +422,7 @@
                         <div class="card border-0 bg-light text-center">
                             <div class="card-body py-3">
                                 <div class="h4 fw-bold text-info mb-1">{{ investor.portfolio_valuation|default:"$2.8B" }}</div>
-                                <small class="text-muted">Portfolio Value</small>
+                                <small class="text-muted">Portfolio Value (USD)</small>
                             </div>
                         </div>
                     </div>
