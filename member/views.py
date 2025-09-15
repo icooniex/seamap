@@ -921,12 +921,22 @@ def problem(request):
     from .models import ProblemStatement
     try:
         problems = ProblemStatement.objects.filter(status='published').order_by('-created_at')
+        
+        # Check if user is a corporate user
+        is_corporate_user = False
+        if request.user.is_authenticated:
+            try:
+                is_corporate_user = request.user.member.companies.filter(company_type='corporate').exists()
+            except:
+                is_corporate_user = False
+        
         context = {
             'problems': problems,
             'total_problems': problems.count(),
+            'is_corporate_user': is_corporate_user,
         }
     except:
-        context = {'problems': [], 'total_problems': 0}
+        context = {'problems': [], 'total_problems': 0, 'is_corporate_user': False}
     return render(request, 'resources/problem.html', context)
 
 @onboarding_required

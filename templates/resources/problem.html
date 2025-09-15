@@ -22,10 +22,10 @@
             </div>
             
             <!-- Corporate Action Button -->
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated and is_corporate_user %}
                 <div class="header-actions">
                     <a href="{% url 'create_problem_statement' %}" class="btn btn-warning btn-lg create-btn" onclick="handleCreateProblem(event)">
-                        <i class="bi bi-plus-circle me-2"></i>Submit Problem
+                        <i class="bi bi-plus-circle me-2"></i>Submit
                     </a>
                 </div>
             {% endif %}

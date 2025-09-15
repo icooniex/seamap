@@ -84,19 +84,20 @@
         <div class="col-lg-8">
             <!-- Problem Description -->
             <div class="content-section">
-                <h3><i class="bi bi-exclamation-triangle me-2"></i>Problem Statement</h3>
+                <h3><i class="bi bi-lightbulb me-2"></i>Problem Statement</h3>
                 <div class="content-card">
+                    
                     {% if problem.description %}
-                        {{ problem.description|safe }}
+                        <p style="white-space: pre-line;">{{ problem.description|safe }}</p>
                     {% else %}
                         <p>The problem statement description will be displayed here once content is available.</p>
                     {% endif %}
                     
-                    {% if problem.categories %}
+                    {% if problem.impact_categories %}
                     <div class="impact-section mt-4">
                         <h5>Categories:</h5>
                         <div class="impact-tags">
-                            {% for category in problem.categories %}
+                            {% for category in problem.impact_categories %}
                                 <span class="impact-tag">{{ category }}</span>
                             {% empty %}
                                 <span class="impact-tag sustainability">Sustainability</span>
@@ -115,11 +116,24 @@
 
             <!-- Solution Requirements -->
             <div class="content-section">
-                <h3><i class="bi bi-target me-2"></i>What We're Looking For</h3>
+                <h3><i class="bi bi-search me-2"></i>What We're Looking For</h3>
                 <div class="content-card">
                     <div class="solution-content">
+                        <h5 class="subsection-title"><i class="bi bi-lightbulb text-warning me-2"></i>Solution Requirements</h5>
                         {% if problem.solution_requirements %}
-                            {{ problem.solution_requirements|safe }}
+                            <p style="white-space: pre-line;">{{ problem.solution_requirements|safe }}</p>
+                        {% else %}
+                            <p>We are seeking innovative and practical solutions that can address our challenges while meeting our goals.</p>
+                        {% endif %}
+                    </div>
+                        
+                </div>
+
+                <div class="content-card">
+                    <div class="solution-content">
+                        <h5 class="subsection-title"><i class="bi bi-lightbulb text-warning me-2"></i>Technical Requirements</h5>
+                        {% if problem.technical_requirements %}
+                            <p style="white-space: pre-line;">{{ problem.technical_requirements|safe }}</p>
                         {% else %}
                             <p>We are seeking innovative and practical solutions that can address our challenges while meeting our goals.</p>
                         {% endif %}
@@ -130,7 +144,7 @@
 
             <!-- Technical Specifications -->
             <div class="content-section">
-                <h3><i class="bi bi-gear me-2"></i>Technical Requirements</h3>
+                <h3><i class="bi bi-gear me-2"></i>Technical Requirements & Evaluation Criteria</h3>
                 <div class="content-card">
                     <div class="technical-content">
                         {% if problem.technical_requirements %}
@@ -354,6 +368,7 @@
     border-radius: 15px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     border: 1px solid #f0f0f0;
+    margin-bottom: 1.5rem;
 }
 
 .impact-tags {
@@ -716,6 +731,13 @@
     color: #58946e;
     font-weight: 600;
     font-size: 0.9rem;
+}
+
+.subsection-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #495057!important;
+    margin-bottom: 1rem;
 }
 
 /* Responsive Design */
