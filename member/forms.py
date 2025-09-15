@@ -360,7 +360,7 @@ class ProblemStatementForm(forms.ModelForm):
         model = None  # Will be imported dynamically to avoid circular import
         fields = [
             'title', 'subtitle', 'description', 'contact_person', 'contact_email',
-            'current_challenges', 'impact_categories', 'solution_requirements',
+            'current_challenges', 'solution_requirements',
             'technical_requirements', 'collaboration_type', 'budget_range',
             'timeline', 'implementation_support', 'region', 'industry_focus',
             'priority', 'featured_image'

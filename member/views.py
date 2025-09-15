@@ -1002,26 +1002,16 @@ def problem_detail(request, problem_id):
         from .models import ProblemStatement
         problem = get_object_or_404(ProblemStatement, pk=problem_id, status='published')
         
-        # Get related problems (same categories or same company, excluding current)
+        # Get related problems (same company, excluding current)
         related_problems = ProblemStatement.objects.filter(
-            status='published'
-        ).exclude(pk=problem_id)
+            status='published',
+            company=problem.company
+        ).exclude(pk=problem_id)[:3]
         
-        # Try to find problems with similar categories
-        if problem.impact_categories:
-            # If current problem has categories, find others with similar categories
-            related_problems = related_problems.filter(
-                impact_categories__overlap=problem.impact_categories
-            )[:3]
-        else:
-            # If no categories, get recent problems from same company or random
-            related_problems = related_problems.filter(
-                company=problem.company
-            )[:3]
-            if not related_problems.exists():
-                related_problems = ProblemStatement.objects.filter(
-                    status='published'
-                ).exclude(pk=problem_id).order_by('-created_at')[:3]
+        if not related_problems.exists():
+            related_problems = ProblemStatement.objects.filter(
+                status='published'
+            ).exclude(pk=problem_id).order_by('-created_at')[:3]
         
         context = {
             'problem': problem,
@@ -1177,9 +1167,6 @@ def create_problem_statement(request):
             contact_email = request.POST.get('contact_email', '').strip()
             region = request.POST.get('region', '').strip()
             
-            # Get impact categories
-            impact_categories = request.POST.getlist('impact_categories')
-            
             # Get new form fields
             preferred_asean_countries = request.POST.getlist('preferred_asean_countries')
             innovation_type = request.POST.getlist('innovation_type')
@@ -1216,10 +1203,6 @@ def create_problem_statement(request):
                 messages.error(request, 'Solution requirements are required.')
                 return render(request, 'resources/create_problem.html')
             
-            if not impact_categories:
-                messages.error(request, 'Please select at least one impact category.')
-                return render(request, 'resources/create_problem.html')
-            
             # Create problem statement
             problem = ProblemStatement.objects.create(
                 title=title,
@@ -1228,7 +1211,6 @@ def create_problem_statement(request):
                 current_challenges=current_challenges,
                 contact_email=contact_email,
                 region=region,
-                impact_categories=impact_categories,
                 preferred_asean_countries=preferred_asean_countries,
                 innovation_type=innovation_type,
                 startup_stage=startup_stage,

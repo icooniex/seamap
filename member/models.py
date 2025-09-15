@@ -835,7 +835,6 @@ class ProblemStatement(models.Model):
     
     # Problem Details
     current_challenges = models.TextField(help_text="Current challenges and pain points")
-    impact_categories = models.JSONField(default=list, blank=True, help_text="Impact category tags")
     
     # New fields for enhanced problem filtering
     preferred_asean_countries = models.JSONField(default=list, blank=True, help_text="Preferred ASEAN countries for solutions")

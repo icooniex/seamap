@@ -98,25 +98,6 @@
                         <p>The problem statement description will be displayed here once content is available.</p>
                     {% endif %}
                     
-                    {% if problem.impact_categories %}
-                    <div class="impact-section mt-4">
-                        <h5 class="subsection-title"><i class="bi bi-tags text-success me-2"></i>Categories</h5>
-                        <div class="tech-tags mb-3">
-                            {% for category in problem.impact_categories %}
-                                <span class="tech-tag-success">{{ category }}</span>
-                            {% empty %}
-                                <span class="tech-tag-success">Sustainability</span>
-                                <span class="tech-tag-success">Waste Management</span>
-                                <span class="tech-tag-success">Circular Economy</span>
-                                <span class="tech-tag-success">Cost Reduction</span>
-                                <span class="tech-tag-success">Innovation</span>
-                                <span class="tech-tag-success">Supply Chain</span>
-                                <span class="tech-tag-success">Customer Experience</span>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    {% endif %}
-
                     {% if problem.preferred_asean_countries %}
                     <div class="impact-section mt-4">
                         <h5 class="subsection-title"><i class="bi bi-geo-alt text-warning me-2"></i>Preferred ASEAN Countries</h5>
@@ -133,7 +114,7 @@
                         <h5 class="subsection-title"><i class="bi bi-lightbulb text-info me-2"></i>Innovation Types</h5>
                         <div class="tech-tags mb-3">
                             {% for type in problem.innovation_type %}
-                                <span class="tech-tag-info">{{ type|title }}</span>
+                                <span class="tech-tag-success">{{ type|title }}</span>
                             {% endfor %}
                         </div>
                     </div>

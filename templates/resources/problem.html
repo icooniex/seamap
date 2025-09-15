@@ -105,13 +105,6 @@
                             {{ problem.description|truncatewords:25 }}
                         </p>
 
-                        <!-- Category Tags -->
-                        <div class="tech-tags-problem mb-3">
-                            {% for category in problem.impact_categories %}
-                                <span class="tech-tag-problem">{{ category|title }}</span>
-                            {% endfor %}
-                        </div>
-
                         <!-- Problem Details -->
                         <div class="problem-details mb-3">
                             {% if problem.region %}

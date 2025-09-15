@@ -492,86 +492,6 @@
                 </div>
             </div>
             
-            <!-- Problem Categories Section -->
-            <div class="form-section">
-                <div class="section-header">
-                    <h4 class="section-title">
-                        <i class="bi bi-tags"></i>
-                        Impact Categories
-                    </h4>
-                    <p class="section-subtitle">Select categories that best describe the impact areas of your problem</p>
-                </div>
-                
-                <div class="checkbox-grid">
-                    <div class="checkbox-card">
-                        <input type="checkbox" id="environmental" name="impact_categories" value="environmental">
-                        <label for="environmental" class="checkbox-card-content">
-                            <div class="checkbox-visual"></div>
-                            <div class="icon">🌱</div>
-                            <div class="text">
-                                <div class="label">Environmental</div>
-                                <div class="description">Environmental impact and sustainability challenges</div>
-                            </div>
-                        </label>
-                    </div>
-                    <div class="checkbox-card">
-                        <input type="checkbox" id="sustainability" name="impact_categories" value="sustainability">
-                        <label for="sustainability" class="checkbox-card-content">
-                            <div class="checkbox-visual"></div>
-                            <div class="icon">♻️</div>
-                            <div class="text">
-                                <div class="label">Sustainability</div>
-                                <div class="description">Sustainable development and eco-friendly solutions</div>
-                            </div>
-                        </label>
-                    </div>
-                    <div class="checkbox-card">
-                        <input type="checkbox" id="waste_management" name="impact_categories" value="waste-management">
-                        <label for="waste_management" class="checkbox-card-content">
-                            <div class="checkbox-visual"></div>
-                            <div class="icon">🗑️</div>
-                            <div class="text">
-                                <div class="label">Waste Management</div>
-                                <div class="description">Waste reduction and management solutions</div>
-                            </div>
-                        </label>
-                    </div>
-                    <div class="checkbox-card">
-                        <input type="checkbox" id="cost_reduction" name="impact_categories" value="cost-reduction">
-                        <label for="cost_reduction" class="checkbox-card-content">
-                            <div class="checkbox-visual"></div>
-                            <div class="icon">💰</div>
-                            <div class="text">
-                                <div class="label">Cost Reduction</div>
-                                <div class="description">Cost optimization and efficiency improvements</div>
-                            </div>
-                        </label>
-                    </div>
-                    <div class="checkbox-card">
-                        <input type="checkbox" id="supply_chain" name="impact_categories" value="supply-chain">
-                        <label for="supply_chain" class="checkbox-card-content">
-                            <div class="checkbox-visual"></div>
-                            <div class="icon">🚚</div>
-                            <div class="text">
-                                <div class="label">Supply Chain</div>
-                                <div class="description">Supply chain optimization and logistics</div>
-                            </div>
-                        </label>
-                    </div>
-                    <div class="checkbox-card">
-                        <input type="checkbox" id="customer_experience" name="impact_categories" value="customer-experience">
-                        <label for="customer_experience" class="checkbox-card-content">
-                            <div class="checkbox-visual"></div>
-                            <div class="icon">👥</div>
-                            <div class="text">
-                                <div class="label">Customer Experience</div>
-                                <div class="description">Customer satisfaction and experience improvements</div>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-            </div>
-            
             <!-- Preferred ASEAN Countries Section -->
             <div class="form-section">
                 <div class="section-header">
@@ -1072,13 +992,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 field.style.borderColor = '#e2e8f0';
             }
         });
-        
-        // Check if at least one impact category is selected
-        const categoryCheckboxes = form.querySelectorAll('input[name="impact_categories"]:checked');
-        if (categoryCheckboxes.length === 0) {
-            hasErrors = true;
-            alert('Please select at least one impact category.');
-        }
         
         if (hasErrors) {
             e.preventDefault();

@@ -269,7 +269,7 @@ class ProblemDocumentInline(admin.TabularInline):
 
 @admin.register(ProblemStatement)
 class ProblemStatementAdmin(admin.ModelAdmin):
-    list_display = ('title', 'get_company_name', 'get_status_display', 'region', 'get_impact_categories', 'get_preferred_countries', 'timeline', 'budget_range', 'created_at')
+    list_display = ('title', 'get_company_name', 'get_status_display', 'region', 'get_preferred_countries', 'timeline', 'budget_range', 'created_at')
     list_filter = ('status', 'region', 'timeline', 'budget_range', 'collaboration_type', 'created_at')
     search_fields = ('title', 'subtitle', 'description', 'company__company_name', 'created_by__user__username', 'contact_email', 'current_challenges')
     readonly_fields = ('created_at', 'updated_at')
@@ -283,12 +283,6 @@ class ProblemStatementAdmin(admin.ModelAdmin):
     def get_status_display(self, obj):
         return obj.get_status_display()
     get_status_display.short_description = 'Status'
-    
-    def get_impact_categories(self, obj):
-        if obj.impact_categories:
-            return ', '.join(obj.impact_categories)
-        return '-'
-    get_impact_categories.short_description = 'Impact Categories'
     
     def get_preferred_countries(self, obj):
         if obj.preferred_asean_countries:
@@ -313,7 +307,7 @@ class ProblemStatementAdmin(admin.ModelAdmin):
             'fields': ('title', 'subtitle', 'description', 'company', 'contact_email', 'created_by')
         }),
         ('Problem Details', {
-            'fields': ('current_challenges', 'impact_categories', 'region', 'status')
+            'fields': ('current_challenges', 'region', 'status')
         }),
         ('Preferences & Requirements', {
             'fields': ('preferred_asean_countries', 'innovation_type', 'startup_stage'),
