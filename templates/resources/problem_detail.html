@@ -2,9 +2,10 @@
 {% load static %}
 {% load media_tags %}
 
-{% block title %}Problem Statement Details - Seamap{% endblock %}
-
 {% block content %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+
+
 <div class="container-fluid">
     <!-- Problem Detail Header -->
     <div class="problem-detail-header">
@@ -84,7 +85,11 @@
         <div class="col-lg-8">
             <!-- Problem Description -->
             <div class="content-section">
-                <h3><i class="bi bi-lightbulb me-2"></i>Problem Statement</h3>
+                <h3 class="section-title mb-4">
+                    <i class="bi bi-lightbulb text-warning me-2"></i>
+                    Problem Statement
+                </h3>
+                
                 <div class="content-card">
                     
                     {% if problem.description %}
@@ -95,18 +100,18 @@
                     
                     {% if problem.impact_categories %}
                     <div class="impact-section mt-4">
-                        <h5>Categories:</h5>
-                        <div class="impact-tags">
+                        <h5 class="subsection-title"><i class="bi bi-tags text-success me-2"></i>Categories</h5>
+                        <div class="tech-tags mb-3">
                             {% for category in problem.impact_categories %}
-                                <span class="impact-tag">{{ category }}</span>
+                                <span class="tech-tag-success">{{ category }}</span>
                             {% empty %}
-                                <span class="impact-tag sustainability">Sustainability</span>
-                                <span class="impact-tag waste-management">Waste Management</span>
-                                <span class="impact-tag circular-economy">Circular Economy</span>
-                                <span class="impact-tag cost-reduction">Cost Reduction</span>
-                                <span class="impact-tag innovation">Innovation</span>
-                                <span class="impact-tag supply-chain">Supply Chain</span>
-                                <span class="impact-tag customer-experience">Customer Experience</span>
+                                <span class="tech-tag-success">Sustainability</span>
+                                <span class="tech-tag-success">Waste Management</span>
+                                <span class="tech-tag-success">Circular Economy</span>
+                                <span class="tech-tag-success">Cost Reduction</span>
+                                <span class="tech-tag-success">Innovation</span>
+                                <span class="tech-tag-success">Supply Chain</span>
+                                <span class="tech-tag-success">Customer Experience</span>
                             {% endfor %}
                         </div>
                     </div>
@@ -114,10 +119,10 @@
 
                     {% if problem.preferred_asean_countries %}
                     <div class="impact-section mt-4">
-                        <h5>Preferred ASEAN Countries:</h5>
-                        <div class="impact-tags">
+                        <h5 class="subsection-title"><i class="bi bi-geo-alt text-warning me-2"></i>Preferred ASEAN Countries</h5>
+                        <div class="tech-tags mb-3">
                             {% for country in problem.preferred_asean_countries %}
-                                <span class="impact-tag region">{{ country|title }}</span>
+                                <span class="tech-tag-warning">{{ country|title }}</span>
                             {% endfor %}
                         </div>
                     </div>
@@ -125,10 +130,10 @@
 
                     {% if problem.innovation_type %}
                     <div class="impact-section mt-4">
-                        <h5>Innovation Types:</h5>
-                        <div class="impact-tags">
+                        <h5 class="subsection-title"><i class="bi bi-lightbulb text-info me-2"></i>Innovation Types</h5>
+                        <div class="tech-tags mb-3">
                             {% for type in problem.innovation_type %}
-                                <span class="impact-tag innovation">{{ type|title }}</span>
+                                <span class="tech-tag-info">{{ type|title }}</span>
                             {% endfor %}
                         </div>
                     </div>
@@ -136,10 +141,10 @@
 
                     {% if problem.startup_stage %}
                     <div class="impact-section mt-4">
-                        <h5>Preferred Startup Stages:</h5>
-                        <div class="impact-tags">
+                        <h5 class="subsection-title"><i class="bi bi-graph-up-arrow text-primary me-2"></i>Preferred Startup Stages</h5>
+                        <div class="tech-tags mb-3">
                             {% for stage in problem.startup_stage %}
-                                <span class="impact-tag stage">{{ stage|title }}</span>
+                                <span class="tech-tag-info">{{ stage|title }}</span>
                             {% endfor %}
                         </div>
                     </div>
@@ -149,7 +154,11 @@
 
             <!-- Solution Requirements -->
             <div class="content-section">
-                <h3><i class="bi bi-search me-2"></i>What We're Looking For</h3>
+                
+                <h3 class="section-title mb-4">
+                    <i class="bi bi-search text-success me-2"></i>
+                    What We're Looking For
+                </h3>
                 <div class="content-card">
                     <div class="solution-content">
                         <h5 class="subsection-title"><i class="bi bi-lightbulb text-warning me-2"></i>Solution Requirements</h5>
@@ -177,7 +186,11 @@
 
             <!-- Technical Specifications -->
             <div class="content-section">
-                <h3><i class="bi bi-gear me-2"></i>Technical Requirements & Evaluation Criteria</h3>
+                
+                <h3 class="section-title mb-4">
+                    <i class="bi bi-gear text-primary me-2"></i>
+                    Technical Requirements & Evaluation Criteria
+                </h3>
                 <div class="content-card">
                     <div class="technical-content">
                         {% if problem.technical_requirements %}
@@ -195,7 +208,11 @@
 
             <!-- Collaboration Opportunities -->
             <div class="content-section">
-                <h3><i class="bi bi-people me-2"></i>Collaboration & Support</h3>
+                
+                <h3 class="section-title mb-4">
+                    <i class="bi bi-people text-warning me-2"></i>
+                    Collaboration & Support
+                </h3>
                 <div class="content-card">
                     {% if problem.implementation_support %}
                         {{ problem.implementation_support|safe }}
@@ -388,7 +405,7 @@
 }
 
 .content-section h3 {
-    color: #58946e;
+    /* color: #58946e; */
     font-weight: 700;
     margin-bottom: 1.5rem;
     padding-bottom: 0.5rem;
