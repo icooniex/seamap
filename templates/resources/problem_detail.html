@@ -180,9 +180,11 @@
                             <p>Technical requirements and specifications will be provided to qualified solution providers.</p>
                         {% endif %}
                         
-                        {% if problem.technical_specifications %}
-                        <p>For detailed technical specifications and testing protocols, please refer to our <a href="{{ problem.technical_specifications.url }}" target="_blank">Technical Requirements Document</a> available for download.</p>
-                        {% endif %}
+                        {% for document in problem.documents.all %}
+                            {% if document.document_type == 'specifications' %}
+                                <p>For detailed technical specifications and testing protocols, please refer to our <a href="{{ document.file.url }}" target="_blank">{{ document.name }}</a> available for download.</p>
+                            {% endif %}
+                        {% endfor %}
                     </div>
                 </div>
             </div>

@@ -865,12 +865,16 @@
                             <label for="technical_specifications" class="form-label">Technical Specifications</label>
                             <div class="file-upload">
                                 <input type="file" class="form-control" id="technical_specifications" name="technical_specifications" 
-                                       accept=".pdf,.doc,.docx">
-                                <div class="mt-2">
+                                       accept=".pdf,.doc,.docx" style="display: none;">
+                                <div class="upload-content">
                                     <i class="bi bi-file-earmark-pdf display-4 text-muted"></i>
-                                    <p class="mb-1">Upload technical specifications</p>
+                                    <p class="mb-1">Upload technical specifications document</p>
                                     <small class="text-muted">PDF, DOC, DOCX • Max 10MB</small>
+                                    <button type="button" class="btn btn-outline-primary mt-2" onclick="document.getElementById('technical_specifications').click()">
+                                        Choose File
+                                    </button>
                                 </div>
+                                <div class="file-feedback" id="tech_specs_feedback"></div>
                             </div>
                         </div>
                     </div>
@@ -975,6 +979,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const requiredFields = form.querySelectorAll('[required]');
     
     form.addEventListener('submit', function(e) {
+        // Log form data for debugging
+        console.log('Form submission started');
+        const formData = new FormData(form);
+        console.log('Files in form:', Array.from(formData.keys()).filter(key => formData.get(key) instanceof File));
+        
         let hasErrors = false;
         const errorMessages = [];
         
@@ -1100,6 +1109,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 container.style.borderColor = 'var(--bs-success)';
                 container.style.backgroundColor = '#f0fdf4';
                 
+                // Handle specific feedback elements or create generic ones
                 let feedback = container.querySelector('.file-feedback');
                 if (!feedback) {
                     feedback = document.createElement('div');
@@ -1107,6 +1117,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     container.appendChild(feedback);
                 }
                 feedback.innerHTML = `<i class="bi bi-check-circle me-1"></i>File: ${fileName}`;
+                
+                // Show success message for the upload
+                console.log(`File selected: ${fileName} for input: ${this.id}`);
             }
         });
     });

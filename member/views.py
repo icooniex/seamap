@@ -1002,6 +1002,9 @@ def problem_detail(request, problem_id):
         from .models import ProblemStatement
         problem = get_object_or_404(ProblemStatement, pk=problem_id, status='published')
         
+        # Prefetch documents to avoid N+1 queries
+        problem = ProblemStatement.objects.prefetch_related('documents').get(pk=problem_id, status='published')
+        
         # Get related problems (same company, excluding current)
         related_problems = ProblemStatement.objects.filter(
             status='published',
@@ -1243,7 +1246,15 @@ def create_problem_statement(request):
             
             # Handle file uploads
             if 'technical_specifications' in request.FILES:
-                problem.technical_specifications = request.FILES['technical_specifications']
+                # Create ProblemDocument for technical specifications
+                from .models import ProblemDocument
+                tech_spec_file = request.FILES['technical_specifications']
+                ProblemDocument.objects.create(
+                    problem=problem,
+                    name='Technical Specifications',
+                    file=tech_spec_file,
+                    document_type='specifications'
+                )
             
             if 'featured_image' in request.FILES:
                 problem.featured_image = request.FILES['featured_image']
