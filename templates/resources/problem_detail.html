@@ -28,39 +28,21 @@
                 
                 <div class="problem-stats mt-4">
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-6">
                             <div class="stat-item">
-                                <i class="bi bi-lightbulb"></i>
+                                <i class="bi bi-person-badge"></i>
                                 <div class="stat-info">
-                                    <h4>{{ problem.solution_count|default:0 }}</h4>
-                                    <span>Solutions</span>
+                                    <h4>{{ problem.company.company_name|default:'Corporate Partner' }}</h4>
+                                    <span>Posted by</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-6">
                             <div class="stat-item">
-                                <i class="bi bi-building"></i>
+                                <i class="bi bi-calendar-check"></i>
                                 <div class="stat-info">
-                                    <h4>{{ problem.created_by.companies.first.get_company_type_display|default:'Corporate' }}</h4>
-                                    <span>Type</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="stat-item">
-                                <i class="bi bi-geo-alt"></i>
-                                <div class="stat-info">
-                                    <h4>{{ problem.location|default:'ASEAN' }}</h4>
-                                    <span>Region</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="stat-item">
-                                <i class="bi bi-recycle"></i>
-                                <div class="stat-info">
-                                    <h4>{{ problem.innovation_category|default:'Innovation' }}</h4>
-                                    <span>Focus</span>
+                                    <h4>{{ problem.published_at|date:"M d, Y"|default:problem.created_at|date:"M d, Y" }}</h4>
+                                    <span>Published</span>
                                 </div>
                             </div>
                         </div>
@@ -109,17 +91,6 @@
                     </div>
                     {% endif %}
 
-                    {% if problem.innovation_type %}
-                    <div class="impact-section mt-4">
-                        <h5 class="subsection-title"><i class="bi bi-lightbulb text-info me-2"></i>Innovation Types</h5>
-                        <div class="tech-tags mb-3">
-                            {% for type in problem.innovation_type %}
-                                <span class="tech-tag-success">{{ type|title }}</span>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    {% endif %}
-
                     {% if problem.startup_stage %}
                     <div class="impact-section mt-4">
                         <h5 class="subsection-title"><i class="bi bi-graph-up-arrow text-primary me-2"></i>Preferred Startup Stages</h5>
@@ -133,12 +104,13 @@
                 </div>
             </div>
 
-            <!-- Solution Requirements -->
+
+            <!-- Technical Specifications -->
             <div class="content-section">
                 
                 <h3 class="section-title mb-4">
-                    <i class="bi bi-search text-success me-2"></i>
-                    What We're Looking For
+                    <i class="bi bi-gear text-primary me-2"></i>
+                    Technical Requirements & Evaluation Criteria
                 </h3>
                 <div class="content-card">
                     <div class="solution-content">
@@ -149,6 +121,17 @@
                             <p>We are seeking innovative and practical solutions that can address our challenges while meeting our goals.</p>
                         {% endif %}
                     </div>
+
+                    {% if problem.innovation_type %}
+                    <div class="impact-section mt-4">
+                        <h5 class="subsection-title"><i class="bi bi-gear text-info me-2"></i>Innovation Types</h5>
+                        <div class="tech-tags mb-3">
+                            {% for type in problem.innovation_type %}
+                                <span class="tech-tag-success">{{ type|title }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
                         
                 </div>
 
@@ -165,30 +148,6 @@
                 </div>
             </div>
 
-            <!-- Technical Specifications -->
-            <div class="content-section">
-                
-                <h3 class="section-title mb-4">
-                    <i class="bi bi-gear text-primary me-2"></i>
-                    Technical Requirements & Evaluation Criteria
-                </h3>
-                <div class="content-card">
-                    <div class="technical-content">
-                        {% if problem.technical_requirements %}
-                            {{ problem.technical_requirements|safe }}
-                        {% else %}
-                            <p>Technical requirements and specifications will be provided to qualified solution providers.</p>
-                        {% endif %}
-                        
-                        {% for document in problem.documents.all %}
-                            {% if document.document_type == 'specifications' %}
-                                <p>For detailed technical specifications and testing protocols, please refer to our <a href="{{ document.file.url }}" target="_blank">{{ document.name }}</a> available for download.</p>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-
             <!-- Collaboration Opportunities -->
             <div class="content-section">
                 
@@ -198,21 +157,11 @@
                 </h3>
                 <div class="content-card">
                     {% if problem.implementation_support %}
-                        {{ problem.implementation_support|safe }}
+                        <p style="white-space: pre-line;">{{ problem.implementation_support|safe }}</p>
                     {% else %}
                         <p>We offer comprehensive support for selected solution providers.</p>
                     {% endif %}
                     
-                    {% if problem.support_offered %}
-                    <div class="support-grid">
-                        {% for support in problem.support_offered %}
-                        <div class="support-item">
-                            <i class="bi bi-check-circle"></i>
-                            <h5>{{ support }}</h5>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
                 </div>
             </div>
         </div>

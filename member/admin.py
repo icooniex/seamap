@@ -345,7 +345,9 @@ class ProblemStatementAdmin(admin.ModelAdmin):
     
     def publish_problems(self, request, queryset):
         from django.utils import timezone
-        updated = queryset.filter(status='approved').update(status='published')
+        # Update status and set published_at timestamp for approved problems
+        approved_problems = queryset.filter(status='approved')
+        updated = approved_problems.update(status='published', published_at=timezone.now())
         self.message_user(request, f'{updated} approved problem statements were published.')
     publish_problems.short_description = "Publish approved problem statements"
 
