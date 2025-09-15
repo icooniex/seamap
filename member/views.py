@@ -1021,12 +1021,27 @@ def problem_detail(request, problem_id):
             'problem_id': problem_id,
             'related_problems': related_problems,
         }
-    except:
-        # Fallback to static data if model not ready
-        context = {
-            'problem_id': problem_id,
-            'related_problems': [],
-        }
+    except Exception as e:
+        # If problem not found or any other error, try to get it with different status
+        try:
+            from .models import ProblemStatement
+            problem = ProblemStatement.objects.prefetch_related('documents').get(pk=problem_id)
+            related_problems = ProblemStatement.objects.filter(
+                company=problem.company
+            ).exclude(pk=problem_id)[:3] if problem.company else []
+            
+            context = {
+                'problem': problem,
+                'problem_id': problem_id,
+                'related_problems': related_problems,
+            }
+        except:
+            # Fallback with None problem
+            context = {
+                'problem': None,
+                'problem_id': problem_id,
+                'related_problems': [],
+            }
     return render(request, 'resources/problem_detail.html', context)
 
 
