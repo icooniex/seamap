@@ -13,9 +13,9 @@
             <a href="{% url 'problem' %}" class="btn btn-outline-light me-3">
                 <i class="bi bi-arrow-left"></i> Back to Problem Statements
             </a>
-            <div class="problem-status-badges">
+            <!-- <div class="problem-status-badges">
                 <span class="badge bg-{{ problem.get_status_display_color|default:'success' }} problem-status-badge">{{ problem.get_status_display|default:'Open' }}</span>
-            </div>
+            </div> -->
         </div>
         
         <div class="row align-items-center">
@@ -172,12 +172,13 @@
             <div class="sidebar-section">
                 <div class="submit-card">
                     <h4><i class="bi bi-lightbulb me-2"></i>Have a Solution?</h4>
-                    <p>Join {{ problem.solution_count|default:0 }} other innovators working on this challenge</p>
-                    <button class="btn btn-success btn-lg w-100 submit-btn">
-                        <i class="bi bi-plus-circle me-2"></i>Submit Solution
-                    </button>
+                    <p>Interested in submitting your solution for this challenge? Share your idea now!</p>
+                    <a href="mailto:{{ problem.contact_email }}?subject=Solution%20Proposal%20for%20{{ problem.title|urlencode }}&body=Dear%20{{ problem.company.company_name|default:'Team' }},%0D%0A%0D%0AI%20am%20interested%20in%20providing%20a%20solution%20for%20your%20problem%20statement:%20{{ problem.title|urlencode }}%0D%0A%0D%0APlease%20find%20my%20solution%20proposal%20below:%0D%0A%0D%0A[Please%20describe%20your%20solution%20here]%0D%0A%0D%0ABest%20regards" 
+                       class="btn btn-success btn-lg w-100 submit-btn">
+                        <i class="bi bi-envelope me-2"></i>Submit Solution
+                    </a>
                     <div class="submit-note mt-3">
-                        <small><i class="bi bi-info-circle me-1"></i>Open for submissions - No deadline</small>
+                        <small><i class="bi bi-info-circle me-1"></i>Timeline : {{problem.timeline}} </small>
                     </div>
                 </div>
             </div>
@@ -185,7 +186,7 @@
             <!-- Company Information -->
             <div class="sidebar-section">
                 <div class="company-card">
-                    <h5><i class="bi bi-building me-2"></i>Problem Owner</h5>
+                    <h5><i class="bi bi-buildings me-2 text-success"></i>Corporate</h5>
                     <div class="company-info">
                         {% if problem.company.company_logo %}
                             <img src="{% company_logo_url problem.company %}" alt="{{ problem.company.company_name }} Logo" class="company-logo">
@@ -199,11 +200,12 @@
                                 {% if problem.company.primary_location %}
                                     <small><i class="bi bi-geo-alt me-1"></i>{{ problem.company.primary_location }}</small>
                                 {% endif %}
-                                {% if problem.company.team_size %}
-                                    <small><i class="bi bi-people me-1"></i>{{ problem.company.get_team_size_display }}</small>
+                                {% if problem.company.organization_type %}
+                                    <small><i class="bi bi-buildings me-1"></i>{{ problem.company.get_organization_type_display }}</small>
                                 {% endif %}
+                                
                             </div>
-                            <a href="#" class="btn btn-outline-success btn-sm mt-2">View Company Profile</a>
+                            <a href="{% url 'corporate_profile' problem.company.pk %}" class="btn btn-outline-success btn-sm mt-2">View Corporate Profile</a>
                         </div>
                     </div>
                 </div>
@@ -212,7 +214,7 @@
             <!-- Related Problems -->
             <div class="sidebar-section">
                 <div class="related-card">
-                    <h5><i class="bi bi-collection me-2"></i>Related Problems</h5>
+                    <h5><i class="bi bi-collection me-2 text-success"></i>Related Problems</h5>
                     <div class="related-list">
                         {% for related_problem in related_problems %}
                         <a href="{% url 'problem_detail' related_problem.pk %}" class="related-item">
@@ -280,14 +282,14 @@
 }
 
 .problem-title {
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: 800;
     margin-bottom: 1rem;
     line-height: 1.2;
 }
 
 .problem-subtitle {
-    font-size: 1.2rem;
+    font-size: 1rem;
     opacity: 0.9;
     margin-bottom: 0;
 }
@@ -312,12 +314,12 @@
 .stat-info h4 {
     margin: 0;
     font-weight: 700;
-    font-size: 1.5rem;
+    font-size: 1.1rem;
 }
 
 .stat-info span {
     opacity: 0.8;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
 }
 
 .problem-detail-image {
@@ -575,11 +577,13 @@
     border-radius: 10px;
     padding: 1rem 2rem;
     font-weight: 700;
+    font-size:1.1rem;
     transition: all 0.3s ease;
 }
 
 .submit-btn:hover {
     background: #f8f9fa;
+    color: #58946e;
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
@@ -641,7 +645,7 @@
 
 .company-card h5,
 .related-card h5 {
-    color: #58946e;
+    /* color: #58946e; */
     font-weight: 700;
     margin-bottom: 1rem;
 }
@@ -758,7 +762,7 @@
     }
     
     .problem-subtitle {
-        font-size: 0.9rem;
+        font-size: 1rem;
         margin-bottom: 1rem;
     }
     
