@@ -269,7 +269,7 @@ class ProblemDocumentInline(admin.TabularInline):
 
 @admin.register(ProblemStatement)
 class ProblemStatementAdmin(admin.ModelAdmin):
-    list_display = ('title', 'get_company_name', 'get_status_display', 'region', 'get_impact_categories', 'timeline', 'budget_range', 'created_at')
+    list_display = ('title', 'get_company_name', 'get_status_display', 'region', 'get_impact_categories', 'get_preferred_countries', 'timeline', 'budget_range', 'created_at')
     list_filter = ('status', 'region', 'timeline', 'budget_range', 'collaboration_type', 'created_at')
     search_fields = ('title', 'subtitle', 'description', 'company__company_name', 'created_by__user__username', 'contact_email', 'current_challenges')
     readonly_fields = ('created_at', 'updated_at')
@@ -290,11 +290,23 @@ class ProblemStatementAdmin(admin.ModelAdmin):
         return '-'
     get_impact_categories.short_description = 'Impact Categories'
     
-    def get_support_offered(self, obj):
-        if obj.support_offered:
-            return ', '.join(obj.support_offered)
+    def get_preferred_countries(self, obj):
+        if obj.preferred_asean_countries:
+            return ', '.join([country.title() for country in obj.preferred_asean_countries])
         return '-'
-    get_support_offered.short_description = 'Support Offered'
+    get_preferred_countries.short_description = 'Preferred ASEAN Countries'
+    
+    def get_innovation_types(self, obj):
+        if obj.innovation_type:
+            return ', '.join([itype.title() for itype in obj.innovation_type])
+        return '-'
+    get_innovation_types.short_description = 'Innovation Types'
+    
+    def get_startup_stages(self, obj):
+        if obj.startup_stage:
+            return ', '.join([stage.title() for stage in obj.startup_stage])
+        return '-'
+    get_startup_stages.short_description = 'Startup Stages'
     
     fieldsets = (
         ('Basic Information', {
@@ -303,16 +315,16 @@ class ProblemStatementAdmin(admin.ModelAdmin):
         ('Problem Details', {
             'fields': ('current_challenges', 'impact_categories', 'region', 'status')
         }),
+        ('Preferences & Requirements', {
+            'fields': ('preferred_asean_countries', 'innovation_type', 'startup_stage'),
+            'classes': ('collapse',)
+        }),
         ('Solution Requirements', {
             'fields': ('solution_requirements', 'technical_requirements'),
             'classes': ('collapse',)
         }),
         ('Collaboration Details', {
             'fields': ('collaboration_type', 'budget_range', 'timeline', 'implementation_support'),
-            'classes': ('collapse',)
-        }),
-        ('Support & Resources', {
-            'fields': ('support_offered',),
             'classes': ('collapse',)
         }),
         ('Media & Documents', {

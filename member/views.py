@@ -1180,6 +1180,11 @@ def create_problem_statement(request):
             # Get impact categories
             impact_categories = request.POST.getlist('impact_categories')
             
+            # Get new form fields
+            preferred_asean_countries = request.POST.getlist('preferred_asean_countries')
+            innovation_type = request.POST.getlist('innovation_type')
+            startup_stage = request.POST.getlist('startup_stage')
+            
             # Get solution & technical requirements
             solution_requirements = request.POST.get('solution_requirements', '').strip()
             technical_requirements = request.POST.get('technical_requirements', '').strip()
@@ -1189,9 +1194,6 @@ def create_problem_statement(request):
             budget_range = request.POST.get('budget_range', '').strip()
             timeline = request.POST.get('timeline', '').strip()
             implementation_support = request.POST.get('implementation_support', '').strip()
-            
-            # Get support offered
-            support_offered = request.POST.getlist('support_offered')
             
             # Validation
             if not title:
@@ -1227,13 +1229,15 @@ def create_problem_statement(request):
                 contact_email=contact_email,
                 region=region,
                 impact_categories=impact_categories,
+                preferred_asean_countries=preferred_asean_countries,
+                innovation_type=innovation_type,
+                startup_stage=startup_stage,
                 solution_requirements=solution_requirements,
                 technical_requirements=technical_requirements,
                 collaboration_type=collaboration_type,
                 budget_range=budget_range,
                 timeline=timeline,
                 implementation_support=implementation_support,
-                support_offered=support_offered,
                 created_by=member,
                 company=member.companies.filter(company_type='corporate').first(),
                 status='pending'

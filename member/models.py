@@ -837,6 +837,11 @@ class ProblemStatement(models.Model):
     current_challenges = models.TextField(help_text="Current challenges and pain points")
     impact_categories = models.JSONField(default=list, blank=True, help_text="Impact category tags")
     
+    # New fields for enhanced problem filtering
+    preferred_asean_countries = models.JSONField(default=list, blank=True, help_text="Preferred ASEAN countries for solutions")
+    innovation_type = models.JSONField(default=list, blank=True, help_text="Types of innovation sought")
+    startup_stage = models.JSONField(default=list, blank=True, help_text="Preferred startup maturity levels")
+    
     # Solution Requirements
     solution_requirements = models.TextField(help_text="Rich text content for what they're looking for")
     technical_requirements = models.TextField(blank=True, help_text="Rich text content for technical specifications")
@@ -846,7 +851,6 @@ class ProblemStatement(models.Model):
     budget_range = models.CharField(max_length=100, blank=True)
     timeline = models.CharField(max_length=100, blank=True)
     implementation_support = models.TextField(blank=True)
-    support_offered = models.JSONField(default=list, blank=True, help_text="Types of support offered to solution providers")
     
     # Location
     region = models.CharField(max_length=100, blank=True)

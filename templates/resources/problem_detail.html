@@ -111,6 +111,39 @@
                         </div>
                     </div>
                     {% endif %}
+
+                    {% if problem.preferred_asean_countries %}
+                    <div class="impact-section mt-4">
+                        <h5>Preferred ASEAN Countries:</h5>
+                        <div class="impact-tags">
+                            {% for country in problem.preferred_asean_countries %}
+                                <span class="impact-tag region">{{ country|title }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if problem.innovation_type %}
+                    <div class="impact-section mt-4">
+                        <h5>Innovation Types:</h5>
+                        <div class="impact-tags">
+                            {% for type in problem.innovation_type %}
+                                <span class="impact-tag innovation">{{ type|title }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if problem.startup_stage %}
+                    <div class="impact-section mt-4">
+                        <h5>Preferred Startup Stages:</h5>
+                        <div class="impact-tags">
+                            {% for stage in problem.startup_stage %}
+                                <span class="impact-tag stage">{{ stage|title }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
 
@@ -436,6 +469,18 @@
     background: rgba(214, 51, 132, 0.1);
     color: #d63384;
     border-color: rgba(214, 51, 132, 0.2);
+}
+
+.impact-tag.region {
+    background: rgba(111, 66, 193, 0.1);
+    color: #6f42c1;
+    border-color: rgba(111, 66, 193, 0.2);
+}
+
+.impact-tag.stage {
+    background: rgba(13, 202, 240, 0.1);
+    color: #0dcaf0;
+    border-color: rgba(13, 202, 240, 0.2);
 }
 
 .impact-tag:hover {
