@@ -415,7 +415,7 @@
             <div class="d-flex align-items-center">
                 <div class="company-icon-container me-3">
                     <div class="company-icon">
-                        <i class="bi bi-exclamation-triangle"></i>
+                        <i class="bi bi-lightbulb"></i>
                     </div>
                 </div>
                 <div>
@@ -475,23 +475,220 @@
                                       placeholder="Describe the specific challenges and pain points you're experiencing. What have you tried? What barriers exist?"></textarea>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="contact_email" class="form-label">Contact Email <span class="required">*</span></label>
-                            <input type="email" class="form-control" id="contact_email" name="contact_email" required
-                                   placeholder="contact@organization.com">
-                        </div>
+                    
+                </div>
+            </div>
+            
+            <!-- Type of Innovation Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <h4 class="section-title">
+                        <i class="bi bi-lightbulb"></i>
+                        Type of Innovation
+                    </h4>
+                    <p class="section-subtitle">Select the type of innovation you are looking for</p>
+                </div>
+                
+                <div class="checkbox-grid">
+                    <div class="checkbox-card">
+                        <input type="checkbox" id="plastic_alternatives" name="innovation_type" value="Eliminate & Redesign Packaging">
+                        <label for="plastic_alternatives" class="checkbox-card-content">
+                            <div class="checkbox-visual"></div>
+                            <div class="icon">🛍️</div>
+                            <div class="text">
+                                <div class="label">Eliminate & Redesign Packaging</div>
+                                <div class="description">Innovative packaging solutions and design alternatives</div>
+                            </div>
+                        </label>
                     </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="region" class="form-label">Region/Location</label>
-                            <input type="text" class="form-control" id="region" name="region"
-                                   placeholder="e.g. Southeast Asia, Global, Thailand">
-                        </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" id="recycling_technologies" name="innovation_type" value="Refill & Reuse Solutions">
+                        <label for="recycling_technologies" class="checkbox-card-content">
+                            <div class="checkbox-visual"></div>
+                            <div class="icon">🔄</div>
+                            <div class="text">
+                                <div class="label">Refill & Reuse Solutions</div>
+                                <div class="description">Systems for refilling and reusing products</div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" id="waste_collection" name="innovation_type" value="Reusable Packaging Collection/Drop Off">
+                        <label for="waste_collection" class="checkbox-card-content">
+                            <div class="checkbox-visual"></div>
+                            <div class="icon">📦</div>
+                            <div class="text">
+                                <div class="label">Reusable Packaging Collection/Drop Off</div>
+                                <div class="description">Collection and drop-off systems for reusable packaging</div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" id="circular_economy" name="innovation_type" value="Upcycling Plastic Waste">
+                        <label for="circular_economy" class="checkbox-card-content">
+                            <div class="checkbox-visual"></div>
+                            <div class="icon">♻️</div>
+                            <div class="text">
+                                <div class="label">Upcycling Plastic Waste</div>
+                                <div class="description">Technologies for upcycling plastic waste into new products</div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" id="monitoring_tools" name="innovation_type" value="Sustainable Alternative Materials">
+                        <label for="monitoring_tools" class="checkbox-card-content">
+                            <div class="checkbox-visual"></div>
+                            <div class="icon">🌿</div>
+                            <div class="text">
+                                <div class="label">Sustainable Alternative Materials</div>
+                                <div class="description">Eco-friendly materials and sustainable alternatives</div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" id="education_partnerships" name="innovation_type" value="Education & Industry Partnerships">
+                        <label for="education_partnerships" class="checkbox-card-content">
+                            <div class="checkbox-visual"></div>
+                            <div class="icon">🤝</div>
+                            <div class="text">
+                                <div class="label">Education & Industry Partnerships</div>
+                                <div class="description">Educational programs and industry collaboration</div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" id="tracking_monitoring" name="innovation_type" value="Tracking & Monitoring Waste">
+                        <label for="tracking_monitoring" class="checkbox-card-content">
+                            <div class="checkbox-visual"></div>
+                            <div class="icon">📊</div>
+                            <div class="text">
+                                <div class="label">Tracking & Monitoring Waste</div>
+                                <div class="description">Systems for tracking and monitoring waste streams</div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" id="other" name="innovation_type" value="Other Innovation">
+                        <label for="other" class="checkbox-card-content">
+                            <div class="checkbox-visual"></div>
+                            <div class="icon">💡</div>
+                            <div class="text">
+                                <div class="label">Other Innovation</div>
+                                <div class="description">Other types of innovative solutions</div>
+                            </div>
+                        </label>
                     </div>
                 </div>
             </div>
             
+            <!-- Solution Requirements Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <h4 class="section-title">
+                        <i class="bi bi-gear"></i>
+                        Solution Requirements
+                    </h4>
+                    <p class="section-subtitle">Specify what you're looking for in a solution</p>
+                </div>
+                
+                <div class="row g-4">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="solution_requirements" class="form-label">Solution Requirements <span class="required">*</span></label>
+                            <textarea class="form-control" id="solution_requirements" name="solution_requirements" rows="6" required
+                                      placeholder="Describe what you're looking for in a solution. Include functional requirements, constraints, and success criteria."></textarea>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="technical_requirements" class="form-label">Technical Requirements</label>
+                            <textarea class="form-control" id="technical_requirements" name="technical_requirements" rows="6"
+                                      placeholder="Specify technical specifications, standards, compatibility requirements, and any technical constraints."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Level of Maturity (Preferred Startup Stage) Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <h4 class="section-title">
+                        <i class="bi bi-graph-up-arrow"></i>
+                        Level of Maturity (Preferred Startup Stage)
+                    </h4>
+                    <p class="section-subtitle">Select the preferred maturity level of startups you want to work with</p>
+                </div>
+                
+                <div class="checkbox-grid">
+                    <div class="checkbox-card">
+                        <input type="checkbox" id="idea_stage" name="startup_stage" value="idea">
+                        <label for="idea_stage" class="checkbox-card-content">
+                            <div class="checkbox-visual"></div>
+                            <div class="icon">💡</div>
+                            <div class="text">
+                                <div class="label">Ideation</div>
+                                <div class="description">Developing an idea, no product yet</div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" id="prototype_stage" name="startup_stage" value="prototype">
+                        <label for="prototype_stage" class="checkbox-card-content">
+                            <div class="checkbox-visual"></div>
+                            <div class="icon">🔧</div>
+                            <div class="text">
+                                <div class="label">Prototype</div>
+                                <div class="description">Initial MVP or prototype created</div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" id="validation_stage" name="startup_stage" value="validation">
+                        <label for="validation_stage" class="checkbox-card-content">
+                            <div class="checkbox-visual"></div>
+                            <div class="icon">🧪</div>
+                            <div class="text">
+                                <div class="label">Validation</div>
+                                <div class="description">Testing with early customers</div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" id="early_stage" name="startup_stage" value="early">
+                        <label for="early_stage" class="checkbox-card-content">
+                            <div class="checkbox-visual"></div>
+                            <div class="icon">📈</div>
+                            <div class="text">
+                                <div class="label">Early Growth</div>
+                                <div class="description">Generating revenue</div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" id="scaling_stage" name="startup_stage" value="scaling">
+                        <label for="scaling_stage" class="checkbox-card-content">
+                            <div class="checkbox-visual"></div>
+                            <div class="icon">🚀</div>
+                            <div class="text">
+                                <div class="label">Scaling</div>
+                                <div class="description">Expanding with proven model</div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" id="profitable_stage" name="startup_stage" value="profitable">
+                        <label for="profitable_stage" class="checkbox-card-content">
+                            <div class="checkbox-visual"></div>
+                            <div class="icon">💰</div>
+                            <div class="text">
+                                <div class="label">Established</div>
+                                <div class="description">Profitable and exploring new markets</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
             <!-- Preferred ASEAN Countries Section -->
             <div class="form-section">
                 <div class="section-header">
@@ -616,194 +813,6 @@
                 </div>
             </div>
             
-            <!-- Type of Innovation Section -->
-            <div class="form-section">
-                <div class="section-header">
-                    <h4 class="section-title">
-                        <i class="bi bi-lightbulb"></i>
-                        Type of Innovation
-                    </h4>
-                    <p class="section-subtitle">Select the type of innovation you are looking for</p>
-                </div>
-                
-                <div class="checkbox-grid">
-                    <div class="checkbox-card">
-                        <input type="checkbox" id="product_innovation" name="innovation_type" value="product">
-                        <label for="product_innovation" class="checkbox-card-content">
-                            <div class="checkbox-visual"></div>
-                            <div class="icon">📱</div>
-                            <div class="text">
-                                <div class="label">Product Innovation</div>
-                                <div class="description">New or improved products and services</div>
-                            </div>
-                        </label>
-                    </div>
-                    <div class="checkbox-card">
-                        <input type="checkbox" id="process_innovation" name="innovation_type" value="process">
-                        <label for="process_innovation" class="checkbox-card-content">
-                            <div class="checkbox-visual"></div>
-                            <div class="icon">⚙️</div>
-                            <div class="text">
-                                <div class="label">Process Innovation</div>
-                                <div class="description">New or improved processes and workflows</div>
-                            </div>
-                        </label>
-                    </div>
-                    <div class="checkbox-card">
-                        <input type="checkbox" id="technological_innovation" name="innovation_type" value="technological">
-                        <label for="technological_innovation" class="checkbox-card-content">
-                            <div class="checkbox-visual"></div>
-                            <div class="icon">💻</div>
-                            <div class="text">
-                                <div class="label">Technological Innovation</div>
-                                <div class="description">Advanced technology and digital solutions</div>
-                            </div>
-                        </label>
-                    </div>
-                    <div class="checkbox-card">
-                        <input type="checkbox" id="business_model_innovation" name="innovation_type" value="business-model">
-                        <label for="business_model_innovation" class="checkbox-card-content">
-                            <div class="checkbox-visual"></div>
-                            <div class="icon">💼</div>
-                            <div class="text">
-                                <div class="label">Business Model Innovation</div>
-                                <div class="description">New business models and revenue streams</div>
-                            </div>
-                        </label>
-                    </div>
-                    <div class="checkbox-card">
-                        <input type="checkbox" id="social_innovation" name="innovation_type" value="social">
-                        <label for="social_innovation" class="checkbox-card-content">
-                            <div class="checkbox-visual"></div>
-                            <div class="icon">👥</div>
-                            <div class="text">
-                                <div class="label">Social Innovation</div>
-                                <div class="description">Solutions for social challenges and community impact</div>
-                            </div>
-                        </label>
-                    </div>
-                    <div class="checkbox-card">
-                        <input type="checkbox" id="sustainable_innovation" name="innovation_type" value="sustainable">
-                        <label for="sustainable_innovation" class="checkbox-card-content">
-                            <div class="checkbox-visual"></div>
-                            <div class="icon">🌱</div>
-                            <div class="text">
-                                <div class="label">Sustainable Innovation</div>
-                                <div class="description">Environmentally friendly and sustainable solutions</div>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Level of Maturity (Preferred Startup Stage) Section -->
-            <div class="form-section">
-                <div class="section-header">
-                    <h4 class="section-title">
-                        <i class="bi bi-graph-up-arrow"></i>
-                        Level of Maturity (Preferred Startup Stage)
-                    </h4>
-                    <p class="section-subtitle">Select the preferred maturity level of startups you want to work with</p>
-                </div>
-                
-                <div class="checkbox-grid">
-                    <div class="checkbox-card">
-                        <input type="checkbox" id="idea_stage" name="startup_stage" value="idea">
-                        <label for="idea_stage" class="checkbox-card-content">
-                            <div class="checkbox-visual"></div>
-                            <div class="icon">💡</div>
-                            <div class="text">
-                                <div class="label">Idea Stage</div>
-                                <div class="description">Early concept and idea development phase</div>
-                            </div>
-                        </label>
-                    </div>
-                    <div class="checkbox-card">
-                        <input type="checkbox" id="prototype_stage" name="startup_stage" value="prototype">
-                        <label for="prototype_stage" class="checkbox-card-content">
-                            <div class="checkbox-visual"></div>
-                            <div class="icon">🔬</div>
-                            <div class="text">
-                                <div class="label">Prototype Stage</div>
-                                <div class="description">Working prototype and proof of concept</div>
-                            </div>
-                        </label>
-                    </div>
-                    <div class="checkbox-card">
-                        <input type="checkbox" id="mvp_stage" name="startup_stage" value="mvp">
-                        <label for="mvp_stage" class="checkbox-card-content">
-                            <div class="checkbox-visual"></div>
-                            <div class="icon">🚀</div>
-                            <div class="text">
-                                <div class="label">MVP Stage</div>
-                                <div class="description">Minimum Viable Product with initial users</div>
-                            </div>
-                        </label>
-                    </div>
-                    <div class="checkbox-card">
-                        <input type="checkbox" id="early_stage" name="startup_stage" value="early">
-                        <label for="early_stage" class="checkbox-card-content">
-                            <div class="checkbox-visual"></div>
-                            <div class="icon">📈</div>
-                            <div class="text">
-                                <div class="label">Early Stage</div>
-                                <div class="description">Product launched with growing user base</div>
-                            </div>
-                        </label>
-                    </div>
-                    <div class="checkbox-card">
-                        <input type="checkbox" id="growth_stage" name="startup_stage" value="growth">
-                        <label for="growth_stage" class="checkbox-card-content">
-                            <div class="checkbox-visual"></div>
-                            <div class="icon">📊</div>
-                            <div class="text">
-                                <div class="label">Growth Stage</div>
-                                <div class="description">Established product with proven market fit</div>
-                            </div>
-                        </label>
-                    </div>
-                    <div class="checkbox-card">
-                        <input type="checkbox" id="mature_stage" name="startup_stage" value="mature">
-                        <label for="mature_stage" class="checkbox-card-content">
-                            <div class="checkbox-visual"></div>
-                            <div class="icon">🏢</div>
-                            <div class="text">
-                                <div class="label">Mature Stage</div>
-                                <div class="description">Established company with stable operations</div>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Solution Requirements Section -->
-            <div class="form-section">
-                <div class="section-header">
-                    <h4 class="section-title">
-                        <i class="bi bi-gear"></i>
-                        Solution Requirements
-                    </h4>
-                    <p class="section-subtitle">Specify what you're looking for in a solution</p>
-                </div>
-                
-                <div class="row g-4">
-                    <div class="col-12">
-                        <div class="form-group">
-                            <label for="solution_requirements" class="form-label">Solution Requirements <span class="required">*</span></label>
-                            <textarea class="form-control" id="solution_requirements" name="solution_requirements" rows="6" required
-                                      placeholder="Describe what you're looking for in a solution. Include functional requirements, constraints, and success criteria."></textarea>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="form-group">
-                            <label for="technical_requirements" class="form-label">Technical Requirements</label>
-                            <textarea class="form-control" id="technical_requirements" name="technical_requirements" rows="6"
-                                      placeholder="Specify technical specifications, standards, compatibility requirements, and any technical constraints."></textarea>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
             <!-- Collaboration & Support Section -->
             <div class="form-section">
                 <div class="section-header">
@@ -850,6 +859,21 @@
                                       placeholder="Describe the support you can provide for solution implementation (resources, expertise, facilities, etc.)"></textarea>
                         </div>
                     </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="contact_email" class="form-label">Contact Email <span class="required">*</span></label>
+                            <input type="email" class="form-control" id="contact_email" name="contact_email" required
+                                   placeholder="contact@organization.com">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="region" class="form-label">Region/Location</label>
+                            <input type="text" class="form-control" id="region" name="region"
+                                   placeholder="e.g. Southeast Asia, Global, Thailand">
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -864,7 +888,7 @@
                 </div>
                 
                 <div class="row g-4">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <div class="form-group">
                             <label for="technical_specifications" class="form-label">Technical Specifications</label>
                             <div class="file-upload">
@@ -878,7 +902,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <div class="form-group">
                             <label for="featured_image" class="form-label">Featured Image</label>
                             <div class="file-upload" id="featured_image_upload">
