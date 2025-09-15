@@ -9,7 +9,7 @@ from django.contrib import messages
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
 from django.db import models
-from .models import Member, Company, MemberDocument, CompanyDocument, INVESTOR_TYPE_CHOICES, FUNDING_SIZE_CHOICES, DEAL_SIZE_CHOICES
+from .models import ORGANIZATION_TYPE_CHOICES, Member, Company, MemberDocument, CompanyDocument, INVESTOR_TYPE_CHOICES, FUNDING_SIZE_CHOICES, DEAL_SIZE_CHOICES
 from .forms import EmailLoginForm, SignUpForm, CompanyForm, StartupForm, InvestorForm, CorporateForm
 import json
 import random
@@ -1677,9 +1677,10 @@ def corporate_profile(request, corporate_id):
         'match_percentage': match_score,
         'headquarters_location': corporate.primary_location or '',
         'founded_year': str(corporate.founded_year) if corporate.founded_year else '',
-        'company_size': f"{corporate.team_size} employees" if corporate.team_size else '',
+        'company_size': f"{corporate.team_size}" if corporate.team_size else '',
         'team_size': corporate.team_size or '',
-        'organization_type': corporate.organization_type or '',
+        # 'organization_type': corporate.organization_type or '',
+        'organization_type': get_display_value(corporate.organization_type, dict(ORGANIZATION_TYPE_CHOICES)),
         'contact_email': corporate.member.user.email if corporate.member else '',
         
         # Financial & Scale Metrics - Enhanced with defaults based on team size
@@ -1694,7 +1695,7 @@ def corporate_profile(request, corporate_id):
         
         # Organization & Industry
         'business_focus_areas': investment_categories_display or ['Technology Solutions'],
-        'industry_expertise': corporate.industry_expertise or corporate.company_description or '',
+        'industry_expertise': corporate.industry_expertise or '',
         
         # Market Interest & Innovation
         'innovation_interest_description': corporate.investment_philosophy or corporate.company_description or 'We actively seek partnerships with innovative companies that align with our strategic focus areas.',

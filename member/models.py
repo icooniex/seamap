@@ -100,10 +100,10 @@ DEAL_SIZE_CHOICES = [
 
 # Corporate-specific choices
 ORGANIZATION_TYPE_CHOICES = [
-    ('private_company', 'Private Company'),
-    ('multinational_corporation', 'Multinational Corporation'),
-    ('sme', 'Small or Medium-sized Enterprise (SME)'),
-    ('startup_subsidiary', 'Startup Subsidiary'),
+    ('private_company', '🏢 Private Company'),
+    ('multinational_corporation', '🌐 Multinational Corporation'),
+    ('sme', '🏭 Small or Medium-sized Enterprise (SME)'),
+    ('startup_subsidiary', '🚀 Startup Subsidiary'),
     ('other', 'Other'),
 ]
 
