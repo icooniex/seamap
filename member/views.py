@@ -1364,7 +1364,8 @@ def startup_profile(request, startup_id):
                 'photo': startup.member.profile_picture if hasattr(startup.member, 'profile_picture') else None
             }
         ] if startup.member else [],
-        'engineering_team_size': str(max(1, int(startup.team_size or '1') // 3)) if startup.team_size and startup.team_size.isdigit() else '',
+        
+        'core_team_size': str(max(1, int(startup.core_team_size or '1') // 4)) if startup.core_team_size and startup.core_team_size.isdigit() else '',
         'team_description': f"Our team at {startup.company_name} is dedicated to {', '.join(innovation_types_display[:2])}." if innovation_types_display else f"Dedicated team at {startup.company_name}.",
         'core_expertise': startup.core_expertise or f"Expertise in {', '.join(innovation_types_display[:2])}" if innovation_types_display else 'Diverse expertise',
         'team_breakdown': {
@@ -1398,12 +1399,7 @@ def startup_profile(request, startup_id):
         # Contact & Partnership
         'contact_email': startup.member.user.email if startup.member else '',
         'partnership_message': startup.additional_info or f'We are seeking partnerships and investment opportunities. Contact us to learn more about {startup.company_name}.',
-        'partnership_opportunities': support_areas_display or [
-            'Strategic Partnerships',
-            'Investment Opportunities',
-            'Technology Collaboration',
-            'Market Development'
-        ],
+        
         
         # Additional template fields for compatibility
         'short_summary': startup.solution_description or startup.company_description or '',

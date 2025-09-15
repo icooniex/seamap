@@ -1,5 +1,6 @@
 {% extends "template_parts/dashboard_base.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/profile.css' %}">
@@ -47,7 +48,22 @@
                             </span>
                             <span class="sticky-separator">•</span>
                             <span class="sticky-info-item">
-                                <i class="bi bi-graph-up me-1"></i>{{ startup.development_stage }}
+                                <i class="bi bi-graph-up me-1"></i>
+                                {% if startup.development_stage == 'idea' %}
+                                    Ideation
+                                {% elif startup.development_stage == 'prototype' %}
+                                    Prototype
+                                {% elif startup.development_stage == 'validation' %}
+                                    Validation
+                                {% elif startup.development_stage == 'early' %}
+                                    Early Growth
+                                {% elif startup.development_stage == 'scaling' %}
+                                    Scaling
+                                {% elif startup.development_stage == 'profitable' %}
+                                    Established/Profitable
+                                {% else %}
+                                    {{ startup.development_stage }}
+                                {% endif %}
                             </span>
                         </div>
                         
@@ -59,13 +75,15 @@
                 <!-- Right Side: Action Buttons -->
                 <div class="sticky-actions">
                     <div class="d-flex gap-2">
-                        <button class="btn btn-primary btn-sm sticky-btn-primary" onclick="openContactModal()">
+                        <button class="btn btn-primary btn-sm sticky-btn-primary" onclick="sendConnectEmail()">
                             <i class="bi bi-envelope me-1"></i>
                             <span class="d-none d-sm-inline">Connect</span>
                         </button>
-                        <button class="btn btn-outline-info btn-sm sticky-btn-secondary d-none d-lg-inline-flex" onclick="shareProfile()">
+                        {% if startup.website %}
+                        <button class="btn btn-outline-info btn-sm sticky-btn-secondary d-none d-lg-inline-flex" onclick="window.open('{{ startup.website }}', '_blank')">
                             <i class="bi bi-globe me-1"></i>Website
                         </button>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -134,15 +152,30 @@
                             </span>
                             <span class="info-separator">•</span>
                             <span class="info-item">
-                                <i class="bi bi-graph-up text-primary"></i> {{ startup.development_stage }}
+                                <i class="bi bi-graph-up text-primary"></i> 
+                                {% if startup.development_stage == 'idea' %}
+                                    Ideation
+                                {% elif startup.development_stage == 'prototype' %}
+                                    Prototype
+                                {% elif startup.development_stage == 'validation' %}
+                                    Validation
+                                {% elif startup.development_stage == 'early' %}
+                                    Early Growth
+                                {% elif startup.development_stage == 'scaling' %}
+                                    Scaling
+                                {% elif startup.development_stage == 'profitable' %}
+                                    Established
+                                {% else %}
+                                    {{ startup.development_stage }}
+                                {% endif %}
                             </span>
                         </div>
 
                         <!-- Industry Tags -->
                         <div class="tech-tags mb-3">
-                            {% for sector in startup.primary_sectors %}
+                            <!-- {% for sector in startup.primary_sectors %}
                                 <span class="tech-tag-primary-sm">{{ sector }}</span>
-                            {% endfor %}
+                            {% endfor %} -->
                             {% for solution in startup.solution_categories %}
                                 <span class="tech-tag-sm">{{ solution }}</span>
                             {% endfor %}
@@ -150,12 +183,14 @@
 
                         <!-- Action Buttons -->
                         <div class="d-flex gap-2 flex-wrap">
-                            <button class="btn btn-primary" onclick="openContactModal()">
+                            <button class="btn btn-primary" onclick="sendConnectEmail()">
                                 <i class="bi bi-envelope me-1"></i>Connect
                             </button>
+                            {% if startup.website %}
                             <button class="btn btn-outline-primary btn-sm" onclick="window.open('{{ startup.website }}', '_blank')">
                                 <i class="bi bi-globe me-1"></i>Website
                             </button>
+                            {% endif %}
                             <!-- <button class="btn btn-outline-secondary btn-sm" onclick="toggleBookmark({{ startup.id }})">
                                 <i class="bi bi-bookmark me-1"></i>Save
                             </button>
@@ -211,7 +246,7 @@
                             -
                         {% endif %}
                     </div>
-                    <div class="stat-label">Funding Goal</div>
+                    <div class="stat-label">Funding Goal (USD)</div>
                 </div>
             </div>
         </div>
@@ -233,7 +268,7 @@
                         <i class="bi bi-calendar-event text-warning"></i>
                     </div>
                     <div class="stat-value text-warning">{{ startup.founding_year }}</div>
-                    <div class="stat-label">Year Founded</div>
+                    <div class="stat-label">Founding Year</div>
                 </div>
             </div>
         </div>
@@ -266,8 +301,20 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="col-lg-4">
+                        <div class="card border-0 bg-warning bg-opacity-10">
+                            <div class="card-body text-center">
+                                <div class="innovation-icon mx-auto mb-3">
+                                    <i class="bi bi-rocket-takeoff"></i>
+                                </div>
+                                <h6 class="fw-bold mb-2">Innovation Stage</h6>
+                                <p class="text-muted mb-0">{{ startup.innovation_stage_description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- <div class="col-lg-4">
                         <div class="card border-0 bg-light h-100">
                             <div class="card-body">
                                 <h6 class="fw-bold mb-3">
@@ -296,7 +343,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
@@ -312,7 +359,7 @@
                 </h3>
                 
                 <div class="row">
-                    <div class="col-lg-8">
+                    <div class="col-lg-12">
                         <div class="mb-4">
                             <h5 class="subsection-title"><i class="bi bi-award text-success me-2"></i>Innovation Highlights</h5>
                             <p class="text-muted" style="white-space: pre-line;">{{ startup.innovation_description }}</p>
@@ -349,17 +396,7 @@
                         </div> -->
                     </div>
                     
-                    <div class="col-lg-4">
-                        <div class="card border-0 bg-warning bg-opacity-10">
-                            <div class="card-body text-center">
-                                <div class="innovation-icon mx-auto mb-3">
-                                    <i class="bi bi-rocket-takeoff"></i>
-                                </div>
-                                <h6 class="fw-bold mb-2">Innovation Stage</h6>
-                                <p class="text-muted mb-0">{{ startup.innovation_stage_description }}</p>
-                            </div>
-                        </div>
-                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -427,7 +464,7 @@
                                 <div class="col-6">
                                     <div class="card border-0 bg-light text-center">
                                         <div class="card-body py-3">
-                                            <div class="h5 fw-bold text-success mb-1">{{ startup.customers_count|default:"25+" }}</div>
+                                            <div class="h5 fw-bold text-success mb-1">{{ startup.customers_count|intcomma|default:"-" }}</div>
                                             <small class="text-muted">Active Users</small>
                                         </div>
                                     </div>
@@ -435,7 +472,7 @@
                                 <div class="col-6">
                                     <div class="card border-0 bg-light text-center">
                                         <div class="card-body py-3">
-                                            <div class="h5 fw-bold text-success mb-1">{{ startup.paying_customers|default:"25+" }}</div>
+                                            <div class="h5 fw-bold text-success mb-1">{{ startup.paying_customers|intcomma|default:"-" }}</div>
                                             <small class="text-muted">Paying Customers</small>
                                         </div>
                                     </div>
@@ -451,8 +488,8 @@
                                 <div class="col-12">
                                     <div class="card border-0 bg-light text-center">
                                         <div class="card-body py-3">
-                                            <div class="h5 fw-bold text-primary mb-1">{{ startup.annual_revenue|default:"$500K" }}</div>
-                                            <small class="text-muted">Annual Revenue</small>
+                                            <div class="h5 fw-bold text-primary mb-1">{{ startup.annual_revenue|intcomma|default:"-" }}</div>
+                                            <small class="text-muted">Annual Revenue (USD)</small>
                                         </div>
                                     </div>
                                 </div>
@@ -513,19 +550,20 @@
                                                     -
                                                 {% endif %}
                                             </div>
-                                            <small class="text-muted">Funding Needed</small>
+                                            <small class="text-muted">Funding Needed (USD)</small>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="text-center">
-                                            <div class="h4 fw-bold text-info">{{ startup.funding_raised|default:"$1.8M" }}</div>
-                                            <small class="text-muted">Already Raised</small>
+                                            <div class="h4 fw-bold text-info">{{ startup.funding_raised|intcomma|default:"-" }}</div>
+                                            <small class="text-muted">Already Raised (USD)</small>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="progress mb-3" style="height: 10px;">
+                                <!-- <div class="progress mb-3" style="height: 10px;">
                                     <div class="progress-bar bg-success" style="width: {{ startup.funding_progress|default:"72" }}%"></div>
-                                </div>
+                                </div> -->
+                                <hr>
                                 <p class="mb-0"><strong>Use of Funds:</strong> {{ startup.use_of_funds }}</p>
                             </div>
                         </div>
@@ -640,13 +678,13 @@
                                     <div class="col-6">
                                         <div class="small-stat">
                                             <div class="fw-bold text-primary">{{ startup.team_size }}</div>
-                                            <small class="text-muted">Total</small>
+                                            <small class="text-muted">Total Team Size</small>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="small-stat">
-                                            <div class="fw-bold text-success">{{ startup.engineering_team_size|default:"8" }}</div>
-                                            <small class="text-muted">Engineers</small>
+                                            <div class="fw-bold text-success">{{ startup.core_team_size|default:"-" }}</div>
+                                            <small class="text-muted">Core Team Size</small>
                                         </div>
                                     </div>
                                 </div>
@@ -735,7 +773,7 @@
                 </h3>
                 
                 <div class="row">
-                    <div class="col-lg-8">
+                    <div class="col-lg-12">
                         <div class="card border-0 bg-primary bg-opacity-10">
                             <div class="card-body">
                                 <h5 class="fw-bold mb-3">
@@ -745,50 +783,17 @@
                                 <p class="mb-4">{{ startup.partnership_message|default:"We're actively seeking strategic partnerships, investment opportunities, and collaborative ventures. Let's explore how we can work together to create meaningful impact." }}</p>
                                 
                                 <div class="d-flex gap-3 flex-wrap">
-                                    <button class="btn btn-primary" onclick="openContactModal()">
+                                    <!-- <button class="btn btn-primary" onclick="sendConnectEmail()">
                                         <i class="bi bi-envelope me-2"></i>Send Message
-                                    </button>
-                                    <button class="btn btn-outline-secondary" onclick="sendEmail()">
-                                        <i class="bi bi-telephone me-2"></i>Request Call
+                                    </button> -->
+                                    <button class="btn btn-primary" onclick="sendPartnershipEmail()">
+                                        <i class="bi bi-telephone me-2"></i>Request Partnership
                                     </button>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="col-lg-4">
-                        <div class="card border-0 bg-warning bg-opacity-10">
-                            <div class="card-body">
-                                <h6 class="fw-bold mb-3">
-                                    <i class="bi bi-question-circle text-warning me-2"></i>
-                                    Partnership Opportunities
-                                </h6>
-                                <ul class="list-unstyled mb-0">
-                                    {% for opportunity in startup.partnership_opportunities %}
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-success me-2"></i>{{ opportunity }}
-                                        </li>
-                                    {% empty %}
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-success me-2"></i>Investment & Funding
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-success me-2"></i>Strategic Partnerships
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-success me-2"></i>Technology Licensing
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="bi bi-check text-success me-2"></i>Pilot Projects
-                                        </li>
-                                        <li class="mb-0">
-                                            <i class="bi bi-check text-success me-2"></i>Joint Research
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 
                 <!-- Contact Information -->
@@ -840,90 +845,6 @@
     </div>
 </div>
 
-<!-- Contact Modal -->
-<div class="modal fade" id="contactModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content border-0">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title">
-                    <i class="bi bi-envelope me-2"></i>Contact {{ startup.company_name }}
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body p-4">
-                <form id="contactForm">
-                    {% csrf_token %}
-                    <input type="hidden" name="startup_id" value="{{ startup.id }}">
-                    
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <label for="firstName" class="form-label fw-semibold">First Name</label>
-                            <input type="text" class="form-control" id="firstName" name="first_name" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="lastName" class="form-label fw-semibold">Last Name</label>
-                            <input type="text" class="form-control" id="lastName" name="last_name" required>
-                        </div>
-                    </div>
-                    
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <label for="email" class="form-label fw-semibold">Email Address</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="company" class="form-label fw-semibold">Company/Organization</label>
-                            <input type="text" class="form-control" id="company" name="company">
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="subject" class="form-label fw-semibold">Subject</label>
-                        <select class="form-select" id="subject" name="subject" required>
-                            <option value="">Select inquiry type...</option>
-                            <option value="investment">Investment Opportunity</option>
-                            <option value="partnership">Partnership Inquiry</option>
-                            <option value="collaboration">Collaboration Request</option>
-                            <option value="licensing">Technology Licensing</option>
-                            <option value="pilot">Pilot Project</option>
-                            <option value="general">General Inquiry</option>
-                        </select>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="message" class="form-label fw-semibold">Message</label>
-                        <textarea class="form-control" id="message" name="message" rows="5" required 
-                                  placeholder="Tell us about your interest and how you can help..."></textarea>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="contactMethod" class="form-label fw-semibold">Preferred Contact Method</label>
-                        <select class="form-select" id="contactMethod" name="contact_method">
-                            <option value="email">Email</option>
-                            <option value="phone">Phone Call</option>
-                            <option value="meeting">Video Meeting</option>
-                            <option value="linkedin">LinkedIn</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="copyMe" name="copy_me" checked>
-                        <label class="form-check-label" for="copyMe">
-                            Send me a copy of this message
-                        </label>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="submitContact()">
-                    <i class="bi bi-send me-2"></i>Send Message
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize tooltips
@@ -967,70 +888,18 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-function openContactModal() {
-    const modal = new bootstrap.Modal(document.getElementById('contactModal'));
-    modal.show();
+function sendConnectEmail() {
+    const subject = encodeURIComponent('Partnership Inquiry - {{ startup.company_name }}');
+    const body = encodeURIComponent(`Hello {{ startup.company_name }} team,\n\nI found your startup profile on SEA-MAP and I'm interested in exploring partnership opportunities with your company.\n\nI would appreciate the opportunity to discuss how we might collaborate and create mutual value.\n\nBest regards`);
+    const email = '{{ startup.contact_email|default:"info@company.com" }}';
+    window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
 }
 
-function submitContact() {
-    const form = document.getElementById('contactForm');
-    const formData = new FormData(form);
-    
-    // Show loading state
-    const submitBtn = document.querySelector('.modal-footer .btn-primary');
-    const originalText = submitBtn.innerHTML;
-    submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Sending...';
-    submitBtn.disabled = true;
-    
-    fetch('/api/contact-startup/', {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-        },
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Show success message
-            const alertDiv = document.createElement('div');
-            alertDiv.className = 'alert alert-success alert-dismissible fade show';
-            alertDiv.innerHTML = `
-                <i class="bi bi-check-circle me-2"></i>
-                Message sent successfully! We'll get back to you soon.
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            document.querySelector('.container-fluid').insertBefore(alertDiv, document.querySelector('.profile-card'));
-            
-            // Close modal and reset form
-            bootstrap.Modal.getInstance(document.getElementById('contactModal')).hide();
-            form.reset();
-            
-            // Auto-hide alert after 5 seconds
-            setTimeout(() => {
-                alertDiv.remove();
-            }, 5000);
-        } else {
-            throw new Error(data.message || 'Unknown error');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        // Show error message
-        const alertDiv = document.createElement('div');
-        alertDiv.className = 'alert alert-danger alert-dismissible fade show';
-        alertDiv.innerHTML = `
-            <i class="bi bi-exclamation-triangle me-2"></i>
-            Error sending message. Please try again or contact us directly.
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        `;
-        document.querySelector('.modal-body').insertBefore(alertDiv, document.querySelector('#contactForm'));
-    })
-    .finally(() => {
-        // Restore button state
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
-    });
+function sendPartnershipEmail() {
+    const subject = encodeURIComponent('Strategic Partnership Request - {{ startup.company_name }}');
+    const body = encodeURIComponent(`Hello {{ startup.company_name }} team,\n\nI'm interested in exploring strategic partnership opportunities with your company.\n\nI believe there could be significant synergies between our organizations and would welcome the opportunity to discuss:\n- Joint ventures\n- Technology partnerships\n- Market expansion opportunities\n- Investment possibilities\n\nI would appreciate the chance to schedule a meeting to explore these opportunities further.\n\nBest regards`);
+    const email = '{{ startup.contact_email|default:"info@company.com" }}';
+    window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
 }
 
 function toggleBookmark(startupId) {
@@ -1062,40 +931,6 @@ function toggleBookmark(startupId) {
         // Revert on error
         icon.className = originalClass;
     });
-}
-
-function shareProfile() {
-    if (navigator.share) {
-        navigator.share({
-            title: '{{ startup.company_name }} - SEA-MAP',
-            text: '{{ startup.short_description }}',
-            url: window.location.href,
-        });
-    } else {
-        navigator.clipboard.writeText(window.location.href).then(function() {
-            // Show success feedback
-            const button = event.target.closest('button');
-            const originalText = button.innerHTML;
-            button.innerHTML = '<i class="bi bi-check me-2"></i>Copied!';
-            setTimeout(() => {
-                button.innerHTML = originalText;
-            }, 2000);
-        }).catch(function() {
-            alert('Link copied to clipboard: ' + window.location.href);
-        });
-    }
-}
-
-function sendEmail() {
-    const subject = encodeURIComponent('Partnership Opportunity - {{ startup.company_name }}');
-    const body = encodeURIComponent(`Hello {{ startup.company_name }} team,\n\nI found your startup profile on SEA-MAP and I'm interested in learning more about potential partnership opportunities.\n\nBest regards`);
-    const email = '{{ startup.contact_email|default:"info@company.com" }}';
-    window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
-}
-
-function scheduleCall() {
-    // This would integrate with a calendar scheduling service
-    alert('Calendar scheduling feature coming soon! Please use the contact form to request a meeting.');
 }
 
 // Smooth scroll for anchor links
