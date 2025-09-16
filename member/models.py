@@ -18,6 +18,29 @@ DOCUMENT_STATUS_CHOICES = [
     ('under_review', 'Under Review'),
 ]
 
+# Member Document Type Choices
+MEMBER_DOCUMENT_TYPE_CHOICES = [
+    ('id_card', 'ID Card'),
+    ('passport', 'Passport'),
+    ('cv', 'CV/Resume'),
+    ('certificate', 'Certificate'),
+    ('portfolio', 'Portfolio'),
+    ('other', 'Other'),
+]
+
+# Company Document Type Choices
+COMPANY_DOCUMENT_TYPE_CHOICES = [
+    ('pitch_deck', 'Pitch Deck'),
+    ('business_plan', 'Business Plan'),
+    ('financial_statements', 'Financial Statements'),
+    ('company_registration', 'Company Registration'),
+    ('technical_docs', 'Technical Documentation'),
+    ('market_research', 'Market Research'),
+    ('product_demo', 'Product Demo'),
+    ('legal_docs', 'Legal Documents'),
+    ('other', 'Other'),
+]
+
 USER_TYPE_CHOICES = [
     ('startup', 'Startup'),
     ('investor', 'Investor'),
@@ -636,6 +659,7 @@ class Company(models.Model):
 class MemberDocument(models.Model):
     member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='documents')
     name = models.CharField(max_length=255)
+    description = models.TextField(blank=True, help_text="Brief description of the document")
     file = models.FileField(upload_to='documents/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
     
@@ -644,7 +668,7 @@ class MemberDocument(models.Model):
     reviewed_at = models.DateTimeField(null=True, blank=True)
     reviewed_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='reviewed_member_documents')
     review_notes = models.TextField(blank=True)
-    document_type = models.CharField(max_length=50, blank=True)  # e.g., 'id_card', 'passport', 'cv'
+    document_type = models.CharField(max_length=50, choices=MEMBER_DOCUMENT_TYPE_CHOICES, default='other')
 
     def __str__(self):
         return f"{self.name} for {self.member.user.username}"
@@ -681,9 +705,10 @@ class CompanyDocument(models.Model):
     """Documents related to a specific company"""
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='documents')
     name = models.CharField(max_length=255)
+    description = models.TextField(blank=True, help_text="Brief description of the document")
     file = models.FileField(upload_to='company_documents/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
-    document_type = models.CharField(max_length=50, blank=True)  # e.g., 'pitch_deck', 'business_plan'
+    document_type = models.CharField(max_length=50, choices=COMPANY_DOCUMENT_TYPE_CHOICES, default='other')
     
     # Document verification fields
     status = models.CharField(max_length=20, choices=DOCUMENT_STATUS_CHOICES, default='pending')

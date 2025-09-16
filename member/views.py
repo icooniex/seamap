@@ -2406,47 +2406,86 @@ def upload_document(request):
     try:
         member = get_object_or_404(Member, user=request.user)
         
-        if 'files' not in request.FILES:
-            return JsonResponse({'success': False, 'error': 'No files provided'})
+        if 'file' not in request.FILES:
+            return JsonResponse({'success': False, 'error': 'No file provided'})
         
-        uploaded_files = []
+        file = request.FILES['file']
+        document_category = request.POST.get('document_category', 'member')
+        document_title = request.POST.get('document_title', '').strip()
+        document_description = request.POST.get('document_description', '').strip()
+        document_type = request.POST.get('document_type', '')
+        company_id = request.POST.get('company_id')
+
+        # Validate required fields
+        if not document_title:
+            return JsonResponse({'success': False, 'error': 'Document title is required'})
         
-        for file in request.FILES.getlist('files'):
-            # Validate file size (10MB max)
-            if file.size > 10 * 1024 * 1024:
-                return JsonResponse({
-                    'success': False, 
-                    'error': f'File {file.name} is too large. Maximum size is 10MB.'
-                })
-            
-            # Validate file type
-            allowed_extensions = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png']
-            file_extension = os.path.splitext(file.name)[1].lower()
-            if file_extension not in allowed_extensions:
-                return JsonResponse({
-                    'success': False,
-                    'error': f'File type {file_extension} is not allowed.'
-                })
-            
-            # Create document record
-            document = MemberDocument.objects.create(
-                member=member,
-                name=file.name,
-                file=file
-            )
-            
-            uploaded_files.append({
-                'id': document.id,
-                'name': document.name,
-                'size': document.file.size,
-                'uploaded_at': document.uploaded_at.strftime('%b %d, %Y'),
-                'url': document.file.url if document.file else None
+        if not document_type:
+            return JsonResponse({'success': False, 'error': 'Document type is required'})
+
+        # Validate file size (10MB max)
+        if file.size > 10 * 1024 * 1024:
+            return JsonResponse({
+                'success': False, 
+                'error': f'File {file.name} is too large. Maximum size is 10MB.'
             })
         
+        # Validate file type
+        allowed_extensions = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png']
+        file_extension = os.path.splitext(file.name)[1].lower()
+        if file_extension not in allowed_extensions:
+            return JsonResponse({
+                'success': False,
+                'error': f'File type {file_extension} is not allowed.'
+            })
+
+        # Create document based on category
+        if document_category == 'company':
+            # Validate company selection
+            if not company_id:
+                return JsonResponse({'success': False, 'error': 'Company selection is required for company documents'})
+            
+            try:
+                company = Company.objects.get(id=company_id, member=member)
+            except Company.DoesNotExist:
+                return JsonResponse({'success': False, 'error': 'Invalid company selection'})
+            
+            # Create company document
+            document = CompanyDocument.objects.create(
+                company=company,
+                name=document_title,
+                description=document_description,
+                file=file,
+                document_type=document_type
+            )
+            
+            success_message = f'Company document "{document_title}" uploaded successfully!'
+            
+        else:
+            # Create member document
+            document = MemberDocument.objects.create(
+                member=member,
+                name=document_title,
+                description=document_description,
+                file=file,
+                document_type=document_type
+            )
+            
+            success_message = f'Personal document "{document_title}" uploaded successfully!'
+
         return JsonResponse({
             'success': True,
-            'files': uploaded_files,
-            'message': f'{len(uploaded_files)} file(s) uploaded successfully!'
+            'message': success_message,
+            'document': {
+                'id': document.id,
+                'name': document.name,
+                'description': document.description,
+                'type': document.get_document_type_display() if hasattr(document, 'get_document_type_display') else document.document_type,
+                'size': document.file.size,
+                'uploaded_at': document.uploaded_at.strftime('%b %d, %Y %H:%M'),
+                'url': document.file.url if document.file else None,
+                'category': document_category
+            }
         })
         
     except Exception as e:

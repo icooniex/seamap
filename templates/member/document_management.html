@@ -35,32 +35,81 @@
                         <i class="bi bi-cloud-upload me-2"></i>
                         Upload Documents
                     </h4>
-                    <p class="upload-subtitle">Drag and drop files here or click to browse</p>
+                    <p class="upload-subtitle">Choose document type and provide details</p>
                 </div>
-                
-                <div class="upload-area" id="uploadArea">
-                    <div class="upload-content">
-                        <div class="upload-icon">
-                            <i class="bi bi-cloud-upload"></i>
+
+                <!-- Document Type Selection -->
+                <div class="document-type-selector mb-4">
+                    <div class="btn-group w-100" role="group" aria-label="Document type">
+                        <input type="radio" class="btn-check" name="document_category" id="member_docs" value="member" checked>
+                        <label class="btn btn-outline-primary flex-fill" for="member_docs">
+                            <i class="bi bi-person-badge me-2"></i>
+                            Personal Documents
+                        </label>
+                        
+                        <input type="radio" class="btn-check" name="document_category" id="company_docs" value="company">
+                        <label class="btn btn-outline-success flex-fill" for="company_docs">
+                            <i class="bi bi-building me-2"></i>
+                            Company Documents
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Upload Form -->
+                <div class="upload-form-container">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="documentTitle" class="form-label">Document Title/Name *</label>
+                            <input type="text" class="form-control" id="documentTitle" placeholder="Enter document title" required>
                         </div>
-                        <div class="upload-text">
-                            <p class="primary-text">Drop files here to upload</p>
-                            <p class="secondary-text">or <span class="upload-link">browse files</span></p>
+                        <div class="col-md-6">
+                            <label for="documentType" class="form-label">Document Type *</label>
+                            <select class="form-select" id="documentType" required>
+                                <option value="">Select document type</option>
+                                <!-- Options will be populated by JavaScript -->
+                            </select>
                         </div>
-                        <div class="upload-info">
-                            <small class="text-muted">Supported formats: PDF, DOC, DOCX, JPG, PNG • Max size: 10MB per file</small>
+                        <div class="col-12">
+                            <label for="documentDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="documentDescription" rows="3" placeholder="Brief description of the document (optional)"></textarea>
+                        </div>
+                        <div class="col-12">
+                            <label for="documentFile" class="form-label">Select File *</label>
+                            <input type="file" class="form-control" id="documentFile" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required>
+                            <div class="form-text">Supported formats: PDF, DOC, DOCX, JPG, PNG • Max size: 10MB per file</div>
                         </div>
                     </div>
-                    <input type="file" id="fileInput" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" style="display: none;">
-                    {% csrf_token %}
+
+                    <!-- Company Selection (for company documents) -->
+                    <div class="company-selection mt-3" id="companySelection" style="display: none;">
+                        <label for="companySelect" class="form-label">Select Company *</label>
+                        <select class="form-select" id="companySelect">
+                            <option value="">Choose company profile</option>
+                            {% for company in member.companies.all %}
+                                <option value="{{ company.id }}">{{ company.company_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="upload-actions mt-4">
+                        <button type="button" class="btn btn-primary" id="uploadButton" disabled>
+                            <i class="bi bi-cloud-upload me-2"></i>
+                            Upload Document
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary ms-2" id="clearForm">
+                            <i class="bi bi-arrow-counterclockwise me-2"></i>
+                            Clear Form
+                        </button>
+                    </div>
                 </div>
                 
                 <!-- Upload Progress -->
-                <div class="upload-progress" id="uploadProgress" style="display: none;">
+                <div class="upload-progress mt-3" id="uploadProgress" style="display: none;">
                     <div class="progress mb-2">
                         <div class="progress-bar" role="progressbar" style="width: 0%"></div>
                     </div>
-                    <small class="text-muted">Uploading files...</small>
+                    <small class="text-muted">Uploading document...</small>
                 </div>
             </div>
         </div>
@@ -68,16 +117,21 @@
         <!-- All Documents List -->
         <div class="col-12">
             <div class="document-list-card">
-                <div class="list-header">
+                <div class="list-header d-flex justify-content-between align-items-center">
                     <h4 class="list-title">
                         <i class="bi bi-files me-2"></i>
-                        All Documents
+                        All Documents ({{ documents.count }})
                     </h4>
+                    <div class="filter-tabs">
+                        <button class="btn btn-sm btn-outline-secondary me-2" id="showAllDocs">All</button>
+                        <button class="btn btn-sm btn-outline-primary me-2" id="showMemberDocs">Personal</button>
+                        <button class="btn btn-sm btn-outline-success" id="showCompanyDocs">Company</button>
+                    </div>
                 </div>
                 
-                <div class="simple-document-list" id="documentList">
+                <div class="enhanced-document-list" id="documentList">
                     {% for document in documents %}
-                    <div class="document-row" data-doc-id="{{ document.id }}">
+                    <div class="document-card {% if document.company %}company-doc{% else %}member-doc{% endif %}" data-doc-id="{{ document.id }}">
                         <div class="document-icon">
                             {% if document.file.name|slice:"-4:" == ".pdf" %}
                                 <i class="bi bi-file-earmark-pdf text-danger"></i>
@@ -91,13 +145,36 @@
                                 <i class="bi bi-file-earmark text-secondary"></i>
                             {% endif %}
                         </div>
-                        <div class="document-info">
-                            <h6 class="document-name">{{ document.name }}</h6>
-                            <p class="document-meta">
-                                {% if document.file.name|slice:"-4:" == ".pdf" %}PDF{% elif document.file.name|slice:"-5:" == ".xlsx" %}XLSX{% elif document.file.name|slice:"-4:" == ".xls" %}XLS{% elif document.file.name|slice:"-5:" == ".docx" %}DOCX{% elif document.file.name|slice:"-4:" == ".doc" %}DOC{% elif document.file.name|slice:"-4:" == ".jpg" or document.file.name|slice:"-5:" == ".jpeg" %}JPG{% elif document.file.name|slice:"-4:" == ".png" %}PNG{% else %}FILE{% endif %} 
-                                • {{ document.file.size|filesizeformat }} 
-                                • {{ document.uploaded_at|date:"M d, Y" }}
-                            </p>
+                        <div class="document-details flex-grow-1">
+                            <div class="document-header">
+                                <h6 class="document-name">{{ document.name }}</h6>
+                                <div class="document-badges">
+                                    {% if document.company %}
+                                        <span class="badge bg-success">Company</span>
+                                        <span class="badge bg-outline-secondary">{{ document.company.company_name|truncatechars:20 }}</span>
+                                    {% else %}
+                                        <span class="badge bg-primary">Personal</span>
+                                    {% endif %}
+                                    <span class="badge bg-secondary">{{ document.get_document_type_display|default:document.document_type|title }}</span>
+                                </div>
+                            </div>
+                            {% if document.description %}
+                                <p class="document-description">{{ document.description|truncatechars:100 }}</p>
+                            {% endif %}
+                            <div class="document-meta">
+                                <span class="meta-item">
+                                    <i class="bi bi-file-text me-1"></i>
+                                    {% if document.file.name|slice:"-4:" == ".pdf" %}PDF{% elif document.file.name|slice:"-5:" == ".xlsx" %}XLSX{% elif document.file.name|slice:"-4:" == ".xls" %}XLS{% elif document.file.name|slice:"-5:" == ".docx" %}DOCX{% elif document.file.name|slice:"-4:" == ".doc" %}DOC{% elif document.file.name|slice:"-4:" == ".jpg" or document.file.name|slice:"-5:" == ".jpeg" %}JPG{% elif document.file.name|slice:"-4:" == ".png" %}PNG{% else %}FILE{% endif %}
+                                </span>
+                                <span class="meta-item">
+                                    <i class="bi bi-hdd me-1"></i>
+                                    {{ document.file.size|filesizeformat }}
+                                </span>
+                                <span class="meta-item">
+                                    <i class="bi bi-calendar me-1"></i>
+                                    {{ document.uploaded_at|date:"M d, Y H:i" }}
+                                </span>
+                            </div>
                         </div>
                         <div class="document-status {% if document.status == 'approved' %}approved{% elif document.status == 'pending' %}pending{% else %}rejected{% endif %}">
                             {% if document.status == 'approved' %}
@@ -112,10 +189,13 @@
                             {% endif %}
                         </div>
                         <div class="document-actions">
-                            <button class="btn btn-sm btn-outline-primary me-2" onclick="viewDocument({{ document.id }})">
+                            <a href="{{ document.file.url }}" target="_blank" class="btn btn-sm btn-outline-info me-2" title="View Document">
                                 <i class="bi bi-eye"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger" onclick="deleteDocument({{ document.id }})">
+                            </a>
+                            <a href="{{ document.file.url }}" download class="btn btn-sm btn-outline-success me-2" title="Download">
+                                <i class="bi bi-download"></i>
+                            </a>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteDocument({{ document.id }})" title="Delete">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </div>
@@ -124,7 +204,7 @@
                     <div class="no-documents-message text-center py-5">
                         <i class="bi bi-folder2-open display-1 text-muted mb-3"></i>
                         <h5 class="text-muted">No documents uploaded yet</h5>
-                        <p class="text-muted">Use the upload area above to add your first document.</p>
+                        <p class="text-muted">Use the upload form above to add your first document.</p>
                     </div>
                     {% endfor %}
                 </div>
@@ -241,7 +321,217 @@
 </div>
 
 <style>
-/* Document Management Styles */
+/* Document Type Selector */
+.document-type-selector {
+    margin-bottom: 2rem;
+}
+
+.document-type-selector .btn-group {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.document-type-selector .btn {
+    border-radius: 0;
+    padding: 1rem 2rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.document-type-selector .btn:first-child {
+    border-radius: 15px 0 0 15px;
+}
+
+.document-type-selector .btn:last-child {
+    border-radius: 0 15px 15px 0;
+}
+
+.document-type-selector .btn-check:checked + .btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+/* Upload Form Container */
+.upload-form-container {
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 2rem;
+    margin-top: 1rem;
+}
+
+/* Company Selection */
+.company-selection {
+    padding: 1rem;
+    background: rgba(40, 167, 69, 0.1);
+    border-radius: 10px;
+    border-left: 4px solid #28a745;
+}
+
+/* Enhanced Document List */
+.enhanced-document-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.document-card {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 15px;
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.document-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border-color: #667eea;
+}
+
+.document-card.member-doc {
+    border-left: 4px solid #0d6efd;
+}
+
+.document-card.company-doc {
+    border-left: 4px solid #28a745;
+}
+
+.document-card .document-icon {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    border-radius: 12px;
+    margin-right: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.document-card .document-icon i {
+    font-size: 1.8rem;
+}
+
+.document-details {
+    min-width: 0;
+}
+
+.document-header {
+    display: flex;
+    justify-content: between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+    gap: 1rem;
+}
+
+.document-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0;
+    line-height: 1.3;
+}
+
+.document-badges {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.document-badges .badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+}
+
+.document-description {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+
+.document-meta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.8rem;
+    color: #6c757d;
+    white-space: nowrap;
+}
+
+.meta-item i {
+    margin-right: 0.25rem;
+}
+
+/* Filter Tabs */
+.filter-tabs {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.filter-tabs .btn {
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+}
+
+.filter-tabs .btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: transparent;
+}
+
+/* Upload Actions */
+.upload-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.upload-actions .btn {
+    border-radius: 12px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.upload-actions .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Form Controls */
+.form-control, .form-select {
+    border-radius: 10px;
+    border: 2px solid #e9ecef;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.form-label {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
 
 /* Documents Header */
 .documents-header {
@@ -829,130 +1119,168 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const uploadArea = document.getElementById('uploadArea');
-    const fileInput = document.getElementById('fileInput');
-    const uploadProgress = document.getElementById('uploadProgress');
+    // Document type options
+    const memberDocTypes = {
+        'id_card': 'ID Card',
+        'passport': 'Passport',
+        'cv': 'CV/Resume',
+        'certificate': 'Certificate',
+        'portfolio': 'Portfolio',
+        'other': 'Other'
+    };
     
-    // Drag and drop functionality
-    uploadArea.addEventListener('click', () => fileInput.click());
+    const companyDocTypes = {
+        'pitch_deck': 'Pitch Deck',
+        'business_plan': 'Business Plan',
+        'financial_statements': 'Financial Statements',
+        'company_registration': 'Company Registration',
+        'technical_docs': 'Technical Documentation',
+        'market_research': 'Market Research',
+        'product_demo': 'Product Demo',
+        'legal_docs': 'Legal Documents',
+        'other': 'Other'
+    };
+
+    // Form elements
+    const documentCategoryRadios = document.querySelectorAll('input[name="document_category"]');
+    const documentTypeSelect = document.getElementById('documentType');
+    const companySelection = document.getElementById('companySelection');
+    const companySelect = document.getElementById('companySelect');
+    const documentTitle = document.getElementById('documentTitle');
+    const documentDescription = document.getElementById('documentDescription');
+    const documentFile = document.getElementById('documentFile');
+    const uploadButton = document.getElementById('uploadButton');
+    const clearFormButton = document.getElementById('clearForm');
     
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        uploadArea.addEventListener(eventName, preventDefaults, false);
+    // Filter buttons
+    const showAllDocsBtn = document.getElementById('showAllDocs');
+    const showMemberDocsBtn = document.getElementById('showMemberDocs');
+    const showCompanyDocsBtn = document.getElementById('showCompanyDocs');
+
+    // Initialize
+    updateDocumentTypeOptions();
+    updateCompanySelectionVisibility();
+    updateUploadButtonState();
+    
+    // Event listeners for document category change
+    documentCategoryRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            updateDocumentTypeOptions();
+            updateCompanySelectionVisibility();
+            updateUploadButtonState();
+        });
     });
-    
-    function preventDefaults(e) {
-        e.preventDefault();
-        e.stopPropagation();
+
+    // Event listeners for form validation
+    [documentTitle, documentFile, documentTypeSelect].forEach(element => {
+        if (element) {
+            element.addEventListener('change', updateUploadButtonState);
+            element.addEventListener('input', updateUploadButtonState);
+        }
+    });
+
+    if (companySelect) {
+        companySelect.addEventListener('change', updateUploadButtonState);
+    }
+
+    // Upload button click
+    if (uploadButton) {
+        uploadButton.addEventListener('click', handleUpload);
     }
     
-    ['dragenter', 'dragover'].forEach(eventName => {
-        uploadArea.addEventListener(eventName, highlight, false);
-    });
-    
-    ['dragleave', 'drop'].forEach(eventName => {
-        uploadArea.addEventListener(eventName, unhighlight, false);
-    });
-    
-    function highlight(e) {
-        uploadArea.classList.add('dragover');
+    // Clear form button
+    if (clearFormButton) {
+        clearFormButton.addEventListener('click', clearForm);
     }
-    
-    function unhighlight(e) {
-        uploadArea.classList.remove('dragover');
+
+    // Filter buttons
+    if (showAllDocsBtn) showAllDocsBtn.addEventListener('click', () => filterDocuments('all'));
+    if (showMemberDocsBtn) showMemberDocsBtn.addEventListener('click', () => filterDocuments('member'));
+    if (showCompanyDocsBtn) showCompanyDocsBtn.addEventListener('click', () => filterDocuments('company'));
+
+    function updateDocumentTypeOptions() {
+        if (!documentTypeSelect) return;
+        
+        const selectedCategory = document.querySelector('input[name="document_category"]:checked');
+        if (!selectedCategory) return;
+        
+        const options = selectedCategory.value === 'member' ? memberDocTypes : companyDocTypes;
+        
+        documentTypeSelect.innerHTML = '<option value="">Select document type</option>';
+        
+        Object.entries(options).forEach(([value, label]) => {
+            const option = document.createElement('option');
+            option.value = value;
+            option.textContent = label;
+            documentTypeSelect.appendChild(option);
+        });
     }
-    
-    uploadArea.addEventListener('drop', handleDrop, false);
-    
-    function handleDrop(e) {
-        const dt = e.dataTransfer;
-        const files = dt.files;
+
+    function updateCompanySelectionVisibility() {
+        if (!companySelection) return;
         
-        handleFiles(files);
+        const selectedCategory = document.querySelector('input[name="document_category"]:checked');
+        if (selectedCategory) {
+            companySelection.style.display = selectedCategory.value === 'company' ? 'block' : 'none';
+        }
     }
-    
-    uploadArea.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        uploadArea.classList.add('dragover');
-    });
-    
-    uploadArea.addEventListener('dragleave', () => {
-        uploadArea.classList.remove('dragover');
-    });
-    
-    uploadArea.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadArea.classList.remove('dragover');
+
+    function updateUploadButtonState() {
+        if (!uploadButton || !documentTitle || !documentTypeSelect || !documentFile) return;
         
-        const files = e.dataTransfer.files;
-        handleFiles(files);
-    });
-    
-    fileInput.addEventListener('change', (e) => {
-        handleFiles(e.target.files);
-    });
-    
-    function handleFiles(files) {
-        if (files.length === 0) return;
+        const selectedCategory = document.querySelector('input[name="document_category"]:checked');
+        if (!selectedCategory) return;
         
-        // Show upload progress
-        uploadProgress.style.display = 'block';
-        const progressBar = uploadProgress.querySelector('.progress-bar');
+        const isValid = documentTitle.value.trim() && 
+                       documentTypeSelect.value && 
+                       documentFile.files.length > 0 &&
+                       (selectedCategory.value === 'member' || (companySelect && companySelect.value));
         
-        // Simulate upload progress
-        let progress = 0;
-        const interval = setInterval(() => {
-            progress += Math.random() * 15;
-            if (progress >= 100) {
-                progress = 100;
-                clearInterval(interval);
-                
-                // Hide progress after completion
-                setTimeout(() => {
-                    uploadProgress.style.display = 'none';
-                    progressBar.style.width = '0%';
-                    
-                    // Show success message (you can customize this)
-                    showToast('success', 'Files uploaded successfully!');
-                }, 1000);
-            }
-            
-            progressBar.style.width = progress + '%';
-        }, 200);
-        
-        // Here you would typically send files to your server
-        uploadFiles(files);
+        uploadButton.disabled = !isValid;
     }
-    
-    // Upload files function
-    function uploadFiles(files) {
-        // Show upload progress modal
-        const uploadModal = new bootstrap.Modal(document.getElementById('uploadProgressModal'));
-        uploadModal.show();
+
+    function clearForm() {
+        if (documentTitle) documentTitle.value = '';
+        if (documentDescription) documentDescription.value = '';
+        if (documentFile) documentFile.value = '';
+        if (documentTypeSelect) documentTypeSelect.value = '';
+        if (companySelect) companySelect.value = '';
         
-        const modalProgressBar = document.getElementById('modalProgressBar');
-        const uploadStatus = document.getElementById('uploadStatus');
+        const memberRadio = document.querySelector('input[name="document_category"][value="member"]');
+        if (memberRadio) memberRadio.checked = true;
         
-        // Simulate progress (you can remove this and use real progress)
-        let progress = 0;
-        const progressInterval = setInterval(() => {
-            progress += Math.random() * 10;
-            if (progress >= 90) {
-                clearInterval(progressInterval);
-                progress = 90;
-            }
-            modalProgressBar.style.width = progress + '%';
-            uploadStatus.textContent = `Uploading... ${Math.round(progress)}%`;
-        }, 200);
+        updateDocumentTypeOptions();
+        updateCompanySelectionVisibility();
+        updateUploadButtonState();
+    }
+
+    function handleUpload() {
+        if (!documentTitle || !documentTypeSelect || !documentFile) return;
+        
+        const selectedCategory = document.querySelector('input[name="document_category"]:checked');
+        if (!selectedCategory) return;
         
         const formData = new FormData();
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        // Add form data
+        formData.append('document_category', selectedCategory.value);
+        formData.append('document_title', documentTitle.value.trim());
+        formData.append('document_description', documentDescription ? documentDescription.value.trim() : '');
+        formData.append('document_type', documentTypeSelect.value);
+        formData.append('file', documentFile.files[0]);
         
-        for (let i = 0; i < files.length; i++) {
-            formData.append('files', files[i]);
+        if (selectedCategory.value === 'company' && companySelect) {
+            formData.append('company_id', companySelect.value);
         }
-        
-        uploadStatus.textContent = 'Uploading files...';
-        
+
+        // Show upload progress
+        const uploadProgress = document.getElementById('uploadProgress');
+        if (uploadProgress) {
+            uploadProgress.style.display = 'block';
+        }
+        uploadButton.disabled = true;
+
         fetch('{% url "upload_document" %}', {
             method: 'POST',
             body: formData,
@@ -962,126 +1290,63 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
-            clearInterval(progressInterval);
-            modalProgressBar.style.width = '100%';
-            uploadStatus.textContent = 'Upload complete!';
-            
-            setTimeout(() => {
-                uploadModal.hide();
+            if (uploadProgress) {
                 uploadProgress.style.display = 'none';
-                const progressBar = uploadProgress.querySelector('.progress-bar');
-                progressBar.style.width = '0%';
-                
-                if (data.success) {
-                    showToast('success', data.message);
-                    // Add uploaded files to the document list
-                    if (data.files && data.files.length > 0) {
-                        addDocumentsToList(data.files);
-                    }
-                } else {
-                    showToast('error', data.error);
-                }
-            }, 800);
+            }
+            
+            if (data.success) {
+                showToast('success', data.message);
+                clearForm();
+                // Refresh page to show new document
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                showToast('error', data.error);
+                updateUploadButtonState();
+            }
         })
         .catch(error => {
-            clearInterval(progressInterval);
-            uploadModal.hide();
-            uploadProgress.style.display = 'none';
-            const progressBar = uploadProgress.querySelector('.progress-bar');
-            progressBar.style.width = '0%';
+            if (uploadProgress) {
+                uploadProgress.style.display = 'none';
+            }
+            updateUploadButtonState();
             showToast('error', 'Upload failed: ' + error.message);
         });
     }
-    
-    // Add documents to list
-    function addDocumentsToList(files) {
-        const documentList = document.getElementById('documentList');
-        const noDocsMessage = documentList.querySelector('.no-documents-message');
+
+    function filterDocuments(type) {
+        const documentCards = document.querySelectorAll('.document-card');
+        const filterButtons = document.querySelectorAll('.filter-tabs .btn');
         
-        if (noDocsMessage) {
-            noDocsMessage.remove();
-        }
-        
-        files.forEach((file, index) => {
-            const fileExtension = file.name.split('.').pop().toLowerCase();
-            let iconClass = 'bi-file-earmark text-secondary';
-            let fileType = 'FILE';
-            
-            if (fileExtension === 'pdf') {
-                iconClass = 'bi-file-earmark-pdf text-danger';
-                fileType = 'PDF';
-            } else if (['xlsx', 'xls'].includes(fileExtension)) {
-                iconClass = 'bi-file-earmark-excel text-success';
-                fileType = fileExtension.toUpperCase();
-            } else if (['docx', 'doc'].includes(fileExtension)) {
-                iconClass = 'bi-file-earmark-text text-primary';
-                fileType = fileExtension.toUpperCase();
-            } else if (['jpg', 'jpeg', 'png'].includes(fileExtension)) {
-                iconClass = 'bi-file-earmark-image text-info';
-                fileType = fileExtension.toUpperCase();
+        // Update active button
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        if (type === 'all' && showAllDocsBtn) showAllDocsBtn.classList.add('active');
+        else if (type === 'member' && showMemberDocsBtn) showMemberDocsBtn.classList.add('active');
+        else if (type === 'company' && showCompanyDocsBtn) showCompanyDocsBtn.classList.add('active');
+
+        // Filter documents
+        documentCards.forEach(card => {
+            if (type === 'all') {
+                card.style.display = 'flex';
+            } else if (type === 'member') {
+                card.style.display = card.classList.contains('member-doc') ? 'flex' : 'none';
+            } else if (type === 'company') {
+                card.style.display = card.classList.contains('company-doc') ? 'flex' : 'none';
             }
-            
-            // Format file size
-            const sizeFormatted = formatFileSize(file.size || 0);
-            
-            // Format upload date
-            const uploadDate = file.uploaded_at || new Date().toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            });
-            
-            const documentRow = document.createElement('div');
-            documentRow.className = 'document-row';
-            documentRow.setAttribute('data-doc-id', file.id);
-            documentRow.innerHTML = `
-                <div class="document-icon">
-                    <i class="bi ${iconClass}"></i>
-                </div>
-                <div class="document-info">
-                    <h6 class="document-name">${file.name}</h6>
-                    <p class="document-meta">${fileType} • ${sizeFormatted} • ${uploadDate}</p>
-                </div>
-                <div class="document-status pending">
-                    <i class="bi bi-clock-fill text-warning"></i>
-                    <span class="status-text text-warning">Pending</span>
-                </div>
-                <div class="document-actions">
-                    <button class="btn btn-sm btn-outline-primary me-2" onclick="viewDocument(${file.id})">
-                        <i class="bi bi-eye"></i>
-                    </button>
-                    <button class="btn btn-sm btn-outline-danger" onclick="deleteDocument(${file.id})">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </div>
-            `;
-            
-            // Add smooth animation
-            documentRow.style.opacity = '0';
-            documentRow.style.transform = 'translateY(-20px)';
-            documentList.insertBefore(documentRow, documentList.firstChild);
-            
-            // Trigger animation with delay for each file
-            setTimeout(() => {
-                documentRow.style.transition = 'all 0.3s ease';
-                documentRow.style.opacity = '1';
-                documentRow.style.transform = 'translateY(0)';
-            }, 100 + (index * 100));
         });
     }
-    
-    // Format file size
-    function formatFileSize(bytes) {
-        if (bytes === 0) return '0 Bytes';
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+
+    // Initialize filter
+    if (showAllDocsBtn) {
+        showAllDocsBtn.classList.add('active');
     }
-    
+
     // Show toast notification
     function showToast(type, message) {
         const toast = document.getElementById('uploadToast');
+        if (!toast) return;
+        
         const toastIcon = toast.querySelector('.toast-icon i');
         const toastTitle = toast.querySelector('.toast-title');
         const toastMessage = toast.querySelector('.toast-message');
@@ -1092,14 +1357,14 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Update content based on type
         if (type === 'success') {
-            toastIcon.className = 'bi bi-check-circle-fill text-success';
-            toastTitle.textContent = 'Success';
+            if (toastIcon) toastIcon.className = 'bi bi-check-circle-fill text-success';
+            if (toastTitle) toastTitle.textContent = 'Success';
         } else {
-            toastIcon.className = 'bi bi-x-circle-fill text-danger';
-            toastTitle.textContent = 'Error';
+            if (toastIcon) toastIcon.className = 'bi bi-x-circle-fill text-danger';
+            if (toastTitle) toastTitle.textContent = 'Error';
         }
         
-        toastMessage.textContent = message;
+        if (toastMessage) toastMessage.textContent = message;
         
         // Show toast
         const bsToast = new bootstrap.Toast(toast, {
@@ -1109,35 +1374,37 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// View document function
-function viewDocument(docId) {
-    window.open(`{% url "view_document" 0 %}`.replace('0', docId), '_blank');
-}
-
 // Delete document function
 function deleteDocument(docId) {
-    const documentRow = document.querySelector(`[data-doc-id="${docId}"]`);
-    const documentName = documentRow ? documentRow.querySelector('.document-name').textContent : 'this document';
+    const documentCard = document.querySelector(`[data-doc-id="${docId}"]`);
+    const documentName = documentCard ? documentCard.querySelector('.document-name').textContent : 'this document';
     
     // Show delete confirmation modal
     const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
-    document.getElementById('deleteDocumentName').textContent = documentName;
+    const deleteDocumentNameEl = document.getElementById('deleteDocumentName');
+    if (deleteDocumentNameEl) {
+        deleteDocumentNameEl.textContent = documentName;
+    }
     
     // Handle confirm delete
-    document.getElementById('confirmDeleteBtn').onclick = function() {
-        deleteModal.hide();
-        performDelete(docId, documentRow);
-    };
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.onclick = function() {
+            deleteModal.hide();
+            performDelete(docId, documentCard);
+        };
+    }
     
     deleteModal.show();
 }
 
-function performDelete(docId, documentRow) {
+function performDelete(docId, documentCard) {
     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     
     // Add removing animation
-    if (documentRow) {
-        documentRow.classList.add('removing');
+    if (documentCard) {
+        documentCard.style.opacity = '0.5';
+        documentCard.style.pointerEvents = 'none';
     }
     
     fetch(`{% url "delete_document" 0 %}`.replace('0', docId), {
@@ -1150,46 +1417,47 @@ function performDelete(docId, documentRow) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Wait for animation to complete
-            setTimeout(() => {
-                if (documentRow) {
-                    documentRow.remove();
-                }
-                
-                // Check if no documents left
-                const documentList = document.getElementById('documentList');
-                if (documentList.children.length === 0) {
-                    documentList.innerHTML = `
-                        <div class="no-documents-message text-center py-5">
-                            <i class="bi bi-folder2-open display-1 text-muted mb-3"></i>
-                            <h5 class="text-muted">No documents uploaded yet</h5>
-                            <p class="text-muted">Use the upload area above to add your first document.</p>
-                        </div>
-                    `;
-                }
-            }, 300);
+            // Remove document card
+            if (documentCard) {
+                documentCard.remove();
+            }
+            
+            // Check if no documents left
+            const documentList = document.getElementById('documentList');
+            if (documentList && documentList.children.length === 0) {
+                documentList.innerHTML = `
+                    <div class="no-documents-message text-center py-5">
+                        <i class="bi bi-folder2-open display-1 text-muted mb-3"></i>
+                        <h5 class="text-muted">No documents uploaded yet</h5>
+                        <p class="text-muted">Use the upload form above to add your first document.</p>
+                    </div>
+                `;
+            }
             
             showToast('success', data.message);
         } else {
-            // Remove animation if failed
-            if (documentRow) {
-                documentRow.classList.remove('removing');
+            // Restore document card if failed
+            if (documentCard) {
+                documentCard.style.opacity = '1';
+                documentCard.style.pointerEvents = 'auto';
             }
             showToast('error', data.error);
         }
     })
     .catch(error => {
-        // Remove animation if failed
-        if (documentRow) {
-            documentRow.classList.remove('removing');
+        // Restore document card if failed
+        if (documentCard) {
+            documentCard.style.opacity = '1';
+            documentCard.style.pointerEvents = 'auto';
         }
         showToast('error', 'Delete failed: ' + error.message);
     });
 }
 
-// Show toast function (if not already defined)
 function showToast(type, message) {
     const toast = document.getElementById('uploadToast');
+    if (!toast) return;
+    
     const toastIcon = toast.querySelector('.toast-icon i');
     const toastTitle = toast.querySelector('.toast-title');
     const toastMessage = toast.querySelector('.toast-message');
@@ -1200,14 +1468,14 @@ function showToast(type, message) {
     
     // Update content based on type
     if (type === 'success') {
-        toastIcon.className = 'bi bi-check-circle-fill text-success';
-        toastTitle.textContent = 'Success';
+        if (toastIcon) toastIcon.className = 'bi bi-check-circle-fill text-success';
+        if (toastTitle) toastTitle.textContent = 'Success';
     } else {
-        toastIcon.className = 'bi bi-x-circle-fill text-danger';
-        toastTitle.textContent = 'Error';
+        if (toastIcon) toastIcon.className = 'bi bi-x-circle-fill text-danger';
+        if (toastTitle) toastTitle.textContent = 'Error';
     }
     
-    toastMessage.textContent = message;
+    if (toastMessage) toastMessage.textContent = message;
     
     // Show toast
     const bsToast = new bootstrap.Toast(toast, {
