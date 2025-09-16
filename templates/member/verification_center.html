@@ -11,7 +11,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
                             <div class="me-3" style="background: rgba(255,255,255,0.2); padding: 12px; border-radius: 12px;">
-                                <i class="fas fa-shield-check" style="font-size: 24px;"></i>
+                                <i class="bi bi-shield-check" style="font-size: 24px;"></i>
                             </div>
                             <div>
                                 <h4 class="mb-1">Verification Center</h4>
@@ -20,7 +20,7 @@
                         </div>
                         <div>
                             <a href="{% url 'account_settings' %}" class="btn btn-outline-light">
-                                <i class="fas fa-arrow-left me-2"></i>Back to Settings
+                                <i class="bi bi-arrow-left me-2"></i>Back to Settings
                             </a>
                         </div>
                     </div>
@@ -88,7 +88,7 @@
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center mb-3">
                         <div class="p-2 rounded me-3" style="background: rgba(13, 110, 253, 0.1);">
-                            <i class="fas fa-user text-primary"></i>
+                            <i class="bi bi-person text-primary"></i>
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="mb-0">Personal Profile</h6>
@@ -102,11 +102,11 @@
                             <div class="me-3">
                                 {% if verification_data.personal.checks.email_verified %}
                                     <div class="status-icon completed">
-                                        <i class="fas fa-check"></i>
+                                        <i class="bi bi-check"></i>
                                     </div>
                                 {% else %}
                                     <div class="status-icon pending">
-                                        <i class="fas fa-envelope"></i>
+                                        <i class="bi bi-envelope"></i>
                                     </div>
                                 {% endif %}
                             </div>
@@ -117,11 +117,11 @@
                             <div class="item-action">
                                 {% if verification_data.personal.checks.email_verified %}
                                     <span class="status-badge verified">
-                                        <i class="fas fa-check-circle me-1"></i>Verified
+                                        <i class="bi bi-check-circle me-1"></i>Verified
                                     </span>
                                 {% else %}
                                     <span class="status-badge pending">
-                                        <i class="fas fa-clock me-1"></i>Pending
+                                        <i class="bi bi-clock me-1"></i>Pending
                                     </span>
                                 {% endif %}
                             </div>
@@ -132,11 +132,11 @@
                             <div class="me-3">
                                 {% if verification_data.personal.checks.profile_complete %}
                                     <div class="status-icon completed">
-                                        <i class="fas fa-check"></i>
+                                        <i class="bi bi-check"></i>
                                     </div>
                                 {% else %}
                                     <div class="status-icon pending">
-                                        <i class="fas fa-user-edit"></i>
+                                        <i class="bi bi-person-gear"></i>
                                     </div>
                                 {% endif %}
                             </div>
@@ -147,11 +147,11 @@
                             <div class="item-action">
                                 {% if verification_data.personal.checks.profile_complete %}
                                     <span class="status-badge verified">
-                                        <i class="fas fa-check-circle me-1"></i>Complete
+                                        <i class="bi bi-check-circle me-1"></i>Complete
                                     </span>
                                 {% else %}
                                     <a href="{% url 'personal_profile_edit' %}" class="action-btn">
-                                        <i class="fas fa-edit me-1"></i>Complete Profile
+                                        <i class="bi bi-pencil me-1"></i>Complete Profile
                                     </a>
                                 {% endif %}
                             </div>
@@ -162,11 +162,11 @@
                             <div class="me-3">
                                 {% if verification_data.personal.checks.linkedin_verified %}
                                     <div class="status-icon completed">
-                                        <i class="fas fa-check"></i>
+                                        <i class="bi bi-check"></i>
                                     </div>
                                 {% else %}
                                     <div class="status-icon optional">
-                                        <i class="fab fa-linkedin"></i>
+                                        <i class="bi bi-linkedin"></i>
                                     </div>
                                 {% endif %}
                             </div>
@@ -177,11 +177,11 @@
                             <div class="item-action">
                                 {% if verification_data.personal.checks.linkedin_verified %}
                                     <span class="status-badge verified">
-                                        <i class="fas fa-check-circle me-1"></i>Connected
+                                        <i class="bi bi-check-circle me-1"></i>Connected
                                     </span>
                                 {% else %}
                                     <a href="#" class="action-btn optional">
-                                        <i class="fab fa-linkedin me-1"></i>Connect LinkedIn
+                                        <i class="bi bi-linkedin me-1"></i>Connect LinkedIn
                                     </a>
                                 {% endif %}
                             </div>
@@ -197,7 +197,7 @@
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center mb-3">
                         <div class="p-2 rounded me-3" style="background: rgba(13, 202, 240, 0.1);">
-                            <i class="fas fa-building text-info"></i>
+                            <i class="bi bi-building text-info"></i>
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="mb-0">Company Profile</h6>
@@ -211,11 +211,11 @@
                             <div class="me-3">
                                 {% if verification_data.company.checks.company_exists %}
                                     <div class="status-icon completed">
-                                        <i class="fas fa-check"></i>
+                                        <i class="bi bi-check"></i>
                                     </div>
                                 {% else %}
                                     <div class="status-icon pending">
-                                        <i class="fas fa-building"></i>
+                                        <i class="bi bi-building"></i>
                                     </div>
                                 {% endif %}
                             </div>
@@ -226,11 +226,11 @@
                             <div class="item-action">
                                 {% if verification_data.company.checks.company_exists %}
                                     <span class="status-badge verified">
-                                        <i class="fas fa-check-circle me-1"></i>Created
+                                        <i class="bi bi-check-circle me-1"></i>Created
                                     </span>
                                 {% else %}
                                     <a href="{% url 'company_profile_edit' %}" class="action-btn">
-                                        <i class="fas fa-plus me-1"></i>Create Company
+                                        <i class="bi bi-plus me-1"></i>Create Company
                                     </a>
                                 {% endif %}
                             </div>
@@ -241,15 +241,15 @@
                             <div class="me-3">
                                 {% if verification_data.company.checks.company_info_complete %}
                                     <div class="status-icon completed">
-                                        <i class="fas fa-check"></i>
+                                        <i class="bi bi-check"></i>
                                     </div>
                                 {% elif verification_data.company.checks.company_exists %}
                                     <div class="status-icon pending">
-                                        <i class="fas fa-info-circle"></i>
+                                        <i class="bi bi-info-circle"></i>
                                     </div>
                                 {% else %}
                                     <div class="status-icon disabled">
-                                        <i class="fas fa-info-circle"></i>
+                                        <i class="bi bi-info-circle"></i>
                                     </div>
                                 {% endif %}
                             </div>
@@ -260,11 +260,11 @@
                             <div class="item-action">
                                 {% if verification_data.company.checks.company_info_complete %}
                                     <span class="status-badge verified">
-                                        <i class="fas fa-check-circle me-1"></i>Complete
+                                        <i class="bi bi-check-circle me-1"></i>Complete
                                     </span>
                                 {% elif verification_data.company.checks.company_exists %}
                                     <a href="{% url 'company_profile_edit' %}" class="action-btn">
-                                        <i class="fas fa-edit me-1"></i>Complete Info
+                                        <i class="bi bi-pencil me-1"></i>Complete Info
                                     </a>
                                 {% else %}
                                     <span class="status-badge disabled">Create profile first</span>
@@ -277,15 +277,15 @@
                             <div class="me-3">
                                 {% if verification_data.company.checks.documents_uploaded %}
                                     <div class="status-icon completed">
-                                        <i class="fas fa-check"></i>
+                                        <i class="bi bi-check"></i>
                                     </div>
                                 {% elif verification_data.company.checks.company_exists %}
                                     <div class="status-icon pending">
-                                        <i class="fas fa-upload"></i>
+                                        <i class="bi bi-upload"></i>
                                     </div>
                                 {% else %}
                                     <div class="status-icon disabled">
-                                        <i class="fas fa-upload"></i>
+                                        <i class="bi bi-upload"></i>
                                     </div>
                                 {% endif %}
                             </div>
@@ -296,11 +296,11 @@
                             <div class="item-action">
                                 {% if verification_data.company.checks.documents_uploaded %}
                                     <span class="status-badge verified">
-                                        <i class="fas fa-check-circle me-1"></i>Uploaded
+                                        <i class="bi bi-check-circle me-1"></i>Uploaded
                                     </span>
                                 {% elif verification_data.company.checks.company_exists %}
                                     <a href="{% url 'document_management' %}" class="action-btn">
-                                        <i class="fas fa-upload me-1"></i>Upload Documents
+                                        <i class="bi bi-upload me-1"></i>Upload Documents
                                     </a>
                                 {% else %}
                                     <span class="status-badge disabled">Create profile first</span>
@@ -313,15 +313,15 @@
                             <div class="me-3">
                                 {% if verification_data.company.checks.documents_verified %}
                                     <div class="status-icon completed">
-                                        <i class="fas fa-check"></i>
+                                        <i class="bi bi-check"></i>
                                     </div>
                                 {% elif verification_data.company.checks.documents_uploaded %}
                                     <div class="status-icon reviewing">
-                                        <i class="fas fa-clock"></i>
+                                        <i class="bi bi-clock"></i>
                                     </div>
                                 {% else %}
                                     <div class="status-icon disabled">
-                                        <i class="fas fa-clipboard-check"></i>
+                                        <i class="bi bi-clipboard-check"></i>
                                     </div>
                                 {% endif %}
                             </div>
@@ -332,11 +332,11 @@
                             <div class="item-action">
                                 {% if verification_data.company.checks.documents_verified %}
                                     <span class="status-badge verified">
-                                        <i class="fas fa-check-circle me-1"></i>Verified
+                                        <i class="bi bi-check-circle me-1"></i>Verified
                                     </span>
                                 {% elif verification_data.company.checks.documents_uploaded %}
                                     <span class="status-badge reviewing">
-                                        <i class="fas fa-clock me-1"></i>{{ document_stats.pending_documents }} pending
+                                        <i class="bi bi-clock me-1"></i>{{ document_stats.pending_documents }} pending
                                     </span>
                                 {% else %}
                                     <span class="status-badge disabled">Upload documents first</span>
