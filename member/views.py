@@ -2590,12 +2590,124 @@ def view_document(request, doc_id):
         })
 
 
+def _calculate_verification_data(member):
+    """Calculate verification progress data for verification center"""
+    
+    # Personal profile checks
+    personal_checks = {
+        'email_verified': member.user.is_active,  # Assuming email verification via activation
+        'profile_complete': (
+            bool(member.profile_picture) and 
+            bool(member.job_position) and 
+            bool(member.short_bio) and 
+            bool(member.phone_number)
+        ),
+        'linkedin_verified': bool(member.linkedin_url),  # Optional
+    }
+    
+    # Count personal profile completion
+    personal_completed = sum([
+        personal_checks['email_verified'],
+        personal_checks['profile_complete']
+    ])
+    personal_total = 2  # Email and profile completion are required
+    
+    # Company profile checks
+    company_exists = member.companies.filter(is_active=True).exists()
+    company_checks = {
+        'company_exists': company_exists,
+        'company_info_complete': False,
+        'documents_uploaded': False,
+        'documents_verified': False,
+    }
+    
+    company_completed = 0
+    company_total = 4  # Company creation, info completion, document upload, document verification
+    
+    if company_exists:
+        company = member.companies.filter(is_active=True).first()
+        
+        # Check if company info is complete
+        company_info_complete = (
+            bool(company.company_name) and
+            bool(company.company_description) and
+            bool(company.website) and
+            bool(company.founded_year) and
+            bool(company.team_size) and
+            bool(company.primary_location)
+        )
+        company_checks['company_info_complete'] = company_info_complete
+        
+        # Check documents
+        company_documents = company.documents.all()
+        company_checks['documents_uploaded'] = company_documents.exists()
+        company_checks['documents_verified'] = (
+            company_documents.exists() and 
+            company_documents.filter(status='approved').count() > 0
+        )
+        
+        # Count completed company steps
+        if company_exists:
+            company_completed += 1
+        if company_info_complete:
+            company_completed += 1
+        if company_checks['documents_uploaded']:
+            company_completed += 1
+        if company_checks['documents_verified']:
+            company_completed += 1
+    
+    # Calculate overall progress
+    total_steps = personal_total + company_total
+    completed_steps = personal_completed + company_completed
+    remaining_steps = total_steps - completed_steps
+    
+    # Calculate document stats for display
+    document_stats = {
+        'pending_documents': 0,
+        'approved_documents': 0,
+        'total_documents': 0,
+    }
+    
+    if company_exists:
+        company = member.companies.filter(is_active=True).first()
+        if company:
+            documents = company.documents.all()
+            document_stats['total_documents'] = documents.count()
+            document_stats['pending_documents'] = documents.filter(status='pending').count()
+            document_stats['approved_documents'] = documents.filter(status='approved').count()
+    
+    return {
+        'overall': {
+            'percentage': round((completed_steps / total_steps * 100) if total_steps > 0 else 0),
+            'completed_steps': completed_steps,
+            'remaining_steps': remaining_steps,
+            'total_steps': total_steps,
+        },
+        'personal': {
+            'completed_steps': personal_completed,
+            'total_steps': personal_total,
+            'checks': personal_checks,
+        },
+        'company': {
+            'completed_steps': company_completed,
+            'total_steps': company_total,
+            'checks': company_checks,
+        },
+        'document_stats': document_stats,
+    }
+
+
 @login_required
 def verification_center(request):
     """Verification center page"""
     member = get_object_or_404(Member, user=request.user)
+    
+    # Calculate verification data
+    verification_data = _calculate_verification_data(member)
+    
     context = {
         'member': member,
+        'verification_data': verification_data,
     }
     return render(request, 'member/verification_center.html', context)
 
