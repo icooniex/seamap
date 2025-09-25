@@ -949,6 +949,24 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Technical Specifications File Handler
+    const techSpecsInput = document.getElementById('technical_specifications');
+    if (techSpecsInput) {
+        techSpecsInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const feedback = document.getElementById('tech_specs_feedback');
+            
+            if (file) {
+                // Show file feedback with file name
+                feedback.className = 'file-feedback success';
+                feedback.innerHTML = `<i class="bi bi-check-circle me-1"></i>Selected: ${file.name}`;
+            } else {
+                feedback.className = '';
+                feedback.innerHTML = '';
+            }
+        });
+    }
+
     // Featured Image Preview
     const featuredImageInput = document.getElementById('featured_image');
     if (featuredImageInput) {
