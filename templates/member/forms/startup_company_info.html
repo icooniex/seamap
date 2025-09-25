@@ -77,8 +77,8 @@
         </div>
         <div class="col-md-6">
             <div class="form-group">
-                <label for="primary_location" class="form-label">Primary Location</label>
-                <select class="form-select" id="primary_location" name="primary_location">
+                <label for="primary_location" class="form-label">Primary Location *</label>
+                <select class="form-select" id="primary_location" name="primary_location" required>
                     <option value="">Select Location</option>
                     <option value="Singapore" {% if company.primary_location == 'Singapore' %}selected{% endif %}>🇸🇬 Singapore</option>
                     <option value="Indonesia" {% if company.primary_location == 'Indonesia' %}selected{% endif %}>🇮🇩 Indonesia</option>
@@ -96,8 +96,8 @@
         </div>
         <div class="col-md-6">
             <div class="form-group">
-                <label for="current_stage" class="form-label">Current Stage</label>
-                <select class="form-select" id="current_stage" name="current_stage">
+                <label for="current_stage" class="form-label">Current Stage *</label>
+                <select class="form-select" id="current_stage" name="current_stage" required>
                     <option value="">Select Stage</option>
                     <option value="idea" {% if company.current_stage == 'idea' %}selected{% endif %}>💡 Ideation – Developing an idea, no product yet</option>
                     <option value="prototype" {% if company.current_stage == 'prototype' %}selected{% endif %}>🔧 Prototype – Initial MVP or prototype created</option>
