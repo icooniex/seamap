@@ -525,3 +525,85 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Checkbox card functionality for corporate form
+    const checkboxCards = document.querySelectorAll('.checkbox-card');
+    
+    checkboxCards.forEach(card => {
+        const checkbox = card.querySelector('input[type="checkbox"]');
+        
+        if (checkbox) {
+            // Set initial state
+            if (checkbox.checked) {
+                card.classList.add('selected');
+            }
+            
+            // Add click handler
+            card.addEventListener('click', function(e) {
+                if (e.target === checkbox) return;
+                
+                checkbox.checked = !checkbox.checked;
+                
+                if (checkbox.checked) {
+                    card.classList.add('selected');
+                } else {
+                    card.classList.remove('selected');
+                }
+                
+                checkbox.dispatchEvent(new Event('change'));
+            });
+            
+            // Handle checkbox change
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    card.classList.add('selected');
+                } else {
+                    card.classList.remove('selected');
+                }
+            });
+        }
+    });
+    
+    // Validation functions for required fields
+    window.validateIndustryExpertise = function() {
+        const industryExpertise = document.querySelectorAll('input[name="industry_expertise"]:checked');
+        if (industryExpertise.length === 0) {
+            alert('Please select at least one Industry Expertise.');
+            const industrySection = document.querySelector('input[name="industry_expertise"]').closest('.form-group');
+            if (industrySection) {
+                industrySection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            return false;
+        }
+        return true;
+    };
+    
+    window.validateTechnologicalAreas = function() {
+        const technologicalAreas = document.querySelectorAll('input[name="investment_categories"]:checked');
+        if (technologicalAreas.length === 0) {
+            alert('Please select at least one Technological Area.');
+            const techSection = document.querySelector('input[name="investment_categories"]').closest('.form-group');
+            if (techSection) {
+                techSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            return false;
+        }
+        return true;
+    };
+    
+    window.validateCollaborationMethods = function() {
+        const collaborationMethods = document.querySelectorAll('input[name="support_areas"]:checked');
+        if (collaborationMethods.length === 0) {
+            alert('Please select at least one Collaboration Method.');
+            const collaborationSection = document.querySelector('input[name="support_areas"]').closest('.form-group');
+            if (collaborationSection) {
+                collaborationSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            return false;
+        }
+        return true;
+    };
+});
+</script>

@@ -250,5 +250,20 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log(`Card ${index} initialized as selected`);
         }
     });
+    
+    // Validation for Innovation Type (required field)
+    window.validateInnovationType = function() {
+        const innovationCheckboxes = document.querySelectorAll('input[name="innovation_type"]:checked');
+        if (innovationCheckboxes.length === 0) {
+            alert('Please select at least one Type of Innovation.');
+            // Scroll to the innovation type section
+            const innovationSection = document.querySelector('.checkbox-grid');
+            if (innovationSection) {
+                innovationSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            return false;
+        }
+        return true;
+    };
 });
 </script>

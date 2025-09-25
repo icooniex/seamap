@@ -391,8 +391,50 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('companyProfileForm');
     if (form) {
         form.addEventListener('submit', function(e) {
-            // Basic validation logic can be added here
-            console.log('Form submitted');
+            // Get company type from form or page context
+            const companyType = "{{ company.company_type|default:'' }}";
+            
+            // Startup validation
+            if (companyType === 'startup' || !companyType) {
+                // Check if we're on the innovation info tab
+                const innovationTab = document.getElementById('innovation-info');
+                if (innovationTab && innovationTab.classList.contains('active')) {
+                    if (window.validateInnovationType && !window.validateInnovationType()) {
+                        e.preventDefault();
+                        return false;
+                    }
+                }
+            }
+            
+            // Investor validation
+            if (companyType === 'investor') {
+                if (window.validateFundingStages && !window.validateFundingStages()) {
+                    e.preventDefault();
+                    return false;
+                }
+                if (window.validateInvestmentCategories && !window.validateInvestmentCategories()) {
+                    e.preventDefault();
+                    return false;
+                }
+            }
+            
+            // Corporate validation
+            if (companyType === 'corporate') {
+                if (window.validateIndustryExpertise && !window.validateIndustryExpertise()) {
+                    e.preventDefault();
+                    return false;
+                }
+                if (window.validateTechnologicalAreas && !window.validateTechnologicalAreas()) {
+                    e.preventDefault();
+                    return false;
+                }
+                if (window.validateCollaborationMethods && !window.validateCollaborationMethods()) {
+                    e.preventDefault();
+                    return false;
+                }
+            }
+            
+            console.log('Form validation passed, submitting...');
         });
     }
 });
