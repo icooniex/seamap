@@ -919,8 +919,19 @@ def corporate_matchmaking(request):
 @onboarding_required
 def problem(request):
     from .models import ProblemStatement
+    from django.db.models import Q
+    
     try:
-        problems = ProblemStatement.objects.filter(status='published').order_by('-created_at')
+        problems = ProblemStatement.objects.filter(status='published').select_related('company').order_by('-created_at')
+        
+        # Handle search functionality
+        search_query = request.GET.get('q', '').strip()
+        if search_query:
+            problems = problems.filter(
+                Q(title__icontains=search_query) |
+                Q(description__icontains=search_query) |
+                Q(company__company_name__icontains=search_query)
+            )
         
         # Check if user is a corporate user
         is_corporate_user = False
@@ -934,6 +945,7 @@ def problem(request):
             'problems': problems,
             'total_problems': problems.count(),
             'is_corporate_user': is_corporate_user,
+            'search_query': search_query,
         }
     except:
         context = {'problems': [], 'total_problems': 0, 'is_corporate_user': False}

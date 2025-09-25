@@ -41,15 +41,6 @@
                        placeholder="Search problem statements by title, description, or company..." 
                        value="{{ request.GET.q }}">
             </div>
-            <select name="category" class="form-select filter-select">
-                <option value="">All Categories</option>
-                <option value="marine">Marine Conservation</option>
-                <option value="packaging">Sustainable Packaging</option>
-                <option value="energy">Clean Energy</option>
-                <option value="waste">Waste Management</option>
-                <option value="agriculture">Agriculture Tech</option>
-                <option value="manufacturing">Manufacturing</option>
-            </select>
             <button type="submit" class="btn btn-primary search-btn">
                 <i class="bi bi-search me-2"></i> Search
             </button>
@@ -58,7 +49,7 @@
 
     <!-- Results Summary -->
     <div class="results-summary mb-3">
-        <span class="text-muted">Showing <strong>{{ total_problems|default:"18" }}</strong> problem statement{{ total_problems|pluralize }}</span>
+        <span class="text-muted">Showing <strong>{{ total_problems|default:0 }}</strong> problem statement{{ total_problems|pluralize }}</span>
     </div>
 
     <!-- Problem Statement Cards Grid -->
@@ -128,193 +119,40 @@
                 </div>
             </div>
             {% empty %}
-            <div class="problem-grid-item">
-                <div class="card shadow-sm h-100 problem-card">
-                    <div class="problem-card-header">
-                        <div class="position-relative">
-                            <img src="{% static 'images/nurturing-innovations.jpg' %}" alt="Ocean Monitoring" class="problem-image">
-                            <div class="problem-badges">
-                                <span class="badge bg-primary problem-status-badge">In Review</span>
-                            </div>
-                            <div class="problem-meta">
-                                <span class="badge bg-light text-dark applicants-badge">
-                                    <i class="bi bi-lightbulb"></i> 8 solutions
-                                </span>
-                            </div>
-                        </div>
+
+            
+            <!-- Empty State -->
+
+            <div class="empty-state-container">
+                <div class="empty-state-card">
+                    <div class="empty-state-icon">
+                        <i class="bi bi-lightbulb"></i>
                     </div>
-                    <div class="card-body problem-card-body">
-                        <!-- Company Info -->
-                        <div class="company-info mb-3">
-                            <div class="d-flex align-items-center">
-                                <div class="company-avatar me-2">
-                                    <span class="avatar-text">OM</span>
-                                </div>
-                                <div class="company-details">
-                                    <div class="company-name">OceanMonitor Technologies</div>
-                                    <div class="company-type">Marine Research & Technology</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Problem Title & Description -->
-                        <h5 class="problem-title mb-2">Real-time Ocean Health Monitoring System</h5>
-                        <p class="problem-description mb-3">
-                            Develop an IoT-based system for continuous monitoring of ocean pH, temperature, and pollution levels with real-time data transmission.
-                        </p>
-
-                        <!-- Category Tags -->
-                        <div class="tech-tags-problem mb-3">
-                            <span class="tech-tag-problem">IoT Sensors</span>
-                            <span class="tech-tag-problem">Data Analytics</span>
-                            <span class="tech-tag-problem">Marine Science</span>
-                        </div>
-
-                        <!-- Problem Details -->
-                        <div class="problem-details mb-3">
-                            <div class="detail-item">
-                                <i class="bi bi-geo-alt text-muted me-2"></i>
-                                <span>Asia-Pacific Waters</span>
-                            </div>
-                            <div class="detail-item">
-                                <i class="bi bi-calendar text-muted me-2"></i>
-                                <span>Posted: Jun 28, 2025</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-footer problem-card-footer">
-                        <a href="{% url 'problem_detail' 2 %}" class="btn btn-primary w-100 problem-btn">
-                            <i class="bi bi-lightbulb me-2"></i>
-                            View Details & Apply
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sample Problem Statement Card 3 -->
-            <div class="problem-grid-item">
-                <div class="card shadow-sm h-100 problem-card">
-                    <div class="problem-card-header">
-                        <div class="position-relative">
-                            <img src="{% static 'images/hero-background.jpg' %}" alt="Aquaculture Automation" class="problem-image">
-                            <div class="problem-badges">
-                                <span class="badge bg-success problem-status-badge">Open</span>
-                            </div>
-                            <div class="problem-meta">
-                                <span class="badge bg-light text-dark applicants-badge">
-                                    <i class="bi bi-lightbulb"></i> 19 solutions
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body problem-card-body">
-                        <!-- Company Info -->
-                        <div class="company-info mb-3">
-                            <div class="d-flex align-items-center">
-                                <div class="company-avatar me-2">
-                                    <span class="avatar-text">AF</span>
-                                </div>
-                                <div class="company-details">
-                                    <div class="company-name">AquaFarm Innovations</div>
-                                    <div class="company-type">Sustainable Aquaculture</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Problem Title & Description -->
-                        <h5 class="problem-title mb-2">Automated Fish Farm Management System</h5>
-                        <p class="problem-description mb-3">
-                            Create an AI-powered automation system for feeding, water quality management, and health monitoring in large-scale aquaculture operations.
-                        </p>
-
-                        <!-- Category Tags -->
-                        <div class="tech-tags-problem mb-3">
-                            <span class="tech-tag-problem">AI/ML</span>
-                            <span class="tech-tag-problem">Automation</span>
-                            <span class="tech-tag-problem">Aquaculture</span>
-                        </div>
-
-                        <!-- Problem Details -->
-                        <div class="problem-details mb-3">
-                            <div class="detail-item">
-                                <i class="bi bi-geo-alt text-muted me-2"></i>
-                                <span>Thailand & Vietnam</span>
-                            </div>
-                            <div class="detail-item">
-                                <i class="bi bi-calendar text-muted me-2"></i>
-                                <span>Posted: Jul 20, 2025</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-footer problem-card-footer">
-                        <a href="{% url 'problem_detail' 3 %}" class="btn btn-primary w-100 problem-btn">
-                            <i class="bi bi-lightbulb me-2"></i>
-                            View Details & Apply
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sample Problem Statement Card 4 -->
-            <div class="problem-grid-item">
-                <div class="card shadow-sm h-100 problem-card">
-                    <div class="problem-card-header">
-                        <div class="position-relative">
-                            <img src="{% static 'images/Coast001.webp' %}" alt="Coral Restoration" class="problem-image">
-                            <div class="problem-badges">
-                                <span class="badge bg-success problem-status-badge">Open</span>
-                            </div>
-                            <div class="problem-meta">
-                                <span class="badge bg-light text-dark applicants-badge">
-                                    <i class="bi bi-lightbulb"></i> 6 solutions
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body problem-card-body">
-                        <!-- Company Info -->
-                        <div class="company-info mb-3">
-                            <div class="d-flex align-items-center">
-                                <div class="company-avatar me-2">
-                                    <span class="avatar-text">CR</span>
-                                </div>
-                                <div class="company-details">
-                                    <div class="company-name">Coral Reef Foundation</div>
-                                    <div class="company-type">Marine Conservation NGO</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Problem Title & Description -->
-                        <h5 class="problem-title mb-2">Accelerated Coral Reef Restoration Technology</h5>
-                        <p class="problem-description mb-3">
-                            Develop innovative biotechnology solutions to accelerate coral growth and improve survival rates in degraded reef ecosystems.
-                        </p>
-
-                        <!-- Category Tags -->
-                        <div class="tech-tags-problem mb-3">
-                            <span class="tech-tag-problem">Biotechnology</span>
-                            <span class="tech-tag-problem">Marine Biology</span>
-                            <span class="tech-tag-problem">Conservation</span>
-                        </div>
-
-                        <!-- Problem Details -->
-                        <div class="problem-details mb-3">
-                            <div class="detail-item">
-                                <i class="bi bi-geo-alt text-muted me-2"></i>
-                                <span>Great Barrier Reef Region</span>
-                            </div>
-                            <div class="detail-item">
-                                <i class="bi bi-calendar text-muted me-2"></i>
-                                <span>Posted: Jul 10, 2025</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-footer problem-card-footer">
-                        <a href="{% url 'problem_detail' 4 %}" class="btn btn-primary w-100 problem-btn">
-                            <i class="bi bi-lightbulb me-2"></i>
-                            View Details & Apply
-                        </a>
+                    <h3 class="empty-state-title">No Problem Statements Found</h3>
+                    <p class="empty-state-description">
+                        {% if request.GET.q %}
+                            No problem statements match your search for "<strong>{{ request.GET.q }}</strong>".
+                            <br>Try adjusting your search terms or browse all available problem statements.
+                        {% else %}
+                            There are currently no published problem statements available.
+                            {% if is_corporate_user %}
+                                <br>Be the first to submit a problem statement for innovative solutions!
+                            {% else %}
+                                <br>Check back later for new opportunities from corporate partners.
+                            {% endif %}
+                        {% endif %}
+                    </p>
+                    <div class="empty-state-actions">
+                        {% if request.GET.q %}
+                            <a href="{% url 'problem' %}" class="btn btn-outline-primary me-2">
+                                <i class="bi bi-arrow-left me-2"></i>View All Problems
+                            </a>
+                        {% endif %}
+                        {% if is_corporate_user %}
+                            <a href="{% url 'create_problem_statement' %}" class="btn btn-warning">
+                                <i class="bi bi-plus-circle me-2"></i>Submit Problem Statement
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -751,6 +589,88 @@
     
     .problem-icon i {
         font-size: 1.5rem;
+    }
+}
+
+/* Empty State Styling */
+.empty-state-container {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    padding: 2rem;
+}
+
+.empty-state-card {
+    text-align: center;
+    background: white;
+    padding: 3rem 2rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    max-width: 500px;
+    width: 100%;
+    border: 1px solid #e2e8f0;
+}
+
+.empty-state-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #2c59a7, #574da1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    color: white;
+    font-size: 2rem;
+}
+
+.empty-state-title {
+    color: #2c59a7;
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.empty-state-description {
+    color: #64748b;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.empty-state-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+    .empty-state-card {
+        padding: 2rem 1.5rem;
+        margin: 1rem;
+    }
+    
+    .empty-state-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+    
+    .empty-state-title {
+        font-size: 1.25rem;
+    }
+    
+    .empty-state-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .empty-state-actions .btn {
+        width: 100%;
     }
 }
 </style>
