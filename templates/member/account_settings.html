@@ -1,6 +1,7 @@
 {% extends "template_parts/dashboard_base.html" %}
 {% load static %}
 
+{% csrf_token %}
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/company_profile_edit.css' %}">
 <div class="container-fluid p-0">
@@ -259,6 +260,75 @@
                             View Details
                         </a>
                         <div class="action-meta">Complete verification</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Security Settings Section -->
+    <div class="security-section mb-5">
+        <div class="section-header mb-3">
+            <h2 class="h5 text-muted mb-0">
+                <i class="bi bi-shield-lock text-danger me-2"></i>
+                Security Settings
+            </h2>
+        </div>
+        
+        <div class="priority-container">
+            <!-- Two-Factor Authentication Card -->
+            <div class="setting-item priority-item">
+                <div class="setting-content">
+                    <div class="setting-left">
+                        <div class="setting-icon-large security-bg">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <div class="setting-details-expanded">
+                            <div class="d-flex align-items-center mb-2">
+                                <h4 class="mb-0">Two-Factor Authentication</h4>
+                                {% if user.member.two_factor_enabled %}
+                                    <span class="badge bg-success ms-2">
+                                        <i class="bi bi-check-circle me-1"></i>Enabled
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-warning ms-2">
+                                        <i class="bi bi-exclamation-triangle me-1"></i>Disabled
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <p class="expanded-description">
+                                {% if user.member.two_factor_enabled %}
+                                    Your account is protected with email-based two-factor authentication. You'll receive a verification code via email whenever you sign in.
+                                {% else %}
+                                    Add an extra layer of security to your account by enabling two-factor authentication. You'll receive a verification code via email each time you sign in.
+                                {% endif %}
+                            </p>
+                            <div class="setting-meta-expanded">
+                                <div class="meta-item">
+                                    <i class="bi bi-envelope text-primary"></i>
+                                    <span>Email: {{ user.email }}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="bi bi-clock text-info"></i>
+                                    <span>Verification codes expire in 10 minutes</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="setting-action-expanded">
+                        {% if user.member.two_factor_enabled %}
+                            <button class="setting-btn-danger" onclick="toggleTwoFactor(false)">
+                                <i class="bi bi-shield-x"></i>
+                                Disable 2FA
+                            </button>
+                            <div class="action-meta">Remove extra security</div>
+                        {% else %}
+                            <button class="setting-btn-primary" onclick="toggleTwoFactor(true)">
+                                <i class="bi bi-shield-plus"></i>
+                                Enable 2FA
+                            </button>
+                            <div class="action-meta">Secure your account</div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -532,6 +602,33 @@
     background: #3b6cc1;
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(44, 89, 167, 0.35);
+    text-decoration: none;
+    color: white;
+}
+
+.setting-btn-danger {
+    background: #dc3545;
+    border: none;
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 14px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.25);
+    min-width: 140px;
+    justify-content: center;
+}
+
+.setting-btn-danger:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(220, 53, 69, 0.35);
     text-decoration: none;
     color: white;
 }
@@ -822,6 +919,48 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 300);
     });
 });
+
+// Two-Factor Authentication Toggle
+function toggleTwoFactor(enable) {
+    const action = enable ? 'enable' : 'disable';
+    const message = enable ? 
+        'Are you sure you want to enable Two-Factor Authentication? You will receive verification codes via email when logging in.' :
+        'Are you sure you want to disable Two-Factor Authentication? This will reduce your account security.';
+    
+    if (confirm(message)) {
+        // Show loading state
+        const button = event.target;
+        const originalHtml = button.innerHTML;
+        button.innerHTML = '<i class="bi bi-hourglass-split"></i> Processing...';
+        button.disabled = true;
+        
+        // Send AJAX request
+        fetch('/member/toggle-2fa/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({ 'enable': enable })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Reload page to update UI
+                window.location.reload();
+            } else {
+                alert('Error: ' + (data.message || 'Failed to update 2FA settings'));
+                button.innerHTML = originalHtml;
+                button.disabled = false;
+            }
+        })
+        .catch(error => {
+            alert('Error: Failed to update 2FA settings');
+            button.innerHTML = originalHtml;
+            button.disabled = false;
+        });
+    }
+}
 </script>
 
 {% endblock %}

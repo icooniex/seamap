@@ -1,0 +1,214 @@
+{% extends "template_parts/dashboard_base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <div class="account-settings-header mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <div class="settings-icon-container me-3">
+                    <div class="settings-icon">
+                        <i class="bi bi-envelope-check"></i>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="h3 mb-1">2FA Email Test</h1>
+                    <p class="header-subtitle mb-0">Test your Gmail SMTP configuration for 2FA emails</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Email Configuration Status -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-gear me-2"></i>Email Configuration Status</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Email Backend:</span>
+                            <code>{{ email_config.backend }}</code>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>SMTP Host:</span>
+                            <code>{{ email_config.host }}</code>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>SMTP Port:</span>
+                            <code>{{ email_config.port }}</code>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Use TLS:</span>
+                            <span class="badge {% if email_config.use_tls %}bg-success{% else %}bg-danger{% endif %}">
+                                {{ email_config.use_tls|yesno:"Yes,No" }}
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Host User:</span>
+                            <code>{{ email_config.host_user }}</code>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Host Password:</span>
+                            <code>{{ email_config.host_password }}</code>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Logo Preview -->
+            <div class="mt-3 pt-3 border-top">
+                <h6><i class="bi bi-image me-2"></i>Email Logo Preview</h6>
+                <div class="d-flex align-items-center">
+                    {% if logo_url %}
+                        <img src="{{ logo_url }}" alt="SeaMap Logo" style="width: 60px; height: 60px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" class="me-3">
+                        <div>
+                            <div class="text-success"><i class="bi bi-check-circle"></i> Logo available</div>
+                            <small class="text-muted">{{ logo_url }}</small>
+                        </div>
+                    {% else %}
+                        <div class="text-warning"><i class="bi bi-exclamation-triangle"></i> Logo not found - will use fallback icon</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Email Form -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-envelope-paper me-2"></i>Send Test OTP Email</h5>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>Test Instructions:</strong> Click the button below to send a test OTP email to your registered email address ({{ user.email }}). 
+                This will help verify that your Gmail SMTP configuration is working correctly.
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="d-flex align-items-center">
+                    <button type="submit" class="btn btn-primary btn-lg me-3">
+                        <i class="bi bi-send me-2"></i>Send Test OTP Email
+                    </button>
+                    <div>
+                        <div><strong>Test Email:</strong> {{ user.email }}</div>
+                        <div class="text-muted small">Logged in as: {{ user.get_full_name|default:user.username }}</div>
+                    </div>
+                </div>
+            </form>
+
+            <hr class="my-4">
+
+            <div class="row">
+                <div class="col-md-6">
+                    <h6><i class="bi bi-check-circle text-success me-2"></i>If Email Sends Successfully:</h6>
+                    <ul class="list-unstyled ms-3">
+                        <li class="mb-2">✅ Check your email inbox for the OTP code</li>
+                        <li class="mb-2">✅ Gmail SMTP configuration is working</li>
+                        <li class="mb-2">✅ 2FA email functionality is ready</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h6><i class="bi bi-exclamation-triangle text-warning me-2"></i>If Email Fails to Send:</h6>
+                    <ul class="list-unstyled ms-3">
+                        <li class="mb-2">❌ Check your Gmail App Password</li>
+                        <li class="mb-2">❌ Verify EMAIL_HOST_USER in .env</li>
+                        <li class="mb-2">❌ Confirm EMAIL_HOST_PASSWORD in .env</li>
+                        <li class="mb-2">❌ Ensure Gmail 2FA is enabled</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Setup Instructions -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-book me-2"></i>Gmail SMTP Setup Instructions</h5>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <strong>Required:</strong> You need a Gmail App Password to send emails. Regular Gmail password won't work.
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Step 1: Enable Gmail 2FA</h6>
+                    <ol class="small">
+                        <li>Go to <a href="https://myaccount.google.com/security" target="_blank">Google Account Security</a></li>
+                        <li>Enable "2-Step Verification" if not already enabled</li>
+                    </ol>
+
+                    <h6>Step 2: Create App Password</h6>
+                    <ol class="small">
+                        <li>Go to <a href="https://myaccount.google.com/apppasswords" target="_blank">App Passwords</a></li>
+                        <li>Select "Mail" as the app</li>
+                        <li>Select "Other" and enter "SeaMap Django"</li>
+                        <li>Click "Generate" and copy the 16-character password</li>
+                    </ol>
+                </div>
+                <div class="col-md-6">
+                    <h6>Step 3: Update .env File</h6>
+                    <div class="bg-light p-3 rounded">
+                        <code>
+                            EMAIL_HOST_USER=your-gmail@gmail.com<br>
+                            EMAIL_HOST_PASSWORD=your-app-password-here
+                        </code>
+                    </div>
+
+                    <h6 class="mt-3">Step 4: Restart Django Server</h6>
+                    <div class="bg-light p-3 rounded">
+                        <code>
+                            python manage.py runserver
+                        </code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.account-settings-header {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(40, 167, 69, 0.15);
+}
+
+.settings-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+}
+
+.card-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 15px 15px 0 0 !important;
+    padding: 1.25rem;
+}
+</style>
+{% endblock %}

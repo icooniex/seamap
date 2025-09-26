@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
+from datetime import timedelta
+import secrets
 from .upload_handlers import profile_picture_upload_to, company_logo_upload_to
 
 # Verification Status Choices
@@ -148,6 +151,9 @@ class Member(models.Model):
     
     # Registration tracking
     profile_completed = models.BooleanField(default=False)
+    
+    # 2FA Settings
+    two_factor_enabled = models.BooleanField(default=False, help_text="Enable two-factor authentication via email")
     onboarding_completed = models.BooleanField(default=False)
     
     # Verification fields
@@ -940,3 +946,39 @@ class ProblemDocument(models.Model):
     class Meta:
         verbose_name = "Problem Document"
         verbose_name_plural = "Problem Documents"
+
+
+class EmailOTP(models.Model):
+    """Model for storing email-based OTP for 2FA"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='email_otps')
+    otp_code = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    is_used = models.BooleanField(default=False)
+    session_key = models.CharField(max_length=40, blank=True, null=True)  # To associate with login session
+    
+    def save(self, *args, **kwargs):
+        if not self.otp_code:
+            # Generate 6-digit OTP
+            self.otp_code = f"{secrets.randbelow(1000000):06d}"
+        if not self.expires_at:
+            # OTP expires in 10 minutes
+            self.expires_at = timezone.now() + timedelta(minutes=10)
+        super().save(*args, **kwargs)
+    
+    def is_valid(self):
+        """Check if OTP is valid (not used and not expired)"""
+        return not self.is_used and timezone.now() < self.expires_at
+    
+    def mark_as_used(self):
+        """Mark OTP as used"""
+        self.is_used = True
+        self.save(update_fields=['is_used'])
+    
+    def __str__(self):
+        return f"OTP for {self.user.username} - {self.otp_code}"
+    
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "Email OTP"
+        verbose_name_plural = "Email OTPs"

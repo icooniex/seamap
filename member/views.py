@@ -2724,6 +2724,66 @@ def verification_center(request):
     return render(request, 'member/verification_center.html', context)
 
 
+@login_required
+@require_http_methods(["POST"])
+def toggle_two_factor_auth(request):
+    """Toggle two-factor authentication for user"""
+    try:
+        data = json.loads(request.body)
+        enable = data.get('enable', False)
+        
+        member = Member.objects.get(user=request.user)
+        
+        if enable:
+            # Enable 2FA
+            member.two_factor_enabled = True
+            member.save(update_fields=['two_factor_enabled'])
+            
+            # Send notification email
+            from .email_utils import send_2fa_enabled_notification
+            send_2fa_enabled_notification(request.user)
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'Two-factor authentication has been enabled successfully. You will now receive verification codes via email when logging in.',
+                'enabled': True
+            })
+        else:
+            # Disable 2FA
+            member.two_factor_enabled = False
+            member.save(update_fields=['two_factor_enabled'])
+            
+            # Clean up any existing OTPs for this user
+            from .models import EmailOTP
+            EmailOTP.objects.filter(user=request.user).delete()
+            
+            # Send notification email
+            from .email_utils import send_2fa_disabled_notification
+            send_2fa_disabled_notification(request.user)
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'Two-factor authentication has been disabled. Your account security level has been reduced.',
+                'enabled': False
+            })
+            
+    except Member.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'message': 'User profile not found.'
+        }, status=404)
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'message': 'Invalid request data.'
+        }, status=400)
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': f'An error occurred: {str(e)}'
+        }, status=500)
+
+
 def disclaimer(request):
     """Disclaimer page"""
     return render(request, 'member/disclaimer.html')
@@ -2737,3 +2797,47 @@ def privacy_policy(request):
 def terms_and_conditions(request):
     """Terms and Conditions page"""
     return render(request, 'member/terms_and_conditions.html')
+
+
+@login_required
+def test_2fa_email(request):
+    """Test view for 2FA email functionality"""
+    if request.method == 'POST':
+        try:
+            # Create test OTP
+            from .models import EmailOTP
+            otp = EmailOTP.objects.create(user=request.user)
+            
+            # Send test email
+            from .email_utils import send_otp_email
+            success = send_otp_email(request.user, otp.otp_code)
+            
+            if success:
+                messages.success(request, f'✅ Test OTP email sent successfully to {request.user.email}! Check your email for verification code: {otp.otp_code}')
+            else:
+                messages.error(request, '❌ Failed to send test email. Please check your email configuration.')
+                
+        except Exception as e:
+            messages.error(request, f'❌ Error: {str(e)}')
+            
+        return redirect('test_2fa_email')
+    
+    # Check email configuration
+    from django.conf import settings
+    email_config = {
+        'backend': settings.EMAIL_BACKEND,
+        'host': settings.EMAIL_HOST,
+        'port': settings.EMAIL_PORT,
+        'use_tls': settings.EMAIL_USE_TLS,
+        'host_user': getattr(settings, 'EMAIL_HOST_USER', 'Not configured'),
+        'host_password': '***' if getattr(settings, 'EMAIL_HOST_PASSWORD', '') else 'Not configured'
+    }
+    
+    # Get logo for preview
+    from .email_assets import get_logo_url, get_logo_base64
+    logo_url = get_logo_url(request)
+    
+    return render(request, 'member/test_2fa_email.html', {
+        'email_config': email_config,
+        'logo_url': logo_url
+    })

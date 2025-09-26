@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SeaMap - Verification Code</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+        
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 0;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c59a7 0%, #3b6cc1 100%);
+            color: white;
+            padding: 2rem;
+            position: relative;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        
+        .header .logo {
+            width: 60px;
+            height: 60px;
+            display: block;
+            /* border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); */
+            /* flex-shrink: 0; */
+        }
+        
+        .logo-placeholder {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            flex-shrink: 0;
+        }
+        
+        .header-text {
+            text-align: right;
+            flex-grow: 1;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        .header p {
+            margin: 0.5rem 0 0 0;
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 2rem;
+        }
+        
+        .greeting {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            color: #2c3e50;
+        }
+        
+        .otp-section {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            margin: 2rem 0;
+        }
+        
+        .otp-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        
+        .otp-code {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2c59a7;
+            letter-spacing: 8px;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 2px solid #2c59a7;
+            display: inline-block;
+        }
+        
+        .expiry-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            color: #856404;
+        }
+        
+        .expiry-info strong {
+            color: #b45309;
+        }
+        
+        .instructions {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            color: #0c5460;
+        }
+        
+        .security-notice {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 2rem 0;
+            color: #721c24;
+        }
+        
+        .footer {
+            background: #f8f9fa;
+            padding: 1.5rem 2rem;
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.9rem;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .footer a {
+            color: #2c59a7;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 600px) {
+            .email-container {
+                margin: 0;
+                border-radius: 0;
+            }
+            
+            .header, .content, .footer {
+                padding: 1.5rem;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            
+            .header-text {
+                text-align: center;
+            }
+            
+            .otp-code {
+                font-size: 2rem;
+                letter-spacing: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <div class="header-content">
+                {% if logo_base64 %}
+                    <img src="{{ logo_base64 }}" alt="SeaMap Logo" class="logo">
+                {% elif logo_url %}
+                    <img src="{{ logo_url }}" alt="SeaMap Logo" class="logo">
+                {% else %}
+                    <div class="logo-placeholder">🔐</div>
+                {% endif %}
+                <div class="header-text">
+                    <h1>🔐 SEA-MaP Platform</h1>
+                    <p>Two-Factor Authentication</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="greeting">
+                Hello {{ user.first_name|default:user.username }},
+            </div>
+            
+            <p>We received a request to sign in to your SeaMap account. To complete the login process, please use the verification code below:</p>
+            
+            <div class="otp-section">
+                <div class="otp-label">Your Verification Code</div>
+                <div class="otp-code">{{ otp_code }}</div>
+            </div>
+            
+            <div class="expiry-info">
+                <strong>⏰ Important:</strong> This verification code will expire in <strong>10 minutes</strong> for security reasons.
+            </div>
+            
+            <div class="instructions">
+                <strong>📱 How to use:</strong>
+                <ol style="margin: 0.5rem 0; padding-left: 1.5rem;">
+                    <li>Return to the SeaMap login page</li>
+                    <li>Enter this verification code when prompted</li>
+                    <li>Complete your secure login</li>
+                </ol>
+            </div>
+            
+            <div class="security-notice">
+                <strong>🔒 Security Notice:</strong> If you didn't request this code, please ignore this email. Your account remains secure. Consider changing your password if you suspect unauthorized access.
+            </div>
+            
+            <p>Thank you for using SeaMap's enhanced security features to protect your account.</p>
+        </div>
+        
+        <div class="footer">
+            <p>
+                This is an automated message from SeaMap.<br>
+                If you have any questions, please contact our support team.
+            </p>
+            <p>
+                <a href="#">Visit SeaMap</a> | 
+                <a href="#">Privacy Policy</a> | 
+                <a href="#">Terms of Service</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

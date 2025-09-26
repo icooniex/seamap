@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Member, Company, MemberDocument, CompanyDocument, Challenge, ChallengeDocument, ProblemStatement, ProblemDocument
+from .models import Member, Company, MemberDocument, CompanyDocument, Challenge, ChallengeDocument, ProblemStatement, ProblemDocument, EmailOTP
 
 @admin.register(Member)
 class MemberAdmin(admin.ModelAdmin):
@@ -21,6 +21,9 @@ class MemberAdmin(admin.ModelAdmin):
         }),
         ('Consent & Privacy', {
             'fields': ('consent_info', 'consent_marketplace')
+        }),
+        ('Security', {
+            'fields': ('two_factor_enabled',)
         }),
         ('Status', {
             'fields': ('profile_completed', 'onboarding_completed')
@@ -362,3 +365,21 @@ class ProblemDocumentAdmin(admin.ModelAdmin):
     def get_problem_title(self, obj):
         return obj.problem.title
     get_problem_title.short_description = 'Problem Statement'
+
+
+@admin.register(EmailOTP)
+class EmailOTPAdmin(admin.ModelAdmin):
+    list_display = ('user', 'otp_code', 'created_at', 'expires_at', 'is_used', 'is_valid_status')
+    list_filter = ('is_used', 'created_at', 'expires_at')
+    search_fields = ('user__username', 'user__email', 'otp_code', 'session_key')
+    readonly_fields = ('created_at', 'otp_code', 'expires_at')
+    ordering = ['-created_at']
+    
+    def is_valid_status(self, obj):
+        return obj.is_valid()
+    is_valid_status.short_description = 'Valid'
+    is_valid_status.boolean = True
+    
+    def has_add_permission(self, request):
+        # Prevent manual creation of OTP through admin
+        return False

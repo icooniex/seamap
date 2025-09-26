@@ -34,6 +34,10 @@ urlpatterns = [
     path('account-settings/documents/', views.document_management, name='document_management'),
     path('account-settings/verification/', views.verification_center, name='verification_center'),
     
+    # Security
+    path('toggle-2fa/', views.toggle_two_factor_auth, name='toggle_2fa'),
+    path('test-2fa-email/', views.test_2fa_email, name='test_2fa_email'),
+    
     # Document Management APIs
     path('api/documents/upload/', views.upload_document, name='upload_document'),
     path('api/documents/<int:doc_id>/delete/', views.delete_document, name='delete_document'),
