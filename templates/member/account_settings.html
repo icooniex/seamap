@@ -4,6 +4,10 @@
 {% csrf_token %}
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/company_profile_edit.css' %}">
+
+<!-- Hidden CSRF token for JavaScript -->
+<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
 <div class="container-fluid p-0">
     <!-- Header Section -->
     <div class="account-settings-header mb-4">
@@ -935,11 +939,11 @@ function toggleTwoFactor(enable) {
         button.disabled = true;
         
         // Send AJAX request
-        fetch('/member/toggle-2fa/', {
+        fetch('{% url "toggle_2fa" %}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value || '{{ csrf_token }}'
             },
             body: JSON.stringify({ 'enable': enable })
         })

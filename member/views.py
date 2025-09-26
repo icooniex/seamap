@@ -64,6 +64,15 @@ class CustomLoginView(LoginView):
         """Override form_valid to handle 2FA check"""
         user = form.get_user()
         
+        # Handle remember me functionality first
+        remember_me = form.cleaned_data.get('remember_me', False)
+        if remember_me:
+            # Remember for 30 days
+            self.request.session.set_expiry(30 * 24 * 60 * 60)
+        else:
+            # Session expires when browser closes
+            self.request.session.set_expiry(0)
+        
         # Check if user has 2FA enabled
         try:
             member = Member.objects.get(user=user)
@@ -138,21 +147,6 @@ class CustomLoginView(LoginView):
             # No member profile exists, redirect to user profile creation
             messages.info(self.request, 'Welcome! Please complete your profile setup.')
             return '/onboarding/profile/'
-    
-    def form_valid(self, form):
-        """Handle successful form submission"""
-        remember_me = form.cleaned_data.get('remember_me', False)
-        
-        # Set session expiry based on remember me checkbox
-        if remember_me:
-            # Remember for 30 days
-            self.request.session.set_expiry(30 * 24 * 60 * 60)
-        else:
-            # Session expires when browser closes
-            self.request.session.set_expiry(0)
-        
-        # Don't show welcome message - let the dashboard handle login success
-        return super().form_valid(form)
     
     def form_invalid(self, form):
         """Handle form validation errors"""
@@ -3011,3 +3005,40 @@ def test_2fa_email(request):
         'email_config': email_config,
         'logo_url': logo_url
     })
+
+
+@login_required
+@require_http_methods(["POST"])
+def toggle_2fa(request):
+    """Toggle 2FA setting for user"""
+    try:
+        member = Member.objects.get(user=request.user)
+        
+        # Toggle the 2FA status
+        member.two_factor_enabled = not member.two_factor_enabled
+        member.save()
+        
+        if member.two_factor_enabled:
+            message = "Two-factor authentication has been enabled successfully!"
+            messages.success(request, message)
+        else:
+            message = "Two-factor authentication has been disabled."
+            messages.info(request, message)
+        
+        return JsonResponse({
+            'success': True,
+            'enabled': member.two_factor_enabled,
+            'message': message
+        })
+        
+    except Member.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'error': 'Member profile not found'
+        }, status=404)
+    
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
