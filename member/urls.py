@@ -11,6 +11,10 @@ urlpatterns = [
     path('logout/', views.custom_logout, name='logout'),
     path('signup/', views.signup, name='signup'),
     
+    # Two-Factor Authentication
+    path('verify-2fa-login/', views.verify_2fa_login, name='verify_2fa_login'),
+    path('resend-2fa-otp/', views.resend_2fa_otp, name='resend_2fa_otp'),
+    
     # Onboarding flow
     path('onboarding/', OnboardingRoleSelectionView.as_view(), name='onboarding_role_selection'),
     path('onboarding/profile/', views.onboarding_user_profile, name='onboarding_user_profile'),

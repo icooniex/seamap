@@ -1,0 +1,318 @@
+{% extends "template_parts/home_base.html" %}
+{% load static %}
+
+{% block title %}Two-Factor Authentication - SeaMap{% endblock %}
+
+{% block extra_head %}
+<!-- Custom Onboarding CSS -->
+<link rel="stylesheet" href="{% static 'css/onboarding.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-header">
+        <div class="auth-logo">
+            <img src="{% static 'images/logo-notext-white.png' %}" alt="SeaMap Logo" class="logo-image">
+            <h1>SeaMap</h1>
+        </div>
+        <h2>Two-Factor Authentication</h2>
+        <p class="auth-subtitle">Enter the verification code sent to your email</p>
+    </div>
+
+    <div class="auth-form-container">
+        <!-- Email Sent Info -->
+        <div class="alert alert-info mb-4">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-envelope-check me-3" style="font-size: 1.5rem;"></i>
+                <div>
+                    <strong>Verification code sent!</strong><br>
+                    <small>We've sent a 6-digit code to <strong>{{ user.email }}</strong></small>
+                </div>
+            </div>
+        </div>
+
+        <form method="post" id="otpForm">
+            {% csrf_token %}
+            
+            <!-- OTP Input -->
+            <div class="form-group mb-4">
+                <label for="otp_code" class="form-label">Verification Code</label>
+                <div class="otp-input-container">
+                    <input 
+                        type="text" 
+                        class="form-control form-control-lg text-center" 
+                        id="otp_code" 
+                        name="otp_code" 
+                        placeholder="000000"
+                        maxlength="6"
+                        pattern="[0-9]{6}"
+                        inputmode="numeric"
+                        autocomplete="one-time-code"
+                        required
+                        autofocus
+                    >
+                </div>
+                <small class="form-text text-muted">
+                    <i class="bi bi-clock me-1"></i>
+                    Code expires in 10 minutes
+                </small>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary btn-lg w-100 mb-3" id="verifyBtn">
+                <i class="bi bi-shield-check me-2"></i>
+                Verify & Login
+            </button>
+        </form>
+
+        <!-- Resend Code -->
+        <div class="text-center">
+            <p class="mb-2">Didn't receive the code?</p>
+            <button type="button" class="btn btn-outline-secondary" id="resendBtn" onclick="resendOTP()">
+                <i class="bi bi-arrow-clockwise me-2"></i>
+                Resend Code
+            </button>
+            <div id="resendMessage" class="mt-2"></div>
+        </div>
+
+        <hr class="my-4">
+
+        <!-- Back to Login -->
+        <div class="text-center">
+            <a href="{% url 'login' %}" class="btn btn-link">
+                <i class="bi bi-arrow-left me-2"></i>
+                Back to Login
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+/* OTP-specific styles */
+.otp-input-container {
+    position: relative;
+}
+
+#otp_code {
+    font-family: 'Courier New', monospace;
+    font-size: 1.8rem;
+    font-weight: bold;
+    letter-spacing: 0.3rem;
+    padding: 1rem;
+    border: 2px solid #dee2e6;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+#otp_code:focus {
+    border-color: #2c59a7;
+    box-shadow: 0 0 0 0.2rem rgba(44, 89, 167, 0.25);
+    background: white;
+    transform: scale(1.02);
+}
+
+.alert-info {
+    background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+    border: 1px solid #bee5eb;
+    border-radius: 12px;
+    color: #0c5460;
+}
+
+.auth-container {
+    max-width: 450px;
+}
+
+.auth-header h2 {
+    color: #2c59a7;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.auth-subtitle {
+    color: #6c757d;
+    margin-bottom: 2rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #2c59a7 0%, #3b6cc1 100%);
+    border: none;
+    border-radius: 12px;
+    padding: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(44, 89, 167, 0.35);
+}
+
+.btn-outline-secondary {
+    border: 2px solid #6c757d;
+    border-radius: 12px;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-secondary:hover {
+    background: #6c757d;
+    transform: translateY(-1px);
+}
+
+#resendBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.loading {
+    opacity: 0.7;
+    cursor: wait;
+}
+
+/* Animation for invalid OTP */
+.shake {
+    animation: shake 0.5s;
+}
+
+@keyframes shake {
+    0%, 20%, 40%, 60%, 80% {
+        transform: translateX(-2px);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(2px);
+    }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 576px) {
+    #otp_code {
+        font-size: 1.5rem;
+        letter-spacing: 0.2rem;
+    }
+    
+    .auth-container {
+        margin: 1rem;
+        max-width: none;
+    }
+}
+</style>
+
+<script>
+// Auto-format OTP input
+document.getElementById('otp_code').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length > 6) {
+        value = value.slice(0, 6);
+    }
+    e.target.value = value;
+    
+    // Auto-submit when 6 digits entered
+    if (value.length === 6) {
+        setTimeout(() => {
+            document.getElementById('otpForm').submit();
+        }, 500);
+    }
+});
+
+// Resend OTP function
+function resendOTP() {
+    const resendBtn = document.getElementById('resendBtn');
+    const resendMessage = document.getElementById('resendMessage');
+    const originalHtml = resendBtn.innerHTML;
+    
+    // Disable button and show loading
+    resendBtn.disabled = true;
+    resendBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Sending...';
+    resendBtn.classList.add('loading');
+    
+    fetch('{% url "resend_2fa_otp" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            resendMessage.innerHTML = '<div class="text-success"><i class="bi bi-check-circle me-1"></i>' + data.message + '</div>';
+            
+            // Start countdown
+            startResendCountdown();
+        } else {
+            resendMessage.innerHTML = '<div class="text-danger"><i class="bi bi-exclamation-circle me-1"></i>' + data.message + '</div>';
+            
+            // Re-enable button after 3 seconds
+            setTimeout(() => {
+                resendBtn.disabled = false;
+                resendBtn.innerHTML = originalHtml;
+                resendBtn.classList.remove('loading');
+            }, 3000);
+        }
+    })
+    .catch(error => {
+        resendMessage.innerHTML = '<div class="text-danger"><i class="bi bi-exclamation-circle me-1"></i>Network error. Please try again.</div>';
+        
+        // Re-enable button
+        setTimeout(() => {
+            resendBtn.disabled = false;
+            resendBtn.innerHTML = originalHtml;
+            resendBtn.classList.remove('loading');
+        }, 3000);
+    });
+}
+
+// Countdown before allowing resend
+function startResendCountdown() {
+    const resendBtn = document.getElementById('resendBtn');
+    let countdown = 60;
+    
+    const timer = setInterval(() => {
+        resendBtn.innerHTML = `<i class="bi bi-clock me-2"></i>Resend in ${countdown}s`;
+        countdown--;
+        
+        if (countdown < 0) {
+            clearInterval(timer);
+            resendBtn.disabled = false;
+            resendBtn.innerHTML = '<i class="bi bi-arrow-clockwise me-2"></i>Resend Code';
+            resendBtn.classList.remove('loading');
+        }
+    }, 1000);
+}
+
+// Form submission handling
+document.getElementById('otpForm').addEventListener('submit', function(e) {
+    const verifyBtn = document.getElementById('verifyBtn');
+    const otpInput = document.getElementById('otp_code');
+    
+    // Show loading state
+    verifyBtn.disabled = true;
+    verifyBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Verifying...';
+    
+    // If verification fails, the page will reload with error message
+    // Reset button state after a delay to handle this case
+    setTimeout(() => {
+        if (verifyBtn.disabled) {
+            verifyBtn.disabled = false;
+            verifyBtn.innerHTML = '<i class="bi bi-shield-check me-2"></i>Verify & Login';
+            
+            // Add shake animation to input on error
+            otpInput.classList.add('shake');
+            setTimeout(() => {
+                otpInput.classList.remove('shake');
+                otpInput.select();
+            }, 500);
+        }
+    }, 5000);
+});
+
+// Clear any previous messages when typing
+document.getElementById('otp_code').addEventListener('input', function() {
+    const resendMessage = document.getElementById('resendMessage');
+    if (resendMessage.innerHTML) {
+        resendMessage.innerHTML = '';
+    }
+});
+</script>
+{% endblock %}

@@ -60,6 +60,47 @@ class CustomLoginView(LoginView):
     form_class = EmailLoginForm
     redirect_authenticated_user = True
     
+    def form_valid(self, form):
+        """Override form_valid to handle 2FA check"""
+        user = form.get_user()
+        
+        # Check if user has 2FA enabled
+        try:
+            member = Member.objects.get(user=user)
+            if member.two_factor_enabled:
+                # Store user credentials temporarily in session (don't log them in yet)
+                self.request.session['pending_2fa_user_id'] = user.id
+                self.request.session['pending_2fa_backend'] = form.get_user()._state.db
+                
+                # Generate and send OTP
+                from .models import EmailOTP
+                from .email_utils import send_otp_email
+                
+                # Clean up any existing OTPs for this user
+                EmailOTP.objects.filter(user=user).delete()
+                
+                # Create new OTP
+                otp = EmailOTP.objects.create(
+                    user=user,
+                    session_key=self.request.session.session_key
+                )
+                
+                # Send OTP email
+                success = send_otp_email(user, otp.otp_code)
+                
+                if success:
+                    messages.info(self.request, f'A verification code has been sent to {user.email}. Please check your email and enter the code to complete login.')
+                    return redirect('verify_2fa_login')
+                else:
+                    messages.error(self.request, 'Failed to send verification email. Please try again.')
+                    return self.form_invalid(form)
+                    
+        except Member.DoesNotExist:
+            pass  # User doesn't have a member profile, proceed with normal login
+        
+        # Normal login (no 2FA)
+        return super().form_valid(form)
+    
     def get_success_url(self):
         """Redirect based on onboarding completion status after successful login"""
         try:
@@ -2782,6 +2823,135 @@ def toggle_two_factor_auth(request):
             'success': False,
             'message': f'An error occurred: {str(e)}'
         }, status=500)
+
+
+def verify_2fa_login(request):
+    """Handle 2FA OTP verification during login"""
+    # Check if there's a pending 2FA user
+    user_id = request.session.get('pending_2fa_user_id')
+    if not user_id:
+        messages.error(request, 'No pending authentication found. Please log in again.')
+        return redirect('login')
+    
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        messages.error(request, 'Invalid authentication session. Please log in again.')
+        return redirect('login')
+    
+    if request.method == 'POST':
+        otp_code = request.POST.get('otp_code', '').strip()
+        
+        if not otp_code:
+            messages.error(request, 'Please enter the verification code.')
+            return render(request, 'member/verify_2fa_login.html', {'user': user})
+        
+        # Find valid OTP for this user
+        from .models import EmailOTP
+        try:
+            otp = EmailOTP.objects.get(
+                user=user,
+                otp_code=otp_code,
+                is_used=False
+            )
+            
+            if not otp.is_valid():
+                messages.error(request, 'The verification code has expired. Please request a new one.')
+                return render(request, 'member/verify_2fa_login.html', {'user': user})
+            
+            # Mark OTP as used
+            otp.mark_as_used()
+            
+            # Complete the login process
+            from django.contrib.auth import login
+            login(request, user, backend='member.backends.EmailBackend')
+            
+            # Clean up session
+            if 'pending_2fa_user_id' in request.session:
+                del request.session['pending_2fa_user_id']
+            if 'pending_2fa_backend' in request.session:
+                del request.session['pending_2fa_backend']
+            
+            messages.success(request, 'Login successful! Two-factor authentication verified.')
+            
+            # Redirect to original success URL
+            try:
+                member = Member.objects.get(user=user)
+                
+                # Check if user profile is complete first
+                if not member.is_profile_complete():
+                    return redirect('onboarding_user_profile')
+                
+                # Check if user has company profile
+                if not member.has_company_profile():
+                    # Check if they have a stored role in session
+                    stored_role = request.session.get('selected_role')
+                    if stored_role:
+                        if stored_role == 'startup':
+                            return redirect('onboarding_startup_new')
+                        elif stored_role == 'investor':
+                            return redirect('onboarding_investor')
+                        elif stored_role == 'corporate':
+                            return redirect('onboarding_corporate')
+                    
+                    # No stored role, go to role selection
+                    return redirect('onboarding_role_selection')
+                
+                # User has completed onboarding, go to dashboard
+                return redirect('dashboard')
+                
+            except Member.DoesNotExist:
+                return redirect('onboarding_user_profile')
+            
+        except EmailOTP.DoesNotExist:
+            messages.error(request, 'Invalid verification code. Please try again.')
+            return render(request, 'member/verify_2fa_login.html', {'user': user})
+    
+    # GET request - show OTP input form
+    return render(request, 'member/verify_2fa_login.html', {'user': user})
+
+
+def resend_2fa_otp(request):
+    """Resend OTP for 2FA login"""
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'}, status=405)
+    
+    user_id = request.session.get('pending_2fa_user_id')
+    if not user_id:
+        return JsonResponse({'success': False, 'message': 'No pending authentication found'}, status=400)
+    
+    try:
+        user = User.objects.get(id=user_id)
+        
+        # Clean up existing OTPs
+        from .models import EmailOTP
+        EmailOTP.objects.filter(user=user).delete()
+        
+        # Create new OTP
+        otp = EmailOTP.objects.create(
+            user=user,
+            session_key=request.session.session_key
+        )
+        
+        # Send OTP email
+        from .email_utils import send_otp_email
+        success = send_otp_email(user, otp.otp_code)
+        
+        if success:
+            return JsonResponse({
+                'success': True,
+                'message': f'A new verification code has been sent to {user.email}'
+            })
+        else:
+            return JsonResponse({
+                'success': False,
+                'message': 'Failed to send verification email. Please try again.'
+            })
+            
+    except User.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'Invalid session'}, status=400)
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': f'Error: {str(e)}'}, status=500)
 
 
 def disclaimer(request):
