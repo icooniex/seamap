@@ -16,67 +16,6 @@
     <link rel="stylesheet" href="{% static 'css/homepage.css' %}">
 
     {% block extra_head %}{% endblock %}
-    
-    <style>
-        /* Footer Legal Links Styles */
-        .footer-legal {
-            border-top: 1px solid #e2e8f0;
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        
-        .legal-links {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-        
-        .legal-link {
-            color: #64748b;
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: color 0.3s ease;
-        }
-        
-        .legal-link:hover {
-            color: #2c59a7;
-            text-decoration: underline;
-        }
-        
-        .legal-separator {
-            color: #cbd5e1;
-            margin: 0 0.25rem;
-        }
-        
-        .copyright {
-            color: #64748b;
-            font-size: 0.9rem;
-            margin: 0;
-        }
-        
-        .copyright p {
-            margin: 0;
-        }
-        
-        @media (max-width: 768px) {
-            .footer-legal {
-                flex-direction: column;
-                text-align: center;
-                gap: 0.5rem;
-            }
-            
-            .legal-links {
-                justify-content: center;
-            }
-        }
-    </style>
-
     {% block extra_styles %}{% endblock %}
     
     
@@ -95,6 +34,9 @@
                         <div class="navbar-tagline" style="line-height: 1.2;font-size: 0.75rem; color:var(--text-light);font-weight: normal;">Regional Platform for Innovation <br>and Investments</div>
                     </div>
                 </a>
+
+                {% block extra_center_topbar %}
+                {% endblock %}
                 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>

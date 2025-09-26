@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,72 +11,49 @@
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Custom Onboarding CSS -->
-    <link rel="stylesheet" href="{% load static %}{% static 'css/onboarding.css' %}">
+    <link rel="stylesheet" href="{% static 'css/homepage.css' %}">
+    <link rel="stylesheet" href="{% static 'css/onboarding.css' %}">
+    
     
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- Top Navigation Bar -->
-    <nav class="navbar navbar-expand-lg top-navbar">
-        <div class="container-fluid px-4">
-            <div class="d-flex justify-content-between align-items-center w-100">
-                <!-- Left Side: Brand/Logo Section -->
-                <div class="d-flex align-items-center">
-                    <a class="navbar-brand" href="">
-                        <div class="d-flex align-items-center" >
-                            <img src="{% static 'images/logo-notext.png' %}" alt="SEA-MaP Logo" class="img-fluid" style="padding: 5px;max-height: 48px;">
-                        </div>
-                        <div class="navbar-text-content">
-                            <div class="navbar-title">SEA-MAP</div>
-                            <div class="navbar-tagline">Regional Platform for Innovation <br>and Investments</div>
-                        </div>
-                    </a>
-                </div>
+    <header class="homepage-header">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+                <a class="navbar-brand" href="{% url 'homepage' %}">
+                    <div class="navbar-logo">
+                        <img src="{% static 'images/logo-notext.png' %}" alt="SEA-MaP Logo" style="width:65px;">
+                    </div>
+                    <div>
+                        <div class="navbar-title">SEA-MaP</div>
+                        <div class="navbar-tagline" style="line-height: 1.2;font-size: 0.75rem; color:var(--text-light);font-weight: normal;">Regional Platform for Innovation <br>and Investments</div>
+                    </div>
+                </a>
 
                 <!-- Center: Mobile breadcrumb (if needed) -->
                 {% block mobile_breadcrumb %}{% endblock %}
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto align-items-center">
+                        {% block topnav_items %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'homepage' %}">
+                                <i class="bi bi-house-door me-1"></i> Home
+                            </a>
+                        </li>
 
-                <!-- Right Side: Navigation and Mobile Toggle -->
-                <div class="d-flex align-items-center gap-3">
-                    <!-- Navigation Links -->
-                    <div class="navbar-nav d-none d-lg-flex flex-row">
-                        <a class="nav-link" href="{% url 'homepage' %}">
-                            <i class="bi bi-house me-1"></i>
-                            Home
-                        </a>
-                        <!-- <a class="nav-link" href="#">
-                            <i class="bi bi-info-circle me-1"></i>
-                            About
-                        </a>
-                        <a class="nav-link" href="#">
-                            <i class="bi bi-question-circle me-1"></i>
-                            Help
-                        </a> -->
-                    </div>
-
-                    <!-- Mobile Menu Toggle -->
-                    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mobileNav">
-                        <i class="bi bi-list"></i>
-                    </button>
+                        {% endblock %}
+                    </ul>
                 </div>
             </div>
+        </nav>
+    </header>
 
-            <!-- Mobile Menu -->
-            <div class="collapse navbar-collapse" id="mobileNav">
-                <div class="navbar-nav ms-auto mt-3 mt-lg-0 d-lg-none">
-                    <a class="nav-link" href="{% url 'homepage' %}">
-                        <i class="bi bi-house me-2"></i>Home
-                    </a>
-                    <!-- <a class="nav-link" href="#">
-                        <i class="bi bi-info-circle me-2"></i>About
-                    </a>
-                    <a class="nav-link" href="#">
-                        <i class="bi bi-question-circle me-2"></i>Help
-                    </a> -->
-                </div>
-            </div>
-        </div>
-    </nav>
 
     <!-- Main Container -->
     <div class="main-container">
@@ -97,6 +75,73 @@
             {% block content %}{% endblock %}
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="homepage-footer">
+        <div class="container">
+            <div class="footer-content">
+                <!-- Left Section - Logo and Description -->
+                <div class="footer-section footer-brand">
+                    <div class="footer-logo">
+                        <img src="{% static 'images/logo-notext-white.png' %}" alt="SEA-MaP Logo" class="footer-logo-img">
+                        <div class="footer-brand-text">
+                            <h3>SEA-MaP</h3>
+                            <p class="footer-tagline">Regional Platform for Innovation and Investments</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Contact Section -->
+                <div class="footer-section footer-contact">
+                    <h5>CONTACT</h5>
+                    <div class="contact-info">
+                        <p>Project Management Unit (PMU)</p>
+                        <p>1st Floor, Heritage Building<br>
+                        The ASEAN Secretariat<br>
+                        70A Jalan Sisingamangaraja<br>
+                        Jakarta 12110, Indonesia</p>
+                        <p>E: seamap.feedback@asean.org</p>
+                    </div>
+                </div>
+                
+                <!-- Follow Us Section -->
+                <div class="footer-section footer-social">
+                    <h5>FOLLOW US</h5>
+                    <div class="social-links">
+                        <a href="https://www.linkedin.com/company/sea-map/about/" class="social-link" target="_blank"><i class="bi bi-linkedin"></i></a>
+                        <a href="https://twitter.com/SEA_MaP" class="social-link" target="_blank"><i class="bi bi-twitter"></i></a>
+                        <a href="https://www.facebook.com/profile.php?id=61556126136211" class="social-link" target="_blank"><i class="bi bi-facebook"></i></a>
+                    </div>
+                </div>
+                
+                <!-- Partners Section -->
+                <div class="footer-section footer-partners">
+                    <p class="partners-text">An ASEAN project supported by the World Bank</p>
+                    <div class="partner-logos">
+                        <div class="partner-logo">
+                            <img src="{% static 'images/world-bank-logo.png' %}" alt="World Bank" class="wb-logo">
+                        </div>
+                        <div class="partner-logo">
+                            <img src="{% static 'images/asean-logo.png' %}" alt="ASEAN" class="asean-logo">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Legal Links Section -->
+            <div class="footer-legal">
+                <div class="legal-links">
+                    <a href="{% url 'privacy_policy' %}" class="legal-link">Privacy Policy</a>
+                    <span class="legal-separator">|</span>
+                    <a href="{% url 'terms_and_conditions' %}" class="legal-link">Terms and Conditions</a>
+                </div>
+                <div class="copyright">
+                    <p>&copy; 2025 SEA-MAP. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
 
     <!-- Shared Modals -->
     {% block modals %}{% endblock %}
