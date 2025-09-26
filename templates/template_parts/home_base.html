@@ -102,6 +102,7 @@
                 
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto align-items-center">
+                        {% block topnav_items %}
                         <li class="nav-item">
                             <a class="nav-link" href="#about">About Us</a>
                         </li>
@@ -129,6 +130,8 @@
                                 <a href="{% url 'signup' %}" class="btn btn-primary">Sign Up</a>
                             </li>
                         {% endif %}
+
+                        {% endblock %}
                     </ul>
                 </div>
             </div>
