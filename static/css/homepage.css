@@ -525,7 +525,7 @@ body {
     z-index: 1;
 }
 
-.steps-row {
+.steps-container .steps-row {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -533,7 +533,7 @@ body {
     margin-bottom: 60px;
 }
 
-.step-item {
+.steps-container .step-item {
     flex: 1;
     text-align: center;
     position: relative;
@@ -542,7 +542,7 @@ body {
     flex-direction: column;
 }
 
-.step-number {
+.steps-container .step-number {
     width: 80px;
     height: 80px;
     border-radius: 50%;
@@ -561,7 +561,7 @@ body {
 .step-3 { background: linear-gradient(135deg, var(--yellow-accent) 0%, #fbbf24 100%); color: var(--text-dark) !important; box-shadow: 0 8px 25px rgba(235, 202, 56, 0.4); }
 .step-4 { background: linear-gradient(135deg, var(--red-accent) 0%, #ef4444 100%); box-shadow: 0 8px 25px rgba(199, 56, 52, 0.4); }
 
-.step-title {
+.steps-container .step-title {
     font-size: 1.3rem;
     font-weight: 700;
     color: var(--text-dark);
