@@ -21,7 +21,7 @@ def send_otp_email(user, otp_code):
         bool: True if email sent successfully, False otherwise
     """
     try:
-        subject = 'SeaMap - Your Verification Code'
+        subject = 'Your Verification Code - SEA-MaP Regional Platform for Innovation and Investments'
         from_email = settings.DEFAULT_FROM_EMAIL
         to_email = [user.email]
         
@@ -75,21 +75,21 @@ def send_2fa_enabled_notification(user):
         bool: True if email sent successfully, False otherwise
     """
     try:
-        subject = 'SeaMap - Two-Factor Authentication Enabled'
+        subject = 'Two-Factor Authentication Enabled - SEA-MaP Regional Platform for Innovation and Investments'
         from_email = settings.DEFAULT_FROM_EMAIL
         to_email = [user.email]
         
         message = f"""
 Hello {user.first_name or user.username},
 
-Two-factor authentication has been successfully enabled for your SeaMap account.
+Two-factor authentication has been successfully enabled for your SEA-MaP Regional Platform for Innovation and Investments account.
 
 From now on, you'll receive a verification code via email each time you sign in to your account. This adds an extra layer of security to protect your account.
 
 If you didn't enable this feature, please contact our support team immediately.
 
 Best regards,
-SeaMap Team
+SEA-MaP Regional Platform for Innovation and Investments Team
         """.strip()
         
         from django.core.mail import send_mail
@@ -120,21 +120,21 @@ def send_2fa_disabled_notification(user):
         bool: True if email sent successfully, False otherwise
     """
     try:
-        subject = 'SeaMap - Two-Factor Authentication Disabled'
+        subject = 'Two-Factor Authentication Disabled - SEA-MaP Regional Platform for Innovation and Investments' 
         from_email = settings.DEFAULT_FROM_EMAIL
         to_email = [user.email]
         
         message = f"""
 Hello {user.first_name or user.username},
 
-Two-factor authentication has been disabled for your SeaMap account.
+Two-factor authentication has been disabled for your SEA-MaP Regional Platform for Innovation and Investments account.
 
 Your account security level has been reduced. We recommend keeping 2FA enabled for better account protection.
 
 If you didn't disable this feature, please contact our support team immediately and consider enabling 2FA again.
 
 Best regards,
-SeaMap Team
+SEA-MaP Regional Platform for Innovation and Investments Team
         """.strip()
         
         from django.core.mail import send_mail

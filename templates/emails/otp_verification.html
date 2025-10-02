@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SeaMap - Verification Code</title>
+    <title>Your Verification Code - SEA-MaP Regional Platform for Innovation and Investments</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -39,8 +39,8 @@
         }
         
         .header .logo {
-            width: 60px;
-            height: 60px;
+            width: 80px;
+            /* height: 60px; */
             display: block;
             /* border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); */
@@ -200,25 +200,25 @@
         <div class="header">
             <div class="header-content">
                 {% if logo_base64 %}
-                    <img src="{{ logo_base64 }}" alt="SeaMap Logo" class="logo">
+                    <img src="{{ logo_base64 }}" alt="SEA-MaP Logo" class="logo">
                 {% elif logo_url %}
-                    <img src="{{ logo_url }}" alt="SeaMap Logo" class="logo">
+                    <img src="{{ logo_url }}" alt="SEA-MaP Logo" class="logo">
                 {% else %}
                     <div class="logo-placeholder">🔐</div>
                 {% endif %}
                 <div class="header-text">
-                    <h1>🔐 SEA-MaP Platform</h1>
-                    <p>Two-Factor Authentication</p>
+                    <h1>🔐 Two-Factor Authentication</h1>
+                    <p>SEA-MaP Regional Platform for Innovation and Investments</p>
                 </div>
             </div>
         </div>
         
         <div class="content">
             <div class="greeting">
-                Hello {{ user.first_name|default:user.username }},
+                <strong>Hello {{ user.first_name|default:user.username }},</strong>
             </div>
             
-            <p>We received a request to sign in to your SeaMap account. To complete the login process, please use the verification code below:</p>
+            <p>We received a request to sign in to your SEA-MaP Regional Platform for Innovation and Investments account. To complete the login process, please use the verification code below:</p>
             
             <div class="otp-section">
                 <div class="otp-label">Your Verification Code</div>
@@ -229,31 +229,32 @@
                 <strong>⏰ Important:</strong> This verification code will expire in <strong>10 minutes</strong> for security reasons.
             </div>
             
-            <div class="instructions">
+            <div class="">
                 <strong>📱 How to use:</strong>
                 <ol style="margin: 0.5rem 0; padding-left: 1.5rem;">
-                    <li>Return to the SeaMap login page</li>
+                    <li>Return to the website's login page</li>
                     <li>Enter this verification code when prompted</li>
                     <li>Complete your secure login</li>
                 </ol>
             </div>
             
-            <div class="security-notice">
-                <strong>🔒 Security Notice:</strong> If you didn't request this code, please ignore this email. Your account remains secure. Consider changing your password if you suspect unauthorized access.
+            <div class="">
+                <strong>🔒 Security Notice:</strong>
+                <p>If you didn't request this code, please ignore this email. Your account remains secure. Consider changing your password if you suspect unauthorized access.</p>
             </div>
             
-            <p>Thank you for using SeaMap's enhanced security features to protect your account.</p>
+            <p>Thank you for using SEA-MaP Regional Platform for Innovation and Investments's enhanced security features to protect your account.</p>
         </div>
         
         <div class="footer">
             <p>
-                This is an automated message from SeaMap.<br>
+                This is an automated message from SEA-MaP Regional Platform for Innovation and Investments.<br>
                 If you have any questions, please contact our support team.
             </p>
             <p>
-                <a href="#">Visit SeaMap</a> | 
-                <a href="#">Privacy Policy</a> | 
-                <a href="#">Terms of Service</a>
+                <a href="{% url 'homepage' %}">Visit Website</a> | 
+                <a href="{% url 'privacy_policy' %}">Privacy Policy</a> | 
+                <a href="{% url 'terms_and_conditions' %}">Terms of Service</a>
             </p>
         </div>
     </div>

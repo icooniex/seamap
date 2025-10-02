@@ -1,25 +1,25 @@
-SeaMap - Two-Factor Authentication Verification Code
+Two-Factor Authentication Verification Code - SEA-MaP Regional Platform for Innovation and Investments
 
-🔐 SeaMap Platform
+🔐 SEA-MaP Regional Platform for Innovation and Investments
 =====================================
 
 Hello {{ user.first_name|default:user.username }},
 
-We received a request to sign in to your SeaMap account. To complete the login process, please use the verification code below:
+We received a request to sign in to your SEA-MaP Regional Platform for Innovation and Investments account. To complete the login process, please use the verification code below:
 
 VERIFICATION CODE: {{ otp_code }}
 
 IMPORTANT: This verification code will expire in 10 minutes for security reasons.
 
 How to use:
-1. Return to the SeaMap login page
+1. Return to the website's login page
 2. Enter this verification code when prompted
 3. Complete your secure login
 
 SECURITY NOTICE: If you didn't request this code, please ignore this email. Your account remains secure. Consider changing your password if you suspect unauthorized access.
 
-Thank you for using SeaMap's enhanced security features to protect your account.
+Thank you for using SEA-MaP Regional Platform for Innovation and Investments's enhanced security features to protect your account.
 
 ---
-This is an automated message from SeaMap.
+This is an automated message from SEA-MaP Regional Platform for Innovation and Investments.
 If you have any questions, please contact our support team.
