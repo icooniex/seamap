@@ -1,0 +1,178 @@
+<!-- Cookie Consent Banner -->
+<div id="cookieConsentBanner" class="cookie-consent-banner" style="display: none;">
+    <div class="cookie-consent-content">
+        <div class="cookie-consent-text">
+            <p class="mb-2">
+                <strong>We use cookies to improve your experience</strong>
+            </p>
+            <p class="mb-0">
+                This website uses cookies to enhance your browsing experience and provide personalized services. 
+                By continuing to use this site, you consent to our use of cookies. 
+                For more information, please read our 
+                <a href="{% url 'privacy_policy' %}" target="_blank" class="cookie-policy-link">Privacy Policy</a>.
+            </p>
+        </div>
+        <div class="cookie-consent-actions">
+            <button type="button" class="btn btn-outline-light btn-sm me-2" id="rejectCookies">
+                Reject
+            </button>
+            <button type="button" class="btn btn-light btn-sm" id="acceptCookies">
+                Accept
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+.cookie-consent-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, #2c59a7, #1e40af);
+    color: white;
+    padding: 15px 20px;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 9999;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cookie-consent-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.cookie-consent-text {
+    flex: 1;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.cookie-consent-text strong {
+    font-size: 16px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.cookie-policy-link {
+    color: #bfdbfe;
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+.cookie-policy-link:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+.cookie-consent-actions {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.cookie-consent-actions .btn {
+    min-width: 80px;
+    font-weight: 500;
+    border-radius: 6px;
+    padding: 8px 16px;
+}
+
+.cookie-consent-actions .btn-outline-light {
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+.cookie-consent-actions .btn-outline-light:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: white;
+}
+
+.cookie-consent-actions .btn-light {
+    background: white;
+    color: #2c59a7;
+    border: none;
+}
+
+.cookie-consent-actions .btn-light:hover {
+    background: #f8fafc;
+    color: #1e40af;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .cookie-consent-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .cookie-consent-text {
+        text-align: left;
+    }
+    
+    .cookie-consent-actions {
+        justify-content: center;
+        width: 100%;
+    }
+    
+    .cookie-consent-actions .btn {
+        flex: 1;
+        max-width: 120px;
+    }
+}
+
+@media (max-width: 480px) {
+    .cookie-consent-banner {
+        padding: 12px 15px;
+    }
+    
+    .cookie-consent-text {
+        font-size: 13px;
+    }
+    
+    .cookie-consent-text strong {
+        font-size: 15px;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const banner = document.getElementById('cookieConsentBanner');
+    const acceptBtn = document.getElementById('acceptCookies');
+    const rejectBtn = document.getElementById('rejectCookies');
+    
+    // Check if user has already made a choice
+    const cookieConsent = localStorage.getItem('cookieConsent');
+    
+    if (!cookieConsent) {
+        // Show banner if no choice has been made
+        banner.style.display = 'block';
+    }
+    
+    // Handle accept button
+    acceptBtn.addEventListener('click', function() {
+        localStorage.setItem('cookieConsent', 'accepted');
+        banner.style.display = 'none';
+        
+        // Optional: Add analytics or tracking code here
+        console.log('Cookies accepted');
+    });
+    
+    // Handle reject button
+    rejectBtn.addEventListener('click', function() {
+        localStorage.setItem('cookieConsent', 'rejected');
+        banner.style.display = 'none';
+        
+        // Optional: Disable analytics or tracking code here
+        console.log('Cookies rejected');
+    });
+});
+</script>
