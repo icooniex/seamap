@@ -341,6 +341,68 @@
 
 </div>
 
+<!-- 2FA Confirmation Modal -->
+<div class="modal fade" id="twoFactorModal" tabindex="-1" aria-labelledby="twoFactorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="twoFactorModalLabel">
+                    <i class="bi bi-shield-check text-primary me-2"></i>
+                    <span id="modalTitle">Two-Factor Authentication</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-3">
+                    <div id="modalIcon" class="modal-icon-container">
+                        <i class="bi bi-shield-plus text-primary"></i>
+                    </div>
+                </div>
+                <p id="modalMessage" class="text-center mb-0">
+                    Are you sure you want to enable Two-Factor Authentication?
+                </p>
+                <small id="modalDetails" class="text-muted d-block text-center mt-2">
+                    You will receive verification codes via email when logging in.
+                </small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>Cancel
+                </button>
+                <button type="button" class="btn btn-primary" id="confirmTwoFactorBtn">
+                    
+                    <span id="confirmBtnText">Enable 2FA</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 2FA Result Modal -->
+<div class="modal fade" id="twoFactorResultModal" tabindex="-1" aria-labelledby="twoFactorResultModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="twoFactorResultModalLabel">
+                    <i id="resultIcon" class="bi bi-info-circle text-primary me-2"></i>
+                    <span id="resultTitle">Notification</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <p id="resultMessage" class="mb-0">Operation completed.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                    <i class="bi bi-check me-1"></i>OK
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
 /* Account Settings Styling */
 .account-settings-header {
@@ -909,6 +971,61 @@
         font-size: 0.8rem;
     }
 }
+
+/* Modal Styles */
+.modal-icon-container {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border: 3px solid #e2e8f0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    transition: all 0.3s ease;
+}
+
+.modal-icon-container i {
+    font-size: 2rem;
+    transition: all 0.3s ease;
+}
+
+.modal-icon-container.enable {
+    background: linear-gradient(135deg, #dff0d8 0%, #c3e6cb 100%);
+    border-color: #28a745;
+}
+
+.modal-icon-container.enable i {
+    color: #28a745;
+}
+
+.modal-icon-container.disable {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    border-color: #dc3545;
+}
+
+.modal-icon-container.disable i {
+    color: #dc3545;
+}
+
+.modal-icon-container.success {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border-color: #28a745;
+}
+
+.modal-icon-container.success i {
+    color: #28a745;
+}
+
+.modal-icon-container.error {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    border-color: #dc3545;
+}
+
+.modal-icon-container.error i {
+    color: #dc3545;
+}
 </style>
 
 <script>
@@ -927,16 +1044,53 @@ document.addEventListener('DOMContentLoaded', function() {
 // Two-Factor Authentication Toggle
 function toggleTwoFactor(enable) {
     const action = enable ? 'enable' : 'disable';
-    const message = enable ? 
-        'Are you sure you want to enable Two-Factor Authentication? You will receive verification codes via email when logging in.' :
-        'Are you sure you want to disable Two-Factor Authentication? This will reduce your account security.';
     
-    if (confirm(message)) {
+    // Update modal content based on action
+    const modal = document.getElementById('twoFactorModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalIcon = document.getElementById('modalIcon');
+    const modalMessage = document.getElementById('modalMessage');
+    const modalDetails = document.getElementById('modalDetails');
+    const confirmBtnText = document.getElementById('confirmBtnText');
+    const confirmBtn = document.getElementById('confirmTwoFactorBtn');
+    
+    if (enable) {
+        modalTitle.textContent = 'Enable Two-Factor Authentication';
+        modalIcon.innerHTML = '<i class="bi bi-shield-plus text-success"></i>';
+        modalIcon.className = 'modal-icon-container enable';
+        modalMessage.textContent = 'Are you sure you want to enable Two-Factor Authentication?';
+        modalDetails.textContent = 'You will receive verification codes via email when logging in.';
+        confirmBtnText.innerHTML = '<i class="bi bi-shield-plus me-1"></i>Enable 2FA';
+        confirmBtn.className = 'btn btn-primary';
+    } else {
+        modalTitle.textContent = 'Disable Two-Factor Authentication';
+        modalIcon.innerHTML = '<i class="bi bi-shield-x text-danger"></i>';
+        modalIcon.className = 'modal-icon-container disable';
+        modalMessage.textContent = 'Are you sure you want to disable Two-Factor Authentication?';
+        modalDetails.textContent = 'This will reduce your account security and remove email verification.';
+        confirmBtnText.innerHTML = '<i class="bi bi-shield-x me-1"></i>Disable 2FA';
+        confirmBtn.className = 'btn btn-danger';
+    }
+    
+    // Store the enable parameter for the confirm button
+    document.getElementById('confirmTwoFactorBtn').setAttribute('data-enable', enable);
+    
+    // Show the modal
+    const bsModal = new bootstrap.Modal(modal);
+    bsModal.show();
+}
+
+// Handle the confirmation
+document.addEventListener('DOMContentLoaded', function() {
+    const confirmBtn = document.getElementById('confirmTwoFactorBtn');
+    
+    confirmBtn.addEventListener('click', function() {
+        const enable = this.getAttribute('data-enable') === 'true';
+        const originalHtml = this.innerHTML;
+        
         // Show loading state
-        const button = event.target;
-        const originalHtml = button.innerHTML;
-        button.innerHTML = '<i class="bi bi-hourglass-split"></i> Processing...';
-        button.disabled = true;
+        this.innerHTML = '<i class="bi bi-hourglass-split"></i> Processing...';
+        this.disabled = true;
         
         // Send AJAX request
         fetch('{% url "toggle_2fa" %}', {
@@ -949,21 +1103,70 @@ function toggleTwoFactor(enable) {
         })
         .then(response => response.json())
         .then(data => {
+            // Hide the confirmation modal
+            const confirmModal = bootstrap.Modal.getInstance(document.getElementById('twoFactorModal'));
+            confirmModal.hide();
+            
+            // Show result modal
+            showTwoFactorResult(data.success, data.message || '', enable);
+            
             if (data.success) {
-                // Reload page to update UI
-                window.location.reload();
+                // Reload page after a short delay
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
             } else {
-                alert('Error: ' + (data.message || 'Failed to update 2FA settings'));
-                button.innerHTML = originalHtml;
-                button.disabled = false;
+                // Reset button state
+                confirmBtn.innerHTML = originalHtml;
+                confirmBtn.disabled = false;
             }
         })
         .catch(error => {
-            alert('Error: Failed to update 2FA settings');
-            button.innerHTML = originalHtml;
-            button.disabled = false;
+            // Hide the confirmation modal
+            const confirmModal = bootstrap.Modal.getInstance(document.getElementById('twoFactorModal'));
+            confirmModal.hide();
+            
+            // Show error result
+            showTwoFactorResult(false, 'Failed to update 2FA settings. Please try again.', enable);
+            
+            // Reset button state
+            confirmBtn.innerHTML = originalHtml;
+            confirmBtn.disabled = false;
         });
+    });
+});
+
+// Show result modal
+function showTwoFactorResult(success, message, wasEnabling) {
+    const resultModal = document.getElementById('twoFactorResultModal');
+    const resultTitle = document.getElementById('resultTitle');
+    const resultIcon = document.getElementById('resultIcon');
+    const resultMessage = document.getElementById('resultMessage');
+    
+    if (success) {
+        const action = wasEnabling ? 'enabled' : 'disabled';
+        resultTitle.textContent = `2FA Successfully ${action.charAt(0).toUpperCase() + action.slice(1)}`;
+        resultIcon.className = 'bi bi-check-circle-fill text-success me-2';
+        resultMessage.innerHTML = `<div class="text-center">
+            <div class="modal-icon-container success mb-3">
+                <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <p class="mb-0">${message || `Two-Factor Authentication has been successfully ${action}.`}</p>
+        </div>`;
+    } else {
+        resultTitle.textContent = 'Error';
+        resultIcon.className = 'bi bi-exclamation-triangle-fill text-danger me-2';
+        resultMessage.innerHTML = `<div class="text-center">
+            <div class="modal-icon-container error mb-3">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+            </div>
+            <p class="mb-0">${message || 'An error occurred while updating 2FA settings.'}</p>
+        </div>`;
     }
+    
+    // Show the result modal
+    const bsResultModal = new bootstrap.Modal(resultModal);
+    bsResultModal.show();
 }
 </script>
 
