@@ -1,8 +1,13 @@
 {% extends "template_parts/dashboard_base.html" %}
 {% load static %}
 
+{% csrf_token %}
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/company_profile_edit.css' %}">
+
+<!-- Hidden CSRF token for JavaScript -->
+<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
 <div class="container-fluid p-0">
     <!-- Header Section -->
     <div class="account-settings-header mb-4">
@@ -265,6 +270,196 @@
         </div>
     </div>
 
+    <!-- Security Settings Section -->
+    <div class="security-section mb-5">
+        <div class="section-header mb-3">
+            <h2 class="h5 text-muted mb-0">
+                <i class="bi bi-shield-lock text-danger me-2"></i>
+                Security Settings
+            </h2>
+        </div>
+        
+        <div class="priority-container">
+            <!-- Two-Factor Authentication Card -->
+            <div class="setting-item priority-item">
+                <div class="setting-content">
+                    <div class="setting-left">
+                        <div class="setting-icon-large security-bg">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <div class="setting-details-expanded">
+                            <div class="d-flex align-items-center mb-2">
+                                <h4 class="mb-0">Two-Factor Authentication</h4>
+                                {% if user.member.two_factor_enabled %}
+                                    <span class="badge bg-success ms-2">
+                                        <i class="bi bi-check-circle me-1"></i>Enabled
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-warning ms-2">
+                                        <i class="bi bi-exclamation-triangle me-1"></i>Disabled
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <p class="expanded-description">
+                                {% if user.member.two_factor_enabled %}
+                                    Your account is protected with email-based two-factor authentication. You'll receive a verification code via email whenever you sign in.
+                                {% else %}
+                                    Add an extra layer of security to your account by enabling two-factor authentication. You'll receive a verification code via email each time you sign in.
+                                {% endif %}
+                            </p>
+                            <div class="setting-meta-expanded">
+                                <div class="meta-item">
+                                    <i class="bi bi-envelope text-primary"></i>
+                                    <span>Email: {{ user.email }}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="bi bi-clock text-info"></i>
+                                    <span>Verification codes expire in 10 minutes</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="setting-action-expanded">
+                        {% if user.member.two_factor_enabled %}
+                            <button class="setting-btn-danger" onclick="toggleTwoFactor(false)">
+                                <i class="bi bi-shield-x"></i>
+                                Disable 2FA
+                            </button>
+                            <div class="action-meta">Remove extra security</div>
+                        {% else %}
+                            <button class="setting-btn-primary" onclick="toggleTwoFactor(true)">
+                                <i class="bi bi-shield-plus"></i>
+                                Enable 2FA
+                            </button>
+                            <div class="action-meta">Secure your account</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- 2FA Confirmation Modal -->
+<div class="modal fade" id="twoFactorModal" tabindex="-1" aria-labelledby="twoFactorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="twoFactorModalLabel">
+                    <i class="bi bi-shield-check text-primary me-2"></i>
+                    <span id="modalTitle">Two-Factor Authentication</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-3">
+                    <div id="modalIcon" class="modal-icon-container">
+                        <i class="bi bi-shield-plus text-primary"></i>
+                    </div>
+                </div>
+                <p id="modalMessage" class="text-center mb-0">
+                    Are you sure you want to enable Two-Factor Authentication?
+                </p>
+                <small id="modalDetails" class="text-muted d-block text-center mt-2">
+                    You will receive verification codes via email when logging in.
+                </small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>Cancel
+                </button>
+                <button type="button" class="btn btn-primary" id="confirmTwoFactorBtn">
+                    
+                    <span id="confirmBtnText">Enable 2FA</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 2FA Verification Code Modal -->
+<div class="modal fade" id="twoFactorVerifyModal" tabindex="-1" aria-labelledby="twoFactorVerifyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="twoFactorVerifyModalLabel">
+                    <i class="bi bi-shield-check text-primary me-2"></i>
+                    Email Verification Required
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <div class="modal-icon-container">
+                        <i class="bi bi-envelope-check text-primary"></i>
+                    </div>
+                </div>
+                <div class="text-center mb-4">
+                    <h6>Verification Code Sent</h6>
+                    <p class="text-muted mb-0">We've sent a 6-digit verification code to:</p>
+                    <p class="fw-bold text-primary">{{ user.email }}</p>
+                    <small class="text-muted">Please enter the code below to continue</small>
+                </div>
+                
+                <form id="verificationForm">
+                    <div class="mb-3">
+                        <label for="verificationCode" class="form-label">Verification Code</label>
+                        <input type="text" 
+                               class="form-control form-control-lg text-center" 
+                               id="verificationCode" 
+                               placeholder="000000"
+                               maxlength="6"
+                               style="letter-spacing: 0.5rem; font-size: 1.2rem;">
+                        <div class="invalid-feedback" id="codeError"></div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <small class="text-muted">
+                            <i class="bi bi-clock me-1"></i>
+                            Code expires in <span id="codeTimer">10:00</span>
+                        </small>
+                        <button type="button" class="btn btn-link btn-sm p-0" id="resendCodeBtn">
+                            <i class="bi bi-arrow-clockwise me-1"></i>Resend Code
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>Cancel
+                </button>
+                <button type="button" class="btn btn-primary" id="verifyCodeBtn">
+                    <i class="bi bi-check-circle me-1"></i>Verify & Continue
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 2FA Result Modal -->
+<div class="modal fade" id="twoFactorResultModal" tabindex="-1" aria-labelledby="twoFactorResultModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="twoFactorResultModalLabel">
+                    <i id="resultIcon" class="bi bi-info-circle text-primary me-2"></i>
+                    <span id="resultTitle">Notification</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <p id="resultMessage" class="mb-0">Operation completed.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                    <i class="bi bi-check me-1"></i>OK
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <style>
@@ -532,6 +727,33 @@
     background: #3b6cc1;
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(44, 89, 167, 0.35);
+    text-decoration: none;
+    color: white;
+}
+
+.setting-btn-danger {
+    background: #dc3545;
+    border: none;
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 14px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.25);
+    min-width: 140px;
+    justify-content: center;
+}
+
+.setting-btn-danger:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(220, 53, 69, 0.35);
     text-decoration: none;
     color: white;
 }
@@ -808,6 +1030,61 @@
         font-size: 0.8rem;
     }
 }
+
+/* Modal Styles */
+.modal-icon-container {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border: 3px solid #e2e8f0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    transition: all 0.3s ease;
+}
+
+.modal-icon-container i {
+    font-size: 2rem;
+    transition: all 0.3s ease;
+}
+
+.modal-icon-container.enable {
+    background: linear-gradient(135deg, #dff0d8 0%, #c3e6cb 100%);
+    border-color: #28a745;
+}
+
+.modal-icon-container.enable i {
+    color: #28a745;
+}
+
+.modal-icon-container.disable {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    border-color: #dc3545;
+}
+
+.modal-icon-container.disable i {
+    color: #dc3545;
+}
+
+.modal-icon-container.success {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border-color: #28a745;
+}
+
+.modal-icon-container.success i {
+    color: #28a745;
+}
+
+.modal-icon-container.error {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    border-color: #dc3545;
+}
+
+.modal-icon-container.error i {
+    color: #dc3545;
+}
 </style>
 
 <script>
@@ -822,6 +1099,314 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 300);
     });
 });
+
+// Two-Factor Authentication Toggle
+function toggleTwoFactor(enable) {
+    const action = enable ? 'enable' : 'disable';
+    
+    // Update modal content based on action
+    const modal = document.getElementById('twoFactorModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalIcon = document.getElementById('modalIcon');
+    const modalMessage = document.getElementById('modalMessage');
+    const modalDetails = document.getElementById('modalDetails');
+    const confirmBtnText = document.getElementById('confirmBtnText');
+    const confirmBtn = document.getElementById('confirmTwoFactorBtn');
+    
+    if (enable) {
+        modalTitle.textContent = 'Enable Two-Factor Authentication';
+        modalIcon.innerHTML = '<i class="bi bi-shield-plus text-success"></i>';
+        modalIcon.className = 'modal-icon-container enable';
+        modalMessage.textContent = 'Are you sure you want to enable Two-Factor Authentication?';
+        modalDetails.textContent = 'You will receive verification codes via email when logging in.';
+        confirmBtnText.innerHTML = '<i class="bi bi-shield-plus me-1"></i>Enable 2FA';
+        confirmBtn.className = 'btn btn-primary';
+    } else {
+        modalTitle.textContent = 'Disable Two-Factor Authentication';
+        modalIcon.innerHTML = '<i class="bi bi-shield-x text-danger"></i>';
+        modalIcon.className = 'modal-icon-container disable';
+        modalMessage.textContent = 'Are you sure you want to disable Two-Factor Authentication?';
+        modalDetails.textContent = 'This will reduce your account security and remove email verification.';
+        confirmBtnText.innerHTML = '<i class="bi bi-shield-x me-1"></i>Disable 2FA';
+        confirmBtn.className = 'btn btn-danger';
+    }
+    
+    // Store the enable parameter for the confirm button
+    document.getElementById('confirmTwoFactorBtn').setAttribute('data-enable', enable);
+    
+    // Show the modal
+    const bsModal = new bootstrap.Modal(modal);
+    bsModal.show();
+}
+
+// Handle the confirmation
+document.addEventListener('DOMContentLoaded', function() {
+    const confirmBtn = document.getElementById('confirmTwoFactorBtn');
+    
+    confirmBtn.addEventListener('click', function() {
+        const enable = this.getAttribute('data-enable') === 'true';
+        const originalHtml = this.innerHTML;
+        
+        // Show loading state
+        this.innerHTML = '<i class="bi bi-hourglass-split"></i> Sending Code...';
+        this.disabled = true;
+        
+        // Send verification code first
+        fetch('{% url "send_2fa_verification" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value || '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ 'action': enable ? 'enable' : 'disable' })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Reset button state
+            confirmBtn.innerHTML = originalHtml;
+            confirmBtn.disabled = false;
+            
+            if (data.success) {
+                // Hide the confirmation modal
+                const confirmModal = bootstrap.Modal.getInstance(document.getElementById('twoFactorModal'));
+                confirmModal.hide();
+                
+                // Store the action for verification
+                document.getElementById('verifyCodeBtn').setAttribute('data-enable', enable);
+                
+                // Show verification modal
+                const verifyModal = new bootstrap.Modal(document.getElementById('twoFactorVerifyModal'));
+                verifyModal.show();
+                
+                // Start countdown timer
+                startVerificationTimer();
+                
+                // Clear any previous code
+                document.getElementById('verificationCode').value = '';
+                document.getElementById('verificationCode').classList.remove('is-invalid');
+            } else {
+                showTwoFactorResult(false, data.message || 'Failed to send verification code. Please try again.', enable);
+            }
+        })
+        .catch(error => {
+            // Reset button state
+            confirmBtn.innerHTML = originalHtml;
+            confirmBtn.disabled = false;
+            
+            // Show error result
+            showTwoFactorResult(false, 'Failed to send verification code. Please try again.', enable);
+        });
+    });
+    
+    // Handle verification code submission
+    const verifyBtn = document.getElementById('verifyCodeBtn');
+    const verificationCode = document.getElementById('verificationCode');
+    
+    verifyBtn.addEventListener('click', function() {
+        const enable = this.getAttribute('data-enable') === 'true';
+        const code = verificationCode.value.trim();
+        
+        if (!code || code.length !== 6) {
+            verificationCode.classList.add('is-invalid');
+            document.getElementById('codeError').textContent = 'Please enter a valid 6-digit code';
+            return;
+        }
+        
+        const originalHtml = this.innerHTML;
+        this.innerHTML = '<i class="bi bi-hourglass-split"></i> Verifying...';
+        this.disabled = true;
+        
+        // Verify code and toggle 2FA
+        fetch('{% url "verify_and_toggle_2fa" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value || '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ 
+                'enable': enable,
+                'verification_code': code
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Hide the verification modal
+            const verifyModal = bootstrap.Modal.getInstance(document.getElementById('twoFactorVerifyModal'));
+            verifyModal.hide();
+            
+            // Show result modal
+            showTwoFactorResult(data.success, data.message || '', enable);
+            
+            if (data.success) {
+                // Reload page after a short delay
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            } else {
+                // Reset button state
+                verifyBtn.innerHTML = originalHtml;
+                verifyBtn.disabled = false;
+                
+                // Show error in verification code field
+                if (data.error_type === 'invalid_code') {
+                    verificationCode.classList.add('is-invalid');
+                    document.getElementById('codeError').textContent = data.message || 'Invalid verification code';
+                }
+            }
+        })
+        .catch(error => {
+            // Hide the verification modal
+            const verifyModal = bootstrap.Modal.getInstance(document.getElementById('twoFactorVerifyModal'));
+            verifyModal.hide();
+            
+            // Show error result
+            showTwoFactorResult(false, 'Failed to verify code. Please try again.', enable);
+            
+            // Reset button state
+            verifyBtn.innerHTML = originalHtml;
+            verifyBtn.disabled = false;
+        });
+    });
+    
+    // Handle resend code
+    const resendBtn = document.getElementById('resendCodeBtn');
+    resendBtn.addEventListener('click', function() {
+        const enable = document.getElementById('verifyCodeBtn').getAttribute('data-enable') === 'true';
+        const originalHtml = this.innerHTML;
+        
+        this.innerHTML = '<i class="bi bi-hourglass-split"></i> Sending...';
+        this.disabled = true;
+        
+        fetch('{% url "send_2fa_verification" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value || '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ 'action': enable ? 'enable' : 'disable' })
+        })
+        .then(response => response.json())
+        .then(data => {
+            this.innerHTML = originalHtml;
+            this.disabled = false;
+            
+            if (data.success) {
+                // Restart timer
+                startVerificationTimer();
+                
+                // Clear code field
+                document.getElementById('verificationCode').value = '';
+                document.getElementById('verificationCode').classList.remove('is-invalid');
+                
+                // Show success message briefly
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="bi bi-check me-1"></i>Code Sent!';
+                this.classList.add('text-success');
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    this.classList.remove('text-success');
+                }, 3000);
+            } else {
+                alert('Failed to resend code. Please try again.');
+            }
+        })
+        .catch(error => {
+            this.innerHTML = originalHtml;
+            this.disabled = false;
+            alert('Failed to resend code. Please try again.');
+        });
+    });
+    
+    // Handle verification code input formatting
+    verificationCode.addEventListener('input', function() {
+        // Remove any non-numeric characters
+        this.value = this.value.replace(/\D/g, '');
+        
+        // Remove invalid state when user starts typing
+        if (this.classList.contains('is-invalid')) {
+            this.classList.remove('is-invalid');
+        }
+        
+        // Auto-submit when 6 digits are entered
+        if (this.value.length === 6) {
+            setTimeout(() => {
+                document.getElementById('verifyCodeBtn').click();
+            }, 500);
+        }
+    });
+    
+    // Handle Enter key in verification code field
+    verificationCode.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            document.getElementById('verifyCodeBtn').click();
+        }
+    });
+});
+
+// Verification timer function
+let verificationTimer;
+function startVerificationTimer() {
+    let timeLeft = 600; // 10 minutes in seconds
+    const timerElement = document.getElementById('codeTimer');
+    
+    // Clear any existing timer
+    if (verificationTimer) {
+        clearInterval(verificationTimer);
+    }
+    
+    verificationTimer = setInterval(() => {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        
+        if (timeLeft <= 0) {
+            clearInterval(verificationTimer);
+            timerElement.textContent = 'Expired';
+            timerElement.classList.add('text-danger');
+            
+            // Disable verify button
+            const verifyBtn = document.getElementById('verifyCodeBtn');
+            verifyBtn.disabled = true;
+            verifyBtn.innerHTML = '<i class="bi bi-clock me-1"></i>Code Expired';
+        }
+        
+        timeLeft--;
+    }, 1000);
+}
+
+// Show result modal
+function showTwoFactorResult(success, message, wasEnabling) {
+    const resultModal = document.getElementById('twoFactorResultModal');
+    const resultTitle = document.getElementById('resultTitle');
+    const resultIcon = document.getElementById('resultIcon');
+    const resultMessage = document.getElementById('resultMessage');
+    
+    if (success) {
+        const action = wasEnabling ? 'enabled' : 'disabled';
+        resultTitle.textContent = `2FA Successfully ${action.charAt(0).toUpperCase() + action.slice(1)}`;
+        resultIcon.className = 'bi bi-check-circle-fill text-success me-2';
+        resultMessage.innerHTML = `<div class="text-center">
+            <div class="modal-icon-container success mb-3">
+                <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <p class="mb-0">${message || `Two-Factor Authentication has been successfully ${action}.`}</p>
+        </div>`;
+    } else {
+        resultTitle.textContent = 'Error';
+        resultIcon.className = 'bi bi-exclamation-triangle-fill text-danger me-2';
+        resultMessage.innerHTML = `<div class="text-center">
+            <div class="modal-icon-container error mb-3">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+            </div>
+            <p class="mb-0">${message || 'An error occurred while updating 2FA settings.'}</p>
+        </div>`;
+    }
+    
+    // Show the result modal
+    const bsResultModal = new bootstrap.Modal(resultModal);
+    bsResultModal.show();
+}
 </script>
 
 {% endblock %}

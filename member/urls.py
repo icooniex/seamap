@@ -11,6 +11,10 @@ urlpatterns = [
     path('logout/', views.custom_logout, name='logout'),
     path('signup/', views.signup, name='signup'),
     
+    # Two-Factor Authentication
+    path('verify-2fa-login/', views.verify_2fa_login, name='verify_2fa_login'),
+    path('resend-2fa-otp/', views.resend_2fa_otp, name='resend_2fa_otp'),
+    
     # Onboarding flow
     path('onboarding/', OnboardingRoleSelectionView.as_view(), name='onboarding_role_selection'),
     path('onboarding/profile/', views.onboarding_user_profile, name='onboarding_user_profile'),
@@ -33,6 +37,12 @@ urlpatterns = [
     path('account-settings/startup/', views.startup_company_profile_edit, name='startup_company_profile_edit'),
     path('account-settings/documents/', views.document_management, name='document_management'),
     path('account-settings/verification/', views.verification_center, name='verification_center'),
+    
+    # Security
+    path('toggle-2fa/', views.toggle_two_factor_auth, name='toggle_2fa'),
+    path('send-2fa-verification/', views.send_2fa_verification, name='send_2fa_verification'),
+    path('verify-and-toggle-2fa/', views.verify_and_toggle_2fa, name='verify_and_toggle_2fa'),
+    path('test-2fa-email/', views.test_2fa_email, name='test_2fa_email'),
     
     # Document Management APIs
     path('api/documents/upload/', views.upload_document, name='upload_document'),

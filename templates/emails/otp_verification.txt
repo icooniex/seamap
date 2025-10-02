@@ -1,0 +1,25 @@
+Two-Factor Authentication Verification Code - SEA-MaP Regional Platform for Innovation and Investments
+
+🔐 SEA-MaP Regional Platform for Innovation and Investments
+=====================================
+
+Hello {{ user.first_name|default:user.username }},
+
+We received a request {{ context_message }}. To complete this action, please use the verification code below:
+
+VERIFICATION CODE: {{ otp_code }}
+
+IMPORTANT: This verification code will expire in 10 minutes for security reasons.
+
+How to use:
+1. Return to the website
+2. Enter this verification code when prompted
+3. Complete your secure action
+
+SECURITY NOTICE: If you didn't request this code, please ignore this email. Your account remains secure. Consider changing your password if you suspect unauthorized access.
+
+Thank you for using SEA-MaP Regional Platform for Innovation and Investments's enhanced security features to protect your account.
+
+---
+This is an automated message from SEA-MaP Regional Platform for Innovation and Investments.
+If you have any questions, please contact our support team.

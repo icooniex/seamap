@@ -263,3 +263,16 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 25 * 1024 * 1024
 ALLOWED_UPLOAD_EXTENSIONS = [
     '.pdf', '.doc', '.docx', '.ppt', '.pptx', '.jpg', '.jpeg', '.png', '.gif'
 ]
+
+# Email Configuration for 2FA
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')  # Your Gmail address
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')  # Your Gmail app password
+DEFAULT_FROM_EMAIL = os.getenv('EMAIL_HOST_USER', 'noreply@seamap.com')
+
+# For development, you can use console backend to see emails in terminal
+if DEBUG and not os.getenv('EMAIL_HOST_USER'):
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
