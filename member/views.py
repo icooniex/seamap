@@ -2737,3 +2737,8 @@ def privacy_policy(request):
 def terms_and_conditions(request):
     """Terms and Conditions page"""
     return render(request, 'member/terms_and_conditions.html')
+
+
+def contact_us(request):
+    """Contact Us page"""
+    return render(request, 'member/contact_us.html')
