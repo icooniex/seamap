@@ -40,6 +40,8 @@ urlpatterns = [
     
     # Security
     path('toggle-2fa/', views.toggle_two_factor_auth, name='toggle_2fa'),
+    path('send-2fa-verification/', views.send_2fa_verification, name='send_2fa_verification'),
+    path('verify-and-toggle-2fa/', views.verify_and_toggle_2fa, name='verify_and_toggle_2fa'),
     path('test-2fa-email/', views.test_2fa_email, name='test_2fa_email'),
     
     # Document Management APIs

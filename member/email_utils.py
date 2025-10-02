@@ -9,13 +9,14 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def send_otp_email(user, otp_code):
+def send_otp_email(user, otp_code, context=None):
     """
     Send OTP verification email to user
     
     Args:
         user: Django User instance
         otp_code: 6-digit OTP code string
+        context: Optional context message about what the OTP is for
     
     Returns:
         bool: True if email sent successfully, False otherwise
@@ -31,16 +32,17 @@ def send_otp_email(user, otp_code):
         logo_base64 = get_logo_base64()
         
         # Context for email templates
-        context = {
+        email_context = {
             'user': user,
             'otp_code': otp_code,
             'logo_url': logo_url,
             'logo_base64': logo_base64,
+            'context_message': context or "for account verification",
         }
         
         # Render HTML and text versions
-        html_body = render_to_string('emails/otp_verification.html', context)
-        text_body = render_to_string('emails/otp_verification.txt', context)
+        html_body = render_to_string('emails/otp_verification.html', email_context)
+        text_body = render_to_string('emails/otp_verification.txt', email_context)
         
         # Create email message
         msg = EmailMultiAlternatives(

@@ -218,7 +218,7 @@
                 <strong>Hello {{ user.first_name|default:user.username }},</strong>
             </div>
             
-            <p>We received a request to sign in to your SEA-MaP Regional Platform for Innovation and Investments account. To complete the login process, please use the verification code below:</p>
+            <p>We received a request {{ context_message }}. To complete this action, please use the verification code below:</p>
             
             <div class="otp-section">
                 <div class="otp-label">Your Verification Code</div>
@@ -232,9 +232,9 @@
             <div class="">
                 <strong>📱 How to use:</strong>
                 <ol style="margin: 0.5rem 0; padding-left: 1.5rem;">
-                    <li>Return to the website's login page</li>
+                    <li>Return to the website</li>
                     <li>Enter this verification code when prompted</li>
-                    <li>Complete your secure login</li>
+                    <li>Complete your secure action</li>
                 </ol>
             </div>
             

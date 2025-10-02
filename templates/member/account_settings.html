@@ -378,6 +378,65 @@
     </div>
 </div>
 
+<!-- 2FA Verification Code Modal -->
+<div class="modal fade" id="twoFactorVerifyModal" tabindex="-1" aria-labelledby="twoFactorVerifyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="twoFactorVerifyModalLabel">
+                    <i class="bi bi-shield-check text-primary me-2"></i>
+                    Email Verification Required
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <div class="modal-icon-container">
+                        <i class="bi bi-envelope-check text-primary"></i>
+                    </div>
+                </div>
+                <div class="text-center mb-4">
+                    <h6>Verification Code Sent</h6>
+                    <p class="text-muted mb-0">We've sent a 6-digit verification code to:</p>
+                    <p class="fw-bold text-primary">{{ user.email }}</p>
+                    <small class="text-muted">Please enter the code below to continue</small>
+                </div>
+                
+                <form id="verificationForm">
+                    <div class="mb-3">
+                        <label for="verificationCode" class="form-label">Verification Code</label>
+                        <input type="text" 
+                               class="form-control form-control-lg text-center" 
+                               id="verificationCode" 
+                               placeholder="000000"
+                               maxlength="6"
+                               style="letter-spacing: 0.5rem; font-size: 1.2rem;">
+                        <div class="invalid-feedback" id="codeError"></div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <small class="text-muted">
+                            <i class="bi bi-clock me-1"></i>
+                            Code expires in <span id="codeTimer">10:00</span>
+                        </small>
+                        <button type="button" class="btn btn-link btn-sm p-0" id="resendCodeBtn">
+                            <i class="bi bi-arrow-clockwise me-1"></i>Resend Code
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>Cancel
+                </button>
+                <button type="button" class="btn btn-primary" id="verifyCodeBtn">
+                    <i class="bi bi-check-circle me-1"></i>Verify & Continue
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- 2FA Result Modal -->
 <div class="modal fade" id="twoFactorResultModal" tabindex="-1" aria-labelledby="twoFactorResultModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -1089,23 +1148,91 @@ document.addEventListener('DOMContentLoaded', function() {
         const originalHtml = this.innerHTML;
         
         // Show loading state
-        this.innerHTML = '<i class="bi bi-hourglass-split"></i> Processing...';
+        this.innerHTML = '<i class="bi bi-hourglass-split"></i> Sending Code...';
         this.disabled = true;
         
-        // Send AJAX request
-        fetch('{% url "toggle_2fa" %}', {
+        // Send verification code first
+        fetch('{% url "send_2fa_verification" %}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value || '{{ csrf_token }}'
             },
-            body: JSON.stringify({ 'enable': enable })
+            body: JSON.stringify({ 'action': enable ? 'enable' : 'disable' })
         })
         .then(response => response.json())
         .then(data => {
-            // Hide the confirmation modal
-            const confirmModal = bootstrap.Modal.getInstance(document.getElementById('twoFactorModal'));
-            confirmModal.hide();
+            // Reset button state
+            confirmBtn.innerHTML = originalHtml;
+            confirmBtn.disabled = false;
+            
+            if (data.success) {
+                // Hide the confirmation modal
+                const confirmModal = bootstrap.Modal.getInstance(document.getElementById('twoFactorModal'));
+                confirmModal.hide();
+                
+                // Store the action for verification
+                document.getElementById('verifyCodeBtn').setAttribute('data-enable', enable);
+                
+                // Show verification modal
+                const verifyModal = new bootstrap.Modal(document.getElementById('twoFactorVerifyModal'));
+                verifyModal.show();
+                
+                // Start countdown timer
+                startVerificationTimer();
+                
+                // Clear any previous code
+                document.getElementById('verificationCode').value = '';
+                document.getElementById('verificationCode').classList.remove('is-invalid');
+            } else {
+                showTwoFactorResult(false, data.message || 'Failed to send verification code. Please try again.', enable);
+            }
+        })
+        .catch(error => {
+            // Reset button state
+            confirmBtn.innerHTML = originalHtml;
+            confirmBtn.disabled = false;
+            
+            // Show error result
+            showTwoFactorResult(false, 'Failed to send verification code. Please try again.', enable);
+        });
+    });
+    
+    // Handle verification code submission
+    const verifyBtn = document.getElementById('verifyCodeBtn');
+    const verificationCode = document.getElementById('verificationCode');
+    
+    verifyBtn.addEventListener('click', function() {
+        const enable = this.getAttribute('data-enable') === 'true';
+        const code = verificationCode.value.trim();
+        
+        if (!code || code.length !== 6) {
+            verificationCode.classList.add('is-invalid');
+            document.getElementById('codeError').textContent = 'Please enter a valid 6-digit code';
+            return;
+        }
+        
+        const originalHtml = this.innerHTML;
+        this.innerHTML = '<i class="bi bi-hourglass-split"></i> Verifying...';
+        this.disabled = true;
+        
+        // Verify code and toggle 2FA
+        fetch('{% url "verify_and_toggle_2fa" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value || '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ 
+                'enable': enable,
+                'verification_code': code
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Hide the verification modal
+            const verifyModal = bootstrap.Modal.getInstance(document.getElementById('twoFactorVerifyModal'));
+            verifyModal.hide();
             
             // Show result modal
             showTwoFactorResult(data.success, data.message || '', enable);
@@ -1117,24 +1244,136 @@ document.addEventListener('DOMContentLoaded', function() {
                 }, 2000);
             } else {
                 // Reset button state
-                confirmBtn.innerHTML = originalHtml;
-                confirmBtn.disabled = false;
+                verifyBtn.innerHTML = originalHtml;
+                verifyBtn.disabled = false;
+                
+                // Show error in verification code field
+                if (data.error_type === 'invalid_code') {
+                    verificationCode.classList.add('is-invalid');
+                    document.getElementById('codeError').textContent = data.message || 'Invalid verification code';
+                }
             }
         })
         .catch(error => {
-            // Hide the confirmation modal
-            const confirmModal = bootstrap.Modal.getInstance(document.getElementById('twoFactorModal'));
-            confirmModal.hide();
+            // Hide the verification modal
+            const verifyModal = bootstrap.Modal.getInstance(document.getElementById('twoFactorVerifyModal'));
+            verifyModal.hide();
             
             // Show error result
-            showTwoFactorResult(false, 'Failed to update 2FA settings. Please try again.', enable);
+            showTwoFactorResult(false, 'Failed to verify code. Please try again.', enable);
             
             // Reset button state
-            confirmBtn.innerHTML = originalHtml;
-            confirmBtn.disabled = false;
+            verifyBtn.innerHTML = originalHtml;
+            verifyBtn.disabled = false;
         });
     });
+    
+    // Handle resend code
+    const resendBtn = document.getElementById('resendCodeBtn');
+    resendBtn.addEventListener('click', function() {
+        const enable = document.getElementById('verifyCodeBtn').getAttribute('data-enable') === 'true';
+        const originalHtml = this.innerHTML;
+        
+        this.innerHTML = '<i class="bi bi-hourglass-split"></i> Sending...';
+        this.disabled = true;
+        
+        fetch('{% url "send_2fa_verification" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value || '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ 'action': enable ? 'enable' : 'disable' })
+        })
+        .then(response => response.json())
+        .then(data => {
+            this.innerHTML = originalHtml;
+            this.disabled = false;
+            
+            if (data.success) {
+                // Restart timer
+                startVerificationTimer();
+                
+                // Clear code field
+                document.getElementById('verificationCode').value = '';
+                document.getElementById('verificationCode').classList.remove('is-invalid');
+                
+                // Show success message briefly
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="bi bi-check me-1"></i>Code Sent!';
+                this.classList.add('text-success');
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    this.classList.remove('text-success');
+                }, 3000);
+            } else {
+                alert('Failed to resend code. Please try again.');
+            }
+        })
+        .catch(error => {
+            this.innerHTML = originalHtml;
+            this.disabled = false;
+            alert('Failed to resend code. Please try again.');
+        });
+    });
+    
+    // Handle verification code input formatting
+    verificationCode.addEventListener('input', function() {
+        // Remove any non-numeric characters
+        this.value = this.value.replace(/\D/g, '');
+        
+        // Remove invalid state when user starts typing
+        if (this.classList.contains('is-invalid')) {
+            this.classList.remove('is-invalid');
+        }
+        
+        // Auto-submit when 6 digits are entered
+        if (this.value.length === 6) {
+            setTimeout(() => {
+                document.getElementById('verifyCodeBtn').click();
+            }, 500);
+        }
+    });
+    
+    // Handle Enter key in verification code field
+    verificationCode.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            document.getElementById('verifyCodeBtn').click();
+        }
+    });
 });
+
+// Verification timer function
+let verificationTimer;
+function startVerificationTimer() {
+    let timeLeft = 600; // 10 minutes in seconds
+    const timerElement = document.getElementById('codeTimer');
+    
+    // Clear any existing timer
+    if (verificationTimer) {
+        clearInterval(verificationTimer);
+    }
+    
+    verificationTimer = setInterval(() => {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        
+        if (timeLeft <= 0) {
+            clearInterval(verificationTimer);
+            timerElement.textContent = 'Expired';
+            timerElement.classList.add('text-danger');
+            
+            // Disable verify button
+            const verifyBtn = document.getElementById('verifyCodeBtn');
+            verifyBtn.disabled = true;
+            verifyBtn.innerHTML = '<i class="bi bi-clock me-1"></i>Code Expired';
+        }
+        
+        timeLeft--;
+    }, 1000);
+}
 
 // Show result modal
 function showTwoFactorResult(success, message, wasEnabling) {

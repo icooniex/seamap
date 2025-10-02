@@ -3042,3 +3042,155 @@ def toggle_2fa(request):
             'success': False,
             'error': str(e)
         }, status=500)
+
+
+@login_required
+@require_http_methods(["POST"])
+def send_2fa_verification(request):
+    """Send verification code before enabling/disabling 2FA"""
+    try:
+        data = json.loads(request.body)
+        action = data.get('action', '')  # 'enable' or 'disable'
+        
+        if action not in ['enable', 'disable']:
+            return JsonResponse({
+                'success': False,
+                'message': 'Invalid action specified.'
+            }, status=400)
+        
+        user = request.user
+        
+        # Generate and send OTP
+        from .models import EmailOTP
+        from .email_utils import send_otp_email
+        
+        # Clean up any existing OTPs for this user
+        EmailOTP.objects.filter(user=user).delete()
+        
+        # Create new OTP
+        otp = EmailOTP.objects.create(user=user)
+        
+        # Send OTP email with context about the action
+        context_message = f"to {action} Two-Factor Authentication on your account"
+        success = send_otp_email(user, otp.otp_code, context=context_message)
+        
+        if success:
+            return JsonResponse({
+                'success': True,
+                'message': f'Verification code sent to {user.email}. Please check your email.',
+                'action': action
+            })
+        else:
+            return JsonResponse({
+                'success': False,
+                'message': 'Failed to send verification email. Please try again.'
+            }, status=500)
+            
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'message': 'Invalid request data.'
+        }, status=400)
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': f'An error occurred: {str(e)}'
+        }, status=500)
+
+
+@login_required
+@require_http_methods(["POST"])
+def verify_and_toggle_2fa(request):
+    """Verify code and toggle 2FA setting"""
+    try:
+        data = json.loads(request.body)
+        enable = data.get('enable', False)
+        verification_code = data.get('verification_code', '').strip()
+        
+        if not verification_code:
+            return JsonResponse({
+                'success': False,
+                'message': 'Verification code is required.',
+                'error_type': 'missing_code'
+            }, status=400)
+        
+        user = request.user
+        
+        # Verify the OTP
+        from .models import EmailOTP
+        try:
+            otp = EmailOTP.objects.get(
+                user=user,
+                otp_code=verification_code,
+                is_used=False
+            )
+            
+            if not otp.is_valid():
+                return JsonResponse({
+                    'success': False,
+                    'message': 'The verification code has expired. Please request a new code.',
+                    'error_type': 'expired_code'
+                }, status=400)
+            
+            # Mark OTP as used
+            otp.mark_as_used()
+            
+        except EmailOTP.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'Invalid verification code. Please check and try again.',
+                'error_type': 'invalid_code'
+            }, status=400)
+        
+        # Now toggle the 2FA setting
+        try:
+            member = Member.objects.get(user=user)
+            
+            if enable:
+                # Enable 2FA
+                member.two_factor_enabled = True
+                member.save(update_fields=['two_factor_enabled'])
+                
+                # Send notification email
+                from .email_utils import send_2fa_enabled_notification
+                send_2fa_enabled_notification(user)
+                
+                return JsonResponse({
+                    'success': True,
+                    'message': 'Two-factor authentication has been enabled successfully. You will now receive verification codes via email when logging in.',
+                    'enabled': True
+                })
+            else:
+                # Disable 2FA
+                member.two_factor_enabled = False
+                member.save(update_fields=['two_factor_enabled'])
+                
+                # Clean up any remaining OTPs for this user
+                EmailOTP.objects.filter(user=user).delete()
+                
+                # Send notification email
+                from .email_utils import send_2fa_disabled_notification
+                send_2fa_disabled_notification(user)
+                
+                return JsonResponse({
+                    'success': True,
+                    'message': 'Two-factor authentication has been disabled. Your account security level has been reduced.',
+                    'enabled': False
+                })
+                
+        except Member.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'User profile not found.'
+            }, status=404)
+            
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'message': 'Invalid request data.'
+        }, status=400)
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': f'An error occurred: {str(e)}'
+        }, status=500)
