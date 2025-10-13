@@ -222,11 +222,11 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="phone_number" class="form-label">
-                            <i class="bi bi-telephone me-2 text-primary"></i>Phone Number <span class="text-danger">*</span>
+                            <i class="bi bi-telephone me-2 text-primary"></i>Phone Number <span class="text-muted">(Optional)</span>
                         </label>
                         <input type="tel" class="form-control" id="phone_number" name="phone_number" 
                                placeholder="+65 9123 4567"
-                               value="{{ member.phone_number|default:'' }}" required>
+                               value="{{ member.phone_number|default:'' }}">
                     </div>
                 </div>
             </div>
@@ -308,7 +308,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const requiredFields = [
             { id: 'profile_picture', name: 'Profile Picture', isFile: true },
             { id: 'job_position', name: 'Job Position' },
-            { id: 'phone_number', name: 'Phone Number' },
             { id: 'short_bio', name: 'Short Bio' }
         ];
         
@@ -350,7 +349,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Add event listeners to all form fields for real-time validation
-    const formFields = ['job_position', 'phone_number', 'short_bio'];
+    const formFields = ['job_position', 'short_bio'];
     formFields.forEach(fieldId => {
         const field = document.getElementById(fieldId);
         if (field) {
