@@ -973,7 +973,7 @@ body {
 
 .footer-content {
     display: grid;
-    grid-template-columns: 2fr 1.5fr 1fr 1.5fr;
+    grid-template-columns: 2fr 1.5fr 1fr 2fr;
     gap: 60px;
     align-items: start;
 }
