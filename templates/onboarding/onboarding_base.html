@@ -23,12 +23,13 @@
             <div class="container">
                 <a class="navbar-brand" href="{% url 'homepage' %}">
                     <div class="navbar-logo">
-                        <img src="{% static 'images/logo-notext.png' %}" alt="SEA-MaP Logo" style="width:65px;">
+                        <!-- <img src="{% static 'images/logo-notext.png' %}" alt="SEA-MaP Logo" style="width:65px;"> -->
+                         <img src="{% static 'images/logo.webp' %}" alt="SEA-MaP Logo" style="width:65px;">
                     </div>
-                    <div>
+                    <!-- <div>
                         <div class="navbar-title">SEA-MaP</div>
                         <div class="navbar-tagline" style="line-height: 1.2;font-size: 0.75rem; color:var(--text-light);font-weight: normal;">Regional Platform for Innovation <br>and Investments</div>
-                    </div>
+                    </div> -->
                 </a>
 
                 <!-- Center: Mobile breadcrumb (if needed) -->
@@ -83,11 +84,11 @@
                 <!-- Left Section - Logo and Description -->
                 <div class="footer-section footer-brand">
                     <div class="footer-logo">
-                        <img src="{% static 'images/logo-notext-white.png' %}" alt="SEA-MaP Logo" class="footer-logo-img">
-                        <div class="footer-brand-text">
+                        <img src="{% static 'images/logo-white-text.webp' %}" alt="SEA-MaP Logo" class="footer-logo-img">
+                        <!-- <div class="footer-brand-text">
                             <h3>SEA-MaP</h3>
                             <p class="footer-tagline">Regional Platform for Innovation and Investments</p>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
                 
@@ -95,12 +96,10 @@
                 <div class="footer-section footer-contact">
                     <h5>CONTACT</h5>
                     <div class="contact-info">
-                        <p>Project Management Unit (PMU)</p>
-                        <p>1st Floor, Heritage Building<br>
-                        The ASEAN Secretariat<br>
-                        70A Jalan Sisingamangaraja<br>
-                        Jakarta 12110, Indonesia</p>
-                        <p>E: seamap.feedback@asean.org</p>
+                        <p>SEA-MaP Regional Platform for Innovation and Investments</p>
+                        <p>383, 5th Floor, Bond Street Road, Bang Phut Subdistrict, Pak Kret District<br>
+                        Nonthaburi 11120, Thailand</p>
+                        <p>Email: seamap@iex.co.th</p>
                     </div>
                 </div>
                 
@@ -117,13 +116,9 @@
                 <!-- Partners Section -->
                 <div class="footer-section footer-partners">
                     <p class="partners-text">An ASEAN project supported by the World Bank</p>
-                    <div class="partner-logos">
-                        <div class="partner-logo">
-                            <img src="{% static 'images/world-bank-logo.png' %}" alt="World Bank" class="wb-logo">
-                        </div>
-                        <div class="partner-logo">
-                            <img src="{% static 'images/asean-logo.png' %}" alt="ASEAN" class="asean-logo">
-                        </div>
+                    <div class="partner-logos d-flex flex-row align-items-center gap-3 flex-wrap">
+                        <img src="{% static 'images/world-bank-logo.png' %}" alt="World Bank" class="wb-logo" style="max-height:40px;">
+                        <img src="{% static 'images/asean-logo.png' %}" alt="ASEAN" class="asean-logo" style="max-height:100px;">
                     </div>
                 </div>
             </div>
