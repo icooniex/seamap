@@ -60,7 +60,7 @@ class Command(BaseCommand):
             import traceback
             traceback.print_exc()
 
-    def _create_user_and_member(self, username, email, first_name, last_name, job_position="", bio="", password="seamap2024"):
+    def _create_user_and_member(self, username, email, first_name, last_name, job_position="", bio="", password="seamap2025"):
         """Create a user and associated member profile"""
         try:
             # Try to get existing user first
@@ -113,14 +113,14 @@ class Command(BaseCommand):
                 'last_name': 'Thanakit',
                 'job_position': 'CEO & Founder',
                 'bio': 'Environmental engineer turned entrepreneur. 8 years developing biodegradable packaging solutions from agricultural waste. Passionate about replacing single-use plastics across Southeast Asia.',
-                'password': 'ecopack2024',
+                'password': 'seamap2025',
                 'company_name': 'EcoPack Solutions',
                 'website': 'https://ecopack.asia',
                 'founded_year': 2022,
                 'team_size': '6-10',
                 'primary_location': 'Thailand',
                 'company_description': 'EcoPack Solutions develops biodegradable packaging materials from agricultural waste, specifically rice husks and corn starch. Our mission is to replace single-use plastics with sustainable alternatives that decompose naturally within 90 days.',
-                'innovation_types': ['plastic_alternatives', 'circular_economy', 'waste_collection'],
+                'innovation_types': ['Eliminate & Redesign Packaging', 'Upcycling Plastic Waste', 'Reusable Packaging Collection/Drop Off'],
                 'solution_description': 'We create compostable packaging from agricultural waste that performs as well as traditional plastics but breaks down completely in 90 days in industrial composting facilities.',
                 'current_stage': 'early',
                 'funding_needed': '500k_1m',
@@ -139,7 +139,7 @@ class Command(BaseCommand):
                 'core_team_size': '7 people including 2 co-founders',
                 'team_overview': 'Our team combines expertise in materials science, environmental engineering, and business development with experience from Dow Chemical and CP Group.',
                 'core_expertise': 'Biodegradable materials research, sustainable manufacturing processes, B2B sales, regulatory compliance',
-                'support_areas': ['manufacturing_supply', 'market_expansion', 'investment_funding'],
+                'support_areas': ['Manufacturing & Supply Chain', 'Market Expansion & Customer Acquisition', 'Investment & Funding Access'],
                 'support_details': 'Seeking manufacturing partners for scale-up, distribution channels across ASEAN, and Series A funding of $800K-1.2M.',
                 'additional_info': 'Our products are certified compostable (ASTM D6400, EN 13432) and meet international food safety standards. Processed 50 tons of agricultural waste in 2024.'
             },
@@ -150,14 +150,14 @@ class Command(BaseCommand):
                 'last_name': 'Lim',
                 'job_position': 'Co-Founder & CEO',
                 'bio': 'Former McKinsey consultant with 10 years in sustainability consulting. Built 2 previous cleantech companies. Expert in circular economy business models and corporate sustainability transformation.',
-                'password': 'plasticfree2024',
+                'password': 'seamap2025',
                 'company_name': 'PlasticFree Innovations',
                 'website': 'https://plasticfree.sg',
                 'founded_year': 2021,
                 'team_size': '11-25',
                 'primary_location': 'Singapore',
                 'company_description': 'PlasticFree Innovations operates a B2B platform connecting businesses with verified sustainable packaging alternatives. We help companies transition from plastic to eco-friendly materials with full supply chain integration.',
-                'innovation_types': ['plastic_alternatives', 'tracking_monitoring', 'education_partnerships'],
+                'innovation_types': ['Eliminate & Redesign Packaging', 'Tracking & Monitoring Waste', 'Education & Industry Partnerships'],
                 'solution_description': 'Our SaaS platform provides end-to-end sustainable packaging solutions including material sourcing, supplier verification, impact tracking, and carbon footprint measurement.',
                 'current_stage': 'scaling',
                 'funding_needed': '1m_5m',
@@ -176,7 +176,7 @@ class Command(BaseCommand):
                 'core_team_size': '16 people across engineering, sales, operations',
                 'team_overview': 'Team of ex-consultants, sustainability experts, and tech professionals from Google, Grab, McKinsey, and Unilever.',
                 'core_expertise': 'B2B SaaS development, supply chain management, sustainability consulting, enterprise sales',
-                'support_areas': ['market_expansion', 'investment_funding', 'manufacturing_supply'],
+                'support_areas': ['Market Expansion & Customer Acquisition', 'Investment & Funding Access', 'Manufacturing & Supply Chain'],
                 'support_details': 'Seeking Series B funding for regional expansion and partnerships with multinational corporations and government agencies.',
                 'additional_info': 'Platform has processed over $35M in sustainable packaging transactions and helped customers save 1.5M kg of plastic waste annually.'
             }
@@ -247,7 +247,7 @@ class Command(BaseCommand):
                 'last_name': 'Chen',
                 'job_position': 'Managing Partner',
                 'bio': 'Former Goldman Sachs investment banker with 15+ years in venture capital. Specialized in sustainability and circular economy investments across Asia-Pacific. Led 40+ investments in cleantech startups.',
-                'password': 'circularvc2024',
+                'password': 'seamap2025',
                 'company_name': 'Circular Ventures Asia',
                 'website': 'https://circularvc.asia',
                 'founded_year': 2019,
@@ -258,10 +258,10 @@ class Command(BaseCommand):
                 'funding_size': '100m_200m',
                 'average_deal_size': '500k_1m',
                 'funding_stages': ['pre_seed', 'seed', 'series_a'],
-                'investment_categories': ['plastic_alternatives', 'recycling_technologies', 'waste_collection', 'tracking_monitoring'],
+                                                                'investment_categories': ['Bioplastics & Compostable Materials', 'Advanced Recycling & Upcycling', 'Collection & Sorting Technologies', 'Data, Monitoring & Traceability'],
                 'market_country_interests': ['Singapore', 'Indonesia', 'Thailand', 'Malaysia', 'Philippines', 'Vietnam'],
                 'investment_philosophy': 'We invest in early-stage startups solving plastic waste challenges with scalable technology solutions. Focus on companies that can achieve both significant environmental impact and strong financial returns in the circular economy.',
-                'support_areas': ['investment_funding', 'market_expansion', 'manufacturing_supply'],
+                'support_areas': ['Investment & Funding Access', 'Market Expansion & Customer Acquisition', 'Manufacturing & Supply Chain'],
                 'support_details': 'We provide hands-on support including business development, strategic partnerships, follow-on funding, and access to our extensive network of corporates, government agencies, and manufacturing partners.',
                 'additional_info': 'Portfolio includes 35 companies across plastic alternatives, waste management, and circular economy with total portfolio value of $400M. Combined portfolio impact: 800K tons plastic waste diverted annually.'
             },
@@ -272,7 +272,7 @@ class Command(BaseCommand):
                 'last_name': 'Williams',
                 'job_position': 'General Partner',
                 'bio': 'Impact investing veteran with PhD in Marine Biology. 18+ years building sustainable businesses across emerging markets. Former World Bank consultant on ocean plastic pollution initiatives.',
-                'password': 'oceanimpact2024',
+                'password': 'seamap2025',
                 'company_name': 'Ocean Impact Fund',
                 'website': 'https://oceanimpact.fund',
                 'founded_year': 2018,
@@ -283,10 +283,10 @@ class Command(BaseCommand):
                 'funding_size': '1m_50m',
                 'average_deal_size': '1m_5m',
                 'funding_stages': ['seed', 'series_a', 'series_b'],
-                'investment_categories': ['waste_collection', 'recycling_technologies', 'tracking_monitoring', 'education_partnerships'],
+                'investment_categories': ['Collection & Sorting Technologies', 'Advanced Recycling & Upcycling', 'Data, Monitoring & Traceability', 'Waste Management Infrastructure'],
                 'market_country_interests': ['Thailand', 'Indonesia', 'Philippines', 'Vietnam', 'Malaysia'],
                 'investment_philosophy': 'We target companies delivering measurable ocean plastic reduction alongside financial returns. Focus on waste collection, advanced recycling, and monitoring technologies with proven impact metrics.',
-                'support_areas': ['investment_funding', 'regulatory_compliance', 'impact_measurement'],
+                'support_areas': ['Investment & Funding Access', 'Regulatory & Compliance', 'Branding & Marketing'],
                 'support_details': 'Beyond capital, we provide impact measurement frameworks, regulatory guidance, connections to government and NGO partners, and access to scientific research networks.',
                 'additional_info': 'Portfolio has prevented 1.2M tons of plastic from entering oceans, created 3,000+ green jobs, and operates in 8 countries across Southeast Asia and Pacific.'
             }
@@ -345,7 +345,7 @@ class Command(BaseCommand):
                 'last_name': 'Lim',
                 'job_position': 'Head of Sustainable Innovation',
                 'bio': 'Leading Unilever\'s plastic circularity initiatives across Southeast Asia. 12+ years in corporate sustainability and open innovation. Expert in sustainable packaging and supply chain transformation.',
-                'password': 'unilever2024',
+                'password': 'seamap2025',
                 'company_name': 'Unilever Southeast Asia',
                 'website': 'https://unilever.com.sg',
                 'founded_year': 1885,
@@ -353,9 +353,10 @@ class Command(BaseCommand):
                 'primary_location': 'Singapore',
                 'company_description': 'Unilever is a leading multinational consumer goods company committed to sustainable living. We are transforming our packaging to be 100% reusable, recyclable, or compostable while reducing plastic waste across our value chain.',
                 'organization_type': 'multinational_corporation',
-                'industry_expertise': ['consumer_goods', 'sustainable_packaging', 'supply_chain', 'circular_economy'],
+                'industry_expertise': ['Retail & Consumer Goods', 'Energy & Sustainability', 'Industrial & Manufacturing'],
+                'investment_categories': ['Eliminate & Redesign Packaging', 'Sustainable Alternative Materials', 'Upcycling Plastic Waste'],
                 'innovation_types': ['plastic_alternatives', 'refill_reuse', 'recycling_technologies'],
-                'support_areas': ['investment_funding', 'manufacturing_supply', 'market_expansion'],
+                'support_areas': ['Co-Development – Collaborating on tailored solutions', 'Financial Support – Funding startups and projects', 'Mentorship & Expertise – Guiding startups with knowledge'],
                 'support_details': 'We offer corporate venture capital through Unilever Ventures, strategic partnerships, pilot opportunities, manufacturing scale-up support, and market access across our global distribution network.',
                 'additional_info': 'Committed to halving virgin plastic use by 2025. Annual revenue of $60B+ globally. Operating plastic waste collection programs in Indonesia, Philippines, and Thailand reaching 100,000+ households.'
             },
@@ -366,7 +367,7 @@ class Command(BaseCommand):
                 'last_name': 'Wichianchai',
                 'job_position': 'Director, Circular Economy',
                 'bio': 'Leading SCG\'s circular economy transformation across ASEAN. 15+ years in materials science and industrial innovation. Expert in chemical recycling and advanced materials development.',
-                'password': 'scgcircular2024',
+                'password': 'seamap2025',
                 'company_name': 'SCG Circular Economy Solutions',
                 'website': 'https://scg.com/circular',
                 'founded_year': 1913,
@@ -374,9 +375,10 @@ class Command(BaseCommand):
                 'primary_location': 'Thailand',
                 'company_description': 'SCG is a leading industrial conglomerate pioneering circular economy solutions across ASEAN. We develop advanced recycling technologies, sustainable materials, and circular business models for plastic waste valorization.',
                 'organization_type': 'multinational_corporation',
-                'industry_expertise': ['chemicals', 'advanced_materials', 'recycling_technology', 'manufacturing'],
+                'industry_expertise': ['Industrial & Manufacturing', 'Food Production & Service', 'Retail & Consumer Goods'],
+                'investment_categories': ['Upcycling Plastic Waste', 'Enhancing Plastic Recycling Systems', 'Sustainable Alternative Materials'],
                 'innovation_types': ['recycling_technologies', 'plastic_alternatives', 'tracking_monitoring'],
-                'support_areas': ['manufacturing_supply', 'product_development', 'investment_funding'],
+                'support_areas': ['Pilot Programs – Testing innovative solution', 'Co-Development – Collaborating on tailored solutions', 'Financial Support – Funding startups and projects'],
                 'support_details': 'We provide manufacturing partnerships, chemical recycling R&D, scale-up facilities, distribution networks, corporate venture investments, and access to circular economy expertise.',
                 'additional_info': 'Revenue of $15B+ with operations across ASEAN. Operates 3 chemical recycling plants processing 30,000 tons annually. Committed to carbon neutrality by 2050 and leading regional circular economy initiatives.'
             }
@@ -405,6 +407,7 @@ class Command(BaseCommand):
                     'company_description': corporate_data['company_description'],
                     'organization_type': corporate_data['organization_type'],
                     'industry_expertise': corporate_data['industry_expertise'],
+                    'investment_categories': corporate_data['investment_categories'],
                     'innovation_types': corporate_data['innovation_types'],
                     'support_areas': corporate_data['support_areas'],
                     'support_details': corporate_data['support_details'],
@@ -429,18 +432,18 @@ class Command(BaseCommand):
         
         # Login info for each user type
         startup_logins = [
-            ("Siriporn Thanakit (CEO & Founder)", "founder@ecopack.asia", "ecopack2024"),
-            ("Marcus Lim (Co-Founder & CEO)", "ceo@plasticfree.sg", "plasticfree2024")
+            ("Siriporn Thanakit (CEO & Founder)", "founder@ecopack.asia", "seamap2025"),
+            ("Marcus Lim (Co-Founder & CEO)", "ceo@plasticfree.sg", "seamap2025")
         ]
         
         investor_logins = [
-            ("David Chen (Managing Partner)", "partner@circularvc.asia", "circularvc2024"),
-            ("Sarah Williams (General Partner)", "gp@oceanimpact.fund", "oceanimpact2024")
+            ("David Chen (Managing Partner)", "partner@circularvc.asia", "seamap2025"),
+            ("Sarah Williams (General Partner)", "gp@oceanimpact.fund", "seamap2025")
         ]
         
         corporate_logins = [
-            ("Jennifer Lim (Head of Sustainable Innovation)", "sustainability@unilever.com.sg", "unilever2024"),
-            ("Supachai Wichianchai (Director, Circular Economy)", "circular@scg.com", "scgcircular2024")
+            ("Jennifer Lim (Head of Sustainable Innovation)", "sustainability@unilever.com.sg", "seamap2025"),
+            ("Supachai Wichianchai (Director, Circular Economy)", "circular@scg.com", "seamap2025")
         ]
         
         self.stdout.write("\n🚀 STARTUP USERS:")
