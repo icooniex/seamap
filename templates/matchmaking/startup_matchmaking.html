@@ -186,17 +186,25 @@
                                     {% if startup.current_stage == "idea" %}
                                         💡 Ideation
                                     {% elif startup.current_stage == "prototype" %}
-                                        🔧 Prototype/MVP
-                                    {% elif startup.current_stage == "validation" %}
-                                        🧪 Validation
-                                    {% elif startup.current_stage == "early" %}
-                                        📈 Early Growth
-                                    {% elif startup.current_stage == "scaling" %}
-                                        🚀 Scaling
-                                    {% elif startup.current_stage == "profit" %}
-                                        💰 Established/Profitable
-                                    {% elif startup.current_stage == "profitable" %}
-                                        💰 Established/Profitable
+                                        🔧 Prototype
+                                    {% elif startup.current_stage == "mvp" %}
+                                        🚧 MVP – Minimum Viable Product tested with users
+                                    {% elif startup.current_stage == "pre_seed" %}
+                                        🚀 Pre-Seed – Preparing for market launch
+                                    {% elif startup.current_stage == "seed" %}
+                                        🌱 Seed – Launched, gaining initial traction
+                                    {% elif startup.current_stage == "pre_series_a" %}
+                                        📊 Pre-Series A – Growing user base, refining model
+                                    {% elif startup.current_stage == "series_a" %}
+                                        💼 Series A – Scaling operations and market reach
+                                    {% elif startup.current_stage == "series_b" %}
+                                        🏢 Series B – Expanding team and infrastructure
+                                    {% elif startup.current_stage == "series_c_plus" %}
+                                        🌍 Series C+ – Established market presence, exploring new opportunities
+                                    {% elif startup.current_stage == "pre_ipo" %}
+                                        💎 Pre-IPO – Preparing for public offering
+                                    {% elif startup.current_stage == "ipo" %}
+                                        🏛️ IPO – Publicly traded company
                                     {% else %}
                                         {{ startup.get_current_stage_display }}
                                     {% endif %}
@@ -312,17 +320,25 @@
                                         {% if startup.current_stage == "idea" %}
                                             💡 Ideation
                                         {% elif startup.current_stage == "prototype" %}
-                                            🔧 Prototype/MVP
-                                        {% elif startup.current_stage == "validation" %}
-                                            🧪 Validation
-                                        {% elif startup.current_stage == "early" %}
-                                            📈 Early Growth
-                                        {% elif startup.current_stage == "scaling" %}
-                                            🚀 Scaling
-                                        {% elif startup.current_stage == "profit" %}
-                                            💰 Established/Profitable
-                                        {% elif startup.current_stage == "profitable" %}
-                                            💰 Established/Profitable
+                                            🔧 Prototype
+                                        {% elif startup.current_stage == "mvp" %}
+                                            🚧 MVP – Minimum Viable Product tested with users
+                                        {% elif startup.current_stage == "pre_seed" %}
+                                            🚀 Pre-Seed – Preparing for market launch
+                                        {% elif startup.current_stage == "seed" %}
+                                            🌱 Seed – Launched, gaining initial traction
+                                        {% elif startup.current_stage == "pre_series_a" %}
+                                            📊 Pre-Series A – Growing user base, refining model
+                                        {% elif startup.current_stage == "series_a" %}
+                                            💼 Series A – Scaling operations and market reach
+                                        {% elif startup.current_stage == "series_b" %}
+                                            🏢 Series B – Expanding team and infrastructure
+                                        {% elif startup.current_stage == "series_c_plus" %}
+                                            🌍 Series C+ – Established market presence, exploring new opportunities
+                                        {% elif startup.current_stage == "pre_ipo" %}
+                                            💎 Pre-IPO – Preparing for public offering
+                                        {% elif startup.current_stage == "ipo" %}
+                                            🏛️ IPO – Publicly traded company
                                         {% else %}
                                             {{ startup.get_current_stage_display }}
                                         {% endif %}
@@ -593,35 +609,70 @@
                                         <input type="checkbox" id="stageMvp" name="current_stage" value="prototype" class="form-check-input">
                                         <label for="stageMvp" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">🔧 Prototype/MVP</span>
+                                            <span class="checkbox-text">🔧 Prototype</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="stageValidation" name="current_stage" value="validation" class="form-check-input">
-                                        <label for="stageValidation" class="checkbox-label">
+                                        <input type="checkbox" id="stageMvp" name="current_stage" value="mvp" class="form-check-input">
+                                        <label for="stageMvp" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">🧪 Validation</span>
+                                            <span class="checkbox-text">🚧 MVP – Minimum Viable Product tested with users</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="stageEarly" name="current_stage" value="early" class="form-check-input">
-                                        <label for="stageEarly" class="checkbox-label">
+                                        <input type="checkbox" id="stagePreSeed" name="current_stage" value="pre_seed" class="form-check-input">
+                                        <label for="stagePreSeed" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">📈 Early Growth</span>
+                                            <span class="checkbox-text">🚀 Pre-Seed – Preparing for market launch</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="stageScaling" name="current_stage" value="scaling" class="form-check-input">
-                                        <label for="stageScaling" class="checkbox-label">
+                                        <input type="checkbox" id="stageSeed" name="current_stage" value="seed" class="form-check-input">
+                                        <label for="stageSeed" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">🚀 Scaling</span>
+                                            <span class="checkbox-text">🌱 Seed – Launched, gaining initial traction</span>
                                         </label>
                                     </div>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="stageProfit" name="current_stage" value="profitable" class="form-check-input">
-                                        <label for="stageProfit" class="checkbox-label">
+                                        <input type="checkbox" id="stagePreSeriesA" name="current_stage" value="pre_series_a" class="form-check-input">
+                                        <label for="stagePreSeriesA" class="checkbox-label">
                                             <span class="checkbox-custom"></span>
-                                            <span class="checkbox-text">💰 Established/Profitable</span>
+                                            <span class="checkbox-text">📊 Pre-Series A – Growing user base, refining model</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="stageSeriesA" name="current_stage" value="series_a" class="form-check-input">
+                                        <label for="stageSeriesA" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">💼 Series A – Scaling operations and market reach</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="stageSeriesB" name="current_stage" value="series_b" class="form-check-input">
+                                        <label for="stageSeriesB" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🏢 Series B – Expanding team and infrastructure</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="stageSeriesCPlus" name="current_stage" value="series_c_plus" class="form-check-input">
+                                        <label for="stageSeriesCPlus" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🌍 Series C+ – Established market presence, exploring new opportunities</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="stagePreIpo" name="current_stage" value="pre_ipo" class="form-check-input">
+                                        <label for="stagePreIpo" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">💎 Pre-IPO – Preparing for public offering</span>
+                                        </label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="stageIpo" name="current_stage" value="ipo" class="form-check-input">
+                                        <label for="stageIpo" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">🏛️ IPO – Publicly traded company</span>
                                         </label>
                                     </div>
                                 </div>

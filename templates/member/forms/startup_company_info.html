@@ -102,10 +102,15 @@
                     <option value="">Select Stage</option>
                     <option value="idea" {% if company.current_stage == 'idea' %}selected{% endif %}>💡 Ideation – Developing an idea, no product yet</option>
                     <option value="prototype" {% if company.current_stage == 'prototype' %}selected{% endif %}>🔧 Prototype – Initial MVP or prototype created</option>
-                    <option value="validation" {% if company.current_stage == 'validation' %}selected{% endif %}>🧪 Validation – Testing with early customers</option>
-                    <option value="early" {% if company.current_stage == 'early' %}selected{% endif %}>📈 Early Growth – Generating revenue</option>
-                    <option value="scaling" {% if company.current_stage == 'scaling' %}selected{% endif %}>🚀 Scaling – Expanding with proven model</option>
-                    <option value="profitable" {% if company.current_stage == 'profitable' %}selected{% endif %}>💰 Established – Profitable and exploring new markets</option>
+                    <option value="mvp" {% if company.current_stage == 'mvp' %}selected{% endif %}>🚧 MVP – Minimum Viable Product tested with users</option>
+                    <option value="pre_seed" {% if company.current_stage == 'pre_seed' %}selected{% endif %}>🚀 Pre-Seed – Preparing for market launch</option>
+                    <option value="seed" {% if company.current_stage == 'seed' %}selected{% endif %}>🌱 Seed – Launched, gaining initial traction</option>
+                    <option value="pre_series_a" {% if company.current_stage == 'pre_series_a' %}selected{% endif %}>📊 Pre-Series A – Growing user base, refining model</option>
+                    <option value="series_a" {% if company.current_stage == 'series_a' %}selected{% endif %}>💼 Series A – Scaling operations and market reach</option>
+                    <option value="series_b" {% if company.current_stage == 'series_b' %}selected{% endif %}>🏢 Series B – Expanding team and infrastructure</option>
+                    <option value="series_c_plus" {% if company.current_stage == 'series_c_plus' %}selected{% endif %}>🌍 Series C+ – Established market presence, exploring new opportunities</option>
+                    <option value="pre_ipo" {% if company.current_stage == 'pre_ipo' %}selected{% endif %}>💎 Pre-IPO – Preparing for public offering</option>
+                    <option value="ipo" {% if company.current_stage == 'ipo' %}selected{% endif %}>🏛️ IPO – Publicly traded company</option>
                 </select>
             </div>
         </div>
