@@ -47,6 +47,7 @@
                 <span>Advanced Filters</span>
             </button>
             <span class="filter-tag active" data-filter="all">All Startups</span>
+            <span class="filter-tag" data-filter="female-led">Female-led Startups</span>
             <span class="filter-tag" data-filter="early-stage">Early Stage</span>
             <span class="filter-tag" data-filter="growth">Growth Stage</span>
             <span class="filter-tag" data-filter="high-match">High Match (>80%)</span>
@@ -140,6 +141,7 @@
                         data-company-description="{{ startup.company_description|default:'' }}"
                         data-solution-description="{{ startup.solution_description|default:'' }}"
                         data-created="{{ startup.created_at|date:'Y-m-d' }}"
+                        data-female-led="{{ startup.member.is_female_led|yesno:'true,false' }}"
                         data-href="/startup/profile/{{ startup.id }}/">
                         <td class="company-cell sticky-column">
                             <div class="d-flex align-items-center">
@@ -277,6 +279,7 @@
                      data-company-description="{{ startup.company_description|default:'' }}"
                      data-solution-description="{{ startup.solution_description|default:'' }}"
                      data-created="{{ startup.created_at|date:'Y-m-d' }}"
+                     data-female-led="{{ startup.member.is_female_led|yesno:'true,false' }}"
                      onclick="window.location.href='/startup/{{ startup.id }}/'">
                     <div class="card-body p-3">
                         <!-- Startup Header -->
@@ -850,6 +853,25 @@
                             </div>
                         </div>
 
+                        <!-- Female-led Filter -->
+                        <div class="col-lg-4 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="bi bi-gender-female me-2"></i>
+                                    Female-led Startups
+                                </label>
+                                <div class="tech-checkbox-grid">
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="femaleLed" name="is_female_led" value="true" class="form-check-input">
+                                        <label for="femaleLed" class="checkbox-label">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">👩‍💼 See only Female-led Startups</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Support Areas Filter -->
                         <div class="col-12">
                             <div class="form-group">
@@ -935,6 +957,7 @@ document.addEventListener('DOMContentLoaded', function() {
         funding: [],
         innovationTypes: [],
         supportAreas: [],
+        femaleLed: false,
         quickFilter: 'all'
     };
 
@@ -1084,6 +1107,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // Support areas
         currentFilters.supportAreas = Array.from(document.querySelectorAll('input[name="support_areas"]:checked'))
             .map(input => input.value);
+        
+        // Female-led
+        currentFilters.femaleLed = document.querySelector('input[name="is_female_led"]:checked') !== null;
     }
     
     function clearAdvancedFilters() {
@@ -1094,6 +1120,7 @@ document.addEventListener('DOMContentLoaded', function() {
         currentFilters.funding = [];
         currentFilters.innovationTypes = [];
         currentFilters.supportAreas = [];
+        currentFilters.femaleLed = false;
         
         // Reset form inputs
         if (matchRange) {
@@ -1115,7 +1142,8 @@ document.addEventListener('DOMContentLoaded', function() {
                currentFilters.stages.length > 0 ||
                currentFilters.funding.length > 0 ||
                currentFilters.innovationTypes.length > 0 ||
-               currentFilters.supportAreas.length > 0;
+               currentFilters.supportAreas.length > 0 ||
+               currentFilters.femaleLed;
     }
     
     // Quick filter tags functionality
@@ -1213,6 +1241,10 @@ document.addEventListener('DOMContentLoaded', function() {
             return false;
         }
         
+        if (currentFilters.femaleLed && !data.isFemaleLed) {
+            return false;
+        }
+        
         return true;
     }
     
@@ -1281,6 +1313,9 @@ document.addEventListener('DOMContentLoaded', function() {
             data.createdDate = new Date(createdAttr);
         }
         
+        // Extract female-led from data attribute
+        data.isFemaleLed = element.dataset.femaleLed === 'true';
+        
         // Extract company description and solution description from data attributes
         data.companyDescription = element.dataset.companyDescription || '';
         data.solutionDescription = element.dataset.solutionDescription || '';
@@ -1305,6 +1340,8 @@ document.addEventListener('DOMContentLoaded', function() {
         switch (quickFilter) {
             case 'all':
                 return true;
+            case 'female-led':
+                return data.isFemaleLed === true;
             case 'early-stage':
                 return ['idea', 'prototype', 'validation', 'early'].includes(data.stage);
             case 'growth':

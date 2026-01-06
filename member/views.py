@@ -286,6 +286,7 @@ def startup_matchmaking(request):
     filter_team_size = request.GET.getlist('team_size')
     filter_technologies = request.GET.getlist('technologies')
     filter_match_score = request.GET.get('match_score', '0')
+    filter_female_led = request.GET.get('is_female_led', '')
     
     # Base queryset - get all startup companies
     startups = Company.objects.filter(
@@ -344,6 +345,10 @@ def startup_matchmaking(request):
             tech_filters |= models.Q(innovation_types__icontains=tech)
         startups = startups.filter(tech_filters)
     
+    # Apply female-led filter
+    if filter_female_led == 'true':
+        startups = startups.filter(member__is_female_led=True)
+    
     # Add mock match scores for demonstration
     startups_with_scores = []
     for startup in startups:
@@ -386,6 +391,7 @@ def startup_matchmaking(request):
         'filter_team_size': filter_team_size,
         'filter_technologies': filter_technologies,
         'filter_match_score': int(filter_match_score),
+        'filter_female_led': filter_female_led,
         'available_locations': sorted(set(locations)),
         'available_stages': sorted(set(stages)),
         'available_team_sizes': sorted(set(team_sizes)),
