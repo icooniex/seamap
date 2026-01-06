@@ -107,16 +107,17 @@
                 <label for="primary_location" class="form-label">Primary Location *</label>
                 <select class="form-select" id="primary_location" name="primary_location" required>
                     <option value="">Select Location</option>
-                    <option value="Singapore" {% if company.primary_location == 'Singapore' %}selected{% endif %}>🇸🇬 Singapore</option>
-                    <option value="Indonesia" {% if company.primary_location == 'Indonesia' %}selected{% endif %}>🇮🇩 Indonesia</option>
-                    <option value="Thailand" {% if company.primary_location == 'Thailand' %}selected{% endif %}>🇹🇭 Thailand</option>
-                    <option value="Malaysia" {% if company.primary_location == 'Malaysia' %}selected{% endif %}>🇲🇾 Malaysia</option>
-                    <option value="Philippines" {% if company.primary_location == 'Philippines' %}selected{% endif %}>🇵🇭 Philippines</option>
-                    <option value="Vietnam" {% if company.primary_location == 'Vietnam' %}selected{% endif %}>🇻🇳 Vietnam</option>
-                    <option value="Cambodia" {% if company.primary_location == 'Cambodia' %}selected{% endif %}>🇰🇭 Cambodia</option>
-                    <option value="Laos" {% if company.primary_location == 'Laos' %}selected{% endif %}>🇱🇦 Laos</option>
-                    <option value="Myanmar" {% if company.primary_location == 'Myanmar' %}selected{% endif %}>🇲🇲 Myanmar</option>
                     <option value="Brunei" {% if company.primary_location == 'Brunei' %}selected{% endif %}>🇧🇳 Brunei</option>
+                    <option value="Cambodia" {% if company.primary_location == 'Cambodia' %}selected{% endif %}>🇰🇭 Cambodia</option>
+                    <option value="Indonesia" {% if company.primary_location == 'Indonesia' %}selected{% endif %}>🇮🇩 Indonesia</option>
+                    <option value="Laos" {% if company.primary_location == 'Laos' %}selected{% endif %}>🇱🇦 Laos</option>
+                    <option value="Malaysia" {% if company.primary_location == 'Malaysia' %}selected{% endif %}>🇲🇾 Malaysia</option>
+                    <option value="Myanmar" {% if company.primary_location == 'Myanmar' %}selected{% endif %}>🇲🇲 Myanmar</option>
+                    <option value="Philippines" {% if company.primary_location == 'Philippines' %}selected{% endif %}>🇵🇭 Philippines</option>
+                    <option value="Singapore" {% if company.primary_location == 'Singapore' %}selected{% endif %}>🇸🇬 Singapore</option>
+                    <option value="Thailand" {% if company.primary_location == 'Thailand' %}selected{% endif %}>🇹🇭 Thailand</option>
+                    <option value="Timor Leste" {% if company.primary_location == 'Timor Leste' %}selected{% endif %}>🇹🇱 Timor Leste</option>
+                    <option value="Vietnam" {% if company.primary_location == 'Vietnam' %}selected{% endif %}>🇻🇳 Vietnam</option>
                     <option value="Other" {% if company.primary_location == 'Other' %}selected{% endif %}>🌍 Other</option>
                 </select>
             </div>
@@ -437,51 +438,11 @@
                 <label class="form-label">Market Country Interests</label>
                 <div class="checkbox-grid">
                     <div class="checkbox-card">
-                        <input type="checkbox" name="market_country_interests" value="Singapore" 
-                               {% if 'Singapore' in company.market_country_interests %}checked{% endif %}>
+                        <input type="checkbox" name="market_country_interests" value="Brunei" 
+                               {% if 'Brunei' in company.market_country_interests %}checked{% endif %}>
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon"></div>
-                            <span class="checkbox-label">🇸🇬 Singapore</span>
-                        </div>
-                    </div>
-                    <div class="checkbox-card">
-                        <input type="checkbox" name="market_country_interests" value="Indonesia" 
-                               {% if 'Indonesia' in company.market_country_interests %}checked{% endif %}>
-                        <div class="checkbox-card-content">
-                            <div class="checkbox-icon"></div>
-                            <span class="checkbox-label">🇮🇩 Indonesia</span>
-                        </div>
-                    </div>
-                    <div class="checkbox-card">
-                        <input type="checkbox" name="market_country_interests" value="Thailand" 
-                               {% if 'Thailand' in company.market_country_interests %}checked{% endif %}>
-                        <div class="checkbox-card-content">
-                            <div class="checkbox-icon"></div>
-                            <span class="checkbox-label">🇹🇭 Thailand</span>
-                        </div>
-                    </div>
-                    <div class="checkbox-card">
-                        <input type="checkbox" name="market_country_interests" value="Malaysia" 
-                               {% if 'Malaysia' in company.market_country_interests %}checked{% endif %}>
-                        <div class="checkbox-card-content">
-                            <div class="checkbox-icon"></div>
-                            <span class="checkbox-label">🇲🇾 Malaysia</span>
-                        </div>
-                    </div>
-                    <div class="checkbox-card">
-                        <input type="checkbox" name="market_country_interests" value="Philippines" 
-                               {% if 'Philippines' in company.market_country_interests %}checked{% endif %}>
-                        <div class="checkbox-card-content">
-                            <div class="checkbox-icon"></div>
-                            <span class="checkbox-label">🇵🇭 Philippines</span>
-                        </div>
-                    </div>
-                    <div class="checkbox-card">
-                        <input type="checkbox" name="market_country_interests" value="Vietnam" 
-                               {% if 'Vietnam' in company.market_country_interests %}checked{% endif %}>
-                        <div class="checkbox-card-content">
-                            <div class="checkbox-icon"></div>
-                            <span class="checkbox-label">🇻🇳 Vietnam</span>
+                            <span class="checkbox-label">🇧🇳 Brunei</span>
                         </div>
                     </div>
                     <div class="checkbox-card">
@@ -493,11 +454,27 @@
                         </div>
                     </div>
                     <div class="checkbox-card">
+                        <input type="checkbox" name="market_country_interests" value="Indonesia" 
+                               {% if 'Indonesia' in company.market_country_interests %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <span class="checkbox-label">🇮🇩 Indonesia</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card">
                         <input type="checkbox" name="market_country_interests" value="Laos" 
                                {% if 'Laos' in company.market_country_interests %}checked{% endif %}>
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon"></div>
                             <span class="checkbox-label">🇱🇦 Laos</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" name="market_country_interests" value="Malaysia" 
+                               {% if 'Malaysia' in company.market_country_interests %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <span class="checkbox-label">🇲🇾 Malaysia</span>
                         </div>
                     </div>
                     <div class="checkbox-card">
@@ -509,11 +486,43 @@
                         </div>
                     </div>
                     <div class="checkbox-card">
-                        <input type="checkbox" name="market_country_interests" value="Brunei" 
-                               {% if 'Brunei' in company.market_country_interests %}checked{% endif %}>
+                        <input type="checkbox" name="market_country_interests" value="Philippines" 
+                               {% if 'Philippines' in company.market_country_interests %}checked{% endif %}>
                         <div class="checkbox-card-content">
                             <div class="checkbox-icon"></div>
-                            <span class="checkbox-label">🇧🇳 Brunei</span>
+                            <span class="checkbox-label">🇵🇭 Philippines</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" name="market_country_interests" value="Singapore" 
+                               {% if 'Singapore' in company.market_country_interests %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <span class="checkbox-label">🇸🇬 Singapore</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" name="market_country_interests" value="Thailand" 
+                               {% if 'Thailand' in company.market_country_interests %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <span class="checkbox-label">🇹🇭 Thailand</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" name="market_country_interests" value="Timor Leste" 
+                               {% if 'Timor Leste' in company.market_country_interests %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <span class="checkbox-label">🇹🇱 Timor Leste</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-card">
+                        <input type="checkbox" name="market_country_interests" value="Vietnam" 
+                               {% if 'Vietnam' in company.market_country_interests %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon"></div>
+                            <span class="checkbox-label">🇻🇳 Vietnam</span>
                         </div>
                     </div>
                     <div class="checkbox-card">

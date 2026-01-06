@@ -647,6 +647,7 @@ class Company(models.Model):
             'Laos': '🇱🇦 Laos',
             'Myanmar': '🇲🇲 Myanmar',
             'Brunei': '🇧🇳 Brunei',
+            'Timor Leste': '🇹🇱 Timor Leste  ',
             'Other': '🌍 Other',
         }
         return [country_mapping.get(c, c) for c in self.market_country_interests]
