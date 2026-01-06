@@ -71,6 +71,7 @@ LOCATION_CHOICES = [
     ('Laos', '🇱🇦 Laos'),
     ('Myanmar', '🇲🇲 Myanmar'),
     ('Brunei', '🇧🇳 Brunei'),
+    ('Timor Leste', '🇹🇱 Timor Leste'),
     ('Other', '🌍 Other'),
 ]
 

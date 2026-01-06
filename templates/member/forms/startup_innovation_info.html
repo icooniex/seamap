@@ -14,7 +14,71 @@
                     <i class="bi bi-lightbulb me-2 text-primary"></i>Type of Innovation <span class="text-danger">*</span> <span class="text-muted">(select all that apply)</span>
                 </label>
                 <div class="checkbox-grid">
-                    <div class="checkbox-card" data-checkbox="plastic_alternatives">
+                    <div class="checkbox-card" data-checkbox="product_redesign">
+                        <input type="checkbox" id="product_redesign" name="innovation_type" value="Product Redesign"
+                            {% if 'Product Redesign' in company.innovation_types %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                            </div>
+                            <label for="product_redesign" class="checkbox-label">Product Redesign</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="incentivizing_waste_engagement">
+                        <input type="checkbox" id="incentivizing_waste_engagement" name="innovation_type" value="Incentivizing Waste Engagement"
+                            {% if 'Incentivizing Waste Engagement' in company.innovation_types %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                            </div>
+                            <label for="incentivizing_waste_engagement" class="checkbox-label">Incentivizing Waste Engagement</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="removal_collection_technology">
+                        <input type="checkbox" id="removal_collection_technology" name="innovation_type" value="Removal and Collection Technology"
+                            {% if 'Removal and Collection Technology' in company.innovation_types %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                            </div>
+                            <label for="removal_collection_technology" class="checkbox-label">Removal and Collection Technology</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="sorting_technology">
+                        <input type="checkbox" id="sorting_technology" name="innovation_type" value="Sorting Technology"
+                            {% if 'Sorting Technology' in company.innovation_types %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                            </div>
+                            <label for="sorting_technology" class="checkbox-label">Sorting Technology</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="waste_valorization_recycling">
+                        <input type="checkbox" id="waste_valorization_recycling" name="innovation_type" value="Waste Valorization and Recycling Methods"
+                            {% if 'Waste Valorization and Recycling Methods' in company.innovation_types %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                            </div>
+                            <label for="waste_valorization_recycling" class="checkbox-label">Waste Valorization and Recycling Methods</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="monitoring_tools">
+                        <input type="checkbox" id="monitoring_tools" name="innovation_type" value="Monitoring and Data Tools"
+                            {% if 'Monitoring and Data Tools' in company.innovation_types %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                            </div>
+                            <label for="monitoring_tools" class="checkbox-label">Monitoring and Data Tools</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="certification_erp_services">
+                        <input type="checkbox" id="certification_erp_services" name="innovation_type" value="Certification and ERP Services" 
+                            {% if 'Certification and ERP Services' in company.innovation_types %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                            </div>
+                            <label for="certification_erp_services" class="checkbox-label">Certification and ERP Services</label>
+                        </div>
+                    </div>
+
+                    <!-- <div class="checkbox-card" data-checkbox="plastic_alternatives">
                         <input type="checkbox" id="plastic_alternatives" name="innovation_type" value="Eliminate & Redesign Packaging" 
                                {% if 'Eliminate & Redesign Packaging' in company.innovation_types %}checked{% endif %}>
                         <div class="checkbox-card-content">
@@ -69,7 +133,7 @@
                             <div class="checkbox-icon"></div>
                             <label for="tracking_monitoring" class="checkbox-label">Tracking & Monitoring Waste</label>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="checkbox-card" data-checkbox="other">
                         <input type="checkbox" id="other" name="innovation_type" value="Other Innovation"
                                {% if 'Other Innovation' in company.innovation_types %}checked{% endif %}>

@@ -301,7 +301,71 @@
             <div class="form-group">
                 <label class="form-label">Technological Areas *</label>
                 <div class="checkbox-grid">
-                    <div class="checkbox-card">
+                    <div class="checkbox-card" data-checkbox="product_redesign">
+                        <input type="checkbox" id="product_redesign" name="investment_categories" value="Product Redesign"
+                            {% if 'Product Redesign' in company.investment_categories %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                            </div>
+                            <label for="product_redesign" class="checkbox-label">Product Redesign</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="incentivizing_waste_engagement">
+                        <input type="checkbox" id="incentivizing_waste_engagement" name="investment_categories" value="Incentivizing Waste Engagement"
+                            {% if 'Incentivizing Waste Engagement' in company.investment_categories %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                            </div>
+                            <label for="incentivizing_waste_engagement" class="checkbox-label">Incentivizing Waste Engagement</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="removal_collection_technology">
+                        <input type="checkbox" id="removal_collection_technology" name="investment_categories" value="Removal and Collection Technology"
+                            {% if 'Removal and Collection Technology' in company.investment_categories %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                            </div>
+                            <label for="removal_collection_technology" class="checkbox-label">Removal and Collection Technology</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="sorting_technology">
+                        <input type="checkbox" id="sorting_technology" name="investment_categories" value="Sorting Technology"
+                            {% if 'Sorting Technology' in company.investment_categories %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                            </div>
+                            <label for="sorting_technology" class="checkbox-label">Sorting Technology</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="waste_valorization_recycling">
+                        <input type="checkbox" id="waste_valorization_recycling" name="investment_categories" value="Waste Valorization and Recycling Methods"
+                            {% if 'Waste Valorization and Recycling Methods' in company.investment_categories %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                            </div>
+                            <label for="waste_valorization_recycling" class="checkbox-label">Waste Valorization and Recycling Methods</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="monitoring_tools">
+                        <input type="checkbox" id="monitoring_tools" name="investment_categories" value="Monitoring and Data Tools"
+                            {% if 'Monitoring and Data Tools' in company.investment_categories %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                            </div>
+                            <label for="monitoring_tools" class="checkbox-label">Monitoring and Data Tools</label>
+                        </div>
+                    </div>
+                    <div class="checkbox-card" data-checkbox="certification_erp_services">
+                        <input type="checkbox" id="certification_erp_services" name="investment_categories" value="Certification and ERP Services" 
+                            {% if 'Certification and ERP Services' in company.investment_categories %}checked{% endif %}>
+                        <div class="checkbox-card-content">
+                            <div class="checkbox-icon">
+                            </div>
+                            <label for="certification_erp_services" class="checkbox-label">Certification and ERP Services</label>
+                        </div>
+                    </div>
+
+                    <!-- <div class="checkbox-card">
                         <input type="checkbox" name="investment_categories" value="eliminate_redesign" 
                                {% if 'eliminate_redesign' in company.investment_categories %}checked{% endif %}>
                         <div class="checkbox-card-content">
@@ -356,7 +420,7 @@
                             <div class="checkbox-icon"></div>
                             <span class="checkbox-label">Data, Monitoring & Traceability</span>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="checkbox-card">
                         <input type="checkbox" name="investment_categories" value="other" 
                                {% if 'other' in company.investment_categories %}checked{% endif %}>
