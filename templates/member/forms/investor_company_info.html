@@ -110,16 +110,17 @@
                 <label for="primary_location" class="form-label">Primary Location *</label>
                 <select class="form-select" id="primary_location" name="primary_location" required>
                     <option value="">Select Location</option>
-                    <option value="Singapore" {% if company.primary_location == 'Singapore' %}selected{% endif %}>🇸🇬 Singapore</option>
-                    <option value="Indonesia" {% if company.primary_location == 'Indonesia' %}selected{% endif %}>🇮🇩 Indonesia</option>
-                    <option value="Thailand" {% if company.primary_location == 'Thailand' %}selected{% endif %}>🇹🇭 Thailand</option>
-                    <option value="Malaysia" {% if company.primary_location == 'Malaysia' %}selected{% endif %}>🇲🇾 Malaysia</option>
-                    <option value="Philippines" {% if company.primary_location == 'Philippines' %}selected{% endif %}>🇵🇭 Philippines</option>
-                    <option value="Vietnam" {% if company.primary_location == 'Vietnam' %}selected{% endif %}>🇻🇳 Vietnam</option>
-                    <option value="Cambodia" {% if company.primary_location == 'Cambodia' %}selected{% endif %}>🇰🇭 Cambodia</option>
-                    <option value="Laos" {% if company.primary_location == 'Laos' %}selected{% endif %}>🇱🇦 Laos</option>
-                    <option value="Myanmar" {% if company.primary_location == 'Myanmar' %}selected{% endif %}>🇲🇲 Myanmar</option>
                     <option value="Brunei" {% if company.primary_location == 'Brunei' %}selected{% endif %}>🇧🇳 Brunei</option>
+                    <option value="Cambodia" {% if company.primary_location == 'Cambodia' %}selected{% endif %}>🇰🇭 Cambodia</option>
+                    <option value="Indonesia" {% if company.primary_location == 'Indonesia' %}selected{% endif %}>🇮🇩 Indonesia</option>
+                    <option value="Laos" {% if company.primary_location == 'Laos' %}selected{% endif %}>🇱🇦 Laos</option>
+                    <option value="Malaysia" {% if company.primary_location == 'Malaysia' %}selected{% endif %}>🇲🇾 Malaysia</option>
+                    <option value="Myanmar" {% if company.primary_location == 'Myanmar' %}selected{% endif %}>🇲🇲 Myanmar</option>
+                    <option value="Philippines" {% if company.primary_location == 'Philippines' %}selected{% endif %}>🇵🇭 Philippines</option>
+                    <option value="Singapore" {% if company.primary_location == 'Singapore' %}selected{% endif %}>🇸🇬 Singapore</option>
+                    <option value="Thailand" {% if company.primary_location == 'Thailand' %}selected{% endif %}>🇹🇭 Thailand</option>
+                    <option value="Timor Leste" {% if company.primary_location == 'Timor Leste' %}selected{% endif %}>🇹🇱 Timor Leste</option>
+                    <option value="Vietnam" {% if company.primary_location == 'Vietnam' %}selected{% endif %}>🇻🇳 Vietnam</option>
                     <option value="Other" {% if company.primary_location == 'Other' %}selected{% endif %}>🌍 Other</option>
                 </select>
             </div>
