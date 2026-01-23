@@ -783,6 +783,71 @@
         </div>
     </div>
 
+    <!-- Published Documents Section -->
+    <div class="profile-card mb-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <h3 class="section-title mb-4">
+                    <i class="bi bi-file-earmark-text text-info me-2"></i>
+                    Published Documents
+                </h3>
+                
+                {% if published_documents %}
+                    <div class="row g-4">
+                        {% for document in published_documents %}
+                            <div class="col-lg-6 col-md-6">
+                                <div class="card border-0 shadow-sm h-100 document-card">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-start mb-3">
+                                            <div class="document-icon me-3" style="font-size: 2rem;">
+                                                {% if document.file.name|slice:"-4:" == '.pdf' %}
+                                                    <i class="bi bi-file-earmark-pdf-fill text-danger"></i>
+                                                {% elif document.file.name|slice:"-4:" == '.doc' or document.file.name|slice:"-5:" == '.docx' %}
+                                                    <i class="bi bi-file-earmark-word-fill text-primary"></i>
+                                                {% elif document.file.name|slice:"-4:" == '.xls' or document.file.name|slice:"-5:" == '.xlsx' %}
+                                                    <i class="bi bi-file-earmark-excel-fill text-success"></i>
+                                                {% elif document.file.name|slice:"-4:" == '.ppt' or document.file.name|slice:"-5:" == '.pptx' %}
+                                                    <i class="bi bi-file-earmark-ppt-fill text-warning"></i>
+                                                {% elif document.file.name|slice:"-4:" == '.jpg' or document.file.name|slice:"-4:" == '.png' or document.file.name|slice:"-5:" == '.jpeg' %}
+                                                    <i class="bi bi-file-earmark-image-fill text-info"></i>
+                                                {% else %}
+                                                    <i class="bi bi-file-earmark-fill text-secondary"></i>
+                                                {% endif %}
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <h6 class="fw-bold mb-2">{{ document.name }}</h6>
+                                                <span class="badge bg-info text-white mb-2">{{ document.get_document_type_display }}</span>
+                                                {% if document.description %}
+                                                    <p class="small text-muted mb-0">{{ document.description|truncatewords:20 }}</p>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                                            <div class="document-meta">
+                                                <small class="text-muted">
+                                                    <i class="bi bi-calendar3 me-1"></i>{{ document.uploaded_at|date:"M d, Y" }}
+                                                </small>
+                                            </div>
+                                            <a href="{{ document.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-download me-1"></i>Download
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-file-earmark-x text-muted" style="font-size: 3rem;"></i>
+                        <p class="text-muted mt-3 mb-0">No published documents available at this time.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
     <!-- Get in Touch Section -->
     <div class="profile-card mb-4">
         <div class="card shadow-sm border-0">

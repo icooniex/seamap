@@ -723,6 +723,9 @@ class CompanyDocument(models.Model):
     reviewed_at = models.DateTimeField(null=True, blank=True)
     reviewed_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='reviewed_company_documents')
     review_notes = models.TextField(blank=True)
+    
+    # Publish control - only approved documents can be published to public profile
+    is_published = models.BooleanField(default=False, help_text="Make this document visible on company profile")
 
     def __str__(self):
         return f"{self.name} for {self.company.company_name}"

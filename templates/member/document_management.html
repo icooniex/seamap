@@ -187,14 +187,29 @@
                                 <i class="bi bi-x-circle-fill text-danger"></i>
                                 <span class="status-text text-danger">Rejected</span>
                             {% endif %}
+                            
+                            {% if document.company %}
+                                {% if document.is_published %}
+                                    <span class="badge bg-info text-white ms-2">
+                                        <i class="bi bi-globe me-1"></i>Published
+                                    </span>
+                                {% endif %}
+                            {% endif %}
                         </div>
                         <div class="document-actions">
                             <a href="{{ document.file.url }}" target="_blank" class="btn btn-sm btn-outline-info me-2" title="View Document">
                                 <i class="bi bi-eye"></i>
                             </a>
-                            <!-- <a href="{{ document.file.url }}" download class="btn btn-sm btn-outline-success me-2" title="Download">
-                                <i class="bi bi-download"></i>
-                            </a> -->
+                            
+                            {% if document.company and document.status == 'approved' %}
+                                <button class="btn btn-sm {% if document.is_published %}btn-outline-secondary{% else %}btn-outline-success{% endif %} me-2" 
+                                        onclick="togglePublish({{ document.id }}, '{% if document.is_published %}unpublish{% else %}publish{% endif %}')" 
+                                        title="{% if document.is_published %}Unpublish from profile{% else %}Publish to profile{% endif %}"
+                                        id="publish-btn-{{ document.id }}">
+                                    <i class="bi {% if document.is_published %}bi-eye-slash{% else %}bi-globe{% endif %}"></i>
+                                </button>
+                            {% endif %}
+                            
                             <button class="btn btn-sm btn-outline-danger" onclick="deleteDocument({{ document.id }})" title="Delete">
                                 <i class="bi bi-trash"></i>
                             </button>
@@ -1451,6 +1466,46 @@ function performDelete(docId, documentCard) {
             documentCard.style.pointerEvents = 'auto';
         }
         showToast('error', 'Delete failed: ' + error.message);
+    });
+}
+
+// Toggle publish/unpublish document
+function togglePublish(docId, action) {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const button = document.getElementById(`publish-btn-${docId}`);
+    
+    // Disable button during request
+    if (button) {
+        button.disabled = true;
+    }
+    
+    fetch(`/api/documents/${docId}/toggle-publish/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrfToken,
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `action=${action}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Reload page to show updated status
+            location.reload();
+        } else {
+            // Re-enable button if failed
+            if (button) {
+                button.disabled = false;
+            }
+            showToast('error', data.error);
+        }
+    })
+    .catch(error => {
+        // Re-enable button if failed
+        if (button) {
+            button.disabled = false;
+        }
+        showToast('error', 'Failed to update publish status: ' + error.message);
     });
 }
 

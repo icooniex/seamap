@@ -48,6 +48,7 @@ urlpatterns = [
     path('api/documents/upload/', views.upload_document, name='upload_document'),
     path('api/documents/<int:doc_id>/delete/', views.delete_document, name='delete_document'),
     path('api/documents/<int:doc_id>/view/', views.view_document, name='view_document'),
+    path('api/documents/<int:doc_id>/toggle-publish/', views.toggle_document_publish, name='toggle_document_publish'),
     
     # Legal Pages
     path('disclaimer/', views.disclaimer, name='disclaimer'),

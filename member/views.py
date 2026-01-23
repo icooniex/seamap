@@ -1535,7 +1535,13 @@ def startup_profile(request, startup_id):
         'certifications': [],  # Could be added as model field
     }
     
-    return render(request, 'member/startup_profile.html', {'startup': startup_data})
+    # Get published documents
+    published_documents = startup.documents.filter(status='approved', is_published=True).order_by('-uploaded_at')
+    
+    return render(request, 'member/startup_profile.html', {
+        'startup': startup_data,
+        'published_documents': published_documents
+    })
 @onboarding_required
 def investor_profile(request, investor_id):
     """Display detailed investor profile page"""
@@ -1687,7 +1693,13 @@ def investor_profile(request, investor_id):
         'geographic_reach': f"{len(investor.market_country_interests)} countries" if investor.market_country_interests else ''
     }
     
-    return render(request, 'member/investor_profile.html', {'investor': investor_data})
+    # Get published documents
+    published_documents = investor.documents.filter(status='approved', is_published=True).order_by('-uploaded_at')
+    
+    return render(request, 'member/investor_profile.html', {
+        'investor': investor_data,
+        'published_documents': published_documents
+    })
 @onboarding_required
 def corporate_profile(request, corporate_id):
     """Display detailed corporate profile page"""
@@ -1831,7 +1843,13 @@ def corporate_profile(request, corporate_id):
         'geographic_reach': f"{len(corporate.market_country_interests)} countries" if corporate.market_country_interests else ''
     }
     
-    return render(request, 'member/corporate_profile.html', {'corporate': corporate_data})
+    # Get published documents
+    published_documents = corporate.documents.filter(status='approved', is_published=True).order_by('-uploaded_at')
+    
+    return render(request, 'member/corporate_profile.html', {
+        'corporate': corporate_data,
+        'published_documents': published_documents
+    })
 
 
 def onboarding_role_selection(request):
@@ -2545,6 +2563,66 @@ def upload_document(request):
         return JsonResponse({
             'success': False,
             'error': f'Upload failed: {str(e)}'
+        })
+
+
+@login_required
+def toggle_document_publish(request, doc_id):
+    """Toggle publish status of a company document"""
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Method not allowed'})
+    
+    try:
+        member = get_object_or_404(Member, user=request.user)
+        
+        # Find the document in user's companies
+        document = None
+        for company in member.companies.all():
+            try:
+                document = CompanyDocument.objects.get(id=doc_id, company=company)
+                break
+            except CompanyDocument.DoesNotExist:
+                continue
+        
+        if not document:
+            return JsonResponse({
+                'success': False,
+                'error': 'Document not found or access denied'
+            })
+        
+        # Only approved documents can be published
+        if document.status != 'approved' and request.POST.get('action') == 'publish':
+            return JsonResponse({
+                'success': False,
+                'error': 'Only approved documents can be published'
+            })
+        
+        # Toggle publish status
+        action = request.POST.get('action')
+        if action == 'publish':
+            document.is_published = True
+            message = 'Document published successfully'
+        elif action == 'unpublish':
+            document.is_published = False
+            message = 'Document unpublished successfully'
+        else:
+            return JsonResponse({
+                'success': False,
+                'error': 'Invalid action'
+            })
+        
+        document.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': message,
+            'is_published': document.is_published
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': f'Failed to update document: {str(e)}'
         })
 
 
