@@ -2006,6 +2006,8 @@ def onboarding_startup_new(request):
                 support_areas=support_areas,
                 support_details=request.POST.get('support_details', ''),
                 additional_info=request.POST.get('additional_info', ''),
+                # Female-led status
+                is_female_led=request.POST.get('is_female_led') == 'on',
                 # Set as primary company
                 is_primary=True
             )
