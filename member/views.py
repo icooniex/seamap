@@ -3048,6 +3048,9 @@ def terms_and_conditions(request):
     """Terms and Conditions page"""
     return render(request, 'member/terms_and_conditions.html')
 
+def environment_agreement(request):
+    return render(request, 'member/environment_agreement.html')
+
 
 def contact_us(request):
     """Contact Us page"""
