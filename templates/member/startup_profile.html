@@ -3,6 +3,7 @@
 {% load humanize %}
 
 {% block content %}
+{% url 'match_score_explanation' as score_url %}
 <link rel="stylesheet" href="{% static 'css/profile.css' %}">
 <link rel="stylesheet" href="{% static 'css/profile_sticky.css' %}">
 
@@ -29,7 +30,12 @@
                         <div class="d-flex align-items-center flex-wrap">
                             <h5 class="sticky-company-name mb-0 me-3">{{ startup.company_name }}</h5>
                             {% if show_match_score and startup.match_percentage is not None %}
-                            <div class="sticky-match-score me-3">
+                            <div class="sticky-match-score me-3 match-score-popover"
+                                 data-bs-toggle="popover"
+                                 data-bs-html="true"
+                                 data-bs-placement="bottom"
+                                 data-bs-title="Match Score"
+                                 data-bs-content="Based on your profile preferences. <a href='{{ score_url }}' target='_blank'>How is this calculated? &rarr;</a>">
                                 <span class="match-badge">{{ startup.match_percentage }}% Match</span>
                             </div>
                             {% endif %}
@@ -144,7 +150,12 @@
                                 <p class="company-tagline text-muted mb-0">{{ startup.description }}</p>
                             </div>
                             {% if show_match_score and startup.match_percentage is not None %}
-                            <div class="match-score-sm">
+                            <div class="match-score-sm match-score-popover"
+                                 data-bs-toggle="popover"
+                                 data-bs-html="true"
+                                 data-bs-placement="left"
+                                 data-bs-title="Match Score"
+                                 data-bs-content="Based on your profile preferences. <a href='{{ score_url }}' target='_blank'>How is this calculated? &rarr;</a>">
                                 <div class="match-percentage-sm">{{ startup.match_percentage }}%</div>
                                 <small class="text-muted d-block text-center">Match</small>
                             </div>
@@ -232,7 +243,12 @@
     <div class="row mb-4">
         {% if show_match_score and startup.match_percentage is not None %}
         <div class="col-lg-3 col-md-6 mb-3">
-            <div class="card text-center border-0 shadow-sm metric-card">
+            <div class="card text-center border-0 shadow-sm metric-card match-score-popover"
+                 data-bs-toggle="popover"
+                 data-bs-html="true"
+                 data-bs-placement="bottom"
+                 data-bs-title="Match Score"
+                 data-bs-content="Based on your profile preferences. <a href='{{ score_url }}' target='_blank'>How is this calculated? &rarr;</a>">
                 <div class="card-body">
                     <div class="metric-icon mx-auto mb-2">
                         <i class="bi bi-percent text-success"></i>
@@ -1155,4 +1171,24 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.querySelectorAll('.match-score-popover').forEach(function(el) {
+    var pop = new bootstrap.Popover(el, { sanitize: false, container: 'body', trigger: 'manual' });
+    var hideTimer;
+    function scheduleHide() { hideTimer = setTimeout(function() { pop.hide(); }, 300); }
+    function cancelHide() { clearTimeout(hideTimer); }
+    el.addEventListener('mouseenter', function() { cancelHide(); pop.show(); });
+    el.addEventListener('mouseleave', scheduleHide);
+    el.addEventListener('shown.bs.popover', function() {
+        var tip = document.getElementById(el.getAttribute('aria-describedby'));
+        if (tip) {
+            tip.addEventListener('mouseenter', cancelHide);
+            tip.addEventListener('mouseleave', scheduleHide);
+        }
+    });
+});
+</script>
 {% endblock %}
