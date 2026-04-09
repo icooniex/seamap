@@ -1,0 +1,302 @@
+{% extends "template_parts/home_base.html" %}
+{% load static %}
+
+{% block title %}How Match Score Works - SEA-MAP{% endblock %}
+
+{% block extra_styles %}
+    <style>
+        .terms-hero {
+            background: linear-gradient(135deg, #2c59a7 0%, #574da1 100%);
+            color: white;
+            padding: 4rem 0 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .terms-hero::after {
+            content: '';
+            position: absolute;
+            bottom: -400px;
+            right: -400px;
+            width: 800px;
+            height: 800px;
+            border: 150px solid rgba(235, 202, 56, 0.3);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .terms-hero::before {
+            content: '';
+            position: absolute;
+            top: -300px;
+            left: -300px;
+            width: 600px;
+            height: 600px;
+            border: 100px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .terms-hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .terms-hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+
+        .terms-hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            text-align: left;
+        }
+
+        .terms-content {
+            padding: 4rem 0;
+            line-height: 1.8;
+        }
+
+        .terms-content h2 {
+            color: #2c59a7;
+            margin-top: 2.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            font-size: 1.3rem;
+        }
+
+        .terms-content h2:first-of-type {
+            margin-top: 0;
+        }
+
+        .back-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: white;
+        }
+
+        .score-table th {
+            background-color: #2c59a7;
+            color: white;
+        }
+
+        .score-breakdown {
+            background: #f8f9fa;
+            border-left: 4px solid #2c59a7;
+            padding: 1rem 1.25rem;
+            border-radius: 0 0.375rem 0.375rem 0;
+            margin-bottom: 1rem;
+        }
+
+        .score-breakdown .score-label {
+            font-weight: 600;
+            color: #2c59a7;
+        }
+
+        .score-breakdown .score-pts {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #574da1;
+        }
+
+        .pair-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .pair-show {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .pair-hide {
+            background: #f8d7da;
+            color: #842029;
+        }
+
+        @media (max-width: 768px) {
+            .terms-hero {
+                padding: 3rem 0 1.5rem 0;
+            }
+
+            .terms-hero h1 {
+                font-size: 2.5rem;
+                text-align: center;
+            }
+
+            .terms-hero p {
+                text-align: center;
+            }
+
+            .terms-hero::after {
+                bottom: -300px;
+                right: -300px;
+                width: 600px;
+                height: 600px;
+                border-width: 100px;
+            }
+
+            .terms-hero::before {
+                top: -200px;
+                left: -200px;
+                width: 400px;
+                height: 400px;
+                border-width: 60px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <!-- Hero Section -->
+    <section class="terms-hero">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="terms-hero-content">
+                        <h1>HOW MATCH SCORE WORKS</h1>
+                        <p class="lead">Understanding how SEA-MAP calculates compatibility between members</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Content -->
+    <section class="terms-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-9 mx-auto">
+                    <div class="card shadow-sm">
+                        <div class="card-body p-5">
+
+                            <p class="text-muted mb-4">The Match Score helps you quickly identify the most compatible partners on the SEA-MAP platform. It is calculated automatically using your company profile information and the profile of each listed company.</p>
+
+                            <h2>1. Who Sees a Match Score?</h2>
+                            <p>Match scores are only shown when there is a meaningful relationship between the viewer and the listed company types. The table below summarises when a score is displayed:</p>
+
+                            <div class="table-responsive mb-4">
+                                <table class="table table-bordered score-table text-center align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-start">You are viewing →<br>You are a ↓</th>
+                                            <th>Startup dashboard</th>
+                                            <th>Investor dashboard</th>
+                                            <th>Corporate dashboard</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="fw-semibold text-start">Startup</td>
+                                            <td><span class="pair-badge pair-hide">Hidden</span></td>
+                                            <td><span class="pair-badge pair-show">Shown ✓</span></td>
+                                            <td><span class="pair-badge pair-show">Shown ✓</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-semibold text-start">Investor</td>
+                                            <td><span class="pair-badge pair-show">Shown ✓</span></td>
+                                            <td><span class="pair-badge pair-hide">Hidden</span></td>
+                                            <td><span class="pair-badge pair-hide">Hidden</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-semibold text-start">Corporate</td>
+                                            <td><span class="pair-badge pair-show">Shown ✓</span></td>
+                                            <td><span class="pair-badge pair-hide">Hidden</span></td>
+                                            <td><span class="pair-badge pair-hide">Hidden</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <p class="text-muted small">Scores are hidden when viewing your own type (e.g. startup browsing startups) or for unsupported combinations (e.g. investor browsing corporates), because no meaningful compatibility algorithm applies.</p>
+
+                            <h2>2. Investor ↔ Startup Score (out of 100)</h2>
+                            <p>When an <strong>investor</strong> views startups (or a <strong>startup</strong> views investors), the score is calculated from four criteria:</p>
+
+                            <div class="score-breakdown">
+                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                    <span class="score-label">Investment Categories overlap</span>
+                                    <span class="score-pts">40 pts</span>
+                                </div>
+                                <p class="mb-0 text-muted small">Compares the investor's preferred investment categories against the startup's industry categories. Full overlap = 40 pts. Partial overlap = proportional score. If the investor has not specified categories, a neutral 20 pts is awarded.</p>
+                            </div>
+
+                            <div class="score-breakdown">
+                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                    <span class="score-label">Funding Stage compatibility</span>
+                                    <span class="score-pts">30 pts</span>
+                                </div>
+                                <p class="mb-0 text-muted small">Checks whether the investor's preferred funding stages (e.g. Seed, Series A) include the startup's current stage. A full match = 30 pts. If the investor has no stage preferences set, a neutral 15 pts is awarded.</p>
+                            </div>
+
+                            <div class="score-breakdown">
+                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                    <span class="score-label">Geographic market overlap</span>
+                                    <span class="score-pts">20 pts</span>
+                                </div>
+                                <p class="mb-0 text-muted small">Compares the investor's target markets with the startup's primary location. A country match = 20 pts. If the investor has no market preferences, a neutral 10 pts is awarded.</p>
+                            </div>
+
+                            <div class="score-breakdown">
+                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                    <span class="score-label">Deal size compatibility</span>
+                                    <span class="score-pts">10 pts</span>
+                                </div>
+                                <p class="mb-0 text-muted small">Checks whether the investor's average deal size is compatible with the startup's funding requirement. Compatible ranges = 10 pts. If either party has not specified an amount, a neutral 5 pts is awarded.</p>
+                            </div>
+
+                            <h2>3. Corporate ↔ Startup Score (out of 100)</h2>
+                            <p>When a <strong>corporate</strong> views startups (or a <strong>startup</strong> views corporates), the score is calculated from three criteria:</p>
+
+                            <div class="score-breakdown">
+                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                    <span class="score-label">Support areas overlap</span>
+                                    <span class="score-pts">50 pts</span>
+                                </div>
+                                <p class="mb-0 text-muted small">Compares the corporate's support areas (e.g. mentoring, market access, technology) against the types of support the startup is seeking. Full overlap = 50 pts. Partial overlap = proportional score. Neutral 25 pts if the corporate has no areas specified.</p>
+                            </div>
+
+                            <div class="score-breakdown">
+                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                    <span class="score-label">Innovation types overlap</span>
+                                    <span class="score-pts">30 pts</span>
+                                </div>
+                                <p class="mb-0 text-muted small">Compares the corporate's innovation interests against the startup's categories or innovation types. Full overlap = 30 pts. Partial overlap = proportional score. Neutral 15 pts if the corporate has nothing specified.</p>
+                            </div>
+
+                            <div class="score-breakdown">
+                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                    <span class="score-label">Geographic market overlap</span>
+                                    <span class="score-pts">20 pts</span>
+                                </div>
+                                <p class="mb-0 text-muted small">Compares the corporate's target markets with the startup's primary location. A country match = 20 pts. Neutral 10 pts if no markets are specified.</p>
+                            </div>
+
+                            <h2>4. Neutral Partial Credit</h2>
+                            <p>To avoid penalising companies with incomplete profiles, each criterion awards a <strong>neutral partial score</strong> (typically half its maximum value) when the viewer has not yet filled in that particular preference field. This means a new or partially complete profile will still generate a meaningful score, reflecting pure uncertainty rather than a poor match.</p>
+                            <p>We encourage all members to complete their profiles for more accurate and personalised match results.</p>
+
+                            <h2>5. Score Range</h2>
+                            <p>All scores are on a <strong>0 – 100</strong> scale. A score of <strong>80 or above</strong> is considered a <em>High Match</em> and is highlighted on both the dashboards and the company profile pages. The score is recalculated in real time each time you load a dashboard or profile page, reflecting the latest profile data of both parties.</p>
+
+                            <hr class="my-4">
+                            <p class="text-muted small mb-0">If you have questions about the scoring or believe a score is inaccurate, please <a href="{% url 'contact_us' %}">contact us</a>.</p>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

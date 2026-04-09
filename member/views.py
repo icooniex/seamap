@@ -3085,6 +3085,11 @@ def privacy_policy(request):
     return render(request, 'member/privacy_policy.html')
 
 
+def match_score_explanation(request):
+    """Match Score Explanation page"""
+    return render(request, 'member/match_score_explanation.html')
+
+
 def terms_and_conditions(request):
     """Terms and Conditions page"""
     return render(request, 'member/terms_and_conditions.html')

@@ -84,11 +84,18 @@
                             </div>
                         </th>
                         {% if show_match_score %}
-                        <th class="sortable" data-sort="match">
+                        {% url 'match_score_explanation' as score_url %}
+                        <th class="sortable" data-sort="match"
+                            data-bs-toggle="popover"
+                            data-bs-html="true"
+                            data-bs-trigger="hover focus"
+                            data-bs-placement="bottom"
+                            data-bs-title="How is Match Score calculated?"
+                            data-bs-content="Scores are based on <strong>Investment Categories (40 pts)</strong>, <strong>Funding Stage (30 pts)</strong>, <strong>Location (20 pts)</strong>, and <strong>Deal Size (10 pts)</strong>. &mdash; <a href='{{ score_url }}' target='_blank'>Learn more &rarr;</a>">
                             <div class="d-flex align-items-center justify-content-center gap-2">
                                 <i class="bi bi-percent text-muted me-2"></i>
                                 <span>Match</span>
-                                <i class="bi bi-arrow-down sort-icon"></i>
+                                <i class="bi bi-info-circle text-muted" style="font-size:0.8rem;"></i>
                             </div>
                         </th>
                         {% endif %}
@@ -1726,5 +1733,25 @@ clickableCards.forEach(card => {
     card.setAttribute('tabindex', '0');
 });
 
+</script>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.querySelectorAll('[data-bs-toggle="popover"]').forEach(function(el) {
+    var pop = new bootstrap.Popover(el, { sanitize: false, container: 'body', trigger: 'manual' });
+    var hideTimer;
+    function scheduleHide() { hideTimer = setTimeout(function() { pop.hide(); }, 300); }
+    function cancelHide() { clearTimeout(hideTimer); }
+    el.addEventListener('mouseenter', function() { cancelHide(); pop.show(); });
+    el.addEventListener('mouseleave', scheduleHide);
+    el.addEventListener('shown.bs.popover', function() {
+        var tip = document.getElementById(el.getAttribute('aria-describedby'));
+        if (tip) {
+            tip.addEventListener('mouseenter', cancelHide);
+            tip.addEventListener('mouseleave', scheduleHide);
+        }
+    });
+});
 </script>
 {% endblock %} 

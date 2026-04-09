@@ -56,4 +56,5 @@ urlpatterns = [
     path('terms-and-conditions/', views.terms_and_conditions, name='terms_and_conditions'),
     path('environment-agreement/', views.environment_agreement, name='environment_agreement'),
     path('contact-us/', views.contact_us, name='contact_us'),
+    path('match-score/', views.match_score_explanation, name='match_score_explanation'),
 ]
