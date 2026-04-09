@@ -81,6 +81,7 @@
                                 <i class="bi bi-arrow-down sort-icon"></i>
                             </div>
                         </th>
+                        {% if show_match_score %}
                         <th class="sortable" data-sort="match">
                             <div class="d-flex align-items-center gap-2">
                                 <i class="bi bi-percent text-muted me-2"></i>
@@ -88,6 +89,7 @@
                                 <i class="bi bi-arrow-down sort-icon"></i>
                             </div>
                         </th>
+                        {% endif %}
                         <th class="sortable" data-sort="type">
                             <div class="d-flex align-items-center gap-2">
                                 <i class="bi bi-buildings text-muted me-2"></i>
@@ -126,7 +128,7 @@
                 <tbody>
                     {% for investor in investors %}
                     <tr class="startup-row clickable-row" 
-                        data-match="{{ investor.match_score }}" 
+                        data-match="{% if show_match_score %}{{ investor.match_score }}{% else %}0{% endif %}" 
                         data-type="{{ investor.investor_type|default:'unknown' }}" 
                         data-name="{{ investor.company_name|lower|cut:' '|cut:'-' }}" 
                         data-location="{{ investor.primary_location|default:'unknown' }}"
@@ -163,6 +165,7 @@
                                 </div>
                             </div>
                         </td>
+                        {% if show_match_score %}
                         <td class="match-cell">
                             <div class="match-score-sm">
                                 <span class="match-percentage-sm">{{ investor.match_score }}%</span>
@@ -171,6 +174,7 @@
                                 </div>
                             </div>
                         </td>
+                        {% endif %}
                         <td class="type-cell">
                             <div class="d-flex align-items-center">
                                 <span>{{ investor.get_investor_type_display|default:investor.investor_type|default:"Not specified" }}</span>
@@ -267,7 +271,7 @@
             {% for investor in investors %}
             <div class="col-12 col-md-6 col-lg-4 investor-grid-item">
                 <div class="startup-card card h-100" 
-                     data-match="{{ investor.match_score }}" 
+                     data-match="{% if show_match_score %}{{ investor.match_score }}{% else %}0{% endif %}" 
                      data-type="{{ investor.investor_type|default:'unknown' }}" 
                      data-name="{{ investor.company_name|lower|cut:' '|cut:'-' }}" 
                      data-location="{{ investor.primary_location|default:'unknown' }}"
@@ -300,9 +304,11 @@
                                         </div>
                                     </div>
                                 </div>
+                                {% if show_match_score %}
                                 <div class="match-score">
                                     <span class="match-percentage">{{ investor.match_score }}%</span>
                                 </div>
+                                {% endif %}
                             </div>
                         </div>
 

@@ -220,56 +220,140 @@ def dashboard(request):
     }
     return render(request, 'dashboard.html', context)
 
-def calculate_match_score(startup):
+# ---------------------------------------------------------------------------
+# Match Score — stage mapping (startup current_stage → investor funding_stages vocab)
+# ---------------------------------------------------------------------------
+_STARTUP_STAGE_TO_INVESTOR_STAGES = {
+    'idea':       {'pre_seed'},
+    'prototype':  {'pre_seed', 'seed'},
+    'validation': {'seed'},
+    'early':      {'seed', 'series_a'},
+    'scaling':    {'series_a', 'series_b', 'series_c'},
+    'profitable': {'series_b', 'series_c', 'series_d_plus'},
+}
+
+# Startup funding_needed → compatible investor average_deal_size values
+_STARTUP_FUNDING_COMPAT_DEAL = {
+    'under_10k':   {'under_100k'},
+    '10k_50k':     {'under_100k'},
+    '50k_100k':    {'under_100k'},
+    '100k_500k':   {'under_100k', '100k_500k'},
+    '500k_1m':     {'100k_500k', '500k_1m'},
+    '1m_5m':       {'500k_1m', '1m_5m'},
+    '5m_10m':      {'1m_5m', '5m_10m'},
+    'over_10m':    {'5m_10m', '10m_50m', 'over_50m'},
+    'not_seeking': set(),
+}
+
+
+def _score_investor_startup(investor, startup):
     """
-    Calculate a mock match score for a startup based on various factors.
-    In a real implementation, this would use ML algorithms and user preferences.
+    Compute a 0-100 match score between an investor and a startup.
+    Works for either viewing direction (investor views startup, or startup views investor).
     """
-    score = 50  # Base score
-    
-    # Add points based on various factors
-    if startup.current_stage:
-        stage_scores = {
-            'idea': 60,
-            'prototype': 70,
-            'validation': 75,
-            'early': 80,
-            'scaling': 85,
-            'profitable': 90
-        }
-        score += stage_scores.get(startup.current_stage, 0) - 50
-    
-    # Add points for having a website
-    if startup.website:
-        score += 10
-    
-    # Add points for team size (sweet spot for early stage)
-    if startup.team_size:
-        team_scores = {
-            '1': 65,
-            '2-5': 85,
-            '6-10': 90,
-            '11-25': 85,
-            '26-50': 80,
-            '51-100': 75,
-            '100+': 70
-        }
-        team_score = team_scores.get(startup.team_size, 70)
-        score = (score + team_score) // 2
-    
-    # Add points for innovation types (diversified approach)
-    if startup.innovation_types and len(startup.innovation_types) > 0:
-        score += min(len(startup.innovation_types) * 5, 20)
-    
-    # Add points for having support areas defined
-    if startup.support_areas and len(startup.support_areas) > 0:
-        score += 5
-    
-    # Add some randomness to make it more realistic
-    score += random.randint(-10, 15)
-    
-    # Ensure score is within bounds
+    score = 0
+
+    # 1. Investment category match (40 pts)
+    investor_cats = set(investor.investment_categories or [])
+    startup_inno  = set(startup.innovation_types or [])
+    if investor_cats and startup_inno:
+        intersection = investor_cats & startup_inno
+        score += round((len(intersection) / max(len(investor_cats), len(startup_inno))) * 40)
+    else:
+        score += 20  # neutral — one side has no preference set
+
+    # 2. Stage match (30 pts)
+    investor_stages = set(investor.funding_stages or [])
+    startup_stage   = startup.current_stage or ''
+    mapped_stages   = _STARTUP_STAGE_TO_INVESTOR_STAGES.get(startup_stage, set())
+    if investor_stages:
+        score += 30 if investor_stages & mapped_stages else 0
+    else:
+        score += 15  # neutral — investor has no stage preference set
+
+    # 3. Location match (20 pts)
+    investor_locations = set(investor.market_country_interests or [])
+    startup_location   = startup.primary_location or ''
+    if investor_locations:
+        score += 20 if startup_location in investor_locations else 0
+    else:
+        score += 10  # neutral — investor has no location preference set
+
+    # 4. Deal size compatibility (10 pts)
+    investor_deal = investor.average_deal_size or ''
+    startup_funding = startup.funding_needed or ''
+    compatible_deals = _STARTUP_FUNDING_COMPAT_DEAL.get(startup_funding, set())
+    if investor_deal:
+        score += 10 if investor_deal in compatible_deals else 0
+    else:
+        score += 5  # neutral — investor has no deal size set
+
     return max(0, min(100, score))
+
+
+def _score_corporate_startup(corporate, startup):
+    """
+    Compute a 0-100 match score between a corporate and a startup.
+    Works for either viewing direction.
+    """
+    score = 0
+
+    # 1. Support areas match (50 pts)
+    corp_support    = set(corporate.support_areas or [])
+    startup_support = set(startup.support_areas or [])
+    if corp_support and startup_support:
+        intersection = corp_support & startup_support
+        score += round((len(intersection) / max(len(corp_support), len(startup_support))) * 50)
+    else:
+        score += 25  # neutral
+
+    # 2. Innovation type match (30 pts)
+    corp_inno    = set(corporate.innovation_types or [])
+    startup_inno = set(startup.innovation_types or [])
+    if corp_inno and startup_inno:
+        intersection = corp_inno & startup_inno
+        score += round((len(intersection) / max(len(corp_inno), len(startup_inno))) * 30)
+    else:
+        score += 15  # neutral
+
+    # 3. Location match (20 pts)
+    if corporate.primary_location and startup.primary_location:
+        score += 20 if corporate.primary_location == startup.primary_location else 0
+    else:
+        score += 10  # neutral
+
+    return max(0, min(100, score))
+
+
+def calculate_real_match_score(viewer_company, subject_company):
+    """
+    Return a 0-100 match score between viewer_company and subject_company.
+    Returns None when the pair has no applicable algorithm (same type, or
+    investor↔corporate which is unsupported).
+    """
+    if viewer_company is None or subject_company is None:
+        return None
+
+    vtype = viewer_company.company_type
+    stype = subject_company.company_type
+
+    if vtype == stype:
+        return None  # same type — no score shown
+
+    # investor ↔ startup (both directions)
+    if vtype == 'investor' and stype == 'startup':
+        return _score_investor_startup(viewer_company, subject_company)
+    if vtype == 'startup' and stype == 'investor':
+        return _score_investor_startup(subject_company, viewer_company)
+
+    # corporate ↔ startup (both directions)
+    if vtype == 'corporate' and stype == 'startup':
+        return _score_corporate_startup(viewer_company, subject_company)
+    if vtype == 'startup' and stype == 'corporate':
+        return _score_corporate_startup(subject_company, viewer_company)
+
+    # investor ↔ corporate — unsupported
+    return None
 
 @onboarding_required
 def startup_matchmaking(request):
@@ -349,40 +433,54 @@ def startup_matchmaking(request):
     if filter_female_led == 'true':
         startups = startups.filter(member__is_female_led=True)
     
-    # Add mock match scores for demonstration
+    # Determine current user's company and whether scores apply
+    try:
+        user_company = request.user.member.companies.filter(is_active=True).first()
+    except Exception:
+        user_company = None
+    # Scores shown only when viewer is NOT a startup (investor or corporate viewing startups)
+    show_match_score = user_company is not None and user_company.company_type != 'startup'
+
     startups_with_scores = []
     for startup in startups:
-        # Calculate a mock match score based on various factors
-        match_score = calculate_match_score(startup)
-        
-        # Only include if meets minimum match score
-        if int(filter_match_score) == 0 or match_score >= int(filter_match_score):
-            startup.match_score = match_score
-            startups_with_scores.append(startup)
-    
-    # Sort by match score if filtering by score
-    if int(filter_match_score) > 0:
-        startups_with_scores.sort(key=lambda x: x.match_score, reverse=True)
-    
+        if show_match_score:
+            match_score = calculate_real_match_score(user_company, startup)
+            if match_score is None:
+                match_score = 0
+        else:
+            match_score = None
+
+        # Only apply score filter when scores are shown
+        if show_match_score and int(filter_match_score) > 0:
+            if match_score < int(filter_match_score):
+                continue
+
+        startup.match_score = match_score
+        startups_with_scores.append(startup)
+
+    # Sort by match score (descending) when scores are visible and filter active
+    if show_match_score and int(filter_match_score) > 0:
+        startups_with_scores.sort(key=lambda x: x.match_score or 0, reverse=True)
+
     # Get filter options for the form
     locations = Company.objects.filter(
         company_type='startup',
         is_active=True,
         primary_location__isnull=False
     ).values_list('primary_location', flat=True).distinct()
-    
+
     stages = Company.objects.filter(
         company_type='startup',
         is_active=True,
         current_stage__isnull=False
     ).values_list('current_stage', flat=True).distinct()
-    
+
     team_sizes = Company.objects.filter(
         company_type='startup',
         is_active=True,
         team_size__isnull=False
     ).values_list('team_size', flat=True).distinct()
-    
+
     context = {
         'startups': startups_with_scores,
         'search_query': search_query,
@@ -396,6 +494,7 @@ def startup_matchmaking(request):
         'available_stages': sorted(set(stages)),
         'available_team_sizes': sorted(set(team_sizes)),
         'total_startups': len(startups_with_scores),
+        'show_match_score': show_match_score,
     }
     return render(request, 'matchmaking/startup_matchmaking.html', context)
 
@@ -627,50 +726,6 @@ def signup(request):
 
 
 
-def calculate_investor_match_score(investor):
-    """
-    Calculate a mock match score for an investor based on various factors.
-    In a real implementation, this would use ML algorithms and user preferences.
-    """
-    score = 60  # Base score
-    
-    # Add points based on investor type
-    if investor.investor_type:
-        type_scores = {
-            'angel': 75,
-            'vc': 85,
-            'pe': 80,
-            'corporate': 70,
-            'grant': 90,
-            'accelerator': 85
-        }
-        score += type_scores.get(investor.investor_type, 0) - 60
-    
-    # Add points for having clear funding stages
-    if investor.funding_stages and len(investor.funding_stages) > 0:
-        score += min(len(investor.funding_stages) * 8, 25)
-    
-    # Add points for having investment categories
-    if investor.investment_categories and len(investor.investment_categories) > 0:
-        score += min(len(investor.investment_categories) * 5, 20)
-    
-    # Add points for having clear funding size
-    if investor.funding_size:
-        score += 15
-    
-    # Add points for having website and description
-    if investor.website:
-        score += 8
-    if investor.company_description:
-        score += 7
-    
-    # Add some randomness to make it more realistic
-    import random
-    score += random.randint(-8, 12)
-    
-    # Ensure score is within bounds
-    return max(0, min(100, score))
-
 @onboarding_required
 def investor_matchmaking(request):
     """Investor matchmaking view with search and filter functionality"""
@@ -728,46 +783,55 @@ def investor_matchmaking(request):
             category_filters |= models.Q(investment_categories__icontains=category)
         investors = investors.filter(category_filters)
     
-    # Add mock match scores and filter by minimum match score
+    # Determine current user's company and whether scores apply
+    try:
+        user_company = request.user.member.companies.filter(is_active=True).first()
+    except Exception:
+        user_company = None
+    # Scores shown only when viewer is a startup (not an investor viewing investors)
+    show_match_score = user_company is not None and user_company.company_type != 'investor'
+
     investors_with_scores = []
     for investor in investors:
-        # Calculate a mock match score based on various factors
-        match_score = calculate_investor_match_score(investor)
-        
-        # Only include if meets minimum match score
-        if int(filter_match_score) == 0 or match_score >= int(filter_match_score):
-            investor.match_score = match_score
-            # Add preferred_stages and investment_categories as lists for template compatibility
-            if investor.funding_stages:
-                investor.preferred_stages = investor.funding_stages
-            else:
-                investor.preferred_stages = []
-                
-            investors_with_scores.append(investor)
-    
-    # Sort by match score if filtering by score
-    if int(filter_match_score) > 0:
-        investors_with_scores.sort(key=lambda x: x.match_score, reverse=True)
-    
+        if show_match_score:
+            match_score = calculate_real_match_score(user_company, investor)
+            if match_score is None:
+                match_score = 0
+        else:
+            match_score = None
+
+        # Only apply score filter when scores are shown
+        if show_match_score and int(filter_match_score) > 0:
+            if match_score < int(filter_match_score):
+                continue
+
+        investor.match_score = match_score
+        investor.preferred_stages = investor.funding_stages or []
+        investors_with_scores.append(investor)
+
+    # Sort by match score (descending) when scores are visible and filter active
+    if show_match_score and int(filter_match_score) > 0:
+        investors_with_scores.sort(key=lambda x: x.match_score or 0, reverse=True)
+
     # Get filter options for the form
     available_investor_types = Company.objects.filter(
         company_type='investor',
         is_active=True,
         investor_type__isnull=False
     ).values_list('investor_type', flat=True).distinct()
-    
+
     available_locations = Company.objects.filter(
         company_type='investor',
         is_active=True,
         primary_location__isnull=False
     ).values_list('primary_location', flat=True).distinct()
-    
+
     available_funding_sizes = Company.objects.filter(
         company_type='investor',
         is_active=True,
         funding_size__isnull=False
     ).values_list('funding_size', flat=True).distinct()
-    
+
     context = {
         'investors': investors_with_scores,
         'search_query': search_query,
@@ -781,66 +845,10 @@ def investor_matchmaking(request):
         'available_locations': sorted(set(available_locations)),
         'available_funding_sizes': sorted(set(available_funding_sizes)),
         'total_investors': len(investors_with_scores),
+        'show_match_score': show_match_score,
     }
-    
-    return render(request, 'matchmaking/investor_matchmaking.html', context)
 
-def calculate_corporate_match_score(corporate):
-    """
-    Calculate a mock match score for a corporate based on various factors.
-    In a real implementation, this would use ML algorithms and user preferences.
-    """
-    score = 65  # Base score
-    
-    # Add points based on organization type
-    if corporate.organization_type:
-        type_scores = {
-            'enterprise': 80,
-            'startup': 85,
-            'government': 75,
-            'ngo': 70,
-            'educational': 90
-        }
-        score += type_scores.get(corporate.organization_type, 0) - 65
-    
-    # Add points for having clear funding/deal size
-    if corporate.average_deal_size:
-        score += 15
-    
-    # Add points for having innovation types
-    if corporate.innovation_types and len(corporate.innovation_types) > 0:
-        score += min(len(corporate.innovation_types) * 6, 25)
-    
-    # Add points for having support areas defined
-    if corporate.support_areas and len(corporate.support_areas) > 0:
-        score += min(len(corporate.support_areas) * 4, 20)
-    
-    # Add points for company size (larger companies often have more resources)
-    if corporate.team_size:
-        team_scores = {
-            '1': 50,
-            '2-5': 60,
-            '6-10': 70,
-            '11-25': 75,
-            '26-50': 80,
-            '51-100': 85,
-            '100+': 90
-        }
-        team_score = team_scores.get(corporate.team_size, 70)
-        score = (score + team_score) // 2
-    
-    # Add points for having website and description
-    if corporate.website:
-        score += 8
-    if corporate.company_description:
-        score += 7
-    
-    # Add some randomness to make it more realistic
-    import random
-    score += random.randint(-8, 12)
-    
-    # Ensure score is within bounds
-    return max(0, min(100, score))
+    return render(request, 'matchmaking/investor_matchmaking.html', context)
 
 @onboarding_required
 def corporate_matchmaking(request):
@@ -896,46 +904,60 @@ def corporate_matchmaking(request):
             tech_filters |= models.Q(innovation_types__icontains=tech)
         corporates = corporates.filter(tech_filters)
     
-    # Add mock match scores and filter by minimum match score
+    # Determine current user's company and whether scores apply
+    try:
+        user_company = request.user.member.companies.filter(is_active=True).first()
+    except Exception:
+        user_company = None
+    # Scores shown only for startups viewing corporates (investor↔corporate unsupported)
+    show_match_score = user_company is not None and user_company.company_type == 'startup'
+
     corporates_with_scores = []
     for corporate in corporates:
-        # Calculate a mock match score based on various factors
-        match_score = calculate_corporate_match_score(corporate)
-        
-        # Only include if meets minimum match score
-        if int(filter_match_score) == 0 or match_score >= int(filter_match_score):
-            corporate.match_score = match_score
-            corporates_with_scores.append(corporate)
-    
-    # Sort by match score if filtering by score
-    if int(filter_match_score) > 0:
-        corporates_with_scores.sort(key=lambda x: x.match_score, reverse=True)
-    
+        if show_match_score:
+            match_score = calculate_real_match_score(user_company, corporate)
+            if match_score is None:
+                match_score = 0
+        else:
+            match_score = None
+
+        # Only apply score filter when scores are shown
+        if show_match_score and int(filter_match_score) > 0:
+            if match_score < int(filter_match_score):
+                continue
+
+        corporate.match_score = match_score
+        corporates_with_scores.append(corporate)
+
+    # Sort by match score (descending) when scores are visible and filter active
+    if show_match_score and int(filter_match_score) > 0:
+        corporates_with_scores.sort(key=lambda x: x.match_score or 0, reverse=True)
+
     # Get filter options for the form
     available_organization_types = Company.objects.filter(
         company_type='corporate',
         is_active=True,
         organization_type__isnull=False
     ).values_list('organization_type', flat=True).distinct()
-    
+
     available_locations = Company.objects.filter(
         company_type='corporate',
         is_active=True,
         primary_location__isnull=False
     ).values_list('primary_location', flat=True).distinct()
-    
+
     available_team_sizes = Company.objects.filter(
         company_type='corporate',
         is_active=True,
         team_size__isnull=False
     ).values_list('team_size', flat=True).distinct()
-    
+
     available_deal_sizes = Company.objects.filter(
         company_type='corporate',
         is_active=True,
         average_deal_size__isnull=False
     ).values_list('average_deal_size', flat=True).distinct()
-    
+
     context = {
         'corporates': corporates_with_scores,
         'search_query': search_query,
@@ -950,8 +972,9 @@ def corporate_matchmaking(request):
         'available_team_sizes': sorted(set(available_team_sizes)),
         'available_deal_sizes': sorted(set(available_deal_sizes)),
         'total_corporates': len(corporates_with_scores),
+        'show_match_score': show_match_score,
     }
-    
+
     return render(request, 'matchmaking/corporate_matchmaking.html', context)
 
 
@@ -1347,9 +1370,13 @@ def startup_profile(request, startup_id):
     """Display detailed startup profile page"""
     # Fetch the actual startup from the database
     startup = get_object_or_404(Company, pk=startup_id, company_type='startup', is_active=True)
-    
-    # Calculate match score based on actual data
-    match_score = calculate_match_score(startup)
+
+    # Calculate real match score based on the viewer's company preferences
+    try:
+        viewer_company = request.user.member.companies.filter(is_active=True).first()
+    except Exception:
+        viewer_company = None
+    match_score = calculate_real_match_score(viewer_company, startup)
     
     # Helper function to get human-readable display values
     def get_display_value(field_value, choices_dict=None):
@@ -1538,18 +1565,24 @@ def startup_profile(request, startup_id):
     # Get published documents
     published_documents = startup.documents.filter(status='approved', is_published=True).order_by('-uploaded_at')
     
+    show_match_score = match_score is not None
     return render(request, 'member/startup_profile.html', {
         'startup': startup_data,
-        'published_documents': published_documents
+        'published_documents': published_documents,
+        'show_match_score': show_match_score,
     })
 @onboarding_required
 def investor_profile(request, investor_id):
     """Display detailed investor profile page"""
     # Fetch the actual investor from the database
     investor = get_object_or_404(Company, pk=investor_id, company_type='investor', is_active=True)
-    
-    # Calculate match score based on actual data
-    match_score = calculate_investor_match_score(investor)
+
+    # Calculate real match score based on the viewer's company preferences
+    try:
+        viewer_company = request.user.member.companies.filter(is_active=True).first()
+    except Exception:
+        viewer_company = None
+    match_score = calculate_real_match_score(viewer_company, investor)
     
     # Helper function to get human-readable display values
     def get_display_value(field_value, choices_dict=None):
@@ -1696,18 +1729,24 @@ def investor_profile(request, investor_id):
     # Get published documents
     published_documents = investor.documents.filter(status='approved', is_published=True).order_by('-uploaded_at')
     
+    show_match_score = match_score is not None
     return render(request, 'member/investor_profile.html', {
         'investor': investor_data,
-        'published_documents': published_documents
+        'published_documents': published_documents,
+        'show_match_score': show_match_score,
     })
 @onboarding_required
 def corporate_profile(request, corporate_id):
     """Display detailed corporate profile page"""
     # Fetch the actual corporate from the database
     corporate = get_object_or_404(Company, pk=corporate_id, company_type='corporate', is_active=True)
-    
-    # Calculate match score based on actual data
-    match_score = calculate_corporate_match_score(corporate)
+
+    # Calculate real match score based on the viewer's company preferences
+    try:
+        viewer_company = request.user.member.companies.filter(is_active=True).first()
+    except Exception:
+        viewer_company = None
+    match_score = calculate_real_match_score(viewer_company, corporate)
     
     # Helper function to get human-readable display values
     def get_display_value(field_value, choices_dict=None):
@@ -1846,9 +1885,11 @@ def corporate_profile(request, corporate_id):
     # Get published documents
     published_documents = corporate.documents.filter(status='approved', is_published=True).order_by('-uploaded_at')
     
+    show_match_score = match_score is not None
     return render(request, 'member/corporate_profile.html', {
         'corporate': corporate_data,
-        'published_documents': published_documents
+        'published_documents': published_documents,
+        'show_match_score': show_match_score,
     })
 
 

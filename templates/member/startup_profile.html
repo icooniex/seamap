@@ -28,9 +28,11 @@
                     <div class="flex-grow-1 me-3">
                         <div class="d-flex align-items-center flex-wrap">
                             <h5 class="sticky-company-name mb-0 me-3">{{ startup.company_name }}</h5>
+                            {% if show_match_score and startup.match_percentage is not None %}
                             <div class="sticky-match-score me-3">
-                                <span class="match-badge">{{ startup.match_percentage|default:"88" }}% Match</span>
+                                <span class="match-badge">{{ startup.match_percentage }}% Match</span>
                             </div>
+                            {% endif %}
                         </div>
 
                         <!-- Company Quick Info (Hidden on mobile) -->
@@ -141,10 +143,12 @@
                                 <h1 class="company-name mb-1">{{ startup.company_name }}</h1>
                                 <p class="company-tagline text-muted mb-0">{{ startup.description }}</p>
                             </div>
+                            {% if show_match_score and startup.match_percentage is not None %}
                             <div class="match-score-sm">
-                                <div class="match-percentage-sm">{{ startup.match_percentage|default:"95" }}%</div>
+                                <div class="match-percentage-sm">{{ startup.match_percentage }}%</div>
                                 <small class="text-muted d-block text-center">Match</small>
                             </div>
+                            {% endif %}
                         </div>
 
                         <!-- Company Quick Info -->
@@ -226,17 +230,19 @@
 
     <!-- Key Metrics Row -->
     <div class="row mb-4">
+        {% if show_match_score and startup.match_percentage is not None %}
         <div class="col-lg-3 col-md-6 mb-3">
             <div class="card text-center border-0 shadow-sm metric-card">
                 <div class="card-body">
                     <div class="metric-icon mx-auto mb-2">
                         <i class="bi bi-percent text-success"></i>
                     </div>
-                    <div class="stat-value text-success">{{ startup.match_percentage|default:"95" }}%</div>
+                    <div class="stat-value text-success">{{ startup.match_percentage }}%</div>
                     <div class="stat-label">Match Score</div>
                 </div>
             </div>
         </div>
+        {% endif %}
         <div class="col-lg-3 col-md-6 mb-3">
             <div class="card text-center border-0 shadow-sm metric-card">
                 <div class="card-body">

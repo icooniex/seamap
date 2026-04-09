@@ -82,6 +82,7 @@
                                 <i class="bi bi-arrow-down sort-icon"></i>
                             </div>
                         </th>
+                        {% if show_match_score %}
                         <th class="sortable" data-sort="match">
                             <div class="d-flex align-items-center justify-content-center gap-2">
                                 <i class="bi bi-percent text-muted me-2"></i>
@@ -89,6 +90,7 @@
                                 <i class="bi bi-arrow-down sort-icon"></i>
                             </div>
                         </th>
+                        {% endif %}
                         <th class="sortable" data-sort="location">
                             <div class="d-flex align-items-center justify-content-center gap-2">
                                 <i class="bi bi-geo-alt text-muted me-2"></i>
@@ -120,7 +122,7 @@
                 <tbody>
                     {% for corporate in corporates %}
                     <tr class="startup-row clickable-row" 
-                        data-match="{{ corporate.match_score }}" 
+                        data-match="{% if show_match_score %}{{ corporate.match_score }}{% else %}0{% endif %}" 
                         data-type="{% if corporate.organization_type in 'private_company,multinational_corporation,sme,startup_subsidiary,other' %}{{ corporate.organization_type|default:'other' }}{% else %}other{% endif %}" 
                         data-name="{{ corporate.company_name|lower|cut:' '|cut:'-' }}" 
                         data-location="{{ corporate.primary_location|default:'Not specified' }}"
@@ -156,6 +158,7 @@
                                 </div>
                             </div>
                         </td>
+                        {% if show_match_score %}
                         <td class="match-cell">
                             <div class="match-score-sm">
                                 <span class="match-percentage-sm">{{ corporate.match_score }}%</span>
@@ -164,6 +167,7 @@
                                 </div>
                             </div>
                         </td>
+                        {% endif %}
                         <td class="location-cell">
                             <div class="d-flex align-items-center">
                                 <span>{{ corporate.get_primary_location_display|default:corporate.primary_location|default:"Not specified" }}</span>
@@ -228,7 +232,7 @@
             {% for corporate in corporates %}
             <div class="col-12 col-md-6 col-lg-4">
                 <div class="startup-card card h-100" 
-                     data-match="{{ corporate.match_score }}" 
+                     data-match="{% if show_match_score %}{{ corporate.match_score }}{% else %}0{% endif %}" 
                      data-type="{% if corporate.organization_type in 'private_company,multinational_corporation,sme,startup_subsidiary,other' %}{{ corporate.organization_type|default:'other' }}{% else %}other{% endif %}" 
                      data-name="{{ corporate.company_name|lower|cut:' '|cut:'-' }}" 
                      data-location="{{ corporate.primary_location|default:'Not specified' }}"
@@ -259,9 +263,11 @@
                                         </div>
                                     </div>
                                 </div>
+                                {% if show_match_score %}
                                 <div class="match-score">
                                     <span class="match-percentage">{{ corporate.match_score }}%</span>
                                 </div>
+                                {% endif %}
                             </div>
                         </div>
 
