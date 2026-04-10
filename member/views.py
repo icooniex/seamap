@@ -559,7 +559,7 @@ def onboarding_investor(request):
             if 'selected_role' in request.session:
                 del request.session['selected_role']
             
-            messages.success(request, f'Welcome to SEA-MAP, {company.company_name}! Your investor registration is complete.')
+            messages.success(request, 'Thank you for your submission! Your profile has been received and will be reviewed by our team. Once verification is successful, your profile will be published. This process typically takes up to 48 hours. We appreciate your patience.')
             return redirect('dashboard')
             
         except Exception as e:
@@ -686,7 +686,7 @@ def onboarding_corporate(request):
             member.onboarding_completed = True
             member.save()
             
-            messages.success(request, 'Corporate onboarding completed successfully!')
+            messages.success(request, 'Thank you for your submission! Your profile has been received and will be reviewed by our team. Once verification is successful, your profile will be published. This process typically takes up to 48 hours. We appreciate your patience.')
             return redirect('dashboard')
             
         except Exception as e:
@@ -1226,7 +1226,7 @@ def create_challenge(request):
             
             challenge.save()
             
-            messages.success(request, 'Challenge submitted successfully! It will be reviewed before publication.')
+            messages.success(request, 'Thank you for submitting your innovation challenge! It will be reviewed by our team and published upon successful verification. This process typically takes up to 48 hours. We appreciate your patience.')
             return redirect('challenge')
             
         except Exception as e:
@@ -1977,7 +1977,7 @@ def onboarding_user_profile(request):
             
             member.save()
             
-            messages.success(request, 'Profile updated successfully!')
+            # messages.success(request, 'Profile updated successfully!')
             
             # Redirect to role-specific onboarding (company setup)
             if selected_role == 'startup':
@@ -2068,7 +2068,7 @@ def onboarding_startup_new(request):
             if 'selected_role' in request.session:
                 del request.session['selected_role']
             
-            messages.success(request, f'Welcome to SEA-MAP, {company.company_name}! Your startup registration is complete.')
+            messages.success(request, 'Thank you for your submission! Your profile has been received and will be reviewed by our team. Once verification is successful, your profile will be published. This process typically takes up to 48 hours. We appreciate your patience.')
             return redirect('dashboard')
             
         except Exception as e:
@@ -2573,7 +2573,7 @@ def upload_document(request):
                 document_type=document_type
             )
             
-            success_message = f'Company document "{document_title}" uploaded successfully!'
+            success_message = f'Your document "{document_title}" has been uploaded successfully and is pending review. Our team will verify it and make it available shortly. Thank you.'
             
         else:
             # Create member document
@@ -2585,7 +2585,7 @@ def upload_document(request):
                 document_type=document_type
             )
             
-            success_message = f'Personal document "{document_title}" uploaded successfully!'
+            success_message = f'Your document "{document_title}" has been uploaded successfully and is pending review. Our team will verify it and make it available shortly. Thank you.'
 
         return JsonResponse({
             'success': True,
