@@ -501,44 +501,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Checkbox card functionality for investor form
-    const checkboxCards = document.querySelectorAll('.checkbox-card');
-    
-    checkboxCards.forEach(card => {
-        const checkbox = card.querySelector('input[type="checkbox"]');
-        
-        if (checkbox) {
-            // Set initial state
-            if (checkbox.checked) {
-                card.classList.add('selected');
-            }
-            
-            // Add click handler
-            card.addEventListener('click', function(e) {
-                if (e.target === checkbox) return;
-                
-                checkbox.checked = !checkbox.checked;
-                
-                if (checkbox.checked) {
-                    card.classList.add('selected');
-                } else {
-                    card.classList.remove('selected');
-                }
-                
-                checkbox.dispatchEvent(new Event('change'));
-            });
-            
-            // Handle checkbox change
-            checkbox.addEventListener('change', function() {
-                if (this.checked) {
-                    card.classList.add('selected');
-                } else {
-                    card.classList.remove('selected');
-                }
-            });
-        }
-    });
-    
     // Validation functions for required fields
     window.validateFundingStages = function() {
         const fundingStages = document.querySelectorAll('input[name="funding_stages"]:checked');
