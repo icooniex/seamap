@@ -229,17 +229,14 @@
 </div>
 
 <!-- Toast Container -->
-<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1050;">
-    <div id="uploadToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header">
-            <div class="toast-icon me-2">
-                <i class="bi bi-check-circle-fill text-success"></i>
+<div class="position-fixed p-3" style="top: 80px; right: 0; z-index: 9999; max-width: 450px;">
+    <div id="uploadToast" class="toast align-items-center text-white border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body" style="font-size: 0.9rem; line-height: 1.5;">
+                <i class="toast-icon-i bi bi-check-circle-fill me-2"></i>
+                <span class="toast-message">Files uploaded successfully!</span>
             </div>
-            <strong class="me-auto toast-title">Upload Status</strong>
-            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body">
-            <span class="toast-message">Files uploaded successfully!</span>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto flex-shrink-0" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
     </div>
 </div>
@@ -1361,30 +1358,24 @@ document.addEventListener('DOMContentLoaded', function() {
     function showToast(type, message) {
         const toast = document.getElementById('uploadToast');
         if (!toast) return;
-        
-        const toastIcon = toast.querySelector('.toast-icon i');
-        const toastTitle = toast.querySelector('.toast-title');
+
+        const toastIcon = toast.querySelector('.toast-icon-i');
         const toastMessage = toast.querySelector('.toast-message');
-        
-        // Reset classes
-        toast.className = 'toast';
-        toast.classList.add(type);
-        
-        // Update content based on type
+
+        // Reset background classes
+        toast.classList.remove('bg-success', 'bg-danger', 'bg-info');
+
         if (type === 'success') {
-            if (toastIcon) toastIcon.className = 'bi bi-check-circle-fill text-success';
-            if (toastTitle) toastTitle.textContent = 'Success';
+            toast.classList.add('bg-success');
+            if (toastIcon) toastIcon.className = 'toast-icon-i bi bi-check-circle-fill me-2';
         } else {
-            if (toastIcon) toastIcon.className = 'bi bi-x-circle-fill text-danger';
-            if (toastTitle) toastTitle.textContent = 'Error';
+            toast.classList.add('bg-danger');
+            if (toastIcon) toastIcon.className = 'toast-icon-i bi bi-exclamation-triangle-fill me-2';
         }
-        
+
         if (toastMessage) toastMessage.textContent = message;
-        
-        // Show toast
-        const bsToast = new bootstrap.Toast(toast, {
-            delay: 5000
-        });
+
+        const bsToast = new bootstrap.Toast(toast, { autohide: false });
         bsToast.show();
     }
 });
