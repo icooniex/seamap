@@ -198,7 +198,7 @@
                                             {{ member.get_verification_status_display }}
                                         </span>
                                     </td>
-                                    <td>{{ member.verified_by.get_full_name|default:member.verified_by.username }}</td>
+                                    <td>{% if member.verified_by %}{{ member.verified_by.get_full_name|default:member.verified_by.username }}{% else %}N/A{% endif %}</td>
                                     <td>{{ member.verified_at|date:"M d, Y" }}</td>
                                 </tr>
                                 {% endfor %}
@@ -242,7 +242,7 @@
                                             {{ company.get_verification_status_display }}
                                         </span>
                                     </td>
-                                    <td>{{ company.verified_by.get_full_name|default:company.verified_by.username }}</td>
+                                    <td>{% if company.verified_by %}{{ company.verified_by.get_full_name|default:company.verified_by.username }}{% else %}N/A{% endif %}</td>
                                     <td>{{ company.verified_at|date:"M d, Y" }}</td>
                                 </tr>
                                 {% endfor %}
