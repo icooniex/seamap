@@ -2,6 +2,9 @@
 {% load static %}
 
 {% block content %}
+<!-- Notification Container (populated by JS from URL param) -->
+<div id="problemNotificationContainer" class="mb-4"></div>
+
 <div class="container-fluid p-0">
     <!-- Header Section -->
     <div class="dashboard-header mb-4">
@@ -697,6 +700,31 @@ function handleCreateProblem(event) {
     // Let the default link behavior happen
     return true;
 }
+
+// Show submit success notification from URL param
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const submitSuccess = urlParams.get('submit_success');
+    if (submitSuccess) {
+        const container = document.getElementById('problemNotificationContainer');
+        if (container) {
+            const alertEl = document.createElement('div');
+            alertEl.className = 'alert alert-success alert-dismissible fade show';
+            alertEl.setAttribute('role', 'alert');
+            alertEl.innerHTML = `
+                <i class="bi bi-check-circle me-2"></i>
+                ${submitSuccess}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            container.appendChild(alertEl);
+            container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        // Clean URL without reload
+        const cleanUrl = new URL(window.location.href);
+        cleanUrl.searchParams.delete('submit_success');
+        history.replaceState(null, '', cleanUrl.toString());
+    }
+});
 </script>
 
 {% endblock %}

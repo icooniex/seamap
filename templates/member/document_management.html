@@ -25,6 +25,9 @@
         </div>
     </div>
 
+    <!-- Notification Container -->
+    <div id="docNotificationContainer" class="mb-4"></div>
+
     <!-- Documents Grid -->
     <div class="row g-4">
         <!-- Upload Area -->
@@ -224,19 +227,6 @@
                     {% endfor %}
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-
-<!-- Toast Container -->
-<div class="position-fixed p-3" style="top: 80px; right: 0; z-index: 9999; max-width: 450px;">
-    <div id="uploadToast" class="toast align-items-center text-white border-0" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-            <div class="toast-body" style="font-size: 0.9rem; line-height: 1.5;">
-                <i class="toast-icon-i bi bi-check-circle-fill me-2"></i>
-                <span class="toast-message">Files uploaded successfully!</span>
-            </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto flex-shrink-0" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
     </div>
 </div>
@@ -1131,6 +1121,17 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Show upload success notification from URL param (after page reload)
+    const urlParams = new URLSearchParams(window.location.search);
+    const uploadSuccess = urlParams.get('upload_success');
+    if (uploadSuccess) {
+        showToast('success', decodeURIComponent(uploadSuccess));
+        // Clean the URL without reloading
+        const cleanUrl = new URL(window.location.href);
+        cleanUrl.searchParams.delete('upload_success');
+        history.replaceState(null, '', cleanUrl.toString());
+    }
+
     // Document type options
     const memberDocTypes = {
         'id_card': 'ID Card',
@@ -1307,12 +1308,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             if (data.success) {
-                showToast('success', data.message);
                 clearForm();
-                // Refresh page to show new document
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
+                // Refresh page to show new document, carry message via URL param
+                const url = new URL(window.location.href);
+                url.searchParams.set('upload_success', encodeURIComponent(data.message));
+                window.location.href = url.toString();
             } else {
                 showToast('error', data.error);
                 updateUploadButtonState();
@@ -1356,27 +1356,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Show toast notification
     function showToast(type, message) {
-        const toast = document.getElementById('uploadToast');
-        if (!toast) return;
+        const container = document.getElementById('docNotificationContainer');
+        if (!container) return;
 
-        const toastIcon = toast.querySelector('.toast-icon-i');
-        const toastMessage = toast.querySelector('.toast-message');
+        const iconClass = type === 'success' ? 'bi-check-circle' : 'bi-exclamation-triangle';
+        const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
 
-        // Reset background classes
-        toast.classList.remove('bg-success', 'bg-danger', 'bg-info');
+        const alertEl = document.createElement('div');
+        alertEl.className = `alert ${alertClass} alert-dismissible fade show`;
+        alertEl.setAttribute('role', 'alert');
+        alertEl.innerHTML = `
+            <i class="bi ${iconClass} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
 
-        if (type === 'success') {
-            toast.classList.add('bg-success');
-            if (toastIcon) toastIcon.className = 'toast-icon-i bi bi-check-circle-fill me-2';
-        } else {
-            toast.classList.add('bg-danger');
-            if (toastIcon) toastIcon.className = 'toast-icon-i bi bi-exclamation-triangle-fill me-2';
-        }
-
-        if (toastMessage) toastMessage.textContent = message;
-
-        const bsToast = new bootstrap.Toast(toast, { autohide: false });
-        bsToast.show();
+        container.innerHTML = '';
+        container.appendChild(alertEl);
+        container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 });
 

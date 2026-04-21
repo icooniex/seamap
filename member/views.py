@@ -1226,8 +1226,9 @@ def create_challenge(request):
             
             challenge.save()
             
-            messages.success(request, 'Thank you for submitting your innovation challenge! It will be reviewed by our team and published upon successful verification. This process typically takes up to 48 hours. We appreciate your patience.')
-            return redirect('challenge')
+            success_msg = 'Thank you for submitting your innovation challenge! It will be reviewed by our team and published upon successful verification. This process typically takes up to 48 hours. We appreciate your patience.'
+            from urllib.parse import urlencode
+            return redirect('/dashboard/challenge/?' + urlencode({'submit_success': success_msg}))
             
         except Exception as e:
             messages.error(request, f'Error creating challenge: {str(e)}')
@@ -1352,8 +1353,9 @@ def create_problem_statement(request):
             
             problem.save()
             
-            messages.success(request, 'Problem statement submitted successfully! It will be reviewed before publication.')
-            return redirect('problem')
+            success_msg = 'Thank you for submitting your problem statement! It will be reviewed by our team and published upon successful verification. This process typically takes up to 48 hours. We appreciate your patience.'
+            from urllib.parse import urlencode
+            return redirect('/dashboard/problem-statement/?' + urlencode({'submit_success': success_msg}))
             
         except Exception as e:
             messages.error(request, f'Error creating problem statement: {str(e)}')

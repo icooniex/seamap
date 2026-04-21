@@ -2,29 +2,8 @@
 {% load static %}
 
 {% block content %}
-{% if messages %}
-<div class="position-fixed p-3" style="top: 80px; right: 0; z-index: 9999; max-width: 450px;">
-    {% for message in messages %}
-    <div class="toast page-notification-toast align-items-center text-white border-0 mb-2 {% if message.tags == 'success' %}bg-success{% elif message.tags == 'error' %}bg-danger{% else %}bg-info{% endif %}"
-         role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
-        <div class="d-flex">
-            <div class="toast-body" style="font-size: 0.9rem; line-height: 1.5;">
-                <i class="bi {% if message.tags == 'success' %}bi-check-circle-fill{% elif message.tags == 'error' %}bi-exclamation-triangle-fill{% else %}bi-info-circle-fill{% endif %} me-2"></i>
-                {{ message }}
-            </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto flex-shrink-0" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-    </div>
-    {% endfor %}
-</div>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.page-notification-toast').forEach(function(toastEl) {
-        new bootstrap.Toast(toastEl, { autohide: false }).show();
-    });
-});
-</script>
-{% endif %}
+<!-- Notification Container (populated by JS from URL param) -->
+<div id="challengeNotificationContainer" class="mb-4"></div>
 
 <div class="container-fluid p-0">
     <!-- Header Section -->
@@ -780,6 +759,31 @@ function handleCreateChallenge(event) {
     // Let the default link behavior happen
     return true;
 }
+
+// Show submit success notification from URL param
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const submitSuccess = urlParams.get('submit_success');
+    if (submitSuccess) {
+        const container = document.getElementById('challengeNotificationContainer');
+        if (container) {
+            const alertEl = document.createElement('div');
+            alertEl.className = 'alert alert-success alert-dismissible fade show';
+            alertEl.setAttribute('role', 'alert');
+            alertEl.innerHTML = `
+                <i class="bi bi-check-circle me-2"></i>
+                ${submitSuccess}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            container.appendChild(alertEl);
+            container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        // Clean URL without reload
+        const cleanUrl = new URL(window.location.href);
+        cleanUrl.searchParams.delete('submit_success');
+        history.replaceState(null, '', cleanUrl.toString());
+    }
+});
 </script>
 
 {% endblock %}
