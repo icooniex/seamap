@@ -372,10 +372,11 @@ def startup_matchmaking(request):
     filter_match_score = request.GET.get('match_score', '0')
     filter_female_led = request.GET.get('is_female_led', '')
     
-    # Base queryset - get all startup companies
+    # Base queryset - get all startup companies (approved only)
     startups = Company.objects.filter(
         company_type='startup',
-        is_active=True
+        is_active=True,
+        verification_status='approved'
     ).select_related('member__user').order_by('-created_at')
     
     # Apply search filter
@@ -466,18 +467,21 @@ def startup_matchmaking(request):
     locations = Company.objects.filter(
         company_type='startup',
         is_active=True,
+        verification_status='approved',
         primary_location__isnull=False
     ).values_list('primary_location', flat=True).distinct()
 
     stages = Company.objects.filter(
         company_type='startup',
         is_active=True,
+        verification_status='approved',
         current_stage__isnull=False
     ).values_list('current_stage', flat=True).distinct()
 
     team_sizes = Company.objects.filter(
         company_type='startup',
         is_active=True,
+        verification_status='approved',
         team_size__isnull=False
     ).values_list('team_size', flat=True).distinct()
 
@@ -741,10 +745,11 @@ def investor_matchmaking(request):
     filter_investment_categories = request.GET.getlist('investment_categories')
     filter_match_score = request.GET.get('match_score', '0')
     
-    # Base queryset - get all investor companies
+    # Base queryset - get all investor companies (approved only)
     investors = Company.objects.filter(
         company_type='investor',
-        is_active=True
+        is_active=True,
+        verification_status='approved'
     ).select_related('member__user').order_by('-created_at')
     
     # Apply search filter
@@ -817,18 +822,21 @@ def investor_matchmaking(request):
     available_investor_types = Company.objects.filter(
         company_type='investor',
         is_active=True,
+        verification_status='approved',
         investor_type__isnull=False
     ).values_list('investor_type', flat=True).distinct()
 
     available_locations = Company.objects.filter(
         company_type='investor',
         is_active=True,
+        verification_status='approved',
         primary_location__isnull=False
     ).values_list('primary_location', flat=True).distinct()
 
     available_funding_sizes = Company.objects.filter(
         company_type='investor',
         is_active=True,
+        verification_status='approved',
         funding_size__isnull=False
     ).values_list('funding_size', flat=True).distinct()
 
@@ -865,10 +873,11 @@ def corporate_matchmaking(request):
     filter_innovation_types = request.GET.getlist('innovation_types')
     filter_match_score = request.GET.get('match_score', '0')
     
-    # Base queryset - get all corporate companies
+    # Base queryset - get all corporate companies (approved only)
     corporates = Company.objects.filter(
         company_type='corporate',
-        is_active=True
+        is_active=True,
+        verification_status='approved'
     ).select_related('member__user').order_by('-created_at')
     
     # Apply search filter
@@ -937,24 +946,28 @@ def corporate_matchmaking(request):
     available_organization_types = Company.objects.filter(
         company_type='corporate',
         is_active=True,
+        verification_status='approved',
         organization_type__isnull=False
     ).values_list('organization_type', flat=True).distinct()
 
     available_locations = Company.objects.filter(
         company_type='corporate',
         is_active=True,
+        verification_status='approved',
         primary_location__isnull=False
     ).values_list('primary_location', flat=True).distinct()
 
     available_team_sizes = Company.objects.filter(
         company_type='corporate',
         is_active=True,
+        verification_status='approved',
         team_size__isnull=False
     ).values_list('team_size', flat=True).distinct()
 
     available_deal_sizes = Company.objects.filter(
         company_type='corporate',
         is_active=True,
+        verification_status='approved',
         average_deal_size__isnull=False
     ).values_list('average_deal_size', flat=True).distinct()
 
