@@ -12,6 +12,7 @@ from django.db import models
 from .models import ORGANIZATION_TYPE_CHOICES, Member, Company, MemberDocument, CompanyDocument, INVESTOR_TYPE_CHOICES, FUNDING_SIZE_CHOICES, DEAL_SIZE_CHOICES
 from .forms import EmailLoginForm, SignUpForm, CompanyForm, StartupForm, InvestorForm, CorporateForm
 import json
+import logging
 import random
 from django.views import View
 from functools import wraps
@@ -21,6 +22,8 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.conf import settings
 from django.views import View
+
+logger = logging.getLogger(__name__)
 
 
 def onboarding_required(view_func):
@@ -562,7 +565,14 @@ def onboarding_investor(request):
             # Clear session
             if 'selected_role' in request.session:
                 del request.session['selected_role']
-            
+
+            # Send company onboarding confirmation email
+            try:
+                from .email_utils import send_company_onboarding_notification
+                send_company_onboarding_notification(user=request.user, company=company)
+            except Exception as email_err:
+                logger.error(f"Company onboarding notification email failed for {request.user.email}: {email_err}")
+
             messages.success(request, 'Thank you for your submission! Your profile has been received and will be reviewed by our team. Once verification is successful, your profile will be published. This process typically takes up to 48 hours. We appreciate your patience.')
             return redirect('dashboard')
             
@@ -689,7 +699,14 @@ def onboarding_corporate(request):
             member.consent_marketplace = consent_marketplace
             member.onboarding_completed = True
             member.save()
-            
+
+            # Send company onboarding confirmation email
+            try:
+                from .email_utils import send_company_onboarding_notification
+                send_company_onboarding_notification(user=request.user, company=company)
+            except Exception as email_err:
+                logger.error(f"Company onboarding notification email failed for {request.user.email}: {email_err}")
+
             messages.success(request, 'Thank you for your submission! Your profile has been received and will be reviewed by our team. Once verification is successful, your profile will be published. This process typically takes up to 48 hours. We appreciate your patience.')
             return redirect('dashboard')
             
@@ -1238,7 +1255,20 @@ def create_challenge(request):
                 challenge.featured_image = request.FILES['featured_image']
             
             challenge.save()
-            
+
+            # Send email notification to the submitting user
+            try:
+                from .email_utils import send_challenge_submission_notification
+                organizer = member.companies.filter(company_type='corporate').first()
+                send_challenge_submission_notification(
+                    user=request.user,
+                    challenge_title=challenge.title,
+                    company_name=organizer.company_name if organizer else request.user.get_full_name(),
+                    submitted_at=challenge.created_at,
+                )
+            except Exception as email_err:
+                logger.error(f"Challenge submission notification email failed for {request.user.email}: {email_err}")
+
             success_msg = 'Thank you for submitting your innovation challenge! It will be reviewed by our team and published upon successful verification. This process typically takes up to 48 hours. We appreciate your patience.'
             from urllib.parse import urlencode
             return redirect('/dashboard/challenge/?' + urlencode({'submit_success': success_msg}))
@@ -2082,7 +2112,14 @@ def onboarding_startup_new(request):
             # Clear session
             if 'selected_role' in request.session:
                 del request.session['selected_role']
-            
+
+            # Send company onboarding confirmation email
+            try:
+                from .email_utils import send_company_onboarding_notification
+                send_company_onboarding_notification(user=request.user, company=company)
+            except Exception as email_err:
+                logger.error(f"Company onboarding notification email failed for {request.user.email}: {email_err}")
+
             messages.success(request, 'Thank you for your submission! Your profile has been received and will be reviewed by our team. Once verification is successful, your profile will be published. This process typically takes up to 48 hours. We appreciate your patience.')
             return redirect('dashboard')
             
@@ -2587,7 +2624,20 @@ def upload_document(request):
                 file=file,
                 document_type=document_type
             )
-            
+
+            # Send email notification
+            try:
+                from .email_utils import send_document_upload_notification
+                send_document_upload_notification(
+                    user=request.user,
+                    document_name=document_title,
+                    document_type_display=document.get_document_type_display(),
+                    document_category='company',
+                    company_name=company.company_name,
+                )
+            except Exception as email_err:
+                logger.error(f"Document upload notification email failed for {request.user.email}: {email_err}")
+
             success_message = f'Your document "{document_title}" has been uploaded successfully and is pending review. Our team will verify it and make it available shortly. Thank you.'
             
         else:
@@ -2599,7 +2649,20 @@ def upload_document(request):
                 file=file,
                 document_type=document_type
             )
-            
+
+            # Send email notification
+            try:
+                from .email_utils import send_document_upload_notification
+                send_document_upload_notification(
+                    user=request.user,
+                    document_name=document_title,
+                    document_type_display=document.get_document_type_display(),
+                    document_category='member',
+                    company_name=None,
+                )
+            except Exception as email_err:
+                logger.error(f"Document upload notification email failed for {request.user.email}: {email_err}")
+
             success_message = f'Your document "{document_title}" has been uploaded successfully and is pending review. Our team will verify it and make it available shortly. Thank you.'
 
         return JsonResponse({

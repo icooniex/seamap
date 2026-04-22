@@ -1,0 +1,32 @@
+Challenge Submission Received - SEA-MaP Regional Platform for Innovation and Investments
+
+SEA-MaP Regional Platform for Innovation and Investments
+=====================================
+
+Dear {{ user.get_full_name|default:user.username }},
+
+We are pleased to confirm that the following Innovation Challenge has been successfully submitted to the SEA-MaP Regional Platform for Innovation and Investments. Your submission is currently under review by our team.
+
+CHALLENGE SUBMISSION DETAILS
+-----------------------------
+Challenge Title : {{ challenge_title }}
+Submitted By    : {{ company_name }}
+Contact Person  : {{ user.get_full_name|default:user.username }}
+Submitted On    : {{ submitted_at }}
+Status          : Pending Review
+
+REVIEW TIMELINE
+---------------
+Your Innovation Challenge submission is currently pending review. Upon successful verification, the challenge will be published on the SEA-MaP platform within 48 hours. You will receive a follow-up notification once the review has been completed.
+
+WHAT HAPPENS NEXT
+-----------------
+1. Our team will review the challenge details for completeness and compliance with platform guidelines.
+2. You will be notified by email of the review outcome.
+3. Upon approval, the challenge will be published and made visible to innovators on the platform.
+
+If you have any questions regarding your submission or require further assistance, please do not hesitate to contact our support team. We appreciate your commitment to driving innovation through SEA-MaP.
+
+---
+This is an automated message from SEA-MaP Regional Platform for Innovation and Investments.
+If you have any questions, please contact our support team.

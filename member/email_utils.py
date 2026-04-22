@@ -4,6 +4,7 @@ Email utilities for sending OTP and other notifications
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.conf import settings
+from django.utils.timezone import now
 import logging
 
 logger = logging.getLogger(__name__)
@@ -153,4 +154,191 @@ SEA-MaP Regional Platform for Innovation and Investments Team
         
     except Exception as e:
         logger.error(f"Failed to send 2FA disabled notification to {user.email}: {str(e)}")
+        return False
+
+
+def send_company_onboarding_notification(user, company):
+    """
+    Send company profile submission confirmation email when a user completes company onboarding.
+    Informs the user that their company profile has been received and is pending review.
+
+    Args:
+        user: Django User instance
+        company: Company model instance (just created/updated during onboarding)
+
+    Returns:
+        bool: True if email sent successfully, False otherwise
+    """
+    try:
+        subject = 'Company Profile Received — Pending Review - SEA-MaP Regional Platform for Innovation and Investments'
+        from_email = settings.DEFAULT_FROM_EMAIL
+        to_email = [user.email]
+
+        # Get logo for email
+        from .email_assets import get_logo_url, get_logo_base64
+        logo_url = get_logo_url()
+        logo_base64 = get_logo_base64()
+
+        # Build human-readable company type
+        company_type_map = {
+            'startup': 'Startup / SME',
+            'investor': 'Investor / Fund',
+            'corporate': 'Corporate / Organization',
+        }
+        company_type_display = company_type_map.get(company.company_type, company.company_type.capitalize())
+
+        # Context for email templates
+        email_context = {
+            'user': user,
+            'company': company,
+            'company_type_display': company_type_display,
+            'submitted_at': now().strftime('%B %d, %Y at %H:%M UTC'),
+            'logo_url': logo_url,
+            'logo_base64': logo_base64,
+        }
+
+        # Render HTML and text versions
+        html_body = render_to_string('emails/signup_confirmation.html', email_context)
+        text_body = render_to_string('emails/signup_confirmation.txt', email_context)
+
+        # Create email message
+        msg = EmailMultiAlternatives(
+            subject=subject,
+            body=text_body,
+            from_email=from_email,
+            to=to_email
+        )
+
+        # Attach HTML version
+        msg.attach_alternative(html_body, "text/html")
+
+        # Send email
+        msg.send()
+
+        logger.info(f"Company onboarding notification sent to {user.email} for company '{company.company_name}'")
+        return True
+
+    except Exception as e:
+        logger.error(f"Failed to send company onboarding notification to {user.email}: {str(e)}")
+        return False
+
+
+def send_document_upload_notification(user, document_name, document_type_display, document_category, company_name=None):
+    """
+    Send document upload confirmation email to the user.
+
+    Args:
+        user: Django User instance
+        document_name: Name/title of the uploaded document
+        document_type_display: Human-readable document type label
+        document_category: 'member' or 'company'
+        company_name: Company name if the document is a company document, else None
+
+    Returns:
+        bool: True if email sent successfully, False otherwise
+    """
+    try:
+        subject = 'Document Received — Pending Review - SEA-MaP Regional Platform for Innovation and Investments'
+        from_email = settings.DEFAULT_FROM_EMAIL
+        to_email = [user.email]
+
+        # Get logo for email
+        from .email_assets import get_logo_url, get_logo_base64
+        logo_url = get_logo_url()
+        logo_base64 = get_logo_base64()
+
+        # Context for email templates
+        email_context = {
+            'user': user,
+            'document_name': document_name,
+            'document_type_display': document_type_display,
+            'document_category': document_category,
+            'company_name': company_name,
+            'uploaded_at': now().strftime('%B %d, %Y at %H:%M UTC'),
+            'logo_url': logo_url,
+            'logo_base64': logo_base64,
+        }
+
+        # Render HTML and text versions
+        html_body = render_to_string('emails/document_upload_notification.html', email_context)
+        text_body = render_to_string('emails/document_upload_notification.txt', email_context)
+
+        # Create email message
+        msg = EmailMultiAlternatives(
+            subject=subject,
+            body=text_body,
+            from_email=from_email,
+            to=to_email
+        )
+
+        # Attach HTML version
+        msg.attach_alternative(html_body, "text/html")
+
+        # Send email
+        msg.send()
+
+        logger.info(f"Document upload notification sent to {user.email} for document '{document_name}'")
+        return True
+
+    except Exception as e:
+        logger.error(f"Failed to send document upload notification to {user.email}: {str(e)}")
+        return False
+
+
+def send_challenge_submission_notification(user, challenge_title, company_name, submitted_at):
+    """
+    Send Innovation Challenge submission confirmation email to the submitting user.
+
+    Args:
+        user: Django User instance
+        challenge_title: Title of the submitted challenge
+        company_name: Name of the organising company
+        submitted_at: datetime when the challenge was submitted
+
+    Returns:
+        bool: True if email sent successfully, False otherwise
+    """
+    try:
+        subject = 'Innovation Challenge Submission Received - SEA-MaP Regional Platform for Innovation and Investments'
+        from_email = settings.DEFAULT_FROM_EMAIL
+        to_email = [user.email]
+
+        # Get logo for email
+        from .email_assets import get_logo_url, get_logo_base64
+        logo_url = get_logo_url()
+        logo_base64 = get_logo_base64()
+
+        # Context for email templates
+        email_context = {
+            'user': user,
+            'challenge_title': challenge_title,
+            'company_name': company_name,
+            'submitted_at': submitted_at.strftime('%B %d, %Y at %H:%M UTC') if submitted_at else now().strftime('%B %d, %Y at %H:%M UTC'),
+            'logo_url': logo_url,
+            'logo_base64': logo_base64,
+        }
+
+        # Render HTML and text versions
+        html_body = render_to_string('emails/challenge_submission_notification.html', email_context)
+        text_body = render_to_string('emails/challenge_submission_notification.txt', email_context)
+
+        # Create email message
+        msg = EmailMultiAlternatives(
+            subject=subject,
+            body=text_body,
+            from_email=from_email,
+            to=to_email
+        )
+
+        # Attach HTML version
+        msg.attach_alternative(html_body, "text/html")
+
+        # Send email
+        msg.send()
+
+        logger.info(f"Challenge submission notification sent to {user.email} for challenge '{challenge_title}'")
+        return True
+
+    except Exception as e:
+        logger.error(f"Failed to send challenge submission notification to {user.email}: {str(e)}")
         return False

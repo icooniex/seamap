@@ -1,0 +1,33 @@
+Document Received - SEA-MaP Regional Platform for Innovation and Investments
+
+SEA-MaP Regional Platform for Innovation and Investments
+=====================================
+
+Dear {{ user.get_full_name|default:user.username }},
+
+We are writing to confirm that the following document has been successfully received by the SEA-MaP Regional Platform for Innovation and Investments. Your submission is currently pending review by our team.
+
+DOCUMENT SUBMISSION DETAILS
+----------------------------
+Document Name   : {{ document_name }}
+Document Type   : {{ document_type_display }}
+Associated With : {% if company_name %}{{ company_name }} (Company){% else %}Personal Profile{% endif %}
+
+Submitted By    : {{ user.get_full_name|default:user.username }}
+Submitted On    : {{ uploaded_at }}
+
+REVIEW TIMELINE
+---------------
+The document is currently pending review. Our team will verify and process your submission within 48 hours. You will receive a notification once the review has been completed.
+
+WHAT HAPPENS NEXT
+-----------------
+1. Our team will review the submitted document for completeness and accuracy.
+2. You will be notified by email of the review outcome.
+3. Upon approval, the document will be reflected in your profile accordingly.
+
+If you did not submit this document or believe this message was received in error, please contact our support team immediately.
+
+---
+This is an automated message from SEA-MaP Regional Platform for Innovation and Investments.
+If you have any questions, please contact our support team.

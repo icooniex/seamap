@@ -1,0 +1,35 @@
+Company Profile Received — Pending Review - SEA-MaP Regional Platform for Innovation and Investments
+
+SEA-MaP Regional Platform for Innovation and Investments
+=====================================
+
+Dear {{ user.get_full_name|default:user.username }},
+
+Thank you for registering your organisation on the SEA-MaP Regional Platform for Innovation and Investments. We are pleased to confirm that the following company profile has been successfully submitted and is currently under review by our team.
+
+COMPANY PROFILE DETAILS
+------------------------
+Company Name      : {{ company.company_name }}
+Organisation Type : {{ company_type_display }}
+{% if company.primary_location %}Primary Location  : {{ company.primary_location }}
+{% endif %}{% if company.website %}Website           : {{ company.website }}
+{% endif %}Registered By     : {{ user.get_full_name|default:user.username }} ({{ user.email }})
+Submitted On      : {{ submitted_at }}
+Status            : Pending Review
+
+REVIEW TIMELINE
+---------------
+Your company profile is currently pending verification. Our team will review and approve your submission within 48 hours. You will receive a follow-up notification once the review is complete.
+
+WHAT HAPPENS NEXT
+-----------------
+1. Our team will verify the submitted company information for accuracy and completeness.
+2. You will be notified by email of the review outcome.
+3. Upon approval, your company profile will be published and visible on the SEA-MaP platform.
+
+If you have any questions or require assistance during this process, please do not hesitate to contact our support team. We appreciate your interest in joining the SEA-MaP ecosystem.
+
+---
+This is an automated message from SEA-MaP Regional Platform for Innovation and Investments.
+If you have any questions, please contact our support team.
+

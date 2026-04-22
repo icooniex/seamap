@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Received - SEA-MaP Regional Platform for Innovation and Investments</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+        
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 0;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c59a7 0%, #3b6cc1 100%);
+            color: white;
+            padding: 2rem;
+            position: relative;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        
+        .header .logo {
+            width: 80px;
+            display: block;
+        }
+        
+        .logo-placeholder {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            flex-shrink: 0;
+        }
+        
+        .header-text {
+            text-align: right;
+            flex-grow: 1;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        .header p {
+            margin: 0.5rem 0 0 0;
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 2rem;
+        }
+        
+        .greeting {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            color: #2c3e50;
+        }
+
+        .confirmation-box {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            color: #155724;
+        }
+
+        .confirmation-box .box-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .detail-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0.5rem 0;
+        }
+
+        .detail-table td {
+            padding: 0.4rem 0;
+            vertical-align: top;
+        }
+
+        .detail-table td:first-child {
+            font-weight: 600;
+            width: 40%;
+            color: #155724;
+        }
+
+        .timeline-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            color: #856404;
+        }
+        
+        .timeline-info strong {
+            color: #b45309;
+        }
+        
+        .next-steps {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            color: #0c5460;
+        }
+        
+        .footer {
+            background: #f8f9fa;
+            padding: 1.5rem 2rem;
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.9rem;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .footer a {
+            color: #2c59a7;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 600px) {
+            .email-container {
+                margin: 0;
+                border-radius: 0;
+            }
+            
+            .header, .content, .footer {
+                padding: 1.5rem;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            
+            .header-text {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <div class="header-content">
+                {% if logo_base64 %}
+                    <img src="{{ logo_base64 }}" alt="SEA-MaP Logo" class="logo">
+                {% elif logo_url %}
+                    <img src="{{ logo_url }}" alt="SEA-MaP Logo" class="logo">
+                {% else %}
+                    <div class="logo-placeholder">📄</div>
+                {% endif %}
+                <div class="header-text">
+                    <h1>📄 Document Received</h1>
+                    <p>SEA-MaP Regional Platform for Innovation and Investments</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="greeting">
+                <strong>Dear {{ user.get_full_name|default:user.username }},</strong>
+            </div>
+
+            <p>
+                We are writing to confirm that the following document has been successfully received by the
+                <strong>SEA-MaP Regional Platform for Innovation and Investments</strong>.
+                Your submission is currently pending review by our team.
+            </p>
+
+            <div class="confirmation-box">
+                <div class="box-label">📄 Document Submission Details</div>
+                <table class="detail-table">
+                    <tr>
+                        <td>Document Name:</td>
+                        <td><strong>{{ document_name }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Document Type:</td>
+                        <td><strong>{{ document_type_display }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Associated With:</td>
+                        <td><strong>{% if company_name %}{{ company_name }} (Company){% else %}Personal Profile{% endif %}</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Submitted By:</td>
+                        <td><strong>{{ user.get_full_name|default:user.username }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Submitted On:</td>
+                        <td><strong>{{ uploaded_at }}</strong></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="timeline-info">
+                <strong>⏰ Review Timeline:</strong> The document is currently pending review.
+                Our team will verify and process your submission within <strong>48 hours</strong>.
+                You will receive a notification once the review has been completed.
+            </div>
+
+            <div class="next-steps">
+                <strong>📋 What Happens Next:</strong>
+                <ol style="margin: 0.5rem 0; padding-left: 1.5rem;">
+                    <li>Our team will review the submitted document for completeness and accuracy.</li>
+                    <li>You will be notified by email of the review outcome.</li>
+                    <li>Upon approval, the document will be reflected in your profile accordingly.</li>
+                </ol>
+            </div>
+
+            <p>
+                If you did not submit this document or believe this message was received in error,
+                please contact our support team immediately.
+                We appreciate your cooperation and look forward to assisting you.
+            </p>
+        </div>
+
+        <div class="footer">
+            <p>
+                This is an automated message from SEA-MaP Regional Platform for Innovation and Investments.<br>
+                If you have any questions, please contact our support team.
+            </p>
+            <p>
+                <a href="{% url 'homepage' %}">Visit Website</a> | 
+                <a href="{% url 'privacy_policy' %}">Privacy Policy</a> | 
+                <a href="{% url 'environment_agreement' %}">Environment and Social</a> | 
+                <a href="{% url 'terms_and_conditions' %}">Terms of Service</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
