@@ -105,7 +105,7 @@
 </div>
 
 <style>
-/* Checkbox Grid Styles - คัดลอกจาก onboarding.css */
+/* Checkbox Grid Styles - Copied from onboarding.css */
 .checkbox-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -210,7 +210,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Market traction script loaded');
     
-    // Checkbox card interactions - วิธีใหม่
+    // Checkbox card interactions - new approach
     const checkboxCards = document.querySelectorAll('.checkbox-card');
     console.log('Found customer segment cards:', checkboxCards.length);
     
@@ -222,16 +222,16 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // เพิ่ม event listener ให้ checkbox โดยตรง
+        // Add an event listener directly to the checkbox
         checkbox.addEventListener('change', function() {
             console.log('Customer segment checkbox changed:', this.checked);
             updateCardState(card, this.checked);
         });
         
-        // เพิ่ม event listener ให้ card
+        // Add an event listener to the card
         card.addEventListener('click', function(e) {
             console.log('Customer segment card clicked:', e.target);
-            // ป้องกันการ click ซ้ำถ้า click ที่ checkbox โดยตรง
+            // Prevent duplicate clicks when clicking the checkbox directly
             if (e.target === checkbox) {
                 return;
             }
